@@ -69,7 +69,7 @@ services:
       context: .
       dockerfile: Dockerfile.admin
       args:
-        VITE_API_URL: https://api.xseo.me
+        VITE_API_URL: /api
     container_name: minigame-admin
     restart: unless-stopped
     depends_on:
@@ -83,7 +83,7 @@ services:
       context: .
       dockerfile: Dockerfile.webapp
       args:
-        VITE_API_URL: https://api.xseo.me
+        VITE_API_URL: /api
     container_name: minigame-webapp
     restart: unless-stopped
     depends_on:
