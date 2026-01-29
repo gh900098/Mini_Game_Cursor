@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎰 Lucky Slots</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --gold: #ffd700;
+            --red: #ef4444;
+            --green: #10b981;
+            --purple: #8b5cf6;
+            --dark: #0a0a1a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1a0a0a 0%, #2d1810 50%, #0a0a1a 100%);
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* Neon Border Animation */
+        .machine-container {
+            position: relative;
+            padding: 4px;
+            background: linear-gradient(45deg, var(--red), var(--gold), var(--green), var(--purple));
+            background-size: 400% 400%;
+            animation: borderGlow 3s ease infinite;
+            border-radius: 30px;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .slot-machine {
+            background: linear-gradient(180deg, #2a1a1a 0%, #1a0a0a 100%);
+            border-radius: 28px;
+            padding: 25px;
+            box-shadow: 
+                inset 0 5px 30px rgba(0,0,0,0.5),
+                0 20px 60px rgba(0,0,0,0.8);
+        }
+
+        /* Header */
+        .machine-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.8rem, 7vw, 2.5rem);
+            font-weight: 900;
+            background: linear-gradient(180deg, var(--gold) 0%, #b8860b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+        }
+
+        .jackpot-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            border: 2px solid var(--gold);
+        }
+
+        .jackpot-label {
+            color: var(--gold);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        .jackpot-amount {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 10px var(--gold);
+        }
+
+        /* Reels Container */
+        .reels-container {
+            background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px 0;
+            border: 3px solid #333;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        .reels {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .reel {
+            width: 80px;
+            height: 100px;
+            background: linear-gradient(180deg, #fff 0%, #f0f0f0 100%);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .reel-strip {
+            position: absolute;
+            width: 100%;
+            transition: transform 0.1s ease-out;
+        }
+
+        .symbol {
+            width: 80px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+        }
+
+        /* Win Line */
+        .win-line {
+            position: absolute;
+            left: -5px;
+            right: -5px;
+            height: 4px;
+            background: var(--gold);
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--gold);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .win-line.show {
+            opacity: 1;
+            animation: flash 0.5s ease-in-out infinite;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Paytable */
+        .paytable {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+            font-size: 0.85rem;
+        }
+
+        .pay-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+
+        .pay-symbols { font-size: 1rem; }
+        
+        .pay-amount {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* Spin Button */
+        .spin-btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(180deg, var(--red) 0%, #b91c1c 100%);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 
+                0 6px 0 #7f1d1d,
+                0 10px 30px rgba(239, 68, 68, 0.4);
+            transition: all 0.1s;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .spin-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 0 #7f1d1d,
+                0 15px 40px rgba(239, 68, 68, 0.5);
+        }
+
+        .spin-btn:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 
+                0 2px 0 #7f1d1d,
+                0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .spin-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Win Display */
+        .win-display {
+            text-align: center;
+            margin-top: 15px;
+            min-height: 40px;
+        }
+
+        .win-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 20px var(--gold);
+            animation: winPulse 0.5s ease-in-out infinite;
+            display: none;
+        }
+
+        .win-text.show {
+            display: block;
+        }
+
+        @keyframes winPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Credits */
+        .credits-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+        }
+
+        .credit-item {
+            text-align: center;
+        }
+
+        .credit-label {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .credit-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        /* Decorative Lights */
+        .lights {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: lightBlink 1s ease-in-out infinite;
+        }
+
+        .light:nth-child(1) { background: var(--red); animation-delay: 0s; }
+        .light:nth-child(2) { background: var(--gold); animation-delay: 0.2s; }
+        .light:nth-child(3) { background: var(--green); animation-delay: 0.4s; }
+        .light:nth-child(4) { background: var(--purple); animation-delay: 0.6s; }
+        .light:nth-child(5) { background: var(--red); animation-delay: 0.8s; }
+
+        @keyframes lightBlink {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 15px currentColor; }
+        }
+    </style>
+</head>
+<body>
+    <div class="machine-container">
+        <div class="slot-machine">
+            <div class="lights">
+                <div class="light"></div>
+                <div class="light"></div>
+                <div class="light"></div>
+                <div class="light"></div>
+                <div class="light"></div>
+            </div>
+
+            <div class="machine-header">
+                <div class="logo">🎰 LUCKY SLOTS</div>
+                <div class="jackpot-display">
+                    <span class="jackpot-label">JACKPOT</span>
+                    <span class="jackpot-amount" id="jackpot">$10,000</span>
+                </div>
+            </div>
+
+            <div class="reels-container">
+                <div class="reels">
+                    <div class="reel">
+                        <div class="reel-strip" id="reel1"></div>
+                    </div>
+                    <div class="reel">
+                        <div class="reel-strip" id="reel2"></div>
+                    </div>
+                    <div class="reel">
+                        <div class="reel-strip" id="reel3"></div>
+                    </div>
+                </div>
+                <div class="win-line" id="winLine"></div>
+            </div>
+
+            <div class="paytable">
+                <div class="pay-row">
+                    <span class="pay-symbols">💎💎💎</span>
+                    <span class="pay-amount">x100</span>
+                </div>
+                <div class="pay-row">
+                    <span class="pay-symbols">7️⃣7️⃣7️⃣</span>
+                    <span class="pay-amount">x50</span>
+                </div>
+                <div class="pay-row">
+                    <span class="pay-symbols">🍒🍒🍒</span>
+                    <span class="pay-amount">x20</span>
+                </div>
+                <div class="pay-row">
+                    <span class="pay-symbols">🍋🍋🍋</span>
+                    <span class="pay-amount">x10</span>
+                </div>
+            </div>
+
+            <button class="spin-btn" id="spinBtn" onclick="spin()">
+                🎰 SPIN
+            </button>
+
+            <div class="win-display">
+                <div class="win-text" id="winText">🎉 YOU WIN $500!</div>
+            </div>
+
+            <div class="credits-bar">
+                <div class="credit-item">
+                    <div class="credit-label">Credits</div>
+                    <div class="credit-value" id="credits">1000</div>
+                </div>
+                <div class="credit-item">
+                    <div class="credit-label">Bet</div>
+                    <div class="credit-value">10</div>
+                </div>
+                <div class="credit-item">
+                    <div class="credit-label">Win</div>
+                    <div class="credit-value" id="lastWin">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const symbols = ['🍒', '🍋', '🍊', '🍇', '⭐', '7️⃣', '💎'];
+        const payouts = {
+            '💎💎💎': 100,
+            '7️⃣7️⃣7️⃣': 50,
+            '⭐⭐⭐': 30,
+            '🍇🍇🍇': 20,
+            '🍊🍊🍊': 15,
+            '🍋🍋🍋': 10,
+            '🍒🍒🍒': 5
+        };
+
+        let credits = 1000;
+        let spinning = false;
+        const bet = 10;
+
+        function init() {
+            // Create reel strips
+            for (let i = 1; i <= 3; i++) {
+                const strip = document.getElementById(`reel${i}`);
+                let html = '';
+                // Create extra symbols for smooth animation
+                for (let j = 0; j < 20; j++) {
+                    const sym = symbols[Math.floor(Math.random() * symbols.length)];
+                    html += `<div class="symbol">${sym}</div>`;
+                }
+                strip.innerHTML = html;
+            }
+        }
+
+        function spin() {
+            if (spinning || credits < bet) return;
+            
+            spinning = true;
+            credits -= bet;
+            updateCredits();
+            
+            document.getElementById('spinBtn').disabled = true;
+            document.getElementById('winText').classList.remove('show');
+            document.getElementById('winLine').classList.remove('show');
+            document.getElementById('lastWin').textContent = '0';
+
+            // Generate results
+            const results = [];
+            for (let i = 0; i < 3; i++) {
+                results.push(symbols[Math.floor(Math.random() * symbols.length)]);
+            }
+
+            // Spin each reel
+            const reelDurations = [1500, 2000, 2500];
+            
+            for (let i = 1; i <= 3; i++) {
+                spinReel(i, results[i-1], reelDurations[i-1]);
+            }
+
+            // Check win after all reels stop
+            setTimeout(() => {
+                checkWin(results);
+                spinning = false;
+                document.getElementById('spinBtn').disabled = false;
+            }, 2700);
+        }
+
+        function spinReel(reelNum, result, duration) {
+            const strip = document.getElementById(`reel${reelNum}`);
+            
+            // Add spinning effect
+            let pos = 0;
+            const spinInterval = setInterval(() => {
+                pos -= 100;
+                strip.style.transform = `translateY(${pos}px)`;
+                
+                // Reset position when needed
+                if (pos <= -1000) {
+                    pos = 0;
+                    strip.style.transition = 'none';
+                    strip.style.transform = `translateY(0)`;
+                    setTimeout(() => {
+                        strip.style.transition = 'transform 0.1s ease-out';
+                    }, 10);
+                }
+            }, 50);
+
+            // Stop at result
+            setTimeout(() => {
+                clearInterval(spinInterval);
+                
+                // Set final position with result
+                strip.innerHTML = '';
+                for (let j = 0; j < 20; j++) {
+                    const sym = j === 0 ? result : symbols[Math.floor(Math.random() * symbols.length)];
+                    strip.innerHTML += `<div class="symbol">${sym}</div>`;
+                }
+                strip.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)';
+                strip.style.transform = 'translateY(0)';
+            }, duration);
+        }
+
+        function checkWin(results) {
+            const combo = results.join('');
+            let win = 0;
+
+            // Check for matching symbols
+            if (results[0] === results[1] && results[1] === results[2]) {
+                const multiplier = payouts[combo] || 3;
+                win = bet * multiplier;
+            }
+
+            if (win > 0) {
+                credits += win;
+                updateCredits();
+                
+                document.getElementById('lastWin').textContent = win;
+                document.getElementById('winText').textContent = `🎉 YOU WIN $${win}!`;
+                document.getElementById('winText').classList.add('show');
+                document.getElementById('winLine').classList.add('show');
+
+                // Confetti for big wins
+                if (win >= bet * 20) {
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#ffd700', '#ef4444', '#10b981']
+                    });
+                }
+            }
+        }
+
+        function updateCredits() {
+            document.getElementById('credits').textContent = credits;
+        }
+
+        init();
+    </script>
+</body>
+</html>

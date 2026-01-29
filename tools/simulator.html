@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3rd Party Site Simulator</title>
+    <style>
+        body { font-family: sans-serif; padding: 40px; background: #f1f5f9; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; }
+        input { width: 100%; padding: 8px; margin: 8px 0; box-sizing: border-box; }
+        button { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+        iframe { width: 100%; height: 500px; border: 1px solid #ddd; margin-top: 20px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Simulate 3rd Party Integration</h2>
+        <label>Company Slug:</label>
+        <input id="slug" value="demo-company" />
+        <label>External User ID:</label>
+        <input id="uid" value="user_12345" />
+        <label>API Secret (from seed):</label>
+        <input id="secret" value="demo-secret-123" />
+        <label>Instance Slug:</label>
+        <input id="instance" value="christmas-spin" />
+        
+        <button onclick="launch()">Launch Game</button>
+    </div>
+
+    <div id="gameContainer"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        async function launch() {
+            const slug = document.getElementById('slug').value;
+            const uid = document.getElementById('uid').value;
+            const secret = document.getElementById('secret').value;
+            const instance = document.getElementById('instance').value;
+            const timestamp = Date.now();
+
+            // 1. Generate Signature: HMAC_SHA256(externalId + ":" + companySlug + ":" + timestamp, secret)
+            const expectedData = `${uid}:${slug}:${timestamp}`;
+            const signature = CryptoJS.HmacSHA256(expectedData, secret).toString();
+
+            console.log('Generated Signature:', signature);
+
+            // 2. Call our API to get a Member Token
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/external/initialize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        companySlug: slug,
+                        externalId: uid,
+                        timestamp: timestamp,
+                        signature: signature,
+                        username: 'Player_' + uid.slice(-5)
+                    })
+                });
+
+                const data = await response.json();
+                console.log('Login Result:', data);
+
+                if (data.access_token) {
+                    // 3. Load the iframe with the token
+                    const iframeUrl = `http://localhost:3000/api/game-instances/${instance}/play?token=${data.access_token}`;
+                    document.getElementById('gameContainer').innerHTML = `
+                        <p>Game active for: <b>${data.member.username}</b> (Points: ${data.member.points})</p>
+                        <iframe src="${iframeUrl}"></iframe>
+                    `;
+                } else {
+                    alert('Log in failed: ' + data.message);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Connection error');
+            }
+        }
+    </script>
+</body>
+</html>

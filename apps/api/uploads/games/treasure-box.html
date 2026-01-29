@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎁 Treasure Box</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --gold: #ffd700;
+            --bronze: #cd7f32;
+            --silver: #c0c0c0;
+            --purple: #9d4edd;
+            --dark: #0f0f23;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1a0a2e 0%, #2d1b4e 50%, #1a0a2e 100%);
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* Sparkle background */
+        .sparkles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            z-index: 10;
+        }
+
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.8rem, 8vw, 2.5rem);
+            font-weight: 900;
+            background: linear-gradient(180deg, var(--gold) 0%, var(--bronze) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+        }
+
+        .subtitle {
+            color: var(--silver);
+            font-size: 1rem;
+            margin-top: 5px;
+            letter-spacing: 3px;
+        }
+
+        /* Treasure Boxes Grid */
+        .boxes-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 350px;
+            z-index: 10;
+            margin: 20px 0;
+        }
+
+        .treasure-box {
+            aspect-ratio: 1;
+            background: linear-gradient(180deg, #4a3728 0%, #2d1f15 100%);
+            border-radius: 15px;
+            border: 3px solid var(--bronze);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
+        .treasure-box::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 15px;
+            background: linear-gradient(180deg, var(--gold), var(--bronze));
+            border-radius: 5px;
+        }
+
+        .treasure-box:hover:not(.opened) {
+            transform: translateY(-5px) scale(1.05);
+            border-color: var(--gold);
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.3);
+        }
+
+        .treasure-box.opened {
+            cursor: default;
+            background: linear-gradient(180deg, #2a1a0a 0%, #1a0f05 100%);
+        }
+
+        .treasure-box.opened .box-icon {
+            animation: revealPrize 0.5s ease-out forwards;
+        }
+
+        @keyframes revealPrize {
+            0% { transform: scale(0) rotate(-180deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+
+        .box-icon {
+            font-size: 3rem;
+            margin-top: 10px;
+        }
+
+        .box-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            color: var(--gold);
+            margin-top: 5px;
+        }
+
+        .glow-ring {
+            position: absolute;
+            inset: -5px;
+            border-radius: 20px;
+            border: 2px solid var(--gold);
+            opacity: 0;
+            animation: glowPulse 1.5s ease-in-out infinite;
+        }
+
+        .treasure-box:not(.opened) .glow-ring {
+            opacity: 1;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+        }
+
+        /* Info Section */
+        .info-section {
+            width: 100%;
+            max-width: 350px;
+            z-index: 10;
+        }
+
+        .picks-left {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .picks-label {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .picks-count {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--gold);
+        }
+
+        /* Prize Legend */
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.05);
+            padding: 10px 15px;
+            border-radius: 10px;
+        }
+
+        .legend-icon { font-size: 1.5rem; }
+        
+        .legend-info {
+            flex: 1;
+        }
+
+        .legend-name {
+            font-weight: 700;
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        .legend-value {
+            font-size: 0.75rem;
+            color: var(--gold);
+        }
+
+        /* Reset Button */
+        .reset-btn {
+            margin-top: 25px;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(180deg, var(--purple) 0%, #7c3aed 100%);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 25px rgba(157, 78, 221, 0.4);
+            transition: all 0.3s;
+            z-index: 10;
+            display: none;
+        }
+
+        .reset-btn.show {
+            display: block;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 35px rgba(157, 78, 221, 0.5);
+        }
+
+        /* Win Display */
+        .win-display {
+            margin-top: 20px;
+            text-align: center;
+            min-height: 50px;
+            z-index: 10;
+        }
+
+        .total-win {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 20px var(--gold);
+        }
+    </style>
+</head>
+<body>
+    <div class="sparkles" id="sparkles"></div>
+
+    <div class="header">
+        <h1 class="title">🎁 TREASURE BOX</h1>
+        <p class="subtitle">Pick 3 boxes to win!</p>
+    </div>
+
+    <div class="boxes-container" id="boxesContainer"></div>
+
+    <div class="info-section">
+        <div class="picks-left">
+            <div class="picks-label">Picks Remaining</div>
+            <div class="picks-count" id="picksCount">3</div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-icon">💎</div>
+                <div class="legend-info">
+                    <div class="legend-name">Diamond</div>
+                    <div class="legend-value">$500</div>
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">👑</div>
+                <div class="legend-info">
+                    <div class="legend-name">Crown</div>
+                    <div class="legend-value">$200</div>
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">💰</div>
+                <div class="legend-info">
+                    <div class="legend-name">Gold</div>
+                    <div class="legend-value">$100</div>
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">⭐</div>
+                <div class="legend-info">
+                    <div class="legend-name">Star</div>
+                    <div class="legend-value">$50</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="win-display">
+        <div class="total-win" id="totalWin"></div>
+    </div>
+
+    <button class="reset-btn" id="resetBtn" onclick="resetGame()">🎁 PLAY AGAIN</button>
+
+    <script>
+        const prizes = [
+            { icon: '💎', name: 'Diamond', value: 500, weight: 5 },
+            { icon: '👑', name: 'Crown', value: 200, weight: 10 },
+            { icon: '💰', name: 'Gold', value: 100, weight: 25 },
+            { icon: '⭐', name: 'Star', value: 50, weight: 30 },
+            { icon: '🎁', name: 'Gift', value: 25, weight: 30 }
+        ];
+
+        let boxes = [];
+        let picksLeft = 3;
+        let totalWin = 0;
+
+        function init() {
+            createSparkles();
+            createBoxes();
+        }
+
+        function createSparkles() {
+            const container = document.getElementById('sparkles');
+            for (let i = 0; i < 40; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                sparkle.style.background = ['#ffd700', '#c0c0c0', '#cd7f32', '#9d4edd'][Math.floor(Math.random() * 4)];
+                container.appendChild(sparkle);
+            }
+        }
+
+        function selectPrize() {
+            const totalWeight = prizes.reduce((sum, p) => sum + p.weight, 0);
+            let random = Math.random() * totalWeight;
+            
+            for (const prize of prizes) {
+                if (random < prize.weight) return prize;
+                random -= prize.weight;
+            }
+            return prizes[prizes.length - 1];
+        }
+
+        function createBoxes() {
+            const container = document.getElementById('boxesContainer');
+            container.innerHTML = '';
+            boxes = [];
+            
+            for (let i = 0; i < 9; i++) {
+                const prize = selectPrize();
+                boxes.push({ prize, opened: false });
+                
+                const box = document.createElement('div');
+                box.className = 'treasure-box';
+                box.dataset.index = i;
+                box.innerHTML = `
+                    <div class="glow-ring"></div>
+                    <div class="box-icon">📦</div>
+                    <div class="box-label">TAP ME</div>
+                `;
+                box.onclick = () => openBox(i);
+                container.appendChild(box);
+            }
+        }
+
+        function openBox(index) {
+            if (boxes[index].opened || picksLeft <= 0) return;
+            
+            const boxEl = document.querySelector(`.treasure-box[data-index="${index}"]`);
+            const prize = boxes[index].prize;
+            
+            boxes[index].opened = true;
+            picksLeft--;
+            totalWin += prize.value;
+            
+            // Update UI
+            document.getElementById('picksCount').textContent = picksLeft;
+            document.getElementById('totalWin').textContent = `Total: $${totalWin}`;
+            
+            boxEl.classList.add('opened');
+            boxEl.querySelector('.box-icon').textContent = prize.icon;
+            boxEl.querySelector('.box-label').textContent = `$${prize.value}`;
+            
+            // Confetti for high value prizes
+            if (prize.value >= 200) {
+                confetti({
+                    particleCount: 80,
+                    spread: 60,
+                    origin: { y: 0.7 },
+                    colors: ['#ffd700', '#c0c0c0', '#9d4edd']
+                });
+            }
+            
+            // Game over
+            if (picksLeft === 0) {
+                document.getElementById('resetBtn').classList.add('show');
+                
+                // Final celebration
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 150,
+                        spread: 90,
+                        origin: { y: 0.6 },
+                        colors: ['#ffd700', '#c0c0c0', '#cd7f32']
+                    });
+                }, 500);
+            }
+        }
+
+        function resetGame() {
+            picksLeft = 3;
+            totalWin = 0;
+            
+            document.getElementById('picksCount').textContent = '3';
+            document.getElementById('totalWin').textContent = '';
+            document.getElementById('resetBtn').classList.remove('show');
+            
+            createBoxes();
+        }
+
+        init();
+    </script>
+</body>
+</html>

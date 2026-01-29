@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>📅 Daily Check-in</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --gold: #ffd700;
+            --green: #10b981;
+            --dark: #0f0f23;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1a1a2e 0%, #0f0f23 100%);
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.8rem, 7vw, 2.5rem);
+            font-weight: 900;
+            background: linear-gradient(180deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .streak-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(99, 102, 241, 0.2);
+            padding: 10px 25px;
+            border-radius: 30px;
+            border: 2px solid var(--primary);
+        }
+
+        .streak-icon { font-size: 1.5rem; }
+        
+        .streak-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: var(--gold);
+        }
+
+        .streak-count {
+            font-weight: 900;
+            font-size: 1.3rem;
+        }
+
+        /* Calendar Grid */
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 25px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .day-cell.checked {
+            background: linear-gradient(135deg, var(--green) 0%, #059669 100%);
+            border-color: #34d399;
+        }
+
+        .day-cell.checked .check-mark {
+            display: block;
+        }
+
+        .day-cell.today {
+            border-color: var(--gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); }
+        }
+
+        .day-cell.today:not(.checked) {
+            cursor: pointer;
+        }
+
+        .day-cell.future {
+            opacity: 0.4;
+        }
+
+        .day-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .day-reward {
+            font-size: 0.7rem;
+            color: var(--gold);
+            margin-top: 2px;
+        }
+
+        .check-mark {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 0.8rem;
+            display: none;
+        }
+
+        /* Milestone Rewards */
+        .milestones {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 25px;
+        }
+
+        .milestone-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .milestone-row {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .milestone-row.achieved {
+            border-color: var(--gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .milestone-row.achieved .milestone-icon {
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .milestone-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        .milestone-info {
+            flex: 1;
+        }
+
+        .milestone-name {
+            font-weight: 700;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .milestone-progress {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .milestone-reward {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        /* Check-in Button */
+        .checkin-btn {
+            width: 100%;
+            max-width: 300px;
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(180deg, var(--primary) 0%, #4f46e5 100%);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s;
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+
+        .checkin-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.5);
+        }
+
+        .checkin-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #666;
+        }
+
+        /* Reward Popup */
+        .reward-popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .reward-card {
+            background: linear-gradient(180deg, #1a1a2e 0%, #0a0a15 100%);
+            border: 3px solid var(--gold);
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 90vw;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .reward-card h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .reward-icon {
+            font-size: 5rem;
+            margin: 15px 0;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        .reward-amount {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .reward-streak {
+            color: var(--green);
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+
+        .close-btn {
+            padding: 12px 40px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(180deg, var(--green) 0%, #059669 100%);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">📅 DAILY CHECK-IN</h1>
+        <div class="streak-display">
+            <span class="streak-icon">🔥</span>
+            <span class="streak-text">Streak: <span class="streak-count" id="streakCount">0</span> Days</span>
+        </div>
+    </div>
+
+    <div class="calendar" id="calendar"></div>
+
+    <div class="milestones">
+        <div class="milestone-title">🏆 MILESTONE REWARDS</div>
+        <div class="milestone-row" data-days="7">
+            <div class="milestone-icon">🎁</div>
+            <div class="milestone-info">
+                <div class="milestone-name">7-Day Streak</div>
+                <div class="milestone-progress">0/7 days</div>
+            </div>
+            <div class="milestone-reward">+500</div>
+        </div>
+        <div class="milestone-row" data-days="14">
+            <div class="milestone-icon">💎</div>
+            <div class="milestone-info">
+                <div class="milestone-name">14-Day Streak</div>
+                <div class="milestone-progress">0/14 days</div>
+            </div>
+            <div class="milestone-reward">+1500</div>
+        </div>
+        <div class="milestone-row" data-days="30">
+            <div class="milestone-icon">👑</div>
+            <div class="milestone-info">
+                <div class="milestone-name">30-Day Streak</div>
+                <div class="milestone-progress">0/30 days</div>
+            </div>
+            <div class="milestone-reward">+5000</div>
+        </div>
+    </div>
+
+    <button class="checkin-btn" id="checkinBtn" onclick="checkIn()">
+        ✅ CHECK IN TODAY
+    </button>
+
+    <div class="reward-popup" id="rewardPopup">
+        <div class="reward-card">
+            <h2>🎉 CHECK-IN COMPLETE! 🎉</h2>
+            <div class="reward-icon">🎁</div>
+            <div class="reward-amount" id="rewardAmount">+100 Points</div>
+            <div class="reward-streak" id="rewardStreak">🔥 3-Day Streak!</div>
+            <button class="close-btn" onclick="closePopup()">AWESOME!</button>
+        </div>
+    </div>
+
+    <script>
+        const dailyRewards = [10, 20, 30, 50, 70, 100, 150]; // Day 1-7 rewards (cycles)
+        let checkedDays = JSON.parse(localStorage.getItem('checkedDays') || '[]');
+        let streak = parseInt(localStorage.getItem('streak') || '0');
+        let lastCheckIn = localStorage.getItem('lastCheckIn');
+
+        function init() {
+            checkStreak();
+            renderCalendar();
+            updateMilestones();
+            updateButton();
+        }
+
+        function checkStreak() {
+            const today = new Date().toDateString();
+            const yesterday = new Date(Date.now() - 86400000).toDateString();
+            
+            if (lastCheckIn && lastCheckIn !== today && lastCheckIn !== yesterday) {
+                // Streak broken
+                streak = 0;
+                localStorage.setItem('streak', '0');
+            }
+            
+            document.getElementById('streakCount').textContent = streak;
+        }
+
+        function renderCalendar() {
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = '';
+            
+            const today = new Date();
+            const currentDay = today.getDate();
+            const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+            
+            for (let day = 1; day <= Math.min(daysInMonth, 28); day++) {
+                const cell = document.createElement('div');
+                cell.className = 'day-cell';
+                
+                const dateStr = new Date(today.getFullYear(), today.getMonth(), day).toDateString();
+                
+                if (checkedDays.includes(dateStr)) {
+                    cell.classList.add('checked');
+                }
+                
+                if (day === currentDay) {
+                    cell.classList.add('today');
+                    if (!checkedDays.includes(dateStr)) {
+                        cell.onclick = checkIn;
+                    }
+                } else if (day > currentDay) {
+                    cell.classList.add('future');
+                }
+                
+                const reward = dailyRewards[(day - 1) % 7];
+                
+                cell.innerHTML = `
+                    <span class="check-mark">✓</span>
+                    <span class="day-num">${day}</span>
+                    <span class="day-reward">+${reward}</span>
+                `;
+                
+                calendar.appendChild(cell);
+            }
+        }
+
+        function updateMilestones() {
+            document.querySelectorAll('.milestone-row').forEach(row => {
+                const days = parseInt(row.dataset.days);
+                const progress = Math.min(streak, days);
+                row.querySelector('.milestone-progress').textContent = `${progress}/${days} days`;
+                
+                if (streak >= days) {
+                    row.classList.add('achieved');
+                } else {
+                    row.classList.remove('achieved');
+                }
+            });
+        }
+
+        function updateButton() {
+            const today = new Date().toDateString();
+            const btn = document.getElementById('checkinBtn');
+            
+            if (checkedDays.includes(today)) {
+                btn.disabled = true;
+                btn.textContent = '✅ CHECKED IN TODAY';
+            } else {
+                btn.disabled = false;
+                btn.textContent = '✅ CHECK IN TODAY';
+            }
+        }
+
+        function checkIn() {
+            const today = new Date().toDateString();
+            
+            if (checkedDays.includes(today)) return;
+            
+            // Update streak
+            const yesterday = new Date(Date.now() - 86400000).toDateString();
+            if (lastCheckIn === yesterday) {
+                streak++;
+            } else if (lastCheckIn !== today) {
+                streak = 1;
+            }
+            
+            // Save check-in
+            checkedDays.push(today);
+            localStorage.setItem('checkedDays', JSON.stringify(checkedDays));
+            localStorage.setItem('streak', streak.toString());
+            localStorage.setItem('lastCheckIn', today);
+            
+            // Calculate reward
+            const dayOfStreak = ((streak - 1) % 7);
+            const reward = dailyRewards[dayOfStreak];
+            
+            // Show reward popup
+            document.getElementById('rewardAmount').textContent = `+${reward} Points`;
+            document.getElementById('rewardStreak').textContent = `🔥 ${streak}-Day Streak!`;
+            document.getElementById('rewardPopup').style.display = 'flex';
+            
+            // Confetti!
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#6366f1', '#ffd700', '#10b981']
+            });
+            
+            // Update UI
+            document.getElementById('streakCount').textContent = streak;
+            renderCalendar();
+            updateMilestones();
+            updateButton();
+        }
+
+        function closePopup() {
+            document.getElementById('rewardPopup').style.display = 'none';
+        }
+
+        init();
+    </script>
+</body>
+</html>

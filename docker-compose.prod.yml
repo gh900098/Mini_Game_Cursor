@@ -1,0 +1,117 @@
+version: '3.8'
+
+services:
+  # ============ Database ============
+  postgres:
+    image: postgres:15-alpine
+    container_name: minigame-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: minigame
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - minigame-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============ Redis ============
+  redis:
+    image: redis:7-alpine
+    container_name: minigame-redis
+    restart: unless-stopped
+    networks:
+      - minigame-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============ Backend API ============
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: minigame-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_DATABASE: minigame
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-change_me_in_production}
+      JWT_EXPIRES_IN: 7d
+      CORS_ORIGINS: https://admin.xseo.me,https://game.xseo.me
+    volumes:
+      - api_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - minigame-network
+
+  # ============ Admin Panel ============
+  admin:
+    build:
+      context: .
+      dockerfile: Dockerfile.admin
+      args:
+        VITE_API_URL: https://api.xseo.me
+    container_name: minigame-admin
+    restart: unless-stopped
+    depends_on:
+      - api
+    networks:
+      - minigame-network
+
+  # ============ Game Frontend ============
+  web-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.webapp
+      args:
+        VITE_API_URL: https://api.xseo.me
+    container_name: minigame-webapp
+    restart: unless-stopped
+    depends_on:
+      - api
+    networks:
+      - minigame-network
+
+  # ============ Nginx Reverse Proxy ============
+  nginx:
+    image: nginx:alpine
+    container_name: minigame-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - api
+      - admin
+      - web-app
+    networks:
+      - minigame-network
+
+networks:
+  minigame-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  api_uploads:

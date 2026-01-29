@@ -1,0 +1,16 @@
+{
+  "name": "minigame-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "dev": "pnpm -r dev",
+    "dev:api": "pnpm --filter api start:dev",
+    "dev:admin": "pnpm --filter soybean-admin dev",
+    "build:api": "pnpm --filter api build"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

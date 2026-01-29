@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🧠 Memory Match</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --secondary: #a78bfa;
+            --gold: #ffd700;
+            --green: #10b981;
+            --pink: #ec4899;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.8rem, 7vw, 2.5rem);
+            font-weight: 900;
+            background: linear-gradient(180deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            gap: 15px;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        /* Game Board */
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 350px;
+            margin: 20px 0;
+        }
+
+        .card {
+            aspect-ratio: 1;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card.matched .card-inner {
+            animation: matchPulse 0.5s ease;
+        }
+
+        @keyframes matchPulse {
+            0%, 100% { transform: rotateY(180deg) scale(1); }
+            50% { transform: rotateY(180deg) scale(1.1); }
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: 2px solid rgba(255,255,255,0.2);
+            font-size: 2rem;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .card-front::after {
+            content: '?';
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            transform: rotateY(180deg);
+            font-size: 2.5rem;
+            border: 3px solid var(--gold);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .card.matched .card-back {
+            background: linear-gradient(135deg, var(--green) 0%, #059669 100%);
+            border-color: #34d399;
+        }
+
+        /* Timer Bar */
+        .timer-container {
+            width: 100%;
+            max-width: 350px;
+            margin-bottom: 15px;
+        }
+
+        .timer-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green), var(--gold), var(--pink));
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        /* Buttons */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .game-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .start-btn {
+            background: linear-gradient(180deg, var(--green) 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+        }
+
+        .reset-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .reset-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Win Overlay */
+        .win-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .win-card {
+            background: linear-gradient(180deg, #1e1b4b 0%, #0f0f23 100%);
+            border: 3px solid var(--gold);
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 90vw;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .win-card h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+
+        .win-icon {
+            font-size: 4rem;
+            margin: 15px 0;
+        }
+
+        .win-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .win-stat {
+            text-align: center;
+        }
+
+        .win-stat-label {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .win-stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .play-again-btn {
+            margin-top: 20px;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(180deg, var(--primary) 0%, #6d28d9 100%);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">🧠 MEMORY MATCH</h1>
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">Moves</div>
+                <div class="stat-value" id="moves">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Pairs</div>
+                <div class="stat-value" id="pairs">0/8</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Score</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="timer-container">
+        <div class="timer-bar">
+            <div class="timer-fill" id="timerFill" style="width: 100%"></div>
+        </div>
+    </div>
+
+    <div class="game-board" id="gameBoard"></div>
+
+    <div class="btn-row">
+        <button class="game-btn start-btn" id="startBtn" onclick="startGame()">▶ START</button>
+        <button class="game-btn reset-btn" onclick="resetGame()">↻ RESET</button>
+    </div>
+
+    <div class="win-overlay" id="winOverlay">
+        <div class="win-card">
+            <h2>🎉 AMAZING! 🎉</h2>
+            <div class="win-icon">🏆</div>
+            <div class="win-stats">
+                <div class="win-stat">
+                    <div class="win-stat-label">Time</div>
+                    <div class="win-stat-value" id="winTime">0s</div>
+                </div>
+                <div class="win-stat">
+                    <div class="win-stat-label">Moves</div>
+                    <div class="win-stat-value" id="winMoves">0</div>
+                </div>
+                <div class="win-stat">
+                    <div class="win-stat-label">Score</div>
+                    <div class="win-stat-value" id="winScore">0</div>
+                </div>
+            </div>
+            <button class="play-again-btn" onclick="resetGame(); closeWin();">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        const emojis = ['🎮', '🎲', '🎯', '🏆', '💎', '⭐', '🔥', '🚀'];
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        let score = 0;
+        let gameStarted = false;
+        let timerInterval;
+        let timeLeft = 60;
+        let startTime;
+
+        function createBoard() {
+            const board = document.getElementById('gameBoard');
+            board.innerHTML = '';
+            
+            // Create pairs and shuffle
+            const cardEmojis = [...emojis, ...emojis];
+            cards = shuffle(cardEmojis);
+            
+            cards.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.index = index;
+                card.dataset.emoji = emoji;
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front"></div>
+                        <div class="card-back">${emoji}</div>
+                    </div>
+                `;
+                card.addEventListener('click', () => flipCard(card));
+                board.appendChild(card);
+            });
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startGame() {
+            if (gameStarted) return;
+            gameStarted = true;
+            startTime = Date.now();
+            timeLeft = 60;
+            
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('startBtn').textContent = '⏱ PLAYING';
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const percent = (timeLeft / 60) * 100;
+                document.getElementById('timerFill').style.width = percent + '%';
+                
+                if (timeLeft <= 0) {
+                    endGame(false);
+                }
+            }, 1000);
+        }
+
+        function flipCard(card) {
+            if (!gameStarted) {
+                startGame();
+            }
+            
+            if (flippedCards.length >= 2) return;
+            if (card.classList.contains('flipped')) return;
+            if (card.classList.contains('matched')) return;
+            
+            card.classList.add('flipped');
+            flippedCards.push(card);
+            
+            if (flippedCards.length === 2) {
+                moves++;
+                document.getElementById('moves').textContent = moves;
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            const match = card1.dataset.emoji === card2.dataset.emoji;
+            
+            if (match) {
+                matchedPairs++;
+                score += Math.max(100 - moves * 2, 10);
+                
+                document.getElementById('pairs').textContent = `${matchedPairs}/8`;
+                document.getElementById('score').textContent = score;
+                
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                flippedCards = [];
+                
+                if (matchedPairs === 8) {
+                    setTimeout(() => endGame(true), 500);
+                }
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    flippedCards = [];
+                }, 1000);
+            }
+        }
+
+        function endGame(won) {
+            clearInterval(timerInterval);
+            gameStarted = false;
+            
+            if (won) {
+                const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+                const bonus = Math.max(500 - timeTaken * 5, 0);
+                score += bonus;
+                
+                document.getElementById('winTime').textContent = timeTaken + 's';
+                document.getElementById('winMoves').textContent = moves;
+                document.getElementById('winScore').textContent = score;
+                document.getElementById('winOverlay').style.display = 'flex';
+                
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#8b5cf6', '#ffd700', '#10b981']
+                });
+            }
+        }
+
+        function resetGame() {
+            clearInterval(timerInterval);
+            gameStarted = false;
+            matchedPairs = 0;
+            moves = 0;
+            score = 0;
+            timeLeft = 60;
+            flippedCards = [];
+            
+            document.getElementById('moves').textContent = '0';
+            document.getElementById('pairs').textContent = '0/8';
+            document.getElementById('score').textContent = '0';
+            document.getElementById('timerFill').style.width = '100%';
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('startBtn').textContent = '▶ START';
+            
+            createBoard();
+        }
+
+        function closeWin() {
+            document.getElementById('winOverlay').style.display = 'none';
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<script setup lang="tsx">
+import { ref, reactive, computed } from 'vue';
+import { NCard, NButton, NTag, NSpace, NModal, NForm, NFormItem, NInput, NSelect, NSwitch, NGrid, NGridItem, NEmpty, NImage, NDivider } from 'naive-ui';
+import { fetchGetGameInstances, fetchCreateGameInstance, fetchUpdateGameInstance, fetchDeleteGameInstance } from '@/service/api/management';
+import { fetchGetGames } from '@/service/api/game';
+import { useLoading, useBoolean } from '@sa/hooks';
+import { useAuthStore } from '@/store/modules/auth';
+import { useNaiveForm } from '@/hooks/common/form';
+import ConfigForm from './components/ConfigForm.vue';
+
+const { loading, startLoading, endLoading } = useLoading();
+const { bool: visible, setTrue: openModal, setFalse: closeModal } = useBoolean();
+const { bool: configVisible, setTrue: openConfig, setFalse: closeConfig } = useBoolean();
+const { bool: previewVisible, setTrue: openPreview, setFalse: closePreview } = useBoolean();
+const { formRef, validate } = useNaiveForm();
+const authStore = useAuthStore();
+
+const instances = ref<Api.Management.GameInstance[]>([]);
+const templates = ref<Api.Game.Game[]>([]);
+const isEdit = ref(false);
+const editingId = ref('');
+const selectedTemplate = ref<Api.Game.Game | null>(null);
+const previewSlug = ref('');
+
+const formModel = reactive({
+  name: '',
+  slug: '',
+  gameId: '',
+  isActive: true
+});
+
+const configModel = ref<Record<string, any>>({});
+
+const templateOptions = computed(() => templates.value.map(t => ({ label: t.name, value: t.id })));
+
+const previewUrl = computed(() => {
+  if (!previewSlug.value) return '';
+  const webAppUrl = import.meta.env.PROD ? 'https://game.xseo.me' : window.location.origin.replace(':9527', ':9529');
+  return `${webAppUrl}/game/${previewSlug.value}?isPreview=true&hideHeader=true`;
+});
+
+async function getData() {
+  startLoading();
+  const currentCompanyId = authStore.userInfo.currentCompanyId;
+  const [instancesRes, templatesRes] = await Promise.all([
+    fetchGetGameInstances({ companyId: currentCompanyId || undefined }),
+    fetchGetGames()
+  ]);
+  
+  if (!instancesRes.error) instances.value = instancesRes.data;
+  if (!templatesRes.error) templates.value = templatesRes.data;
+  endLoading();
+}
+
+function handleAdd() {
+  isEdit.value = false;
+  Object.assign(formModel, { name: '', slug: '', gameId: '', isActive: true });
+  openModal();
+}
+
+function handleEdit(row: Api.Management.GameInstance) {
+  isEdit.value = true;
+  editingId.value = row.id;
+  Object.assign(formModel, {
+    name: row.name,
+    slug: row.slug,
+    gameId: row.gameId,
+    isActive: row.isActive
+  });
+  openModal();
+}
+
+function handleConfig(row: Api.Management.GameInstance) {
+  editingId.value = row.id;
+  selectedTemplate.value = row.gameTemplate || null;
+  configModel.value = { ...(row.config || {}) };
+  openConfig();
+}
+
+function handlePreview(slug: string) {
+  previewSlug.value = slug;
+  openPreview();
+}
+
+async function handleSubmit() {
+  await validate();
+  const { error } = isEdit.value 
+    ? await fetchUpdateGameInstance(editingId.value, formModel)
+    : await fetchCreateGameInstance(formModel);
+
+  if (!error) {
+    window.$message?.success('Success');
+    closeModal();
+    getData();
+  }
+}
+
+async function handleSaveConfig() {
+  const { error } = await fetchUpdateGameInstance(editingId.value, { config: configModel.value });
+  if (!error) {
+    window.$message?.success('Configuration saved');
+    closeConfig();
+    getData();
+  }
+}
+
+async function handleDelete(id: string) {
+  const { error } = await fetchDeleteGameInstance(id);
+  if (!error) {
+    window.$message?.success('Deleted');
+    getData();
+  }
+}
+
+getData();
+</script>
+
+<template>
+  <div class="h-full flex-col p-4">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-24px font-bold">Game Marketplace</h2>
+      <NButton type="primary" size="large" @click="handleAdd">
+        <template #icon>
+          <icon-ic-round-plus class="text-20px" />
+        </template>
+        Deploy New Game
+      </NButton>
+    </div>
+
+    <div v-if="loading && instances.length === 0" class="flex-1 flex items-center justify-center">
+      <NEmpty description="Loading instances..." />
+    </div>
+    
+    <NGrid v-else :x-gap="16" :y-gap="16" cols="1 s:2 m:3 l:4 xl:5" responsive="screen">
+      <NGridItem v-for="item in instances" :key="item.id">
+        <NCard hoverable class="h-full flex flex-col rounded-16px overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+          <template #cover>
+            <div class="h-160px overflow-hidden bg-gray-100 relative group">
+              <NImage
+                v-if="item.gameTemplate?.thumbnailUrl"
+                :src="item.gameTemplate.thumbnailUrl"
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                preview-disabled
+              />
+              <div v-else class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
+                <icon-mdi-gamepad-variant class="text-48px" />
+              </div>
+
+              <!-- Admin Quick Preview Button -->
+              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                 <NButton type="primary" strong round @click="handlePreview(item.slug)">
+                   <template #icon><icon-mdi-play class="text-24px" /></template>
+                   Live Preview
+                 </NButton>
+              </div>
+
+              <div class="absolute top-2 right-2">
+                <NTag :type="item.isActive ? 'success' : 'error'" size="small" round>
+                  {{ item.isActive ? 'Active' : 'Inactive' }}
+                </NTag>
+              </div>
+            </div>
+          </template>
+
+          <div class="py-2">
+            <h3 class="text-18px font-bold mb-1 truncate" :title="item.name">{{ item.name }}</h3>
+            <div class="text-gray-400 text-xs mb-3 flex items-center">
+              <icon-mdi-tag class="mr-1" /> {{ item.slug }}
+            </div>
+            
+            <div class="flex items-center text-14px text-gray-600 mb-4 bg-gray-50 p-2 rounded-8px">
+              <icon-mdi-office-building class="mr-2 text-primary" />
+              <span class="truncate">{{ item.company?.name || 'Unknown Company' }}</span>
+            </div>
+
+            <div class="text-12px text-gray-500 mb-4 line-clamp-2 min-h-32px">
+              {{ item.gameTemplate?.description || 'No description available for this game template.' }}
+            </div>
+
+            <NDivider class="!my-3" />
+
+            <NSpace justify="space-between">
+              <NSpace size="small">
+                <NButton secondary size="small" type="primary" @click="handleConfig(item)">
+                  <template #icon><icon-mdi-cog class="text-16px" /></template>
+                  Config
+                </NButton>
+                <NButton quaternary size="small" circle @click="handleEdit(item)">
+                  <template #icon><icon-carbon-edit /></template>
+                </NButton>
+              </NSpace>
+              
+              <NButton quaternary size="small" type="error" circle @click="handleDelete(item.id)">
+                <template #icon><icon-carbon-trash-can /></template>
+              </NButton>
+            </NSpace>
+          </div>
+        </NCard>
+      </NGridItem>
+    </NGrid>
+
+    <!-- Create/Edit Modal -->
+    <NModal v-model:show="visible" preset="card" :title="isEdit ? 'Update Game Instance' : 'Deploy New Game'" class="w-600px rounded-16px">
+      <NForm ref="formRef" :model="formModel" label-placement="left" label-width="120" class="py-4">
+        <NFormItem label="Display Name" path="name">
+          <NInput v-model:value="formModel.name" placeholder="e.g. Christmas Spin Wheel" />
+        </NFormItem>
+        <NFormItem label="Unique Slug" path="slug">
+          <NInput v-model:value="formModel.slug" placeholder="e.g. christmas-wheel" />
+        </NFormItem>
+        <NFormItem label="Game Template" path="gameId">
+          <NSelect v-model:value="formModel.gameId" :options="templateOptions" placeholder="Select a game base" />
+        </NFormItem>
+        <NFormItem label="Status" path="isActive">
+          <NSpace align="center" class="mt-1">
+            <NSwitch v-model:value="formModel.isActive" />
+            <span class="text-gray-500 text-xs">{{ formModel.isActive ? 'Game is live' : 'Game is hidden' }}</span>
+          </NSpace>
+        </NFormItem>
+      </NForm>
+      <template #footer>
+        <NSpace justify="end">
+          <NButton @click="closeModal">Cancel</NButton>
+          <NButton type="primary" @click="handleSubmit">Confirm Deployment</NButton>
+        </NSpace>
+      </template>
+    </NModal>
+
+    <!-- Configuration Modal -->
+    <NModal v-model:show="configVisible" preset="card" title="Game Configuration" class="w-1000px rounded-16px">
+      <div v-if="selectedTemplate" class="py-2">
+        <div class="mb-6 flex items-center bg-primary/5 p-4 rounded-12px border border-primary/10">
+          <div class="w-48px h-48px rounded-8px bg-primary/10 flex items-center justify-center mr-4">
+             <icon-mdi-gamepad-variant class="text-24px text-primary" />
+          </div>
+          <div>
+            <div class="font-bold text-16px">{{ selectedTemplate.name }}</div>
+            <div class="text-xs text-gray-500">Configure parameters for this instance</div>
+          </div>
+        </div>
+
+        <ConfigForm
+          v-if="selectedTemplate.configSchema"
+          v-model:modelValue="configModel"
+          :schema="selectedTemplate.configSchema"
+          :instance-id="editingId"
+          :company-id="authStore.userInfo.currentCompanyId || undefined"
+        />
+        <div v-else class="text-center py-10 text-gray-400">
+          <NEmpty description="This game has no custom parameters." />
+        </div>
+      </div>
+      <template #footer>
+        <NSpace justify="end">
+          <NButton @click="closeConfig">Cancel</NButton>
+          <NButton type="primary" @click="handleSaveConfig">Apply Changes</NButton>
+        </NSpace>
+      </template>
+    </NModal>
+
+    <!-- Game Preview Modal -->
+    <NModal v-model:show="previewVisible" preset="card" title="Simulator (Whole Screen Display)" class="w-auto rounded-16px">
+      <div class="flex flex-col items-center">
+        <!-- Mobile Device Frame -->
+        <div class="mobile-frame">
+          <div class="notch"></div>
+          <div class="screen">
+            <iframe
+              v-if="previewVisible"
+              :src="previewUrl"
+              class="w-full h-full border-none"
+              allow="autoplay; fullscreen"
+            />
+          </div>
+          <div class="home-indicator"></div>
+        </div>
+        
+        <div class="mt-6 text-center text-gray-400 text-xs max-w-300px">
+          Previewing in "Whole Screen Display" mode (port 9529). 
+          Authentication is bypassed for admin simulation.
+        </div>
+      </div>
+    </NModal>
+  </div>
+</template>
+
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.mobile-frame {
+  position: relative;
+  width: 360px;
+  height: 740px;
+  background: #111;
+  border-radius: 40px;
+  border: 12px solid #222;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 25px;
+  background: #222;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  z-index: 10;
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+.home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  z-index: 10;
+}
+</style>

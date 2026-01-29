@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>🎰 Premium Spin Wheel Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #f1f5f9;
+            --duration: 4000ms;
+            --gold: #eab308;
+            --gold-light: #fde047;
+            --gold-gradient: linear-gradient(180deg, #fceabb 0%, #fccd4d 50%, #f8b500 100%);
+            --metallic-text: linear-gradient(180deg, #fff 0%, #eab308 40%, #854d0e 100%);
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+            background: #000; font-family: 'Inter', sans-serif;
+        }
+        
+        /* ========== ENTRANCE ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 20px var(--primary)); }
+            50% { filter: drop-shadow(0 0 40px var(--primary)) drop-shadow(0 0 60px var(--gold)); }
+        }
+        @keyframes spin-glow {
+            0% { box-shadow: 0 0 0 4px var(--primary), 0 0 30px var(--primary); }
+            50% { box-shadow: 0 0 0 4px var(--gold), 0 0 60px var(--gold), 0 0 100px var(--primary); }
+            100% { box-shadow: 0 0 0 4px var(--primary), 0 0 30px var(--primary); }
+        }
+        @keyframes pointer-bounce {
+            0%, 100% { transform: translateY(0); }
+            20% { transform: translateY(-15px); }
+            40% { transform: translateY(0); }
+            60% { transform: translateY(-8px); }
+            80% { transform: translateY(0); }
+        }
+        @keyframes particle-float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+        @keyframes led-chase {
+            0%, 100% { opacity: 0.2; transform: scale(0.6); }
+            50% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 20px var(--gold); }
+        }
+        @keyframes ray-rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes star-twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        /* ========== GAME CONTAINER ========== */
+        .game-world {
+            position: fixed; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            overflow: hidden; z-index: 1;
+        }
+        
+        .bg-layer {
+            position: absolute; inset: -20px; z-index: -1; 
+            width: calc(100% + 40px); height: calc(100% + 40px);
+            pointer-events: none; transition: all 0.5s ease;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #0f172a 100%);
+        }
+        
+        /* ========== FLOATING PARTICLES ========== */
+        .particles-container {
+            position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0;
+        }
+        .particle {
+            position: absolute; border-radius: 50%;
+            animation: particle-float linear infinite;
+            opacity: 0;
+        }
+        
+        /* ========== TOP HUD ========== */
+        .hud-top {
+            width: 100%; padding: env(safe-area-inset-top) 0; 
+            display: flex; flex-direction: column; align-items: center;
+            z-index: 50; margin-top: 10px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .token-bar {
+            background: linear-gradient(135deg, #ca8a04 0%, #a16207 100%);
+            color: #fff;
+            padding: 10px 28px; border-radius: 50px; font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            filter: drop-shadow(0 4px 15px rgba(0,0,0,0.4));
+            border: 2px solid rgba(255,255,255,0.3);
+            min-width: 200px; text-align: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        .token-bar::after {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+        
+        .branding { 
+            width: 100%; text-align: center; margin-top: 10px;
+            animation: fadeInUp 0.8s ease-out 0.1s both;
+        }
+        .default-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.8rem, 8vw, 3rem); font-weight: 950;
+            background: var(--metallic-text); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(234, 179, 8, 0.6));
+            line-height: 1;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        /* ========== WHEEL STAGE ========== */
+        .wheel-stage {
+            position: relative; 
+            width: min(85vw, 380px); height: min(85vw, 380px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 60;
+            animation: fadeInScale 0.8s ease-out 0.2s both;
+        }
+        
+        .wheel-glow {
+            position: absolute; inset: -30px; border-radius: 50%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0; transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        .wheel-glow.active {
+            opacity: 0.5;
+            animation: pulse-glow 0.5s ease-in-out infinite;
+        }
+        
+        .pointer-wrapper {
+            position: absolute; inset: 0; pointer-events: none; z-index: 60;
+            display: flex; justify-content: center;
+        }
+        
+        .outer-neon-ring {
+            position: absolute; inset: -12px; border-radius: 50%;
+            border: 5px solid #1e293b;
+            box-shadow: inset 0 0 15px #000, 0 0 20px var(--primary);
+            z-index: 10;
+        }
+        
+        .led-dot {
+            position: absolute; width: 10px; height: 10px; border-radius: 50%;
+            background: var(--gold-light);
+            box-shadow: 0 0 10px var(--gold);
+        }
+        .led-dot.spinning {
+            animation: led-chase 0.15s ease-in-out infinite;
+        }
+        
+        .wheel-container {
+            width: 100%; height: 100%; border-radius: 50%;
+            border: 8px solid #0f172a;
+            box-shadow: 0 0 0 4px var(--primary), 0 0 30px rgba(0,0,0,0.5);
+            overflow: hidden; background: #fff; position: relative; z-index: 10;
+            transition: box-shadow 0.3s;
+        }
+        .wheel-container.spinning {
+            animation: spin-glow 0.5s ease-in-out infinite;
+        }
+        
+        #wheel {
+            width: 100%; height: 100%; position: relative;
+            transform-origin: center center;
+            will-change: transform;
+        }
+        
+        svg { width: 100%; height: 100%; display: block; }
+        .slice-label-g { pointer-events: none; }
+        .slice-label {
+            font-family: 'Orbitron', sans-serif; font-weight: 900;
+            text-transform: uppercase; text-anchor: middle;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+        }
+        .slice-prefix { font-size: 5px; font-weight: 700; opacity: 0.7; letter-spacing: 1px; }
+        .slice-text { font-size: 9px; letter-spacing: 0.5px; }
+        .slice-icon-emoji { font-size: 22px; }
+        
+        .pointer-stage {
+            position: absolute; top: -35px;
+            width: 50px; height: 75px; z-index: 60;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+            transition: transform 0.3s;
+        }
+        .pointer-stage.bounce {
+            animation: pointer-bounce 0.6s ease-out;
+        }
+        .pointer-asset {
+            width: 100%; height: 100%;
+            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            border-radius: 4px;
+        }
+        
+        .center-hub {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 60px; height: 60px;
+            background: radial-gradient(circle at 30% 30%, #fff, #94a3b8);
+            border: 5px solid #1e293b;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 2px 5px #fff;
+            z-index: 20; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 24px;
+        }
+        
+        /* ========== BOTTOM HUD ========== */
+        .hud-bottom {
+            width: 100%; padding-bottom: calc(25px + env(safe-area-inset-bottom));
+            display: flex; flex-direction: column; align-items: center; z-index: 50;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+        
+        .spin-btn {
+            width: min(85vw, 320px); height: 70px;
+            border: none; cursor: pointer; border-radius: 16px;
+            position: relative; overflow: hidden;
+            transition: all 0.15s ease;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5), 0 4px 0 rgba(0,0,0,0.2);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+        }
+        .spin-btn::before {
+            content: '';
+            position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        .spin-btn:hover::before { left: 100%; }
+        .spin-btn:active:not(:disabled) { 
+            transform: translateY(4px) scale(0.98);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .spin-btn:disabled { 
+            opacity: 0.6; filter: grayscale(0.5); cursor: not-allowed;
+            transform: none;
+        }
+        
+        .spin-label { 
+            font-family: 'Orbitron', sans-serif; font-weight: 950; 
+            font-size: 1.6rem; color: #451a03; 
+            line-height: 1; text-shadow: 0 2px 4px rgba(255,255,255,0.3);
+        }
+        .spin-sub { 
+            font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 700;
+            color: #451a03; margin-top: 4px; opacity: 0.8;
+        }
+        
+        #status-msg { 
+            margin-top: 15px; color: #fff; 
+            font-family: 'Orbitron', sans-serif; font-weight: 700;
+            letter-spacing: 3px; text-transform: uppercase;
+            opacity: 0.7; font-size: 0.75rem;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+        
+        /* ========== RESULT SCREEN ========== */
+        #result-screen {
+            position: fixed; inset: 0; 
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(20px);
+            display: none; align-items: center; justify-content: center; z-index: 100;
+            padding: 20px;
+        }
+        
+        .result-rays {
+            position: absolute; top: 50%; left: 50%;
+            width: 150vmax; height: 150vmax;
+            background: conic-gradient(from 0deg, transparent, rgba(234, 179, 8, 0.1), transparent, rgba(234, 179, 8, 0.1), transparent, rgba(234, 179, 8, 0.1), transparent, rgba(234, 179, 8, 0.1), transparent);
+            animation: ray-rotate 20s linear infinite;
+            pointer-events: none;
+        }
+        
+        .result-stars {
+            position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--gold);
+            animation: star-twinkle 1.5s ease-in-out infinite;
+        }
+        
+        .result-card {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            border: 4px solid var(--gold);
+            border-radius: 32px; width: 90vw; max-width: 380px;
+            padding: 50px 25px 40px; text-align: center;
+            box-shadow: 0 0 80px rgba(234, 179, 8, 0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+            animation: card-reveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex; flex-direction: column; align-items: center;
+            position: relative; z-index: 10;
+        }
+        @keyframes card-reveal { 
+            from { transform: scale(0.5) translateY(50px); opacity: 0; } 
+            to { transform: scale(1) translateY(0); opacity: 1; } 
+        }
+        
+        .result-badge {
+            font-family: 'Orbitron', sans-serif; font-size: 0.75rem;
+            color: var(--gold); letter-spacing: 6px; text-transform: uppercase;
+            font-weight: 900; margin-bottom: 15px;
+        }
+        
+        .result-icon {
+            font-size: 4rem; margin-bottom: 10px;
+            animation: float 2s ease-in-out infinite;
+        }
+        
+        .result-prize {
+            font-family: 'Orbitron', sans-serif; 
+            font-size: clamp(1.6rem, 8vw, 2.8rem);
+            background: var(--metallic-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 10px 0 20px;
+            filter: drop-shadow(0 0 20px rgba(234, 179, 8, 0.5));
+            line-height: 1.2; word-break: break-word;
+        }
+        
+        .result-msg {
+            color: rgba(255,255,255,0.7); margin-bottom: 30px;
+            font-size: 0.9rem; line-height: 1.5;
+        }
+        
+        .collect-btn {
+            width: 100%; max-width: 280px; height: 56px;
+            border: none; border-radius: 12px; cursor: pointer;
+            background: linear-gradient(180deg, var(--gold) 0%, #ca8a04 100%);
+            color: #1e1b4b; font-family: 'Orbitron', sans-serif;
+            font-weight: 950; font-size: 1.3rem;
+            box-shadow: 0 6px 20px rgba(234, 179, 8, 0.4);
+            transition: all 0.15s;
+        }
+        .collect-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 10px rgba(234, 179, 8, 0.3);
+        }
+
+        /* ========== VERSION BADGE ========== */
+        .version-badge {
+            position: fixed; top: 10px; right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: #fff; padding: 5px 12px; border-radius: 20px;
+            font-size: 0.7rem; font-family: 'Inter', sans-serif;
+            z-index: 1000; backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="version-badge">✨ Premium v2.0</div>
+    
+    <div id="game-container-el" class="game-world">
+        <div id="bg-layer" class="bg-layer"></div>
+        <div id="particles" class="particles-container"></div>
+        
+        <div class="hud-top">
+            <div id="token-bar-el" class="token-bar">
+                <span id="token-value">🪙 TOKEN: 100</span>
+            </div>
+            <div id="branding-el" class="branding">
+                <div class="default-title">🎰 SPIN & WIN</div>
+            </div>
+        </div>
+
+        <div class="wheel-stage">
+            <div id="wheel-glow" class="wheel-glow"></div>
+            <div class="outer-neon-ring" id="led-ring"></div>
+            <div class="pointer-wrapper">
+                <div class="pointer-stage" id="pointer-stage">
+                    <div id="pointer-el" class="pointer-asset"></div>
+                </div>
+            </div>
+            <div class="wheel-container" id="wheel-container-el">
+                <div id="wheel"></div>
+            </div>
+            <div class="center-hub" id="center-hub">🎯</div>
+        </div>
+
+        <div class="hud-bottom">
+            <button class="spin-btn" id="spin-btn" onclick="spin()">
+                <div class="spin-label">SPIN NOW</div>
+                <div class="spin-sub">TAP TO PLAY</div>
+            </button>
+            <div id="status-msg">TAP TO SPIN</div>
+        </div>
+
+        <div id="result-screen">
+            <div class="result-rays"></div>
+            <div id="result-stars" class="result-stars"></div>
+            <div class="result-card">
+                <div class="result-badge">🎉 CONGRATULATIONS 🎉</div>
+                <div id="winner-icon" class="result-icon">🎁</div>
+                <div id="winner-text" class="result-prize"></div>
+                <p id="winner-msg" class="result-msg">You've won an amazing prize!</p>
+                <button class="collect-btn" onclick="closeOverlay()">COLLECT</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== PRIZE LIST ==========
+        const prizeList = [
+            { icon: '💰', label: '100 Points', weight: 30, color: '#3b82f6' },
+            { icon: '🎁', label: 'Mystery Box', weight: 15, color: '#8b5cf6' },
+            { icon: '😅', label: 'Try Again', weight: 25, color: '#64748b' },
+            { icon: '💎', label: 'JACKPOT!', weight: 5, color: '#eab308' },
+            { icon: '🎟️', label: 'Free Ticket', weight: 15, color: '#10b981' },
+            { icon: '⭐', label: '50 Points', weight: 10, color: '#f43f5e' }
+        ];
+        
+        // ========== STATE ==========
+        let isSpinning = false;
+        let currentRotation = 0;
+        let weights = prizeList.map(p => Number(p.weight) || 100);
+        let labels = prizeList.map(p => p.label);
+        let icons = prizeList.map(p => p.icon || '🎁');
+        
+        const wheelEl = document.getElementById('wheel');
+        const ledRing = document.getElementById('led-ring');
+        const wheelGlow = document.getElementById('wheel-glow');
+        const wheelContainer = document.getElementById('wheel-container-el');
+        const pointerStage = document.getElementById('pointer-stage');
+        
+        // ========== SOUND EFFECTS ==========
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+        
+        function playTick() {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.frequency.value = 600 + Math.random() * 400;
+                osc.type = 'sine';
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialDecayTo && gain.gain.exponentialDecayTo(0.01, audioCtx.currentTime + 0.05);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch(e) {}
+        }
+        
+        function playWinSound() {
+            if (!audioCtx) return;
+            const notes = [523, 659, 784, 1047]; // C5, E5, G5, C6
+            notes.forEach((freq, i) => {
+                setTimeout(() => {
+                    try {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'sine';
+                        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 0.3);
+                    } catch(e) {}
+                }, i * 100);
+            });
+        }
+        
+        // ========== HAPTIC FEEDBACK ==========
+        function vibrate(pattern) {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(pattern);
+            }
+        }
+        
+        // ========== PARTICLES ==========
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const colors = ['#3b82f6', '#eab308', '#fff', '#8b5cf6', '#22c55e'];
+            
+            for (let i = 0; i < 25; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    width: ${3 + Math.random() * 6}px;
+                    height: ${3 + Math.random() * 6}px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    animation-duration: ${15 + Math.random() * 25}s;
+                    animation-delay: ${Math.random() * 15}s;
+                `;
+                container.appendChild(particle);
+            }
+        }
+        
+        // ========== RESULT STARS ==========
+        function createResultStars() {
+            const container = document.getElementById('result-stars');
+            container.innerHTML = '';
+            for (let i = 0; i < 40; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                    animation-delay: ${Math.random() * 2}s;
+                    width: ${2 + Math.random() * 4}px;
+                    height: ${2 + Math.random() * 4}px;
+                `;
+                container.appendChild(star);
+            }
+        }
+        
+        // ========== UTILITIES ==========
+        function getContrast(hex) {
+            if (!hex || hex[0] !== '#') return '#ffffff';
+            const r = parseInt(hex.substr(1, 2), 16);
+            const g = parseInt(hex.substr(3, 2), 16);
+            const b = parseInt(hex.substr(5, 2), 16);
+            const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+            return (yiq >= 128) ? '#1e293b' : '#ffffff';
+        }
+        
+        // ========== CREATE WHEEL ==========
+        function createWheel() {
+            const n = prizeList.length;
+            const angle = 360 / n;
+            let svgHtml = '<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">';
+            
+            // Gradient definitions
+            svgHtml += '<defs>';
+            prizeList.forEach((prize, i) => {
+                const baseColor = prize.color;
+                svgHtml += `<linearGradient id="grad${i}" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:${baseColor};stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:${baseColor};stop-opacity:0.7" />
+                </linearGradient>`;
+            });
+            svgHtml += '</defs>';
+            
+            // Slices
+            prizeList.forEach((prize, i) => {
+                const startAngle = i * angle;
+                const endAngle = (i + 1) * angle;
+                const x1 = 200 + 200 * Math.cos((startAngle - 90) * Math.PI / 180);
+                const y1 = 200 + 200 * Math.sin((startAngle - 90) * Math.PI / 180);
+                const x2 = 200 + 200 * Math.cos((endAngle - 90) * Math.PI / 180);
+                const y2 = 200 + 200 * Math.sin((endAngle - 90) * Math.PI / 180);
+                const largeArc = angle > 180 ? 1 : 0;
+                
+                svgHtml += `<path d="M 200 200 L ${x1} ${y1} A 200 200 0 ${largeArc} 1 ${x2} ${y2} Z" fill="url(#grad${i})" />`;
+            });
+            
+            // Dividers
+            // Labels
+            prizeList.forEach((prize, i) => {
+                const startAngle = i * angle;
+                const endAngle = (i + 1) * angle;
+                const midAngle = (startAngle + endAngle) / 2;
+                
+                const textCol = getContrast(prize.color);
+                const textDist = 130;
+                const tx = 200 + textDist * Math.cos((midAngle - 90) * Math.PI / 180);
+                const ty = 200 + textDist * Math.sin((midAngle - 90) * Math.PI / 180);
+                
+                svgHtml += `<g class="slice-label-g" transform="translate(${tx}, ${ty}) rotate(${midAngle})">
+                    <text class="slice-label" fill="${textCol}">
+                        <tspan x="0" dy="8" class="slice-icon-emoji">${prize.icon}</tspan>
+                    </text>
+                </g>`;
+            });
+            
+            svgHtml += '</svg>';
+            wheelEl.innerHTML = svgHtml;
+        }
+        
+        // ========== CREATE LEDS ==========
+        function createLeds() {
+            let html = '';
+            const count = 24;
+            for (let i = 0; i < count; i++) {
+                const angle = (i * (360 / count)) * (Math.PI / 180);
+                const x = 50 + 51 * Math.cos(angle);
+                const y = 50 + 51 * Math.sin(angle);
+                html += `<div class="led-dot" data-index="${i}" style="left: ${x}%; top: ${y}%;"></div>`;
+            }
+            ledRing.innerHTML = html;
+        }
+        
+        // ========== SPIN ==========
+        function spin() {
+            if (isSpinning) return;
+            
+            initAudio();
+            vibrate(50);
+            
+            isSpinning = true;
+            const btn = document.getElementById('spin-btn');
+            const status = document.getElementById('status-msg');
+            btn.disabled = true;
+            status.innerText = 'SPINNING...';
+            
+            // Activate glow
+            wheelGlow.classList.add('active');
+            wheelContainer.classList.add('spinning');
+            
+            // Chase LEDs
+            document.querySelectorAll('.led-dot').forEach((led, i) => {
+                led.classList.add('spinning');
+                led.style.animationDelay = (i * 0.03) + 's';
+            });
+            
+            // Select winner
+            const winnerIdx = (() => {
+                const total = weights.reduce((a, b) => a + b, 0);
+                let r = Math.random() * total;
+                for (let i = 0; i < weights.length; i++) {
+                    if (r < weights[i]) return i;
+                    r -= weights[i];
+                }
+                return 0;
+            })();
+            
+            const sliceAngle = 360 / prizeList.length;
+            const targetPos = 360 - (winnerIdx * sliceAngle + sliceAngle / 2);
+            
+            const duration = 4000;
+            const turns = 10;
+            const delta = (turns * 360) + (targetPos - (currentRotation % 360) + 360) % 360;
+            currentRotation += delta;
+            
+            // Tick sounds during spin
+            let tickCount = 0;
+            const totalTicks = turns * prizeList.length;
+            const tickInterval = setInterval(() => {
+                playTick();
+                vibrate(5);
+                tickCount++;
+                if (tickCount > totalTicks) {
+                    clearInterval(tickInterval);
+                }
+            }, duration / (totalTicks * 1.2));
+            
+            wheelEl.style.transition = 'none';
+            void wheelEl.offsetWidth;
+            wheelEl.style.transition = `transform ${duration}ms cubic-bezier(0.1, 0, 0, 1)`;
+            wheelEl.style.transform = `rotate(${currentRotation}deg)`;
+            
+            setTimeout(() => {
+                clearInterval(tickInterval);
+                isSpinning = false;
+                btn.disabled = false;
+                
+                // Stop effects
+                wheelGlow.classList.remove('active');
+                wheelContainer.classList.remove('spinning');
+                document.querySelectorAll('.led-dot').forEach(led => led.classList.remove('spinning'));
+                
+                // Pointer bounce
+                pointerStage.classList.add('bounce');
+                setTimeout(() => pointerStage.classList.remove('bounce'), 600);
+                
+                const won = labels[winnerIdx];
+                const wonIcon = icons[winnerIdx];
+                status.innerText = 'YOU WON!';
+                
+                // Show result
+                document.getElementById('winner-icon').innerText = wonIcon;
+                document.getElementById('winner-text').innerText = won;
+                document.getElementById('winner-msg').innerText = `You've unlocked ${won}!`;
+                createResultStars();
+                document.getElementById('result-screen').style.display = 'flex';
+                
+                // Effects
+                playWinSound();
+                vibrate([100, 50, 100, 50, 200]);
+                
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    colors: ['#eab308', '#ffffff', '#3b82f6', '#22c55e']
+                });
+                
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 80,
+                        spread: 100,
+                        origin: { x: 0.2, y: 0.5 },
+                        colors: ['#eab308', '#ffffff']
+                    });
+                    confetti({
+                        particleCount: 80,
+                        spread: 100,
+                        origin: { x: 0.8, y: 0.5 },
+                        colors: ['#eab308', '#ffffff']
+                    });
+                }, 300);
+                
+            }, duration + 200);
+        }
+        
+        function closeOverlay() {
+            document.getElementById('result-screen').style.display = 'none';
+            vibrate(30);
+        }
+        
+        // ========== INIT ==========
+        createLeds();
+        createWheel();
+        createParticles();
+    </script>
+</body>
+</html>
