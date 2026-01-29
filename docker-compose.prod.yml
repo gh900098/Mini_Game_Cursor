@@ -40,6 +40,8 @@ services:
       dockerfile: Dockerfile.api
     container_name: minigame-api
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:3100:3000"
     environment:
       NODE_ENV: production
       PORT: 3000
@@ -72,6 +74,8 @@ services:
         VITE_API_URL: /api
     container_name: minigame-admin
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:3101:80"
     depends_on:
       - api
     networks:
@@ -86,6 +90,8 @@ services:
         VITE_API_URL: /api
     container_name: minigame-webapp
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:3102:80"
     depends_on:
       - api
     networks:
