@@ -32,6 +32,16 @@
         class="w-full h-full border-none"
         allow="autoplay; fullscreen"
       ></iframe>
+      <!-- 浮动音效按钮（不管是否全屏都显示） -->
+      <div class="absolute top-4 right-4 z-50">
+        <button
+          @click="toggleSound"
+          :title="settingsStore.soundEnabled ? 'Mute Sound' : 'Unmute Sound'"
+          class="w-12 h-12 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-black/70 transition-all"
+        >
+          <div :class="settingsStore.soundEnabled ? 'i-carbon-volume-up' : 'i-carbon-volume-mute'" class="text-2xl"></div>
+        </button>
+      </div>
       <div v-if="loading" class="absolute inset-0 flex-center bg-slate-800/80 backdrop-blur-sm">
         <div class="text-center">
           <n-spin size="large" />
