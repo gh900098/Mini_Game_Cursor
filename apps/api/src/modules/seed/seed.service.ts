@@ -622,7 +622,7 @@ export class SeedService {
                                 ],
                                 default: 'Cyberpunk Elite',
                                 loadPreset: true,
-                                span: 24
+                                span: 12
                             },
                             { 
                                 key: 'fontPreset', 
