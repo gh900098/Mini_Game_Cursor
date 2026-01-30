@@ -88,7 +88,8 @@ const showSoundButton = computed(() => {
 });
 
 const soundButtonOpacity = computed(() => {
-  return instance.value?.config?.soundButtonOpacity ?? 0.8; // 默认 0.8
+  const opacity = instance.value?.config?.soundButtonOpacity ?? 80; // 默认 80%
+  return opacity / 100; // 转换成 CSS opacity (0-1)
 });
 
 const gameUrl = computed(() => {
