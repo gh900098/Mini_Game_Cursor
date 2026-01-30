@@ -858,7 +858,15 @@ export class GameInstancesController {
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @RequirePermission('games:manage')
     create(@Request() req: any, @Body() body: any) {
-        const companyId = req.user.isSuperAdmin ? body.companyId : req.user.currentCompanyId;
+        // Super Admin can specify companyId, otherwise use current company
+        const companyId = req.user.isSuperAdmin && body.companyId 
+            ? body.companyId 
+            : req.user.currentCompanyId;
+        
+        if (!companyId) {
+            throw new Error('Company ID is required');
+        }
+        
         return this.instancesService.create({
             ...body,
             companyId,
