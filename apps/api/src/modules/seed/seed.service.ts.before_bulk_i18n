@@ -720,19 +720,19 @@ export class SeedService {
                                 label: '🔲 Wheel Border / Frame',
                                 span: 24,
                                 items: [
-                                    { key: 'wheelBorderImage', type: 'image', label: 'page.manage.game.visuals.wheelBorderImage', span: 24 },
-                                    { key: 'wheelBorderSize', type: 'slider', label: 'page.manage.game.visuals.wheelBorderSize', min: 100, max: 150, step: 1, suffix: '%', default: 110, span: 12 },
-                                    { key: 'wheelBorderOpacity', type: 'slider', label: 'page.manage.game.visuals.bgOpacity', min: 0, max: 100, step: 5, suffix: '%', default: 100, span: 12 },
-                                    { key: 'wheelBorderTop', type: 'slider', label: 'page.manage.game.visuals.verticalOffset', min: -50, max: 50, step: 1, suffix: 'px', default: 0, span: 12 },
+                                    { key: 'wheelBorderImage', type: 'image', label: 'Border Image', span: 24 },
+                                    { key: 'wheelBorderSize', type: 'slider', label: 'Size', min: 100, max: 150, step: 1, suffix: '%', default: 110, span: 12 },
+                                    { key: 'wheelBorderOpacity', type: 'slider', label: 'Opacity', min: 0, max: 100, step: 5, suffix: '%', default: 100, span: 12 },
+                                    { key: 'wheelBorderTop', type: 'slider', label: 'Vertical Offset', min: -50, max: 50, step: 1, suffix: 'px', default: 0, span: 12 },
                                     {
                                         key: 'wheelBorderLayer',
                                         type: 'select',
-                                        label: 'page.manage.game.visuals.layerPriority',
+                                        label: 'Layer Priority',
                                         default: 'behind',
                                         span: 12,
                                         options: [
-                                            { label: 'page.manage.game.visuals.behindPrizes', value: 'behind' },
-                                            { label: 'page.manage.game.visuals.inFrontOfPrizes', value: 'front' }
+                                            { label: '🔽 Behind Prizes', value: 'behind' },
+                                            { label: '🔼 In Front of Prizes', value: 'front' }
                                         ]
                                     }
                                 ]
@@ -819,7 +819,7 @@ export class SeedService {
                                 label: '👆 Pointer',
                                 span: 24,
                                 items: [
-                                    { key: 'pointerImage', type: 'image', label: 'page.manage.game.visuals.pointerImage', span: 24 },
+                                    { key: 'pointerImage', type: 'image', label: 'Pointer Image', span: 24 },
                                     {
                                         key: 'pointerDirection',
                                         type: 'select',
@@ -837,7 +837,7 @@ export class SeedService {
                                             { label: '↖️ Top Left', value: 'top-left' }
                                         ]
                                     },
-                                    { key: 'pointerSize', type: 'slider', label: 'page.manage.game.visuals.wheelBorderSize', min: 40, max: 150, step: 5, suffix: 'px', default: 50, span: 10 },
+                                    { key: 'pointerSize', type: 'slider', label: 'Size', min: 40, max: 150, step: 5, suffix: 'px', default: 50, span: 10 },
                                     { key: 'pointerTop', type: 'slider', label: 'Top Pos', min: -100, max: 100, step: 5, suffix: 'px', default: -35, span: 7 },
                                     { key: 'pointerShadow', type: 'switch', label: 'Shadow', default: true, span: 7 }
                                 ]
@@ -855,7 +855,7 @@ export class SeedService {
                                     { key: 'titleImage', type: 'image', label: 'Brand Logo/Title', span: 24 },
                                     { key: 'logoWidth', type: 'slider', label: 'Logo Width', min: 20, max: 100, step: 5, suffix: '%', default: 80, span: 12 },
                                     { key: 'logoTopMargin', type: 'slider', label: 'Top Margin', min: 0, max: 60, step: 2, suffix: 'px', default: 10, span: 12 },
-                                    { key: 'logoOpacity', type: 'slider', label: 'page.manage.game.visuals.bgOpacity', min: 0, max: 100, step: 5, suffix: '%', default: 100, span: 12 },
+                                    { key: 'logoOpacity', type: 'slider', label: 'Opacity', min: 0, max: 100, step: 5, suffix: '%', default: 100, span: 12 },
                                     { key: 'logoDropShadow', type: 'switch', label: 'Enable Drop Shadow', default: true, span: 12 }
                                 ]
                             },

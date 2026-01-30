@@ -371,7 +371,11 @@ const local: App.I18n.Schema = {
           interact: 'Interaction Mode',
           clickToSpin: 'Click to Spin',
           swipeToSpin: 'Swipe to Spin',
-          prizeList: 'Prize List'
+          prizeList: 'Prize List',
+          verticalOffset: 'Vertical Offset',
+          layerPriority: 'Layer Priority',
+          behindPrizes: '🔽 Behind Prizes',
+          inFrontOfPrizes: '🔼 In Front of Prizes'
         },
         prizes: {
           visualTemplate: 'Visual Template',

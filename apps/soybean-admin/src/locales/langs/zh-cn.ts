@@ -367,7 +367,11 @@ const local: App.I18n.Schema = {
           interact: '交互方式',
           clickToSpin: '点击旋转',
           swipeToSpin: '滑动旋转',
-          prizeList: '奖品列表'
+          prizeList: '奖品列表',
+          verticalOffset: '垂直偏移',
+          layerPriority: '图层优先级',
+          behindPrizes: '🔽 在奖品后面',
+          inFrontOfPrizes: '🔼 在奖品前面'
         },
         prizes: {
           visualTemplate: '视觉模板',
