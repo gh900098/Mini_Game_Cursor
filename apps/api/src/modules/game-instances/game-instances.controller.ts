@@ -859,13 +859,10 @@ export class GameInstancesController {
     @RequirePermission('games:manage')
     create(@Request() req: any, @Body() body: any) {
         // Super Admin can specify companyId, otherwise use current company
+        // Fallback to default company if currentCompanyId is not set
         const companyId = req.user.isSuperAdmin && body.companyId 
             ? body.companyId 
-            : req.user.currentCompanyId;
-        
-        if (!companyId) {
-            throw new Error('Company ID is required');
-        }
+            : (req.user.currentCompanyId || 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
         
         return this.instancesService.create({
             ...body,
