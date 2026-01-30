@@ -12,6 +12,11 @@
         <span class="text-white font-medium">{{ loading ? 'Loading Game...' : instance?.name }}</span>
       </div>
       <div class="flex-y-center gap-4">
+        <n-button text class="text-white" @click="toggleSound" :title="settingsStore.soundEnabled ? 'Mute Sound' : 'Unmute Sound'">
+          <template #icon>
+            <div :class="settingsStore.soundEnabled ? 'i-carbon-volume-up' : 'i-carbon-volume-mute'" class="text-xl"></div>
+          </template>
+        </n-button>
         <n-button text class="text-white" @click="toggleFullscreen">
           <template #icon>
             <div class="i-carbon-maximize text-xl"></div>
@@ -46,15 +51,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useMessage } from 'naive-ui';
 import { useAuthStore } from '@/store/auth';
+import { useSettingsStore } from '@/store/settings';
 import service from '@/service/api';
 
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
+const settingsStore = useSettingsStore();
 
 const instance = ref<any>(null);
 const loading = ref(true);
@@ -122,6 +129,23 @@ function toggleFullscreen() {
     gameContainer.value.requestFullscreen();
   }
 }
+
+function toggleSound() {
+  settingsStore.toggleSound();
+  // 通知 iframe 内的游戏音效状态已改变
+  iframeRef.value?.contentWindow?.postMessage({
+    type: 'sound-toggle',
+    enabled: settingsStore.soundEnabled,
+  }, '*');
+}
+
+// 监听音效状态变化，自动同步到游戏
+watch(() => settingsStore.soundEnabled, (enabled) => {
+  iframeRef.value?.contentWindow?.postMessage({
+    type: 'sound-toggle',
+    enabled,
+  }, '*');
+});
 
 onMounted(() => {
   window.addEventListener('message', handleMessage);

@@ -12,8 +12,26 @@ export function getToken() {
 
 /** Clear auth storage */
 export function clearAuthStorage() {
-  localStg.remove('token');
-  localStg.remove('refreshToken');
-  sessionStg.remove('token');
-  sessionStg.remove('refreshToken');
+  // Check which storage has the token
+  const hasLocalToken = Boolean(localStg.get('token'));
+  const hasSessionToken = Boolean(sessionStg.get('token'));
+
+  // Only clear from the storage that has the token
+  if (hasLocalToken) {
+    localStg.remove('token');
+    localStg.remove('refreshToken');
+  }
+  
+  if (hasSessionToken) {
+    sessionStg.remove('token');
+    sessionStg.remove('refreshToken');
+  }
+
+  // If no token found, clear both (fallback)
+  if (!hasLocalToken && !hasSessionToken) {
+    localStg.remove('token');
+    localStg.remove('refreshToken');
+    sessionStg.remove('token');
+    sessionStg.remove('refreshToken');
+  }
 }
