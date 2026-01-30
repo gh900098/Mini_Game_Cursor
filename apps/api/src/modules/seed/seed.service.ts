@@ -884,21 +884,10 @@ export class SeedService {
                             { key: 'spinDuration', type: 'slider', label: 'page.manage.game.visuals.spinDuration', min: 1, max: 10, step: 0.5, suffix: 's', default: 4, span: 12 },
                             { key: 'spinTurns', type: 'slider', label: 'page.manage.game.visuals.spinTurns', min: 1, max: 20, step: 1, default: 5, span: 12 },
                             {
-                                key: 'audio_bools',
-                                type: 'switch-group',
-                                label: 'page.manage.game.visuals.audio',
-                                span: 12,
-                                items: [
-                                    { key: 'soundEnabled', label: 'page.manage.game.visuals.soundEnabled' },
-                                    { key: 'repeatWinSound', label: 'page.manage.game.visuals.repeatWinSound' },
-                                    { key: 'jackpotSound', label: 'page.manage.game.visuals.jackpotSound' }
-                                ]
-                            },
-                            {
                                 key: 'interact_bools',
                                 type: 'switch-group',
                                 label: 'page.manage.game.visuals.interact',
-                                span: 12,
+                                span: 24,
                                 items: [
                                     { key: 'clickToSpin', label: 'page.manage.game.visuals.clickToSpin' },
                                     { key: 'swipeToSpin', label: 'page.manage.game.visuals.swipeToSpin' }
