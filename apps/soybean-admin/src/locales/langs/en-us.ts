@@ -401,6 +401,7 @@ const local: App.I18n.Schema = {
           jackpotSoundFile: 'Jackpot Sound (.mp3)',
           tickSound: 'Tick Sound',
           tickVolume: 'Tick Volume',
+          soundButtonSettings: 'Sound Button Settings',
           showSoundButton: 'Show Sound Button',
           soundButtonOpacity: 'Sound Button Opacity',
           confettiSettings: 'Confetti Settings',

@@ -911,80 +911,80 @@ export class SeedService {
                             {
                                 key: 'ultra_features',
                                 type: 'switch-group',
-                                label: '🚀 Ultra Premium Features',
+                                label: 'page.manage.game.effects.ultraFeatures',
                                 items: [
-                                    { key: 'enableBGM', label: 'Background Music (BGM)' },
-                                    { key: 'enableLedRing', label: 'LED Ring Animation' },
-                                    { key: 'enableConfetti', label: 'Confetti on Win' },
-                                    { key: 'enableStartScreen', label: 'Start Screen (Audio Unlock)' },
-                                    { key: 'enableHexagons', label: 'Floating Hexagons' },
-                                    { key: 'enableGridFloor', label: 'Cyber Grid Floor' }
+                                    { key: 'enableBGM', label: 'page.manage.game.effects.enableBGM' },
+                                    { key: 'enableLedRing', label: 'page.manage.game.effects.enableLedRing' },
+                                    { key: 'enableConfetti', label: 'page.manage.game.effects.enableConfetti' },
+                                    { key: 'enableStartScreen', label: 'page.manage.game.effects.enableStartScreen' },
+                                    { key: 'enableHexagons', label: 'page.manage.game.effects.enableHexagons' },
+                                    { key: 'enableGridFloor', label: 'page.manage.game.effects.enableGridFloor' }
                                 ]
                             },
                             {
                                 key: 'bgm_section',
                                 type: 'collapse-group',
-                                label: '🎵 Background Music Settings',
+                                label: 'page.manage.game.effects.bgmSettings',
                                 items: [
-                                    { key: 'bgmUrl', type: 'file', label: 'BGM Audio File (.mp3)', span: 24 },
-                                    { key: 'bgmVolume', type: 'slider', label: 'BGM Volume', min: 0, max: 100, step: 5, suffix: '%', default: 40, span: 12 },
-                                    { key: 'bgmLoop', type: 'switch', label: 'Loop BGM', default: true, span: 12 }
+                                    { key: 'bgmUrl', type: 'file', label: 'page.manage.game.effects.bgmUrl', span: 24 },
+                                    { key: 'bgmVolume', type: 'slider', label: 'page.manage.game.effects.bgmVolume', min: 0, max: 100, step: 5, suffix: '%', default: 40, span: 12 },
+                                    { key: 'bgmLoop', type: 'switch', label: 'page.manage.game.effects.bgmLoop', default: true, span: 12 }
                                 ]
                             },
                             {
                                 key: 'led_section',
                                 type: 'collapse-group',
-                                label: '💡 LED Ring Settings',
+                                label: 'page.manage.game.effects.ledSettings',
                                 items: [
-                                    { key: 'ledCount', type: 'slider', label: 'Number of LEDs', min: 16, max: 64, step: 4, default: 32, span: 12 },
-                                    { key: 'ledSpeed', type: 'slider', label: 'Chase Speed (ms)', min: 20, max: 200, step: 10, suffix: 'ms', default: 50, span: 12 },
-                                    { key: 'ledColor1', type: 'color', label: 'LED Color 1', default: '#00f5ff', span: 8 },
-                                    { key: 'ledColor2', type: 'color', label: 'LED Color 2', default: '#ff00ff', span: 8 },
-                                    { key: 'ledColor3', type: 'color', label: 'LED Color 3', default: '#ffd700', span: 8 }
+                                    { key: 'ledCount', type: 'slider', label: 'page.manage.game.effects.ledCount', min: 16, max: 64, step: 4, default: 32, span: 12 },
+                                    { key: 'ledSpeed', type: 'slider', label: 'page.manage.game.effects.ledSpeed', min: 20, max: 200, step: 10, suffix: 'ms', default: 50, span: 12 },
+                                    { key: 'ledColor1', type: 'color', label: 'page.manage.game.effects.ledColor1', default: '#00f5ff', span: 8 },
+                                    { key: 'ledColor2', type: 'color', label: 'page.manage.game.effects.ledColor2', default: '#ff00ff', span: 8 },
+                                    { key: 'ledColor3', type: 'color', label: 'page.manage.game.effects.ledColor3', default: '#ffd700', span: 8 }
                                 ]
                             },
                             {
                                 key: 'result_sounds',
                                 type: 'collapse-group',
-                                label: '🔊 Result Sound Effects',
+                                label: 'page.manage.game.effects.resultSounds',
                                 items: [
-                                    { key: 'winSound', type: 'file', label: 'Win Sound (.mp3)', span: 24 },
-                                    { key: 'loseSound', type: 'file', label: 'Lose Sound (.mp3)', span: 24 },
-                                    { key: 'jackpotSound', type: 'file', label: 'Jackpot Sound (.mp3)', span: 24 },
-                                    { key: 'tickSoundEnabled', type: 'switch', label: 'Enable Tick Sound', default: true, span: 12 },
-                                    { key: 'tickVolume', type: 'slider', label: 'Tick Volume', min: 0, max: 100, step: 5, suffix: '%', default: 30, span: 12 }
+                                    { key: 'winSound', type: 'file', label: 'page.manage.game.effects.winSound', span: 24 },
+                                    { key: 'loseSound', type: 'file', label: 'page.manage.game.effects.loseSound', span: 24 },
+                                    { key: 'jackpotSound', type: 'file', label: 'page.manage.game.effects.jackpotSoundFile', span: 24 },
+                                    { key: 'tickSoundEnabled', type: 'switch', label: 'page.manage.game.effects.tickSound', default: true, span: 12 },
+                                    { key: 'tickVolume', type: 'slider', label: 'page.manage.game.effects.tickVolume', min: 0, max: 100, step: 5, suffix: '%', default: 30, span: 12 }
                                 ]
                             },
                             {
                                 key: 'sound_button_section',
                                 type: 'collapse-group',
-                                label: '🔊 Sound Button',
+                                label: 'page.manage.game.effects.soundButtonSettings',
                                 items: [
-                                    { key: 'showSoundButton', type: 'switch', label: 'Show Sound Button', default: true, span: 12 },
-                                    { key: 'soundButtonOpacity', type: 'slider', label: 'Sound Button Opacity', min: 0, max: 100, step: 5, suffix: '%', default: 80, span: 12 }
+                                    { key: 'showSoundButton', type: 'switch', label: 'page.manage.game.effects.showSoundButton', default: true, span: 12 },
+                                    { key: 'soundButtonOpacity', type: 'slider', label: 'page.manage.game.effects.soundButtonOpacity', min: 0, max: 100, step: 5, suffix: '%', default: 80, span: 12 }
                                 ]
                             },
                             {
                                 key: 'confetti_section',
                                 type: 'collapse-group',
-                                label: '🎊 Confetti Settings',
+                                label: 'page.manage.game.effects.confettiSettings',
                                 items: [
-                                    { key: 'confettiParticles', type: 'slider', label: 'Particle Count', min: 50, max: 500, step: 50, default: 200, span: 12 },
-                                    { key: 'confettiSpread', type: 'slider', label: 'Spread Angle', min: 30, max: 180, step: 10, suffix: '°', default: 70, span: 12 },
-                                    { key: 'confettiColors', type: 'text', label: 'Colors (comma separated hex)', default: '#ff0000,#00ff00,#0000ff,#ffff00,#ff00ff', span: 24 }
+                                    { key: 'confettiParticles', type: 'slider', label: 'page.manage.game.effects.confettiParticles', min: 50, max: 500, step: 50, default: 200, span: 12 },
+                                    { key: 'confettiSpread', type: 'slider', label: 'page.manage.game.effects.confettiSpread', min: 30, max: 180, step: 10, suffix: '°', default: 70, span: 12 },
+                                    { key: 'confettiColors', type: 'text', label: 'page.manage.game.effects.confettiColors', default: '#ff0000,#00ff00,#0000ff,#ffff00,#ff00ff', span: 24 }
                                 ]
                             },
                             {
                                 key: 'cyber_theme',
                                 type: 'collapse-group',
-                                label: '✨ Neon / Glow Colors',
+                                label: 'page.manage.game.effects.neonColors',
                                 items: [
-                                    { key: 'neonCyan', type: 'color', label: 'Accent Color 1', default: '#00f5ff', span: 8 },
-                                    { key: 'neonPink', type: 'color', label: 'Accent Color 2', default: '#ff00ff', span: 8 },
-                                    { key: 'neonPurple', type: 'color', label: 'Accent Color 3', default: '#9d00ff', span: 8 },
-                                    { key: 'neonGold', type: 'color', label: 'Highlight Color', default: '#ffd700', span: 8 },
-                                    { key: 'neonGreen', type: 'color', label: 'Success Color', default: '#00ff88', span: 8 },
-                                    { key: 'darkBg', type: 'color', label: 'Dark Background', default: '#0a0a12', span: 8 }
+                                    { key: 'neonCyan', type: 'color', label: 'page.manage.game.effects.neonCyan', default: '#00f5ff', span: 8 },
+                                    { key: 'neonPink', type: 'color', label: 'page.manage.game.effects.neonPink', default: '#ff00ff', span: 8 },
+                                    { key: 'neonPurple', type: 'color', label: 'page.manage.game.effects.neonPurple', default: '#9d00ff', span: 8 },
+                                    { key: 'neonGold', type: 'color', label: 'page.manage.game.effects.neonGold', default: '#ffd700', span: 8 },
+                                    { key: 'neonGreen', type: 'color', label: 'page.manage.game.effects.neonGreen', default: '#00ff88', span: 8 },
+                                    { key: 'darkBg', type: 'color', label: 'page.manage.game.effects.darkBg', default: '#0a0a12', span: 8 }
                                 ]
                             },
                             {

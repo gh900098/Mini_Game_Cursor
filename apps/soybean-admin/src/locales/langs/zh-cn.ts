@@ -397,6 +397,7 @@ const local: App.I18n.Schema = {
           jackpotSoundFile: '大奖音效 (.mp3)',
           tickSound: '滴答声',
           tickVolume: '滴答音量',
+          soundButtonSettings: '音效按钮设置',
           showSoundButton: '显示音效按钮',
           soundButtonOpacity: '音效按钮透明度',
           confettiSettings: '彩纸设置',
