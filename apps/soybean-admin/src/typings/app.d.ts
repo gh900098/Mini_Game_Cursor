@@ -602,6 +602,8 @@ declare namespace App {
               interact: string;
               clickToSpin: string;
               swipeToSpin: string;
+              showSoundButton: string;
+              soundButtonOpacity: string;
             };
             tabEmbed: string;
             iframeCode: string;

@@ -891,7 +891,10 @@ export class SeedService {
                                 items: [
                                     { key: 'swipeToSpin', label: 'page.manage.game.visuals.swipeToSpin' }
                                 ]
-                            }
+                            },
+                            // 音效按钮配置
+                            { key: 'showSoundButton', type: 'switch', label: 'page.manage.game.visuals.showSoundButton', default: true, span: 12 },
+                            { key: 'soundButtonOpacity', type: 'slider', label: 'page.manage.game.visuals.soundButtonOpacity', min: 0.1, max: 1, step: 0.1, default: 0.8, span: 12 }
                         ]
                     },
                     {

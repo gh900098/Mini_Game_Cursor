@@ -371,6 +371,8 @@ const local: App.I18n.Schema = {
           interact: 'Interaction Mode',
           clickToSpin: 'Click to Spin',
           swipeToSpin: 'Swipe to Spin',
+          showSoundButton: 'Show Sound Button',
+          soundButtonOpacity: 'Sound Button Opacity',
           prizeList: 'Prize List'
         },
         prizes: {

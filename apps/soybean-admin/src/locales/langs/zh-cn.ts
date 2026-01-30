@@ -367,6 +367,8 @@ const local: App.I18n.Schema = {
           interact: '交互方式',
           clickToSpin: '点击旋转',
           swipeToSpin: '滑动旋转',
+          showSoundButton: '显示音效按钮',
+          soundButtonOpacity: '音效按钮透明度',
           prizeList: '奖品列表'
         },
         prizes: {

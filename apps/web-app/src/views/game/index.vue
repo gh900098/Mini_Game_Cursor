@@ -33,10 +33,11 @@
         allow="autoplay; fullscreen"
       ></iframe>
       <!-- 浮动音效按钮（不管是否全屏都显示） -->
-      <div class="absolute top-4 right-4 z-50">
+      <div v-if="showSoundButton" class="absolute top-4 right-4 z-50">
         <button
           @click="toggleSound"
           :title="settingsStore.soundEnabled ? 'Mute Sound' : 'Unmute Sound'"
+          :style="{ opacity: soundButtonOpacity }"
           class="w-12 h-12 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-black/70 transition-all"
         >
           <div :class="settingsStore.soundEnabled ? 'i-carbon-volume-up' : 'i-carbon-volume-mute'" class="text-2xl"></div>
@@ -80,6 +81,15 @@ const gameContainer = ref<HTMLElement | null>(null);
 const instanceSlug = computed(() => route.params.id);
 const isPreview = computed(() => route.query.isPreview === 'true');
 const hideHeader = computed(() => route.query.hideHeader === 'true');
+
+// 音效按钮配置
+const showSoundButton = computed(() => {
+  return instance.value?.config?.showSoundButton !== false; // 默认显示
+});
+
+const soundButtonOpacity = computed(() => {
+  return instance.value?.config?.soundButtonOpacity ?? 0.8; // 默认 0.8
+});
 
 const gameUrl = computed(() => {
   if (!instance.value) return '';
