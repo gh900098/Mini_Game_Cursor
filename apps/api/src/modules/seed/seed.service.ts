@@ -950,8 +950,8 @@ export class SeedService {
                                 type: 'collapse-group',
                                 label: '🔊 Sound Button',
                                 items: [
-                                    { key: 'showSoundButton', type: 'switch', label: 'page.manage.game.effects.showSoundButton', default: true, span: 12 },
-                                    { key: 'soundButtonOpacity', type: 'slider', label: 'page.manage.game.effects.soundButtonOpacity', min: 0, max: 100, step: 5, suffix: '%', default: 80, span: 12 }
+                                    { key: 'showSoundButton', type: 'switch', label: 'Show Sound Button', default: true, span: 12 },
+                                    { key: 'soundButtonOpacity', type: 'slider', label: 'Sound Button Opacity', min: 0, max: 100, step: 5, suffix: '%', default: 80, span: 12 }
                                 ]
                             },
                             {
