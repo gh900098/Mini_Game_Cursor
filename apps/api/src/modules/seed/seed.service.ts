@@ -603,8 +603,11 @@ export class SeedService {
                     },
                     {
                         name: 'visuals',
-                        label: 'page.manage.game.tabs.visuals', // page.manage.game.tabBranding
+                        label: 'page.manage.game.tabs.visuals',
                         items: [
+                            // ═══════════════════════════════════════════════════════════
+                            // 🎨 SECTION 1: QUICK STYLE (快速风格设置)
+                            // ═══════════════════════════════════════════════════════════
                             {
                                 key: 'themePreset',
                                 type: 'select',
@@ -618,13 +621,35 @@ export class SeedService {
                                     { label: '✏️ Custom', value: 'Custom' }
                                 ],
                                 default: 'Cyberpunk Elite',
-                                loadPreset: true,  // Flag to indicate frontend should load templatePresets when this changes
+                                loadPreset: true,
                                 span: 24
                             },
+                            { 
+                                key: 'fontPreset', 
+                                type: 'font-select', 
+                                label: 'Game Font', 
+                                span: 12,
+                                default: 'Orbitron',
+                                options: [
+                                    { label: 'Orbitron', value: 'Orbitron' },
+                                    { label: 'Press Start 2P', value: 'Press Start 2P' },
+                                    { label: 'Bangers', value: 'Bangers' },
+                                    { label: 'Bungee', value: 'Bungee' },
+                                    { label: 'Russo One', value: 'Russo One' },
+                                    { label: 'Black Ops One', value: 'Black Ops One' },
+                                    { label: 'Righteous', value: 'Righteous' },
+                                    { label: 'Permanent Marker', value: 'Permanent Marker' },
+                                    { label: 'Creepster', value: 'Creepster' },
+                                    { label: 'Lobster', value: 'Lobster' },
+                                    { label: 'Custom (Upload Below)', value: 'custom' }
+                                ]
+                            },
+                            { key: 'gameFont', type: 'file', label: 'Custom Game Font', span: 12, condition: { key: 'fontPreset', value: 'custom' } },
                             {
                                 key: 'background_section',
                                 type: 'collapse-group',
                                 label: 'page.manage.game.visuals.bgSettings',
+                                span: 24,
                                 items: [
                                     {
                                         key: 'bgType',
@@ -638,7 +663,6 @@ export class SeedService {
                                         default: 'gradient',
                                         span: 24
                                     },
-                                    // Gradient Settings
                                     { key: 'bgGradStart', type: 'color', label: 'Start Color', default: '#1e1b4b', span: 12, condition: { key: 'bgType', value: 'gradient' } },
                                     { key: 'bgGradEnd', type: 'color', label: 'End Color', default: '#312e81', span: 12, condition: { key: 'bgType', value: 'gradient' } },
                                     {
@@ -656,9 +680,7 @@ export class SeedService {
                                         span: 24,
                                         condition: { key: 'bgType', value: 'gradient' }
                                     },
-                                    // Color Settings
                                     { key: 'bgColor', type: 'color', label: 'Background Color', default: '#1a1a1a', span: 24, condition: { key: 'bgType', value: 'color' } },
-                                    // Image Settings
                                     { key: 'bgImage', type: 'image', label: 'Background Image', span: 24, condition: { key: 'bgType', value: 'image' } },
                                     {
                                         key: 'bgFit',
@@ -679,46 +701,62 @@ export class SeedService {
                                 ]
                             },
 
-                            { 
-                                key: 'fontPreset', 
-                                type: 'font-select', 
-                                label: 'Game Font', 
+                            // ═══════════════════════════════════════════════════════════
+                            // 🎡 SECTION 2: WHEEL DESIGN (转盘设计 - 由外到内)
+                            // ═══════════════════════════════════════════════════════════
+                            {
+                                key: 'border_section',
+                                type: 'collapse-group',
+                                label: '🔲 Wheel Border / Frame',
                                 span: 24,
-                                default: 'Orbitron',
-                                options: [
-                                    { label: 'Orbitron', value: 'Orbitron' },
-                                    { label: 'Press Start 2P', value: 'Press Start 2P' },
-                                    { label: 'Bangers', value: 'Bangers' },
-                                    { label: 'Bungee', value: 'Bungee' },
-                                    { label: 'Russo One', value: 'Russo One' },
-                                    { label: 'Black Ops One', value: 'Black Ops One' },
-                                    { label: 'Righteous', value: 'Righteous' },
-                                    { label: 'Permanent Marker', value: 'Permanent Marker' },
-                                    { label: 'Creepster', value: 'Creepster' },
-                                    { label: 'Lobster', value: 'Lobster' },
-                                    { label: 'Custom (Upload Below)', value: 'custom' }
+                                items: [
+                                    { key: 'wheelBorderImage', type: 'image', label: 'Border Image', span: 24 },
+                                    { key: 'wheelBorderSize', type: 'slider', label: 'Size', min: 100, max: 150, step: 1, suffix: '%', default: 110, span: 12 },
+                                    { key: 'wheelBorderOpacity', type: 'slider', label: 'Opacity', min: 0, max: 100, step: 5, suffix: '%', default: 100, span: 12 },
+                                    { key: 'wheelBorderTop', type: 'slider', label: 'Vertical Offset', min: -50, max: 50, step: 1, suffix: 'px', default: 0, span: 12 },
+                                    {
+                                        key: 'wheelBorderLayer',
+                                        type: 'select',
+                                        label: 'Layer Priority',
+                                        default: 'behind',
+                                        span: 12,
+                                        options: [
+                                            { label: '🔽 Behind Prizes', value: 'behind' },
+                                            { label: '🔼 In Front of Prizes', value: 'front' }
+                                        ]
+                                    }
                                 ]
                             },
-                            { key: 'gameFont', type: 'file', label: 'Custom Game Font', span: 24, condition: { key: 'fontPreset', value: 'custom' } },
-                            { key: 'spinDuration', type: 'slider', label: 'page.manage.game.visuals.spinDuration', min: 1, max: 10, step: 0.5, suffix: 's', default: 4 },
-                            { key: 'spinTurns', type: 'slider', label: 'page.manage.game.visuals.spinTurns', min: 1, max: 20, step: 1, default: 5 },
-                            // { key: 'bgImage', type: 'image', label: 'Background Image', span: 24 }, // REMOVED (Replaced above)
                             {
-                                key: 'brand_section',
+                                key: 'divider_section',
                                 type: 'collapse-group',
-                                label: 'Brand Logo Settings',
+                                label: '➗ Slice Dividers',
+                                span: 24,
                                 items: [
-                                    { key: 'titleImage', type: 'image', label: 'Brand Logo/Title', span: 24 },
-                                    { key: 'logoWidth', type: 'slider', label: 'Logo Width', min: 20, max: 100, step: 5, suffix: '%', default: 80, span: 12 },
-                                    { key: 'logoTopMargin', type: 'slider', label: 'Top Margin', min: 0, max: 60, step: 2, suffix: 'px', default: 10, span: 12 },
-                                    { key: 'logoOpacity', type: 'slider', label: 'Opacity', min: 0, max: 100, step: 5, suffix: '%', default: 100, span: 12 },
-                                    { key: 'logoDropShadow', type: 'switch', label: 'Enable Drop Shadow', default: true, span: 12 }
+                                    {
+                                        key: 'dividerType',
+                                        type: 'select',
+                                        label: 'Type',
+                                        default: 'line',
+                                        span: 24,
+                                        options: [
+                                            { label: '➖ Line', value: 'line' },
+                                            { label: '🖼️ Image', value: 'image' }
+                                        ]
+                                    },
+                                    { key: 'dividerColor', type: 'color', label: 'Line Color', default: 'rgba(255,255,255,0.2)', span: 12, condition: { key: 'dividerType', value: 'line' } },
+                                    { key: 'dividerStroke', type: 'slider', label: 'Thickness', min: 1, max: 10, step: 1, suffix: 'px', default: 1, span: 12, condition: { key: 'dividerType', value: 'line' } },
+                                    { key: 'dividerImage', type: 'image', label: 'Texture', span: 24, condition: { key: 'dividerType', value: 'image' } },
+                                    { key: 'dividerWidth', type: 'slider', label: 'Width', min: 5, max: 50, step: 1, suffix: 'px', default: 20, span: 12, condition: { key: 'dividerType', value: 'image' } },
+                                    { key: 'dividerHeight', type: 'slider', label: 'Height (Length)', min: 20, max: 300, step: 5, suffix: 'px', default: 180, span: 12, condition: { key: 'dividerType', value: 'image' } },
+                                    { key: 'dividerTop', type: 'slider', label: 'Offset', min: -50, max: 50, step: 1, suffix: 'px', default: 0, span: 24, condition: { key: 'dividerType', value: 'image' } }
                                 ]
                             },
                             {
                                 key: 'center_hub_section',
                                 type: 'collapse-group',
-                                label: 'Center Hub Settings',
+                                label: '🎯 Center Hub',
+                                span: 24,
                                 items: [
                                     {
                                         key: 'centerType',
@@ -768,7 +806,8 @@ export class SeedService {
                             {
                                 key: 'pointer_section',
                                 type: 'collapse-group',
-                                label: 'Pointer Settings',
+                                label: '👆 Pointer',
+                                span: 24,
                                 items: [
                                     { key: 'pointerImage', type: 'image', label: 'Pointer Image', span: 24 },
                                     {
@@ -793,32 +832,28 @@ export class SeedService {
                                     { key: 'pointerShadow', type: 'switch', label: 'Shadow', default: true, span: 7 }
                                 ]
                             },
+
+                            // ═══════════════════════════════════════════════════════════
+                            // 🖼️ SECTION 3: UI ELEMENTS (界面元素 - 由上到下)
+                            // ═══════════════════════════════════════════════════════════
                             {
-                                key: 'border_section',
+                                key: 'brand_section',
                                 type: 'collapse-group',
-                                label: 'Wheel Border / Frame',
+                                label: '🏷️ Brand Logo',
+                                span: 24,
                                 items: [
-                                    { key: 'wheelBorderImage', type: 'image', label: 'Border Image', span: 24 },
-                                    { key: 'wheelBorderSize', type: 'slider', label: 'Size', min: 100, max: 150, step: 1, suffix: '%', default: 110, span: 12 },
-                                    { key: 'wheelBorderOpacity', type: 'slider', label: 'Opacity', min: 0, max: 100, step: 5, suffix: '%', default: 100, span: 12 },
-                                    { key: 'wheelBorderTop', type: 'slider', label: 'Vertical Offset', min: -50, max: 50, step: 1, suffix: 'px', default: 0, span: 12 },
-                                    {
-                                        key: 'wheelBorderLayer',
-                                        type: 'select',
-                                        label: 'Layer Priority',
-                                        default: 'behind',
-                                        span: 12,
-                                        options: [
-                                            { label: '🔽 Behind Prizes', value: 'behind' },
-                                            { label: '🔼 In Front of Prizes', value: 'front' }
-                                        ]
-                                    }
+                                    { key: 'titleImage', type: 'image', label: 'Brand Logo/Title', span: 24 },
+                                    { key: 'logoWidth', type: 'slider', label: 'Logo Width', min: 20, max: 100, step: 5, suffix: '%', default: 80, span: 12 },
+                                    { key: 'logoTopMargin', type: 'slider', label: 'Top Margin', min: 0, max: 60, step: 2, suffix: 'px', default: 10, span: 12 },
+                                    { key: 'logoOpacity', type: 'slider', label: 'Opacity', min: 0, max: 100, step: 5, suffix: '%', default: 100, span: 12 },
+                                    { key: 'logoDropShadow', type: 'switch', label: 'Enable Drop Shadow', default: true, span: 12 }
                                 ]
                             },
                             {
                                 key: 'token_bar_section',
                                 type: 'collapse-group',
-                                label: 'Token Bar Settings',
+                                label: '💰 Token Bar',
+                                span: 24,
                                 items: [
                                     { key: 'tokenBarImage', type: 'image', label: 'Background Image', span: 24 },
                                     { key: 'tokenBarColor', type: 'color', label: 'Background Color', default: '#ca8a04', span: 12 },
@@ -829,7 +864,8 @@ export class SeedService {
                             {
                                 key: 'spin_button_section',
                                 type: 'collapse-group',
-                                label: 'Spin Button Settings',
+                                label: '🔘 Spin Button',
+                                span: 24,
                                 items: [
                                     { key: 'spinBtnText', type: 'text', label: 'Button Text', default: 'SPIN NOW', span: 12 },
                                     { key: 'spinBtnSubtext', type: 'text', label: 'Subtext', default: '1 PLAY = 10 TOKEN', span: 12 },
@@ -841,35 +877,17 @@ export class SeedService {
                                     { key: 'spinBtnImage', type: 'image', label: 'Custom Image', span: 24 }
                                 ]
                             },
-                            {
-                                key: 'divider_section',
-                                type: 'collapse-group',
-                                label: 'Divider Settings',
-                                items: [
-                                    {
-                                        key: 'dividerType',
-                                        type: 'select',
-                                        label: 'Type',
-                                        default: 'line',
-                                        span: 24,
-                                        options: [
-                                            { label: '➖ Line', value: 'line' },
-                                            { label: '🖼️ Image', value: 'image' }
-                                        ]
-                                    },
-                                    { key: 'dividerColor', type: 'color', label: 'Line Color', default: 'rgba(255,255,255,0.2)', span: 12, condition: { key: 'dividerType', value: 'line' } },
-                                    { key: 'dividerStroke', type: 'slider', label: 'Thickness', min: 1, max: 10, step: 1, suffix: 'px', default: 1, span: 12, condition: { key: 'dividerType', value: 'line' } },
-                                    { key: 'dividerImage', type: 'image', label: 'Texture', span: 24, condition: { key: 'dividerType', value: 'image' } },
-                                    { key: 'dividerWidth', type: 'slider', label: 'Width', min: 5, max: 50, step: 1, suffix: 'px', default: 20, span: 12, condition: { key: 'dividerType', value: 'image' } },
-                                    { key: 'dividerHeight', type: 'slider', label: 'Height (Length)', min: 20, max: 300, step: 5, suffix: 'px', default: 180, span: 12, condition: { key: 'dividerType', value: 'image' } },
-                                    { key: 'dividerTop', type: 'slider', label: 'Offset', min: -50, max: 50, step: 1, suffix: 'px', default: 0, span: 24, condition: { key: 'dividerType', value: 'image' } },
-                                ]
-                            },
 
+                            // ═══════════════════════════════════════════════════════════
+                            // ⚙️ SECTION 4: ANIMATION & INTERACTION (动画与交互)
+                            // ═══════════════════════════════════════════════════════════
+                            { key: 'spinDuration', type: 'slider', label: 'page.manage.game.visuals.spinDuration', min: 1, max: 10, step: 0.5, suffix: 's', default: 4, span: 12 },
+                            { key: 'spinTurns', type: 'slider', label: 'page.manage.game.visuals.spinTurns', min: 1, max: 20, step: 1, default: 5, span: 12 },
                             {
                                 key: 'audio_bools',
                                 type: 'switch-group',
                                 label: 'page.manage.game.visuals.audio',
+                                span: 12,
                                 items: [
                                     { key: 'soundEnabled', label: 'page.manage.game.visuals.soundEnabled' },
                                     { key: 'repeatWinSound', label: 'page.manage.game.visuals.repeatWinSound' },
@@ -880,6 +898,7 @@ export class SeedService {
                                 key: 'interact_bools',
                                 type: 'switch-group',
                                 label: 'page.manage.game.visuals.interact',
+                                span: 12,
                                 items: [
                                     { key: 'clickToSpin', label: 'page.manage.game.visuals.clickToSpin' },
                                     { key: 'swipeToSpin', label: 'page.manage.game.visuals.swipeToSpin' }
