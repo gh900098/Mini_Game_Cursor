@@ -44,6 +44,30 @@ export class SeedService {
         return { message: 'Database seeded successfully' };
     }
 
+    async refreshGameSchemas(): Promise<{ message: string; updated: number }> {
+        this.logger.log('Refreshing game instance schemas...');
+        
+        // Get the fresh schema from getSchemasForGame
+        const spinWheelSchema = this.getSchemasForGame('spin-wheel');
+        
+        // Update all spin-wheel instances
+        const instances = await this.gameInstanceRepository.find({ 
+            where: { game: { slug: 'spin-wheel' } },
+            relations: ['game']
+        });
+        
+        let updated = 0;
+        for (const instance of instances) {
+            // Preserve existing config values, just update the schema structure
+            instance.configSchema = spinWheelSchema;
+            await this.gameInstanceRepository.save(instance);
+            updated++;
+        }
+        
+        this.logger.log(`Updated ${updated} game instance(s) with fresh schema`);
+        return { message: 'Schemas refreshed successfully', updated };
+    }
+
     private async seedPermissions(): Promise<void> {
         const resources = ['companies', 'roles', 'permissions', 'users', 'games', 'game-instances', 'members', 'credits', 'gameplays', 'audit-logs', 'email'];
         const actions = ['create', 'read', 'update', 'delete', 'manage'];

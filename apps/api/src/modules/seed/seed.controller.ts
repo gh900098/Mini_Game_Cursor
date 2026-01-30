@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Patch } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SeedService } from './seed.service';
 
@@ -12,5 +12,12 @@ export class SeedController {
     @ApiResponse({ status: 201, description: 'Database seeded successfully' })
     async runSeed() {
         return await this.seedService.seedAll();
+    }
+
+    @Patch('refresh-schemas')
+    @ApiOperation({ summary: 'Update all existing game instances with latest schema' })
+    @ApiResponse({ status: 200, description: 'Schemas refreshed successfully' })
+    async refreshSchemas() {
+        return await this.seedService.refreshGameSchemas();
     }
 }
