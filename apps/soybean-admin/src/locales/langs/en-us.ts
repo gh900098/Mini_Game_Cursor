@@ -375,11 +375,28 @@ const local: App.I18n.Schema = {
           verticalOffset: 'Vertical Offset',
           layerPriority: 'Layer Priority',
           behindPrizes: '🔽 Behind Prizes',
-          inFrontOfPrizes: '🔼 In Front of Prizes'
+          inFrontOfPrizes: '🔼 In Front of Prizes',
+          hubSize: 'Hub Size',
+          border: 'Border',
+          shadow: 'Shadow',
+          topPos: 'Top Position',
+          logoWidth: 'Logo Width',
+          topMargin: 'Top Margin',
+          enableDropShadow: 'Enable Drop Shadow',
+          backgroundImage: 'Background Image',
+          backgroundColor: 'Background Color',
+          textColor: 'Text Color',
+          buttonText: 'Button Text',
+          subtext: 'Subtext',
+          buttonColor: 'Button Color',
+          width: 'Width',
+          height: 'Height',
+          customImage: 'Custom Image'
         },
         prizes: {
           visualTemplate: 'Visual Template',
-          quickTemplate: 'Quick Template'
+          quickTemplate: 'Quick Template',
+          prizeSegments: 'Prize Segments'
         },
         effects: {
           ultraFeatures: 'Premium Features',

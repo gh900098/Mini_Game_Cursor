@@ -371,11 +371,28 @@ const local: App.I18n.Schema = {
           verticalOffset: '垂直偏移',
           layerPriority: '图层优先级',
           behindPrizes: '🔽 在奖品后面',
-          inFrontOfPrizes: '🔼 在奖品前面'
+          inFrontOfPrizes: '🔼 在奖品前面',
+          hubSize: '中心大小',
+          border: '边框',
+          shadow: '阴影',
+          topPos: '顶部位置',
+          logoWidth: 'Logo宽度',
+          topMargin: '顶部边距',
+          enableDropShadow: '启用阴影',
+          backgroundImage: '背景图片',
+          backgroundColor: '背景颜色',
+          textColor: '文字颜色',
+          buttonText: '按钮文字',
+          subtext: '副标题',
+          buttonColor: '按钮颜色',
+          width: '宽度',
+          height: '高度',
+          customImage: '自定义图片'
         },
         prizes: {
           visualTemplate: '视觉模板',
-          quickTemplate: '快速模板'
+          quickTemplate: '快速模板',
+          prizeSegments: '奖品区块'
         },
         effects: {
           ultraFeatures: '高级特效开关',
