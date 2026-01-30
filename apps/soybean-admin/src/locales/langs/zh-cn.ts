@@ -387,7 +387,15 @@ const local: App.I18n.Schema = {
           buttonColor: '按钮颜色',
           width: '宽度',
           height: '高度',
-          customImage: '自定义图片'
+          customImage: '自定义图片',
+          gameFont: '游戏字体',
+          fontPreset: '字体预设',
+          customFontFile: '自定义字体文件',
+          direction: '方向',
+          type: '类型',
+          contentType: '内容类型',
+          selectIcon: '选择图标',
+          imageFillMethod: '图片填充方式'
         },
         prizes: {
           visualTemplate: '视觉模板',

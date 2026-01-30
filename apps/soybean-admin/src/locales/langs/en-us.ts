@@ -391,7 +391,15 @@ const local: App.I18n.Schema = {
           buttonColor: 'Button Color',
           width: 'Width',
           height: 'Height',
-          customImage: 'Custom Image'
+          customImage: 'Custom Image',
+          gameFont: 'Game Font',
+          fontPreset: 'Font Preset',
+          customFontFile: 'Custom Font File',
+          direction: 'Direction',
+          type: 'Type',
+          contentType: 'Content Type',
+          selectIcon: 'Select Icon',
+          imageFillMethod: 'Image Fill Method'
         },
         prizes: {
           visualTemplate: 'Visual Template',

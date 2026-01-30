@@ -570,7 +570,7 @@ export class SeedService {
                             {
                                 key: 'visualTemplate',
                                 type: 'select',
-                                label: '🎨 Visual Template',
+                                label: 'page.manage.game.prizes.visualTemplate',
                                 options: [
                                     { label: 'Default (Dynamic)', value: 'default' },
                                     { label: 'Premium Neon', value: 'premium-neon' },
@@ -582,7 +582,7 @@ export class SeedService {
                             {
                                 key: 'prizeTemplate',
                                 type: 'select',
-                                label: 'Quick Template',
+                                label: 'page.manage.game.prizes.quickTemplate',
                                 options: ['Standard Balanced', 'High Stakes', 'Emoji Party'],
                                 default: 'Standard Balanced'
                             },
@@ -637,7 +637,7 @@ export class SeedService {
                             { 
                                 key: 'fontPreset', 
                                 type: 'font-select', 
-                                label: 'Game Font', 
+                                label: 'page.manage.game.visuals.gameFont', 
                                 span: 12,
                                 default: 'Orbitron',
                                 options: [
@@ -654,7 +654,7 @@ export class SeedService {
                                     { label: 'Custom (Upload Below)', value: 'custom' }
                                 ]
                             },
-                            { key: 'gameFont', type: 'file', label: 'Custom Game Font', span: 12, condition: { key: 'fontPreset', value: 'custom' } },
+                            { key: 'gameFont', type: 'file', label: 'page.manage.game.visuals.customFontFile', span: 12, condition: { key: 'fontPreset', value: 'custom' } },
                             {
                                 key: 'background_section',
                                 type: 'collapse-group',
@@ -678,7 +678,7 @@ export class SeedService {
                                     {
                                         key: 'bgGradDir',
                                         type: 'select',
-                                        label: 'Direction',
+                                        label: 'page.manage.game.visuals.direction',
                                         options: [
                                             { label: 'Top to Bottom', value: 'to bottom' },
                                             { label: 'Left to Right', value: 'to right' },
@@ -695,7 +695,7 @@ export class SeedService {
                                     {
                                         key: 'bgFit',
                                         type: 'select',
-                                        label: 'Image Fill Method',
+                                        label: 'page.manage.game.visuals.imageFillMethod',
                                         options: [
                                             { label: 'Cover (Crop to fit)', value: 'cover' },
                                             { label: 'Contain (Show full)', value: 'contain' },
@@ -746,7 +746,7 @@ export class SeedService {
                                     {
                                         key: 'dividerType',
                                         type: 'select',
-                                        label: 'Type',
+                                        label: 'page.manage.game.visuals.type',
                                         default: 'line',
                                         span: 24,
                                         options: [
@@ -771,7 +771,7 @@ export class SeedService {
                                     {
                                         key: 'centerType',
                                         type: 'radio',
-                                        label: 'Content Type',
+                                        label: 'page.manage.game.visuals.contentType',
                                         options: [{ label: 'Emoji / Preset', value: 'emoji' }, { label: 'page.manage.game.visuals.customImage', value: 'image' }],
                                         default: 'emoji',
                                         span: 24
@@ -779,7 +779,7 @@ export class SeedService {
                                     {
                                         key: 'centerEmoji',
                                         type: 'select',
-                                        label: 'Select Icon',
+                                        label: 'page.manage.game.visuals.selectIcon',
                                         default: '🎯',
                                         span: 24,
                                         condition: { key: 'centerType', value: 'emoji' },
@@ -823,7 +823,7 @@ export class SeedService {
                                     {
                                         key: 'pointerDirection',
                                         type: 'select',
-                                        label: 'Direction',
+                                        label: 'page.manage.game.visuals.direction',
                                         default: 'top',
                                         span: 24,
                                         options: [
