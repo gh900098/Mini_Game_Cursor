@@ -31,6 +31,7 @@
         :src="gameUrl"
         class="w-full h-full border-none"
         allow="autoplay; fullscreen"
+        @load="handleIframeLoad"
       ></iframe>
       <!-- 浮动音效按钮（不管是否全屏都显示） -->
       <div v-if="showSoundButton" class="absolute top-4 right-4 z-50">
@@ -151,6 +152,14 @@ function toggleFullscreen() {
   }
 }
 
+function handleIframeLoad() {
+  // Iframe 加载完成后，发送初始音效状态
+  iframeRef.value?.contentWindow?.postMessage({
+    type: 'sound-toggle',
+    enabled: settingsStore.soundEnabled,
+  }, '*');
+}
+
 function toggleSound() {
   settingsStore.toggleSound();
   // 通知 iframe 内的游戏音效状态已改变
@@ -169,6 +178,9 @@ watch(() => settingsStore.soundEnabled, (enabled) => {
 });
 
 onMounted(() => {
+  // 每次加载游戏时重置音效为开启
+  settingsStore.resetSound();
+  
   window.addEventListener('message', handleMessage);
   
   if (!authStore.isLoggedIn && !isPreview.value) {

@@ -1,16 +1,9 @@
 import { defineStore } from 'pinia';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 export const useSettingsStore = defineStore('settings', () => {
-  // 从 localStorage 读取初始值，默认开启
-  const soundEnabled = ref<boolean>(
-    localStorage.getItem('soundEnabled') !== 'false'
-  );
-
-  // 监听变化并同步到 localStorage
-  watch(soundEnabled, (newValue) => {
-    localStorage.setItem('soundEnabled', String(newValue));
-  });
+  // 音效默认开启（每次重新加载都重置，不 persist）
+  const soundEnabled = ref<boolean>(true);
 
   function toggleSound() {
     soundEnabled.value = !soundEnabled.value;
@@ -20,9 +13,14 @@ export const useSettingsStore = defineStore('settings', () => {
     soundEnabled.value = enabled;
   }
 
+  function resetSound() {
+    soundEnabled.value = true;
+  }
+
   return {
     soundEnabled,
     toggleSound,
     setSoundEnabled,
+    resetSound,
   };
 });
