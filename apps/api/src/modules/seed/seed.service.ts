@@ -889,7 +889,6 @@ export class SeedService {
                                 label: 'page.manage.game.visuals.interact',
                                 span: 24,
                                 items: [
-                                    { key: 'clickToSpin', label: 'page.manage.game.visuals.clickToSpin' },
                                     { key: 'swipeToSpin', label: 'page.manage.game.visuals.swipeToSpin' }
                                 ]
                             }
