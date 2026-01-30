@@ -741,6 +741,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
         let bgmAudio = null;
+        let soundEnabled = true; // 音效开关，默认开启
         let bgmPlaying = false;
         
         function initAudio() {
@@ -766,12 +767,14 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
             console.log('[initBGM] Volume set to:', bgmAudio.volume);
             
             // Try to play (may be blocked by autoplay policy)
-            bgmAudio.play().then(() => {
-                bgmPlaying = true;
-                console.log('[BGM] Playing:', fullUrl);
-            }).catch(err => {
-                console.log('[BGM] Autoplay blocked:', err.message);
-            });
+            if (soundEnabled) {
+                bgmAudio.play().then(() => {
+                    bgmPlaying = true;
+                    console.log('[BGM] Playing:', fullUrl);
+                }).catch(err => {
+                    console.log('[BGM] Autoplay blocked:', err.message);
+                });
+            }
         }
         
         function startBGM() {
@@ -800,7 +803,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                 // Play when ready
                 bgmAudio.addEventListener('canplay', () => {
                     console.log('[startBGM] Audio can play now!');
-                    if (!bgmPlaying) {
+                    if (!bgmPlaying && soundEnabled) {
                         bgmAudio.play().then(() => {
                             bgmPlaying = true;
                             console.log('[startBGM] BGM started playing!');
@@ -814,7 +817,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                 bgmAudio.src = fullUrl;
                 bgmAudio.load();
                 console.log('[startBGM] Loading audio...');
-            } else if (!bgmPlaying) {
+            } else if (!bgmPlaying && soundEnabled) {
                 console.log('[startBGM] Attempting to play existing BGM, readyState:', bgmAudio.readyState);
                 bgmAudio.play().then(() => {
                     bgmPlaying = true;
@@ -896,17 +899,19 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                 console.log('[Sound] Playing WIN sound');
             }
             
-            if (soundUrl) {
-                // Build full URL to avoid relative path issues
-                const fullUrl = soundUrl.startsWith('http') ? soundUrl : window.location.origin + soundUrl;
-                console.log('[playResultSound] Playing:', fullUrl);
-                currentResultAudio = new Audio(fullUrl);
-                currentResultAudio.volume = 0.7;
-                currentResultAudio.play().catch(e => console.log('[Sound] Play failed:', e));
-            } else {
-                // Fallback to synthesized sound
-                console.log('[playResultSound] No sound URL, using synthesized sound');
-                playWinSound();
+            if (soundEnabled) {
+                if (soundUrl) {
+                    // Build full URL to avoid relative path issues
+                    const fullUrl = soundUrl.startsWith('http') ? soundUrl : window.location.origin + soundUrl;
+                    console.log('[playResultSound] Playing:', fullUrl);
+                    currentResultAudio = new Audio(fullUrl);
+                    currentResultAudio.volume = 0.7;
+                    currentResultAudio.play().catch(e => console.log('[Sound] Play failed:', e));
+                } else {
+                    // Fallback to synthesized sound
+                    console.log('[playResultSound] No sound URL, using synthesized sound');
+                    playWinSound();
+                }
             }
         }
         
@@ -1453,6 +1458,17 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                 }
                 createWheel();
                 // Additional visual updates can be added here
+            } else if (e.data?.type === 'sound-toggle') {
+                // 音效开关控制
+                soundEnabled = e.data.enabled;
+                if (bgmAudio) {
+                    if (soundEnabled) {
+                        bgmAudio.play().catch(e => console.log('[Sound] Resume failed:', e));
+                    } else {
+                        bgmAudio.pause();
+                    }
+                }
+                console.log('[Sound] Sound', soundEnabled ? 'enabled' : 'disabled');
             }
         });
         
