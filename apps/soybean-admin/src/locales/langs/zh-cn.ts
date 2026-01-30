@@ -367,8 +367,6 @@ const local: App.I18n.Schema = {
           interact: '交互方式',
           clickToSpin: '点击旋转',
           swipeToSpin: '滑动旋转',
-          showSoundButton: '显示音效按钮',
-          soundButtonOpacity: '音效按钮透明度',
           prizeList: '奖品列表'
         },
         prizes: {
@@ -399,6 +397,8 @@ const local: App.I18n.Schema = {
           jackpotSoundFile: '大奖音效 (.mp3)',
           tickSound: '滴答声',
           tickVolume: '滴答音量',
+          showSoundButton: '显示音效按钮',
+          soundButtonOpacity: '音效按钮透明度',
           confettiSettings: '彩纸设置',
           confettiParticles: '粒子数量',
           confettiSpread: '扩散角度',

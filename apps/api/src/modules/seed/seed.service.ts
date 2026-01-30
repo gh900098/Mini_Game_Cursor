@@ -891,17 +891,6 @@ export class SeedService {
                                 items: [
                                     { key: 'swipeToSpin', label: 'page.manage.game.visuals.swipeToSpin' }
                                 ]
-                            },
-                            // 音效按钮配置
-                            {
-                                key: 'sound_button_section',
-                                type: 'collapse-group',
-                                label: '🔊 Sound Button',
-                                span: 24,
-                                items: [
-                                    { key: 'showSoundButton', type: 'switch', label: 'page.manage.game.visuals.showSoundButton', default: true, span: 12 },
-                                    { key: 'soundButtonOpacity', type: 'slider', label: 'page.manage.game.visuals.soundButtonOpacity', min: 0, max: 100, step: 5, suffix: '%', default: 80, span: 12 }
-                                ]
                             }
                         ]
                     },
@@ -954,6 +943,15 @@ export class SeedService {
                                     { key: 'jackpotSound', type: 'file', label: 'Jackpot Sound (.mp3)', span: 24 },
                                     { key: 'tickSoundEnabled', type: 'switch', label: 'Enable Tick Sound', default: true, span: 12 },
                                     { key: 'tickVolume', type: 'slider', label: 'Tick Volume', min: 0, max: 100, step: 5, suffix: '%', default: 30, span: 12 }
+                                ]
+                            },
+                            {
+                                key: 'sound_button_section',
+                                type: 'collapse-group',
+                                label: '🔊 Sound Button',
+                                items: [
+                                    { key: 'showSoundButton', type: 'switch', label: 'page.manage.game.effects.showSoundButton', default: true, span: 12 },
+                                    { key: 'soundButtonOpacity', type: 'slider', label: 'page.manage.game.effects.soundButtonOpacity', min: 0, max: 100, step: 5, suffix: '%', default: 80, span: 12 }
                                 ]
                             },
                             {

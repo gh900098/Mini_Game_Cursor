@@ -371,8 +371,6 @@ const local: App.I18n.Schema = {
           interact: 'Interaction Mode',
           clickToSpin: 'Click to Spin',
           swipeToSpin: 'Swipe to Spin',
-          showSoundButton: 'Show Sound Button',
-          soundButtonOpacity: 'Sound Button Opacity',
           prizeList: 'Prize List'
         },
         prizes: {
@@ -403,6 +401,8 @@ const local: App.I18n.Schema = {
           jackpotSoundFile: 'Jackpot Sound (.mp3)',
           tickSound: 'Tick Sound',
           tickVolume: 'Tick Volume',
+          showSoundButton: 'Show Sound Button',
+          soundButtonOpacity: 'Sound Button Opacity',
           confettiSettings: 'Confetti Settings',
           confettiParticles: 'Particle Count',
           confettiSpread: 'Spread Angle',
