@@ -47,20 +47,26 @@ export class SeedService {
     async refreshGameSchemas(): Promise<{ message: string; updated: number }> {
         this.logger.log('Refreshing game instance schemas...');
         
-        // Get the fresh schema from getSchemasForGame
-        const spinWheelSchema = this.getSchemasForGame('spin-wheel');
+        // Get the spin-wheel game template (which has the latest schema)
+        const spinWheelGame = await this.gameRepository.findOne({ 
+            where: { slug: 'spin-wheel' }
+        });
         
-        // Update all spin-wheel instances
-        const instances = await this.gameInstanceRepository.find({ 
-            where: { game: { slug: 'spin-wheel' } },
+        if (!spinWheelGame || !spinWheelGame.configSchema) {
+            throw new Error('Spin wheel game template not found or has no schema');
+        }
+        
+        // Update all spin-wheel instances with the template's schema
+        const instances = await this.instanceRepository.find({ 
+            where: { gameId: spinWheelGame.id },
             relations: ['game']
         });
         
         let updated = 0;
         for (const instance of instances) {
-            // Preserve existing config values, just update the schema structure
-            instance.configSchema = spinWheelSchema;
-            await this.gameInstanceRepository.save(instance);
+            // Update the schema (preserving existing config values)
+            instance.configSchema = spinWheelGame.configSchema;
+            await this.instanceRepository.save(instance);
             updated++;
         }
         
