@@ -717,7 +717,7 @@ export class SeedService {
                             {
                                 key: 'border_section',
                                 type: 'collapse-group',
-                                label: '🔲 Wheel Border / Frame',
+                                label: 'page.manage.game.visuals.wheelBorderFrame',
                                 span: 24,
                                 items: [
                                     { key: 'wheelBorderImage', type: 'image', label: 'page.manage.game.visuals.wheelBorderImage', span: 24 },
@@ -740,7 +740,7 @@ export class SeedService {
                             {
                                 key: 'divider_section',
                                 type: 'collapse-group',
-                                label: '➗ Slice Dividers',
+                                label: 'page.manage.game.visuals.sliceDividers',
                                 span: 24,
                                 items: [
                                     {
@@ -765,7 +765,7 @@ export class SeedService {
                             {
                                 key: 'center_hub_section',
                                 type: 'collapse-group',
-                                label: '🎯 Center Hub',
+                                label: 'page.manage.game.visuals.centerHubSection',
                                 span: 24,
                                 items: [
                                     {
@@ -816,7 +816,7 @@ export class SeedService {
                             {
                                 key: 'pointer_section',
                                 type: 'collapse-group',
-                                label: '👆 Pointer',
+                                label: 'page.manage.game.visuals.pointerSection',
                                 span: 24,
                                 items: [
                                     { key: 'pointerImage', type: 'image', label: 'page.manage.game.visuals.pointerImage', span: 24 },
@@ -849,7 +849,7 @@ export class SeedService {
                             {
                                 key: 'brand_section',
                                 type: 'collapse-group',
-                                label: '🏷️ Brand Logo',
+                                label: 'page.manage.game.visuals.brandLogoSection',
                                 span: 24,
                                 items: [
                                     { key: 'titleImage', type: 'image', label: 'page.manage.game.visuals.titleImage', span: 24 },
@@ -862,7 +862,7 @@ export class SeedService {
                             {
                                 key: 'token_bar_section',
                                 type: 'collapse-group',
-                                label: '💰 Token Bar',
+                                label: 'page.manage.game.visuals.tokenBarSection',
                                 span: 24,
                                 items: [
                                     { key: 'tokenBarImage', type: 'image', label: 'page.manage.game.visuals.backgroundImage', span: 24 },
@@ -874,7 +874,7 @@ export class SeedService {
                             {
                                 key: 'spin_button_section',
                                 type: 'collapse-group',
-                                label: '🔘 Spin Button',
+                                label: 'page.manage.game.visuals.spinButtonSection',
                                 span: 24,
                                 items: [
                                     { key: 'spinBtnText', type: 'text', label: 'page.manage.game.visuals.buttonText', default: 'SPIN NOW', span: 12 },
@@ -1030,12 +1030,12 @@ export class SeedService {
                     cardColor: '#c0c0c0'
                 },
                 configSchema: [
-                    { name: 'prizes', label: 'Prizes', items: [
-                        { key: 'prizeList', type: 'prize-list', label: 'Prize List' }
+                    { name: 'prizes', label: 'page.manage.game.common.prizes', items: [
+                        { key: 'prizeList', type: 'prize-list', label: 'page.manage.game.common.prizeList' }
                     ]},
-                    { name: 'settings', label: 'Settings', items: [
-                        { key: 'scratchPercent', type: 'slider', label: 'Scratch % to Reveal', min: 30, max: 90, default: 60, suffix: '%' },
-                        { key: 'cardColor', type: 'color', label: 'Scratch Layer Color', default: '#c0c0c0' }
+                    { name: 'settings', label: 'page.manage.game.common.settings', items: [
+                        { key: 'scratchPercent', type: 'slider', label: 'page.manage.game.common.scratchPercent', min: 30, max: 90, default: 60, suffix: '%' },
+                        { key: 'cardColor', type: 'color', label: 'page.manage.game.common.scratchLayer', default: '#c0c0c0' }
                     ]}
                 ]
             },
@@ -1052,12 +1052,12 @@ export class SeedService {
                     resetOnMiss: true
                 },
                 configSchema: [
-                    { name: 'rewards', label: 'Rewards', items: [
-                        { key: 'dailyRewards', type: 'list', label: 'Daily Rewards (Day 1-7)' },
-                        { key: 'resetOnMiss', type: 'switch', label: 'Reset Streak on Miss', default: true }
+                    { name: 'rewards', label: 'page.manage.game.common.rewards', items: [
+                        { key: 'dailyRewards', type: 'list', label: 'page.manage.game.common.dailyRewards' },
+                        { key: 'resetOnMiss', type: 'switch', label: 'page.manage.game.common.resetOnMiss', default: true }
                     ]},
-                    { name: 'milestones', label: 'Milestones', items: [
-                        { key: 'streakBonus', type: 'vip-grid', label: 'Streak Milestone Bonuses' }
+                    { name: 'milestones', label: 'page.manage.game.common.milestones', items: [
+                        { key: 'streakBonus', type: 'vip-grid', label: 'page.manage.game.common.streakBonus' }
                     ]}
                 ]
             },
@@ -1078,13 +1078,13 @@ export class SeedService {
                     jackpotAmount: 10000
                 },
                 configSchema: [
-                    { name: 'symbols', label: 'Symbols & Payouts', items: [
-                        { key: 'symbols', type: 'list', label: 'Reel Symbols' },
-                        { key: 'payouts', type: 'vip-grid', label: 'Payout Table' }
+                    { name: 'symbols', label: 'page.manage.game.common.symbols', items: [
+                        { key: 'symbols', type: 'list', label: 'page.manage.game.common.reelSymbols' },
+                        { key: 'payouts', type: 'vip-grid', label: 'page.manage.game.common.payoutTable' }
                     ]},
-                    { name: 'settings', label: 'Game Settings', items: [
-                        { key: 'betAmount', type: 'number', label: 'Bet Amount', default: 10 },
-                        { key: 'jackpotAmount', type: 'number', label: 'Jackpot Amount', default: 10000 }
+                    { name: 'settings', label: 'page.manage.game.common.gameSettings', items: [
+                        { key: 'betAmount', type: 'number', label: 'page.manage.game.common.betAmount', default: 10 },
+                        { key: 'jackpotAmount', type: 'number', label: 'page.manage.game.common.jackpotAmount', default: 10000 }
                     ]}
                 ]
             },
@@ -1105,12 +1105,12 @@ export class SeedService {
                     betAmount: 10
                 },
                 configSchema: [
-                    { name: 'board', label: 'Board Settings', items: [
-                        { key: 'rows', type: 'slider', label: 'Number of Rows', min: 8, max: 16, default: 12 },
-                        { key: 'betAmount', type: 'number', label: 'Bet Amount', default: 10 }
+                    { name: 'board', label: 'page.manage.game.common.board', items: [
+                        { key: 'rows', type: 'slider', label: 'page.manage.game.common.numberOfRows', min: 8, max: 16, default: 12 },
+                        { key: 'betAmount', type: 'number', label: 'page.manage.game.common.betAmount', default: 10 }
                     ]},
-                    { name: 'multipliers', label: 'Risk Multipliers', items: [
-                        { key: 'riskLevels', type: 'vip-grid', label: 'Multiplier Grid by Risk' }
+                    { name: 'multipliers', label: 'page.manage.game.common.multipliers', items: [
+                        { key: 'riskLevels', type: 'vip-grid', label: 'page.manage.game.common.riskMultipliers' }
                     ]}
                 ]
             },
@@ -1129,13 +1129,13 @@ export class SeedService {
                     timeBonus: 5
                 },
                 configSchema: [
-                    { name: 'gameplay', label: 'Gameplay', items: [
-                        { key: 'gridSize', type: 'select', label: 'Grid Size', options: ['3', '4', '5'], default: '4' },
-                        { key: 'timeLimit', type: 'slider', label: 'Time Limit', min: 30, max: 120, default: 60, suffix: 's' }
+                    { name: 'gameplay', label: 'page.manage.game.common.gameplay', items: [
+                        { key: 'gridSize', type: 'select', label: 'page.manage.game.common.gridSize', options: ['3', '4', '5'], default: '4' },
+                        { key: 'timeLimit', type: 'slider', label: 'page.manage.game.common.timeLimit', min: 30, max: 120, default: 60, suffix: 's' }
                     ]},
-                    { name: 'scoring', label: 'Scoring', items: [
-                        { key: 'baseScore', type: 'number', label: 'Base Score per Match', default: 100 },
-                        { key: 'timeBonus', type: 'number', label: 'Time Bonus per Second', default: 5 }
+                    { name: 'scoring', label: 'page.manage.game.common.scoring', items: [
+                        { key: 'baseScore', type: 'number', label: 'page.manage.game.common.baseScore', default: 100 },
+                        { key: 'timeBonus', type: 'number', label: 'page.manage.game.common.timeBonus', default: 5 }
                     ]}
                 ]
             },
@@ -1158,9 +1158,9 @@ export class SeedService {
                     betAmount: 50
                 },
                 configSchema: [
-                    { name: 'bets', label: 'Bet Options', items: [
-                        { key: 'betOptions', type: 'vip-grid', label: 'Betting Options & Multipliers' },
-                        { key: 'betAmount', type: 'number', label: 'Default Bet', default: 50 }
+                    { name: 'bets', label: 'page.manage.game.common.bets', items: [
+                        { key: 'betOptions', type: 'vip-grid', label: 'page.manage.game.common.bettingOptions' },
+                        { key: 'betAmount', type: 'number', label: 'page.manage.game.common.defaultBet', default: 50 }
                     ]}
                 ]
             },
@@ -1183,12 +1183,12 @@ export class SeedService {
                     ]
                 },
                 configSchema: [
-                    { name: 'boxes', label: 'Box Settings', items: [
-                        { key: 'boxCount', type: 'number', label: 'Number of Boxes', default: 9 },
-                        { key: 'picksAllowed', type: 'number', label: 'Picks Allowed', default: 3 }
+                    { name: 'boxes', label: 'page.manage.game.common.boxes', items: [
+                        { key: 'boxCount', type: 'number', label: 'page.manage.game.common.numberOfBoxes', default: 9 },
+                        { key: 'picksAllowed', type: 'number', label: 'page.manage.game.common.picksAllowed', default: 3 }
                     ]},
-                    { name: 'prizes', label: 'Prizes', items: [
-                        { key: 'prizeList', type: 'prize-list', label: 'Prize Configuration' }
+                    { name: 'prizes', label: 'page.manage.game.common.prizes', items: [
+                        { key: 'prizeList', type: 'prize-list', label: 'page.manage.game.common.prizeConfiguration' }
                     ]}
                 ]
             },
@@ -1206,13 +1206,13 @@ export class SeedService {
                     streakBonus: 10
                 },
                 configSchema: [
-                    { name: 'categories', label: 'Categories', items: [
-                        { key: 'categories', type: 'list', label: 'Quiz Categories' }
+                    { name: 'categories', label: 'page.manage.game.common.categories', items: [
+                        { key: 'categories', type: 'list', label: 'page.manage.game.common.quizCategories' }
                     ]},
-                    { name: 'gameplay', label: 'Gameplay', items: [
-                        { key: 'timePerQuestion', type: 'slider', label: 'Time per Question', min: 5, max: 30, default: 10, suffix: 's' },
-                        { key: 'basePoints', type: 'number', label: 'Base Points', default: 100 },
-                        { key: 'streakBonus', type: 'number', label: 'Streak Bonus', default: 10 }
+                    { name: 'gameplay', label: 'page.manage.game.common.gameplay', items: [
+                        { key: 'timePerQuestion', type: 'slider', label: 'page.manage.game.common.timePerQuestion', min: 5, max: 30, default: 10, suffix: 's' },
+                        { key: 'basePoints', type: 'number', label: 'page.manage.game.common.basePoints', default: 100 },
+                        { key: 'streakBonus', type: 'number', label: 'page.manage.game.common.streakBonus', default: 10 }
                     ]}
                 ]
             }
