@@ -81,6 +81,70 @@ function clearAsset(key: string, item?: any) {
   }
 }
 
+// Audio Mode Helpers
+const audioModes = ref<Record<string, 'theme' | 'custom' | 'none'>>({});
+
+function isAudioField(key: string): boolean {
+  return key.toLowerCase().includes('sound') || 
+         key.toLowerCase().includes('bgm') || 
+         key.toLowerCase().includes('audio');
+}
+
+function initAudioMode(key: string) {
+  if (!audioModes.value[key]) {
+    const value = formModel.value[key];
+    if (!value || value === '' || value === null) {
+      audioModes.value[key] = 'none';
+    } else if (value === '__THEME_DEFAULT__' || value.includes('/templates/')) {
+      audioModes.value[key] = 'theme';
+    } else {
+      audioModes.value[key] = 'custom';
+    }
+  }
+}
+
+function getAudioMode(key: string): 'theme' | 'custom' | 'none' {
+  initAudioMode(key);
+  return audioModes.value[key];
+}
+
+function setAudioMode(key: string, mode: 'theme' | 'custom' | 'none') {
+  audioModes.value[key] = mode;
+  
+  if (mode === 'none') {
+    formModel.value[key] = '';
+  } else if (mode === 'theme') {
+    // Set to a placeholder indicating theme default
+    formModel.value[key] = '__THEME_DEFAULT__';
+  } else if (mode === 'custom' && !formModel.value[key]) {
+    // Initialize with empty string for custom mode
+    formModel.value[key] = '';
+  }
+}
+
+function getThemeAudioUrl(key: string): string {
+  // Return the current theme's default audio URL for preview
+  const themeId = formModel.value.visualTemplate || 'Cyberpunk Elite';
+  const themeMap: Record<string, string> = {
+    'Cyberpunk Elite': 'cyberpunk-elite',
+    'Neon Night': 'neon-night',
+    'Classic Arcade': 'classic-arcade',
+    'Christmas Joy': 'christmas-joy',
+    'Gold Royale': 'gold-royale'
+  };
+  const themeSlug = themeMap[themeId] || 'cyberpunk-elite';
+  
+  const audioTypeMap: Record<string, string> = {
+    bgmUrl: 'bgm.mp3',
+    winSound: 'win.mp3',
+    loseSound: 'lose.mp3',
+    jackpotSound: 'jackpot.mp3'
+  };
+  
+  const filename = audioTypeMap[key] || 'bgm.mp3';
+  return `/api/uploads/templates/${themeSlug}/${filename}`;
+}
+
 interface SchemaItem {
   key: string;
   type: 'string' | 'number' | 'select' | 'color' | 'list' | 'prize-list' | 'vip-grid' | 'embed-code' | 'switch-group' | 'slider' | 'time-limit' | 'dynamic-prob' | 'budget-control' | 'image' | 'radio' | 'collapse-group' | 'switch' | 'file';
@@ -1161,8 +1225,64 @@ function isFontSelect(item: SchemaItem): boolean {
                     </template>
                   </NInput>
                   
+                  <!-- Audio Files with 3 Modes -->
+                  <div v-else-if="item.type === 'file' && isAudioField(item.key)" class="space-y-3">
+                    <NRadioGroup :value="getAudioMode(item.key)" @update:value="(val) => setAudioMode(item.key, val)">
+                      <NSpace vertical>
+                        <NRadio value="theme">
+                          <span class="text-sm">🎵 使用主题默认音效</span>
+                        </NRadio>
+                        <NRadio value="custom">
+                          <span class="text-sm">📤 自定义上传</span>
+                        </NRadio>
+                        <NRadio value="none">
+                          <span class="text-sm">🔇 不使用音效</span>
+                        </NRadio>
+                      </NSpace>
+                    </NRadioGroup>
+                    
+                    <!-- Show current file when custom mode -->
+                    <div v-if="getAudioMode(item.key) === 'custom'" class="space-y-2">
+                      <NInput v-model:value="formModel[item.key]" placeholder="音效文件URL" size="small" readonly>
+                        <template #prefix>🎵</template>
+                      </NInput>
+                      <NSpace size="small">
+                        <NButton 
+                          size="small" 
+                          @click="triggerUpload(item.key, item.key, 'audio', null, '.mp3,.wav,.ogg,.m4a,.aac')">
+                          <template #icon><icon-mdi-upload /></template>
+                          上传音效文件
+                        </NButton>
+                        <NButton 
+                          v-if="formModel[item.key] && formModel[item.key] !== '__THEME_DEFAULT__'" 
+                          size="small" 
+                          quaternary
+                          @click="() => { const audio = new Audio(formModel[item.key]); audio.play(); }">
+                          ▶️ 预览
+                        </NButton>
+                      </NSpace>
+                      <div class="text-xs text-gray-500">
+                        💡 文件将保存到您的专属文件夹，不会影响主题文件
+                      </div>
+                    </div>
+                    
+                    <!-- Show theme preview when theme mode -->
+                    <div v-else-if="getAudioMode(item.key) === 'theme'" class="space-y-2">
+                      <div class="text-sm text-gray-600">
+                        当前主题：{{ formModel.visualTemplate || 'Cyberpunk Elite' }}
+                      </div>
+                      <NButton 
+                        size="small" 
+                        quaternary
+                        @click="() => { const audio = new Audio(getThemeAudioUrl(item.key)); audio.play(); }">
+                        ▶️ 预览主题音效
+                      </NButton>
+                    </div>
+                  </div>
+                  
+                  <!-- Non-Audio Files (Fonts, etc.) -->
                   <NInput v-else-if="item.type === 'file'" v-model:value="formModel[item.key]" :placeholder="getItemLabel(item)" size="large" readonly>
-                    <template #prefix>{{ item.key.includes('Sound') || item.key.includes('bgm') || item.key.includes('Bgm') ? '🎵' : '📄' }}</template>
+                    <template #prefix>📄</template>
                     <template #suffix>
                         <NSpace size="small">
                             <NButton v-if="formModel[item.key]" size="tiny" quaternary type="error" @click="clearAsset(item.key)">
@@ -1171,15 +1291,9 @@ function isFontSelect(item: SchemaItem): boolean {
                             <NButton 
                               size="tiny" 
                               quaternary 
-                              @click="triggerUpload(
-                                item.key, 
-                                item.key, 
-                                item.key.includes('Sound') || item.key.includes('bgm') || item.key.includes('Bgm') ? 'audio' : 'fonts', 
-                                null, 
-                                item.key.includes('Sound') || item.key.includes('bgm') || item.key.includes('Bgm') ? '.mp3,.wav,.ogg,.m4a,.aac' : '.ttf,.otf,.woff,.woff2'
-                              )">
+                              @click="triggerUpload(item.key, item.key, 'fonts', null, '.ttf,.otf,.woff,.woff2')">
                                 <template #icon><icon-mdi-upload /></template>
-                                {{ item.key.includes('Sound') || item.key.includes('bgm') || item.key.includes('Bgm') ? 'Upload' : 'Upload Font' }}
+                                Upload Font
                             </NButton>
                         </NSpace>
                     </template>
