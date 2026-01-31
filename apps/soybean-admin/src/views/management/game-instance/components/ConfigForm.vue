@@ -1301,34 +1301,31 @@ function isFontSelect(item: SchemaItem): boolean {
                                                 </div>
 
                                                 <!-- Color List -->
-                                                <div v-else-if="subItem.type === 'color-list'" class="space-y-2">
-                                                  <NSpace size="small">
-                                                    <div v-for="(color, index) in getColorList(subItem.key)" :key="index" class="relative group">
+                                                <div v-else-if="subItem.type === 'color-list'">
+                                                  <div class="flex flex-wrap gap-2 mb-2">
+                                                    <div v-for="(color, index) in getColorList(subItem.key)" :key="index" class="flex flex-col items-center gap-1">
                                                       <NColorPicker 
                                                         :value="color" 
                                                         @update:value="(val) => updateColor(subItem.key, index, val)"
                                                         :show-alpha="false"
-                                                        size="small"
                                                       />
                                                       <NButton 
-                                                        size="tiny" 
-                                                        circle 
+                                                        size="tiny"
                                                         quaternary 
                                                         type="error"
-                                                        class="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity"
                                                         @click="removeColor(subItem.key, index)">
-                                                        ×
+                                                        删除
                                                       </NButton>
                                                     </div>
-                                                    <NButton 
-                                                      v-if="getColorList(subItem.key).length < 8"
-                                                      size="small" 
-                                                      dashed
-                                                      @click="addColor(subItem.key)">
-                                                      + {{ $t('page.manage.game.effects.confettiAddColor') }}
-                                                    </NButton>
-                                                  </NSpace>
-                                                  <div class="text-xs text-gray-500">
+                                                  </div>
+                                                  <NButton 
+                                                    v-if="getColorList(subItem.key).length < 8"
+                                                    size="small" 
+                                                    dashed
+                                                    @click="addColor(subItem.key)">
+                                                    + {{ $t('page.manage.game.effects.confettiAddColor') }}
+                                                  </NButton>
+                                                  <div class="text-xs text-gray-500 mt-2">
                                                     💡 {{ $t('page.manage.game.effects.confettiMaxColors') }}
                                                   </div>
                                                 </div>
@@ -1491,34 +1488,31 @@ function isFontSelect(item: SchemaItem): boolean {
                     <template #label>
                         <span class="font-bold text-gray-700 text-sm">{{ getItemLabel(item) }}</span>
                     </template>
-                    <div class="space-y-2">
-                      <NSpace size="small">
-                        <div v-for="(color, index) in getColorList(item.key)" :key="index" class="relative group">
+                    <div>
+                      <div class="flex flex-wrap gap-2 mb-2">
+                        <div v-for="(color, index) in getColorList(item.key)" :key="index" class="flex flex-col items-center gap-1">
                           <NColorPicker 
                             :value="color" 
                             @update:value="(val) => updateColor(item.key, index, val)"
                             :show-alpha="false"
-                            size="small"
                           />
                           <NButton 
-                            size="tiny" 
-                            circle 
+                            size="tiny"
                             quaternary 
                             type="error"
-                            class="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity"
                             @click="removeColor(item.key, index)">
-                            ×
+                            删除
                           </NButton>
                         </div>
-                        <NButton 
-                          v-if="getColorList(item.key).length < 8"
-                          size="small" 
-                          dashed
-                          @click="addColor(item.key)">
-                          + {{ $t('page.manage.game.effects.confettiAddColor') }}
-                        </NButton>
-                      </NSpace>
-                      <div class="text-xs text-gray-500">
+                      </div>
+                      <NButton 
+                        v-if="getColorList(item.key).length < 8"
+                        size="small" 
+                        dashed
+                        @click="addColor(item.key)">
+                        + {{ $t('page.manage.game.effects.confettiAddColor') }}
+                      </NButton>
+                      <div class="text-xs text-gray-500 mt-2">
                         💡 {{ $t('page.manage.game.effects.confettiMaxColors') }}
                       </div>
                     </div>
