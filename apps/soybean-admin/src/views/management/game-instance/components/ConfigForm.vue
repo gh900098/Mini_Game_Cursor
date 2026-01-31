@@ -5,7 +5,15 @@ import { useI18n } from 'vue-i18n';
 import { request } from '@/service/request';
 
 // Extend the window object to potentially access parent methods or simply use local logic
-const { t } = useI18n();
+const { t, locale, availableLocales } = useI18n();
+
+// DEBUG: Check i18n status
+console.log('[ConfigForm] i18n Debug:', {
+  currentLocale: locale.value,
+  availableLocales: availableLocales,
+  testTranslation: t('page.manage.game.common.totalProbability'),
+  testKey: 'page.manage.game.common.totalProbability'
+});
 
 const uploadRef = ref<HTMLInputElement | null>(null);
 const currentUploadTarget = ref<{ key: string, item?: any, name?: string, category?: string, accept?: string } | null>(null);
