@@ -84,6 +84,14 @@ export interface SpinWheelConfig {
     // Sound (new)
     enableSound: boolean;
     
+    // Confetti effects
+    enableConfetti: boolean;
+    confettiParticles: number;
+    confettiSpread: number;
+    confettiColors: string;
+    confettiShapeType: 'default' | 'emoji';
+    confettiEmojis: string;
+    
     // Preview mode
     isPreview: boolean;
     
