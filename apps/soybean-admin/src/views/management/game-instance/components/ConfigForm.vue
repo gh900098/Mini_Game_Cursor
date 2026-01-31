@@ -727,7 +727,11 @@ function getOptions(options?: string[] | { label: string; value: string }[]) {
   if (typeof options[0] === 'string') {
     return (options as string[]).map(opt => ({ label: opt, value: opt }));
   }
-  return options as { label: string; value: string }[];
+  // Translate label if it looks like an i18n key
+  return (options as { label: string; value: string }[]).map(opt => ({
+    label: opt.label.includes('.') ? t(opt.label) : opt.label,
+    value: opt.value
+  }));
 }
 
 function moveItem(key: string, index: number | string, direction: 'up' | 'down') {
