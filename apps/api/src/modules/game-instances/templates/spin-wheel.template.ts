@@ -1270,42 +1270,63 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                 
                 // Confetti effect (if enabled)
                 if (config.enableConfetti !== false) {
-                    // Prepare confetti configuration
-                    const confettiConfig = {
-                        particleCount: config.confettiParticles || 150,
-                        spread: config.confettiSpread || 80,
-                        origin: { y: 0.6 },
-                        colors: (config.confettiColors || '#eab308,#ffffff,#3b82f6,#22c55e').split(',')
-                    };
-                    
-                    // Add shapes (emoji or default)
-                    if (config.confettiShapeType === 'emoji' && config.confettiEmojis) {
-                        const emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
-                        if (emojis.length > 0) {
-                            confettiConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 2 }));
-                        }
+                    // Check if confetti library is loaded
+                    if (typeof confetti === 'undefined') {
+                        console.warn('🎉 Confetti library not loaded yet, skipping confetti effect');
+                        return;
                     }
                     
-                    confetti(confettiConfig);
+                    console.log('🎉 Triggering confetti:', {
+                        particles: config.confettiParticles,
+                        spread: config.confettiSpread,
+                        colors: config.confettiColors,
+                        shapeType: config.confettiShapeType,
+                        emojis: config.confettiEmojis
+                    });
                     
-                    setTimeout(() => {
-                        const sideConfig = {
-                            particleCount: (config.confettiParticles || 150) / 1.5,
-                            spread: (config.confettiSpread || 80) + 20,
-                            colors: (config.confettiColors || '#eab308,#ffffff').split(',').slice(0, 2)
+                    try {
+                        // Prepare confetti configuration
+                        const confettiConfig = {
+                            particleCount: config.confettiParticles || 150,
+                            spread: config.confettiSpread || 80,
+                            origin: { y: 0.6 },
+                            colors: (config.confettiColors || '#eab308,#ffffff,#3b82f6,#22c55e').split(',')
                         };
                         
-                        // Add shapes to side bursts too
+                        // Add shapes (emoji or default)
                         if (config.confettiShapeType === 'emoji' && config.confettiEmojis) {
                             const emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
                             if (emojis.length > 0) {
-                                sideConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 2 }));
+                                confettiConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 2 }));
+                                console.log('🎉 Using emoji shapes:', emojis);
                             }
                         }
                         
-                        confetti({ ...sideConfig, origin: { x: 0.2, y: 0.5 } });
-                        confetti({ ...sideConfig, origin: { x: 0.8, y: 0.5 } });
-                    }, 300);
+                        confetti(confettiConfig);
+                        console.log('🎉 Center confetti triggered');
+                        
+                        setTimeout(() => {
+                            const sideConfig = {
+                                particleCount: (config.confettiParticles || 150) / 1.5,
+                                spread: (config.confettiSpread || 80) + 20,
+                                colors: (config.confettiColors || '#eab308,#ffffff').split(',').slice(0, 2)
+                            };
+                            
+                            // Add shapes to side bursts too
+                            if (config.confettiShapeType === 'emoji' && config.confettiEmojis) {
+                                const emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
+                                if (emojis.length > 0) {
+                                    sideConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 2 }));
+                                }
+                            }
+                            
+                            confetti({ ...sideConfig, origin: { x: 0.2, y: 0.5 } });
+                            confetti({ ...sideConfig, origin: { x: 0.8, y: 0.5 } });
+                            console.log('🎉 Side confetti bursts triggered');
+                        }, 300);
+                    } catch (error) {
+                        console.error('🎉 Confetti error:', error);
+                    }
                 }
                 
                 window.parent.postMessage({ type: 'score-submit', score: 10, metadata: { prize: won } }, '*');
