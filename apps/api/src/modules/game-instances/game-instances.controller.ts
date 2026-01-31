@@ -151,7 +151,15 @@ export class GameInstancesController {
                 
                 // Background Gradient (alternative)
                 bgGradStart: config.bgGradStart || '',
-                bgGradEnd: config.bgGradEnd || ''
+                bgGradEnd: config.bgGradEnd || '',
+                
+                // Confetti effects
+                enableConfetti: config.enableConfetti !== false,
+                confettiParticles: config.confettiParticles || 150,
+                confettiSpread: config.confettiSpread || 80,
+                confettiColors: config.confettiColors || '#eab308,#ffffff,#3b82f6,#22c55e',
+                confettiShapeType: config.confettiShapeType || 'default',
+                confettiEmojis: config.confettiEmojis || ''
             };
 
             return generateSpinWheelHtml(templateConfig);
