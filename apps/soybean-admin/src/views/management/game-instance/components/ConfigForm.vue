@@ -1302,19 +1302,27 @@ function isFontSelect(item: SchemaItem): boolean {
 
                                                 <!-- Color List -->
                                                 <div v-else-if="subItem.type === 'color-list'">
-                                                  <div class="flex flex-wrap gap-2 mb-2">
+                                                  <div class="flex flex-wrap gap-3 mb-3">
                                                     <div v-for="(color, index) in getColorList(subItem.key)" :key="index" class="flex flex-col items-center gap-1">
                                                       <NColorPicker 
                                                         :value="color" 
                                                         @update:value="(val) => updateColor(subItem.key, index, val)"
                                                         :show-alpha="false"
-                                                      />
+                                                        :show-preview="true"
+                                                      >
+                                                        <template #label>
+                                                          <div 
+                                                            :style="{ backgroundColor: color }"
+                                                            class="w-12 h-12 rounded-lg border-2 border-gray-300 cursor-pointer hover:border-blue-500 transition-all shadow-sm"
+                                                          />
+                                                        </template>
+                                                      </NColorPicker>
                                                       <NButton 
                                                         size="tiny"
                                                         quaternary 
                                                         type="error"
                                                         @click="removeColor(subItem.key, index)">
-                                                        删除
+                                                        ×
                                                       </NButton>
                                                     </div>
                                                   </div>
@@ -1489,19 +1497,27 @@ function isFontSelect(item: SchemaItem): boolean {
                         <span class="font-bold text-gray-700 text-sm">{{ getItemLabel(item) }}</span>
                     </template>
                     <div>
-                      <div class="flex flex-wrap gap-2 mb-2">
+                      <div class="flex flex-wrap gap-3 mb-3">
                         <div v-for="(color, index) in getColorList(item.key)" :key="index" class="flex flex-col items-center gap-1">
                           <NColorPicker 
                             :value="color" 
                             @update:value="(val) => updateColor(item.key, index, val)"
                             :show-alpha="false"
-                          />
+                            :show-preview="true"
+                          >
+                            <template #label>
+                              <div 
+                                :style="{ backgroundColor: color }"
+                                class="w-12 h-12 rounded-lg border-2 border-gray-300 cursor-pointer hover:border-blue-500 transition-all shadow-sm"
+                              />
+                            </template>
+                          </NColorPicker>
                           <NButton 
                             size="tiny"
                             quaternary 
                             type="error"
                             @click="removeColor(item.key, index)">
-                            删除
+                            ×
                           </NButton>
                         </div>
                       </div>
