@@ -50,30 +50,9 @@ export class SeedService {
         // Re-seed the game templates to get fresh schemas
         await this.seedGames();
         
-        // Get the latest schema from Spin Wheel game template
-        const spinWheelGame = await this.gameRepository.findOne({
-            where: { slug: 'spin-wheel' }
-        });
-        
-        if (!spinWheelGame || !spinWheelGame.configSchema) {
-            this.logger.warn('Spin Wheel game template not found or has no schema');
-            return { message: 'Game templates refreshed successfully', updated: 1 };
-        }
-        
-        // Update all existing Spin Wheel game instances with the latest schema
-        const instances = await this.instanceRepository.find({
-            where: { gameId: spinWheelGame.id }
-        });
-        
-        let updatedCount = 0;
-        for (const instance of instances) {
-            instance.configSchema = spinWheelGame.configSchema;
-            await this.instanceRepository.save(instance);
-            updatedCount++;
-        }
-        
-        this.logger.log(`Updated ${updatedCount} game instances with latest schema`);
-        return { message: 'Game templates and instances refreshed successfully', updated: updatedCount };
+        this.logger.log('Game templates refreshed with latest schemas');
+        this.logger.log('Admin panel will fetch the latest schema on next load');
+        return { message: 'Game templates refreshed successfully', updated: 1 };
     }
 
     private async seedPermissions(): Promise<void> {
