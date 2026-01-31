@@ -754,14 +754,14 @@ function isFontSelect(item: SchemaItem): boolean {
                  <!-- Stats Header -->
                  <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100 flex-wrap">
                      <div class="flex flex-col min-w-120px">
-                         <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">TOTAL PROBABILITY TEST</span>
+                         <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">{{ t('page.manage.game.common.totalProbability') }}</span>
                          <span :class="['text-2xl font-black tabular-nums', getTotalChance('prizeList') === 100 ? 'text-green-500' : 'text-red-500']">
                              {{ getTotalChance('prizeList') }}%
                          </span>
                      </div>
                       <div class="w-px h-10 bg-gray-200 hidden sm:block"></div>
                       <div class="flex flex-col min-w-150px">
-                         <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">EXPECTED VALUE TEST</span>
+                         <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">{{ t('page.manage.game.common.expectedValue') }}</span>
                          <span class="text-2xl font-black text-gray-700 tabular-nums">${{ getExpectedValue('prizeList') }}</span>
                      </div>
                      <div class="flex-1"></div>
@@ -776,7 +776,7 @@ function isFontSelect(item: SchemaItem): boolean {
                          </div>
                         
                         <NButton dashed size="medium" class="rounded-lg px-4 font-bold" @click="autoBalance('prizeList')">
-                            ⚖️ BALANCE TEST
+                            ⚖️ {{ t('page.manage.game.common.balance') }}
                         </NButton>
                         <NButton type="primary" size="medium" class="rounded-lg px-6 font-bold" @click="addPrizeItem('prizeList')">
                             + {{ t('common.add') }}
