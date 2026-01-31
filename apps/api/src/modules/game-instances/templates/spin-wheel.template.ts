@@ -1290,7 +1290,11 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                             particleCount: config.confettiParticles || 150,
                             spread: config.confettiSpread || 80,
                             origin: { y: 0.6 },
-                            colors: (config.confettiColors || '#eab308,#ffffff,#3b82f6,#22c55e').split(',')
+                            colors: (config.confettiColors || '#eab308,#ffffff,#3b82f6,#22c55e').split(','),
+                            startVelocity: 30,
+                            gravity: 1,
+                            drift: 0,
+                            ticks: 200
                         };
                         
                         // Add shapes (emoji or default)
@@ -1298,8 +1302,9 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                             const emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
                             if (emojis.length > 0) {
                                 try {
-                                    confettiConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 2 }));
-                                    console.log('🎉 Using emoji shapes:', emojis);
+                                    // Increase scalar to make emoji bigger and more visible
+                                    confettiConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 4 }));
+                                    console.log('🎉 Using emoji shapes (scalar 4):', emojis);
                                 } catch (err) {
                                     console.warn('🎉 Failed to create emoji shapes, using default shapes', err);
                                 }
@@ -1309,13 +1314,17 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                         }
                         
                         confetti(confettiConfig);
-                        console.log('🎉 Center confetti triggered');
+                        console.log('🎉 Center confetti triggered', confettiConfig);
                         
                         setTimeout(() => {
                             const sideConfig = {
                                 particleCount: (config.confettiParticles || 150) / 1.5,
                                 spread: (config.confettiSpread || 80) + 20,
-                                colors: (config.confettiColors || '#eab308,#ffffff').split(',').slice(0, 2)
+                                colors: (config.confettiColors || '#eab308,#ffffff').split(',').slice(0, 2),
+                                startVelocity: 30,
+                                gravity: 1,
+                                drift: 0,
+                                ticks: 200
                             };
                             
                             // Add shapes to side bursts too
@@ -1323,7 +1332,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                                 const emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
                                 if (emojis.length > 0) {
                                     try {
-                                        sideConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 2 }));
+                                        sideConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 4 }));
                                     } catch (err) {
                                         console.warn('🎉 Failed to create side emoji shapes', err);
                                     }

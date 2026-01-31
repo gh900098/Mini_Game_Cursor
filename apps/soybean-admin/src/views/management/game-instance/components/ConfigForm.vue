@@ -271,7 +271,7 @@ function toggleEmoji(key: string, emoji: string) {
   } else {
     // Not selected, add it
     if (emojis.length >= 10) {
-      window.$message?.warning($t('page.manage.game.effects.confettiMaxEmojis'));
+      window.$message?.warning(t('page.manage.game.effects.confettiMaxEmojis'));
       return;
     }
     emojis.push(emoji);
