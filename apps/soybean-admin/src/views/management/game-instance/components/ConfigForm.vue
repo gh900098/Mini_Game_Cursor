@@ -1215,7 +1215,11 @@ function isFontSelect(item: SchemaItem): boolean {
                                                   </NRadioGroup>
                                                   
                                                   <div v-if="getAudioMode(subItem.key) === 'custom'" class="space-y-2">
-                                                    <NInput v-model:value="formModel[subItem.key]" placeholder="音效文件URL" size="small" readonly>
+                                                    <NInput 
+                                                      :value="formModel[subItem.key] === '__CUSTOM_PENDING__' ? '' : formModel[subItem.key]" 
+                                                      placeholder="请上传音效文件" 
+                                                      size="small" 
+                                                      readonly>
                                                       <template #prefix>🎵</template>
                                                     </NInput>
                                                     <NSpace size="small">
@@ -1353,7 +1357,11 @@ function isFontSelect(item: SchemaItem): boolean {
                     
                     <!-- Show current file when custom mode -->
                     <div v-if="getAudioMode(item.key) === 'custom'" class="space-y-2">
-                      <NInput v-model:value="formModel[item.key]" placeholder="音效文件URL" size="small" readonly>
+                      <NInput 
+                        :value="formModel[item.key] === '__CUSTOM_PENDING__' ? '' : formModel[item.key]" 
+                        placeholder="请上传音效文件" 
+                        size="small" 
+                        readonly>
                         <template #prefix>🎵</template>
                       </NInput>
                       <NSpace size="small">
@@ -1428,5 +1436,5 @@ function isFontSelect(item: SchemaItem): boolean {
     </template>
   </NForm>
   
-  <input type="file" ref="uploadRef" class="hidden" :accept="currentUploadTarget?.accept || 'image/*'" @change="handleFileChange" />
+  <input type="file" ref="uploadRef" class="hidden" :accept="currentUploadTarget?.accept || 'image/*'" :key="currentUploadTarget?.accept" @change="handleFileChange" />
 </template>
