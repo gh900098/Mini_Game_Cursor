@@ -195,7 +195,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
     <title>${cfg.instanceName}</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     ${isGoogleFont ? `<link href="${googleFontUrl}" rel="stylesheet">` : ''}
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"><\/script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"><\/script>
     <style>
         ${fontCss}
         :root {
@@ -1294,12 +1294,18 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                         };
                         
                         // Add shapes (emoji or default)
-                        if (config.confettiShapeType === 'emoji' && config.confettiEmojis) {
+                        if (config.confettiShapeType === 'emoji' && config.confettiEmojis && typeof confetti.shapeFromText === 'function') {
                             const emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
                             if (emojis.length > 0) {
-                                confettiConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 2 }));
-                                console.log('🎉 Using emoji shapes:', emojis);
+                                try {
+                                    confettiConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 2 }));
+                                    console.log('🎉 Using emoji shapes:', emojis);
+                                } catch (err) {
+                                    console.warn('🎉 Failed to create emoji shapes, using default shapes', err);
+                                }
                             }
+                        } else if (config.confettiShapeType === 'emoji') {
+                            console.warn('🎉 confetti.shapeFromText not available, using default shapes');
                         }
                         
                         confetti(confettiConfig);
@@ -1313,10 +1319,14 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                             };
                             
                             // Add shapes to side bursts too
-                            if (config.confettiShapeType === 'emoji' && config.confettiEmojis) {
+                            if (config.confettiShapeType === 'emoji' && config.confettiEmojis && typeof confetti.shapeFromText === 'function') {
                                 const emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
                                 if (emojis.length > 0) {
-                                    sideConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 2 }));
+                                    try {
+                                        sideConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 2 }));
+                                    } catch (err) {
+                                        console.warn('🎉 Failed to create side emoji shapes', err);
+                                    }
                                 }
                             }
                             
