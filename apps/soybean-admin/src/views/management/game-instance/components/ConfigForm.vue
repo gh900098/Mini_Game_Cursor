@@ -204,6 +204,114 @@ function getPreviewButtonText(key: string, isTheme: boolean): string {
   return isTheme ? '▶️ 预览主题音效' : '▶️ 预览';
 }
 
+// Color list helpers
+function getColorList(key: string): string[] {
+  const value = formModel.value[key];
+  if (!value || value === '') return [];
+  return value.split(',').map((c: string) => c.trim()).filter((c: string) => c);
+}
+
+function setColorList(key: string, colors: string[]) {
+  formModel.value[key] = colors.join(',');
+}
+
+function addColor(key: string, color: string = '#ff0000') {
+  const colors = getColorList(key);
+  if (colors.length >= 8) {
+    window.$message?.warning($t('page.manage.game.effects.confettiMaxColors'));
+    return;
+  }
+  colors.push(color);
+  setColorList(key, colors);
+}
+
+function removeColor(key: string, index: number) {
+  const colors = getColorList(key);
+  colors.splice(index, 1);
+  setColorList(key, colors);
+}
+
+function updateColor(key: string, index: number, color: string) {
+  const colors = getColorList(key);
+  colors[index] = color;
+  setColorList(key, colors);
+}
+
+// Emoji list helpers
+const presetEmojis = ['🎉', '🎊', '🎈', '🎁', '⭐', '🌟', '💫', '✨', '❤️', '💙', '💚', '💛', '💜', '🧡', '🏆', '🥇', '👑', '💎', '🔥', '🎯'];
+
+function getEmojiList(key: string): string[] {
+  const value = formModel.value[key];
+  if (!value || value === '') return [];
+  return value.split(',').map((e: string) => e.trim()).filter((e: string) => e);
+}
+
+function setEmojiList(key: string, emojis: string[]) {
+  formModel.value[key] = emojis.join(',');
+}
+
+function toggleEmoji(key: string, emoji: string) {
+  const emojis = getEmojiList(key);
+  const index = emojis.indexOf(emoji);
+  
+  if (index >= 0) {
+    // Already selected, remove it
+    emojis.splice(index, 1);
+  } else {
+    // Not selected, add it
+    if (emojis.length >= 10) {
+      window.$message?.warning($t('page.manage.game.effects.confettiMaxEmojis'));
+      return;
+    }
+    emojis.push(emoji);
+  }
+  
+  setEmojiList(key, emojis);
+}
+
+function isEmojiSelected(key: string, emoji: string): boolean {
+  const emojis = getEmojiList(key);
+  return emojis.includes(emoji);
+}
+
+// Confetti preview
+function previewConfetti(key: string) {
+  const colors = getColorList('confettiColors');
+  const shapeType = formModel.value['confettiShapeType'] || 'default';
+  const emojis = getEmojiList('confettiEmojis');
+  
+  // Load confetti library if not already loaded
+  if (typeof (window as any).confetti === 'undefined') {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
+    script.onload = () => triggerConfettiPreview(colors, shapeType, emojis);
+    document.head.appendChild(script);
+  } else {
+    triggerConfettiPreview(colors, shapeType, emojis);
+  }
+}
+
+function triggerConfettiPreview(colors: string[], shapeType: string, emojis: string[]) {
+  const confetti = (window as any).confetti;
+  
+  const config: any = {
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 }
+  };
+  
+  if (colors.length > 0) {
+    config.colors = colors;
+  }
+  
+  if (shapeType === 'emoji' && emojis.length > 0) {
+    config.shapes = emojis.map((emoji: string) => confetti.shapeFromText({ text: emoji }));
+    config.scalar = 2; // Make emojis bigger
+  }
+  
+  confetti(config);
+}
+
 interface SchemaItem {
   key: string;
   type: 'string' | 'number' | 'select' | 'color' | 'list' | 'prize-list' | 'vip-grid' | 'embed-code' | 'switch-group' | 'slider' | 'time-limit' | 'dynamic-prob' | 'budget-control' | 'image' | 'radio' | 'collapse-group' | 'switch' | 'file';
@@ -1181,6 +1289,67 @@ function isFontSelect(item: SchemaItem): boolean {
                                                     </NInputNumber>
                                                 </div>
 
+                                                <!-- Color List -->
+                                                <div v-else-if="subItem.type === 'color-list'" class="space-y-2">
+                                                  <NSpace size="small">
+                                                    <div v-for="(color, index) in getColorList(subItem.key)" :key="index" class="relative group">
+                                                      <NColorPicker 
+                                                        :value="color" 
+                                                        @update:value="(val) => updateColor(subItem.key, index, val)"
+                                                        :show-alpha="false"
+                                                        size="small"
+                                                      />
+                                                      <NButton 
+                                                        size="tiny" 
+                                                        circle 
+                                                        quaternary 
+                                                        type="error"
+                                                        class="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        @click="removeColor(subItem.key, index)">
+                                                        ×
+                                                      </NButton>
+                                                    </div>
+                                                    <NButton 
+                                                      v-if="getColorList(subItem.key).length < 8"
+                                                      size="small" 
+                                                      dashed
+                                                      @click="addColor(subItem.key)">
+                                                      + {{ $t('page.manage.game.effects.confettiAddColor') }}
+                                                    </NButton>
+                                                  </NSpace>
+                                                  <div class="text-xs text-gray-500">
+                                                    💡 {{ $t('page.manage.game.effects.confettiMaxColors') }}
+                                                  </div>
+                                                </div>
+
+                                                <!-- Emoji List -->
+                                                <div v-else-if="subItem.type === 'emoji-list'" class="space-y-3">
+                                                  <div class="flex flex-wrap gap-2">
+                                                    <div 
+                                                      v-for="emoji in presetEmojis" 
+                                                      :key="emoji"
+                                                      @click="toggleEmoji(subItem.key, emoji)"
+                                                      :class="[
+                                                        'w-10 h-10 flex items-center justify-center text-2xl cursor-pointer rounded border-2 transition-all',
+                                                        isEmojiSelected(subItem.key, emoji) 
+                                                          ? 'border-blue-500 bg-blue-50 scale-110' 
+                                                          : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'
+                                                      ]">
+                                                      {{ emoji }}
+                                                    </div>
+                                                  </div>
+                                                  <div class="text-xs text-gray-500">
+                                                    💡 {{ $t('page.manage.game.effects.confettiMaxEmojis') }}
+                                                  </div>
+                                                  <NButton 
+                                                    type="primary" 
+                                                    ghost 
+                                                    size="small"
+                                                    @click="previewConfetti(subItem.key)">
+                                                    🎬 {{ $t('page.manage.game.effects.confettiPreview') }}
+                                                  </NButton>
+                                                </div>
+
                                                 <NSelect 
                                                   v-else-if="subItem.type === 'select'" 
                                                   v-model:value="formModel[subItem.key]" 
@@ -1303,6 +1472,77 @@ function isFontSelect(item: SchemaItem): boolean {
                         <NInputNumber v-model:value="formModel[item.key]" size="small" class="w-20" :show-button="false">
                             <template v-if="item.suffix" #suffix>{{ item.suffix }}</template>
                         </NInputNumber>
+                    </div>
+                 </NFormItem>
+
+                 <!-- Color List -->
+                 <NFormItem v-else-if="item.type === 'color-list'" :label="getItemLabel(item)" :path="item.key">
+                    <template #label>
+                        <span class="font-bold text-gray-700 text-sm">{{ getItemLabel(item) }}</span>
+                    </template>
+                    <div class="space-y-2">
+                      <NSpace size="small">
+                        <div v-for="(color, index) in getColorList(item.key)" :key="index" class="relative group">
+                          <NColorPicker 
+                            :value="color" 
+                            @update:value="(val) => updateColor(item.key, index, val)"
+                            :show-alpha="false"
+                            size="small"
+                          />
+                          <NButton 
+                            size="tiny" 
+                            circle 
+                            quaternary 
+                            type="error"
+                            class="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            @click="removeColor(item.key, index)">
+                            ×
+                          </NButton>
+                        </div>
+                        <NButton 
+                          v-if="getColorList(item.key).length < 8"
+                          size="small" 
+                          dashed
+                          @click="addColor(item.key)">
+                          + {{ $t('page.manage.game.effects.confettiAddColor') }}
+                        </NButton>
+                      </NSpace>
+                      <div class="text-xs text-gray-500">
+                        💡 {{ $t('page.manage.game.effects.confettiMaxColors') }}
+                      </div>
+                    </div>
+                 </NFormItem>
+
+                 <!-- Emoji List -->
+                 <NFormItem v-else-if="item.type === 'emoji-list'" :label="getItemLabel(item)" :path="item.key">
+                    <template #label>
+                        <span class="font-bold text-gray-700 text-sm">{{ getItemLabel(item) }}</span>
+                    </template>
+                    <div class="space-y-3">
+                      <div class="flex flex-wrap gap-2">
+                        <div 
+                          v-for="emoji in presetEmojis" 
+                          :key="emoji"
+                          @click="toggleEmoji(item.key, emoji)"
+                          :class="[
+                            'w-10 h-10 flex items-center justify-center text-2xl cursor-pointer rounded border-2 transition-all',
+                            isEmojiSelected(item.key, emoji) 
+                              ? 'border-blue-500 bg-blue-50 scale-110' 
+                              : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'
+                          ]">
+                          {{ emoji }}
+                        </div>
+                      </div>
+                      <div class="text-xs text-gray-500">
+                        💡 {{ $t('page.manage.game.effects.confettiMaxEmojis') }}
+                      </div>
+                      <NButton 
+                        type="primary" 
+                        ghost 
+                        size="small"
+                        @click="previewConfetti(item.key)">
+                        🎬 {{ $t('page.manage.game.effects.confettiPreview') }}
+                      </NButton>
                     </div>
                  </NFormItem>
 

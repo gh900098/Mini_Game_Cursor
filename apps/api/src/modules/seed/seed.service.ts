@@ -401,6 +401,8 @@ export class SeedService {
                     confettiParticles: 200,
                     confettiSpread: 70,
                     confettiColors: '#ff0000,#00ff00,#0000ff,#ffff00,#ff00ff',
+                    confettiShapeType: 'default',
+                    confettiEmojis: '🎉,⭐,❤️',
 
                     // Cyberpunk Theme Colors
                     neonCyan: '#00f5ff',
@@ -971,7 +973,9 @@ export class SeedService {
                                 items: [
                                     { key: 'confettiParticles', type: 'slider', label: 'page.manage.game.effects.confettiParticles', min: 50, max: 500, step: 50, default: 200, span: 12 },
                                     { key: 'confettiSpread', type: 'slider', label: 'page.manage.game.effects.confettiSpread', min: 30, max: 180, step: 10, suffix: '°', default: 70, span: 12 },
-                                    { key: 'confettiColors', type: 'text', label: 'page.manage.game.effects.confettiColors', default: '#ff0000,#00ff00,#0000ff,#ffff00,#ff00ff', span: 24 }
+                                    { key: 'confettiColors', type: 'color-list', label: 'page.manage.game.effects.confettiColors', default: '#ff0000,#00ff00,#0000ff,#ffff00,#ff00ff', span: 24 },
+                                    { key: 'confettiShapeType', type: 'radio', label: 'page.manage.game.effects.confettiShapeType', options: ['default', 'emoji'], default: 'default', span: 24 },
+                                    { key: 'confettiEmojis', type: 'emoji-list', label: 'page.manage.game.effects.confettiEmojis', default: '🎉,⭐,❤️', span: 24, condition: { key: 'confettiShapeType', value: 'emoji' } }
                                 ]
                             },
                             {

@@ -1262,26 +1262,41 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                 
                 // Confetti effect (if enabled)
                 if (config.enableConfetti !== false) {
-                    confetti({
+                    // Prepare confetti configuration
+                    const confettiConfig = {
                         particleCount: config.confettiParticles || 150,
                         spread: config.confettiSpread || 80,
                         origin: { y: 0.6 },
                         colors: (config.confettiColors || '#eab308,#ffffff,#3b82f6,#22c55e').split(',')
-                    });
+                    };
+                    
+                    // Add shapes (emoji or default)
+                    if (config.confettiShapeType === 'emoji' && config.confettiEmojis) {
+                        const emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
+                        if (emojis.length > 0) {
+                            confettiConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 2 }));
+                        }
+                    }
+                    
+                    confetti(confettiConfig);
                     
                     setTimeout(() => {
-                        confetti({
+                        const sideConfig = {
                             particleCount: (config.confettiParticles || 150) / 1.5,
                             spread: (config.confettiSpread || 80) + 20,
-                            origin: { x: 0.2, y: 0.5 },
                             colors: (config.confettiColors || '#eab308,#ffffff').split(',').slice(0, 2)
-                        });
-                        confetti({
-                            particleCount: (config.confettiParticles || 150) / 1.5,
-                            spread: (config.confettiSpread || 80) + 20,
-                            origin: { x: 0.8, y: 0.5 },
-                            colors: (config.confettiColors || '#eab308,#ffffff').split(',').slice(0, 2)
-                        });
+                        };
+                        
+                        // Add shapes to side bursts too
+                        if (config.confettiShapeType === 'emoji' && config.confettiEmojis) {
+                            const emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
+                            if (emojis.length > 0) {
+                                sideConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 2 }));
+                            }
+                        }
+                        
+                        confetti({ ...sideConfig, origin: { x: 0.2, y: 0.5 } });
+                        confetti({ ...sideConfig, origin: { x: 0.8, y: 0.5 } });
                     }, 300);
                 }
                 
