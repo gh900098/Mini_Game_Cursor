@@ -116,8 +116,8 @@ function setAudioMode(key: string, mode: 'theme' | 'custom' | 'none') {
   } else if (mode === 'theme') {
     // Set to a placeholder indicating theme default
     formModel.value[key] = '__THEME_DEFAULT__';
-  } else if (mode === 'custom' && !formModel.value[key]) {
-    // Initialize with empty string for custom mode
+  } else if (mode === 'custom') {
+    // Always clear when switching to custom mode - user must upload
     formModel.value[key] = '';
   }
 }

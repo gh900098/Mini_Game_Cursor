@@ -131,16 +131,6 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         }
     ` : '');
 
-    // Audio URL resolver - Handle __THEME_DEFAULT__ special value
-    function resolveAudioUrl(audioUrl: string | undefined, themeTemplate: string): string {
-        if (!audioUrl || audioUrl === '') return '';
-        if (audioUrl === '__THEME_DEFAULT__') {
-            // Return theme default URL (will be resolved runtime)
-            return '';  // Empty means use theme default in runtime
-        }
-        return audioUrl;
-    }
-    
     // Get theme template slug for default audio
     const visualTemplate = (cfg.rawConfig?.visualTemplate as string) || 'Cyberpunk Elite';
     const themeSlugMap: Record<string, string> = {
@@ -152,11 +142,27 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
     };
     const themeSlug = themeSlugMap[visualTemplate] || 'cyberpunk-elite';
     
-    // Resolve audio URLs
-    const resolvedBgmUrl = resolveAudioUrl(cfg.rawConfig?.bgmUrl, themeSlug) || `/api/uploads/templates/${themeSlug}/bgm.mp3`;
-    const resolvedWinSound = resolveAudioUrl(cfg.rawConfig?.winSound, themeSlug) || `/api/uploads/templates/${themeSlug}/win.mp3`;
-    const resolvedLoseSound = resolveAudioUrl(cfg.rawConfig?.loseSound, themeSlug) || `/api/uploads/templates/${themeSlug}/lose.mp3`;
-    const resolvedJackpotSound = resolveAudioUrl(cfg.rawConfig?.jackpotSound, themeSlug) || `/api/uploads/templates/${themeSlug}/jackpot.mp3`;
+    // Audio URL resolver - Handle three modes properly
+    function resolveAudioUrl(audioUrl: string | undefined, themeSlug: string, audioType: string): string {
+        // Mode 1: Explicitly empty string = User chose "none" - no audio
+        if (audioUrl === '') {
+            return '';
+        }
+        
+        // Mode 2: __THEME_DEFAULT__ or undefined = Use theme default
+        if (!audioUrl || audioUrl === '__THEME_DEFAULT__') {
+            return `/api/uploads/templates/${themeSlug}/${audioType}`;
+        }
+        
+        // Mode 3: Has URL = User uploaded custom audio
+        return audioUrl;
+    }
+    
+    // Resolve audio URLs - preserve empty strings (mode: none)
+    const resolvedBgmUrl = resolveAudioUrl(cfg.rawConfig?.bgmUrl, themeSlug, 'bgm.mp3');
+    const resolvedWinSound = resolveAudioUrl(cfg.rawConfig?.winSound, themeSlug, 'win.mp3');
+    const resolvedLoseSound = resolveAudioUrl(cfg.rawConfig?.loseSound, themeSlug, 'lose.mp3');
+    const resolvedJackpotSound = resolveAudioUrl(cfg.rawConfig?.jackpotSound, themeSlug, 'jackpot.mp3');
     
     // Override config with resolved URLs
     cfg.rawConfig = {
