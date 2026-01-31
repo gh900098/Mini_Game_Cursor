@@ -149,12 +149,17 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
             return '';
         }
         
-        // Mode 2: __THEME_DEFAULT__ or undefined = Use theme default
+        // Mode 2: __CUSTOM_PENDING__ = User chose custom but hasn't uploaded yet - no audio
+        if (audioUrl === '__CUSTOM_PENDING__') {
+            return '';
+        }
+        
+        // Mode 3: __THEME_DEFAULT__ or undefined = Use theme default
         if (!audioUrl || audioUrl === '__THEME_DEFAULT__') {
             return `/api/uploads/templates/${themeSlug}/${audioType}`;
         }
         
-        // Mode 3: Has URL = User uploaded custom audio
+        // Mode 4: Has URL = User uploaded custom audio
         return audioUrl;
     }
     

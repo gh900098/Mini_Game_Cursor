@@ -117,8 +117,9 @@ function setAudioMode(key: string, mode: 'theme' | 'custom' | 'none') {
     // Set to a placeholder indicating theme default
     formModel.value[key] = '__THEME_DEFAULT__';
   } else if (mode === 'custom') {
-    // Always clear when switching to custom mode - user must upload
-    formModel.value[key] = '';
+    // Set placeholder to indicate custom mode (not empty = shows volume/loop options)
+    // This way condition { bgmUrl != '' } will show options even before upload
+    formModel.value[key] = '__CUSTOM_PENDING__';
   }
 }
 
@@ -1228,7 +1229,7 @@ function isFontSelect(item: SchemaItem): boolean {
                                                         上传音效文件
                                                       </NButton>
                                                       <NButton 
-                                                        v-if="formModel[subItem.key] && formModel[subItem.key] !== '__THEME_DEFAULT__'" 
+                                                        v-if="formModel[subItem.key] && formModel[subItem.key] !== '__THEME_DEFAULT__' && formModel[subItem.key] !== '__CUSTOM_PENDING__'" 
                                                         size="small" 
                                                         quaternary
                                                         @click="() => toggleAudioPreview(`custom_${subItem.key}`, formModel[subItem.key])">
@@ -1366,7 +1367,7 @@ function isFontSelect(item: SchemaItem): boolean {
                           上传音效文件
                         </NButton>
                         <NButton 
-                          v-if="formModel[item.key] && formModel[item.key] !== '__THEME_DEFAULT__'" 
+                          v-if="formModel[item.key] && formModel[item.key] !== '__THEME_DEFAULT__' && formModel[item.key] !== '__CUSTOM_PENDING__'" 
                           size="small" 
                           quaternary
                           @click="() => toggleAudioPreview(`custom_${item.key}`, formModel[item.key])">
