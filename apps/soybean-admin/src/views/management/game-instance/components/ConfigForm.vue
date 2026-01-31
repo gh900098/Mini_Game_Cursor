@@ -90,22 +90,19 @@ function isAudioField(key: string): boolean {
          key.toLowerCase().includes('audio');
 }
 
-function initAudioMode(key: string) {
-  if (!audioModes.value[key]) {
-    const value = formModel.value[key];
-    if (!value || value === '' || value === null) {
-      audioModes.value[key] = 'none';
-    } else if (value === '__THEME_DEFAULT__' || value.includes('/templates/')) {
-      audioModes.value[key] = 'theme';
-    } else {
-      audioModes.value[key] = 'custom';
-    }
-  }
-}
-
 function getAudioMode(key: string): 'theme' | 'custom' | 'none' {
-  initAudioMode(key);
-  return audioModes.value[key];
+  // Always derive mode from formModel current value (reactive!)
+  const value = formModel.value[key];
+  
+  if (!value || value === '' || value === null) {
+    return 'none';
+  } else if (value === '__THEME_DEFAULT__' || value.includes('/templates/')) {
+    return 'theme';
+  } else if (value === '__CUSTOM_PENDING__' || !value.startsWith('__')) {
+    return 'custom';
+  }
+  
+  return 'none';
 }
 
 function setAudioMode(key: string, mode: 'theme' | 'custom' | 'none') {
@@ -1224,7 +1221,7 @@ function isFontSelect(item: SchemaItem): boolean {
                                                     <NSpace size="small">
                                                       <NButton 
                                                         size="small" 
-                                                        @click="triggerUpload(subItem.key, subItem.key, 'audio', null, '.mp3,.wav,.ogg,.m4a,.aac')">
+                                                        @click="triggerUpload(subItem.key, subItem.key, 'audio', null, 'audio/*')">
                                                         <template #icon><icon-mdi-upload /></template>
                                                         上传音效文件
                                                       </NButton>
@@ -1362,7 +1359,7 @@ function isFontSelect(item: SchemaItem): boolean {
                       <NSpace size="small">
                         <NButton 
                           size="small" 
-                          @click="triggerUpload(item.key, item.key, 'audio', null, '.mp3,.wav,.ogg,.m4a,.aac')">
+                          @click="triggerUpload(item.key, item.key, 'audio', null, 'audio/*')">
                           <template #icon><icon-mdi-upload /></template>
                           上传音效文件
                         </NButton>
