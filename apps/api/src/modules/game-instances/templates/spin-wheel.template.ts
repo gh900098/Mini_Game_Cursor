@@ -1299,12 +1299,23 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                         
                         // Add shapes (emoji or default)
                         if (config.confettiShapeType === 'emoji' && config.confettiEmojis && typeof confetti.shapeFromText === 'function') {
-                            const emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
+                            let emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
+                            
+                            // Remove variation selectors (U+FE0F, U+FE0E) that might break shapeFromText
+                            emojis = emojis.map(e => e.replace(/[\uFE0E\uFE0F]/g, ''));
+                            
                             if (emojis.length > 0) {
                                 try {
-                                    // Increase scalar to make emoji bigger and more visible
-                                    confettiConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 4 }));
-                                    console.log('🎉 Using emoji shapes (scalar 4):', emojis);
+                                    // Create text shapes - NOTE: canvas-confetti might not render these correctly
+                                    const emojiShapes = emojis.map(emoji => {
+                                        const shape = confetti.shapeFromText({ text: emoji, scalar: 3 });
+                                        console.log('Created shape for:', emoji, shape);
+                                        return shape;
+                                    });
+                                    
+                                    confettiConfig.shapes = emojiShapes;
+                                    confettiConfig.scalar = 3; // Make shapes bigger
+                                    console.log('🎉 Using emoji shapes (cleaned):', emojis, 'shapes:', emojiShapes);
                                 } catch (err) {
                                     console.warn('🎉 Failed to create emoji shapes, using default shapes', err);
                                 }
@@ -1329,10 +1340,13 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                             
                             // Add shapes to side bursts too
                             if (config.confettiShapeType === 'emoji' && config.confettiEmojis && typeof confetti.shapeFromText === 'function') {
-                                const emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
+                                let emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
+                                emojis = emojis.map(e => e.replace(/[\uFE0E\uFE0F]/g, ''));
+                                
                                 if (emojis.length > 0) {
                                     try {
-                                        sideConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 4 }));
+                                        sideConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 3 }));
+                                        sideConfig.scalar = 3;
                                     } catch (err) {
                                         console.warn('🎉 Failed to create side emoji shapes', err);
                                     }
