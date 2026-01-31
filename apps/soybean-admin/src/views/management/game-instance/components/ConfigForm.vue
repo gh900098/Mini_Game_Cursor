@@ -1144,7 +1144,7 @@ function isFontSelect(item: SchemaItem): boolean {
                                                 <!-- Audio Files with 3 Modes (nested in collapse-group) -->
                                                 <div v-else-if="subItem.type === 'file' && isAudioField(subItem.key)" class="space-y-3">
                                                   <NRadioGroup :value="getAudioMode(subItem.key)" @update:value="(val) => setAudioMode(subItem.key, val)">
-                                                    <NSpace vertical>
+                                                    <NSpace>
                                                       <NRadio value="theme">
                                                         <span class="text-sm">🎵 使用主题默认音效</span>
                                                       </NRadio>
@@ -1281,7 +1281,7 @@ function isFontSelect(item: SchemaItem): boolean {
                   <!-- Audio Files with 3 Modes -->
                   <div v-else-if="item.type === 'file' && isAudioField(item.key)" class="space-y-3">
                     <NRadioGroup :value="getAudioMode(item.key)" @update:value="(val) => setAudioMode(item.key, val)">
-                      <NSpace vertical>
+                      <NSpace>
                         <NRadio value="theme">
                           <span class="text-sm">🎵 使用主题默认音效</span>
                         </NRadio>
