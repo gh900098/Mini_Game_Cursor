@@ -131,6 +131,42 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         }
     ` : '');
 
+    // Audio URL resolver - Handle __THEME_DEFAULT__ special value
+    function resolveAudioUrl(audioUrl: string | undefined, themeTemplate: string): string {
+        if (!audioUrl || audioUrl === '') return '';
+        if (audioUrl === '__THEME_DEFAULT__') {
+            // Return theme default URL (will be resolved runtime)
+            return '';  // Empty means use theme default in runtime
+        }
+        return audioUrl;
+    }
+    
+    // Get theme template slug for default audio
+    const visualTemplate = (cfg.rawConfig?.visualTemplate as string) || 'Cyberpunk Elite';
+    const themeSlugMap: Record<string, string> = {
+        'Cyberpunk Elite': 'cyberpunk-elite',
+        'Neon Night': 'neon-night',
+        'Classic Arcade': 'classic-arcade',
+        'Christmas Joy': 'christmas-joy',
+        'Gold Royale': 'gold-royale'
+    };
+    const themeSlug = themeSlugMap[visualTemplate] || 'cyberpunk-elite';
+    
+    // Resolve audio URLs
+    const resolvedBgmUrl = resolveAudioUrl(cfg.rawConfig?.bgmUrl, themeSlug) || `/api/uploads/templates/${themeSlug}/bgm.mp3`;
+    const resolvedWinSound = resolveAudioUrl(cfg.rawConfig?.winSound, themeSlug) || `/api/uploads/templates/${themeSlug}/win.mp3`;
+    const resolvedLoseSound = resolveAudioUrl(cfg.rawConfig?.loseSound, themeSlug) || `/api/uploads/templates/${themeSlug}/lose.mp3`;
+    const resolvedJackpotSound = resolveAudioUrl(cfg.rawConfig?.jackpotSound, themeSlug) || `/api/uploads/templates/${themeSlug}/jackpot.mp3`;
+    
+    // Override config with resolved URLs
+    cfg.rawConfig = {
+        ...cfg.rawConfig,
+        bgmUrl: resolvedBgmUrl,
+        winSound: resolvedWinSound,
+        loseSound: resolvedLoseSound,
+        jackpotSound: resolvedJackpotSound
+    };
+
     return `
 <!DOCTYPE html>
 <html lang="en">
