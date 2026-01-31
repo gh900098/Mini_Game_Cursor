@@ -145,17 +145,63 @@ function getThemeAudioUrl(key: string): string {
   return `/api/uploads/templates/${themeSlug}/${filename}`;
 }
 
-function playAudioPreview(url: string) {
+// Audio preview state management
+let currentAudio: HTMLAudioElement | null = null;
+const audioPlayingStates = ref<Record<string, boolean>>({});
+
+function toggleAudioPreview(key: string, url: string) {
+  // If this audio is playing, stop it
+  if (audioPlayingStates.value[key]) {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
+    }
+    audioPlayingStates.value[key] = false;
+    return;
+  }
+  
+  // Stop any currently playing audio
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    // Reset all playing states
+    Object.keys(audioPlayingStates.value).forEach(k => {
+      audioPlayingStates.value[k] = false;
+    });
+  }
+  
+  // Play new audio
   try {
-    const audio = new window.Audio(url);
-    audio.play().catch(err => {
+    currentAudio = new window.Audio(url);
+    audioPlayingStates.value[key] = true;
+    
+    currentAudio.play().catch(err => {
       console.error('Audio preview failed:', err);
       window.$message?.error('无法播放音效预览');
+      audioPlayingStates.value[key] = false;
+      currentAudio = null;
+    });
+    
+    // Auto reset state when audio ends
+    currentAudio.addEventListener('ended', () => {
+      setTimeout(() => {
+        audioPlayingStates.value[key] = false;
+        currentAudio = null;
+      }, 1500); // 1.5 seconds delay before resetting button
     });
   } catch (err) {
     console.error('Audio creation failed:', err);
     window.$message?.error('音效预览失败');
+    audioPlayingStates.value[key] = false;
   }
+}
+
+function getPreviewButtonText(key: string, isTheme: boolean): string {
+  if (audioPlayingStates.value[key]) {
+    return '⏸️ 停止';
+  }
+  return isTheme ? '▶️ 预览主题音效' : '▶️ 预览';
 }
 
 interface SchemaItem {
@@ -1185,8 +1231,8 @@ function isFontSelect(item: SchemaItem): boolean {
                                                         v-if="formModel[subItem.key] && formModel[subItem.key] !== '__THEME_DEFAULT__'" 
                                                         size="small" 
                                                         quaternary
-                                                        @click="() => playAudioPreview(formModel[subItem.key])">
-                                                        ▶️ 预览
+                                                        @click="() => toggleAudioPreview(`custom_${subItem.key}`, formModel[subItem.key])">
+                                                        {{ getPreviewButtonText(`custom_${subItem.key}`, false) }}
                                                       </NButton>
                                                     </NSpace>
                                                     <div class="text-xs text-gray-500">
@@ -1201,8 +1247,8 @@ function isFontSelect(item: SchemaItem): boolean {
                                                     <NButton 
                                                       size="small" 
                                                       quaternary
-                                                      @click="() => playAudioPreview(getThemeAudioUrl(subItem.key))">
-                                                      ▶️ 预览主题音效
+                                                      @click="() => toggleAudioPreview(`theme_${subItem.key}`, getThemeAudioUrl(subItem.key))">
+                                                      {{ getPreviewButtonText(`theme_${subItem.key}`, true) }}
                                                     </NButton>
                                                   </div>
                                                 </div>
@@ -1323,8 +1369,8 @@ function isFontSelect(item: SchemaItem): boolean {
                           v-if="formModel[item.key] && formModel[item.key] !== '__THEME_DEFAULT__'" 
                           size="small" 
                           quaternary
-                          @click="() => playAudioPreview(formModel[item.key])">
-                          ▶️ 预览
+                          @click="() => toggleAudioPreview(`custom_${item.key}`, formModel[item.key])">
+                          {{ getPreviewButtonText(`custom_${item.key}`, false) }}
                         </NButton>
                       </NSpace>
                       <div class="text-xs text-gray-500">
@@ -1340,8 +1386,8 @@ function isFontSelect(item: SchemaItem): boolean {
                       <NButton 
                         size="small" 
                         quaternary
-                        @click="() => playAudioPreview(getThemeAudioUrl(item.key))">
-                        ▶️ 预览主题音效
+                        @click="() => toggleAudioPreview(`theme_${item.key}`, getThemeAudioUrl(item.key))">
+                        {{ getPreviewButtonText(`theme_${item.key}`, true) }}
                       </NButton>
                     </div>
                   </div>
