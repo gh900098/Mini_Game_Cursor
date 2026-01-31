@@ -1141,6 +1141,59 @@ function isFontSelect(item: SchemaItem): boolean {
                                                 
                                                 <NSwitch v-else-if="subItem.type === 'switch'" v-model:value="formModel[subItem.key]" />
 
+                                                <!-- Audio Files with 3 Modes (nested in collapse-group) -->
+                                                <div v-else-if="subItem.type === 'file' && isAudioField(subItem.key)" class="space-y-3">
+                                                  <NRadioGroup :value="getAudioMode(subItem.key)" @update:value="(val) => setAudioMode(subItem.key, val)">
+                                                    <NSpace vertical>
+                                                      <NRadio value="theme">
+                                                        <span class="text-sm">🎵 使用主题默认音效</span>
+                                                      </NRadio>
+                                                      <NRadio value="custom">
+                                                        <span class="text-sm">📤 自定义上传</span>
+                                                      </NRadio>
+                                                      <NRadio value="none">
+                                                        <span class="text-sm">🔇 不使用音效</span>
+                                                      </NRadio>
+                                                    </NSpace>
+                                                  </NRadioGroup>
+                                                  
+                                                  <div v-if="getAudioMode(subItem.key) === 'custom'" class="space-y-2">
+                                                    <NInput v-model:value="formModel[subItem.key]" placeholder="音效文件URL" size="small" readonly>
+                                                      <template #prefix>🎵</template>
+                                                    </NInput>
+                                                    <NSpace size="small">
+                                                      <NButton 
+                                                        size="small" 
+                                                        @click="triggerUpload(subItem.key, subItem.key, 'audio', null, '.mp3,.wav,.ogg,.m4a,.aac')">
+                                                        <template #icon><icon-mdi-upload /></template>
+                                                        上传音效文件
+                                                      </NButton>
+                                                      <NButton 
+                                                        v-if="formModel[subItem.key] && formModel[subItem.key] !== '__THEME_DEFAULT__'" 
+                                                        size="small" 
+                                                        quaternary
+                                                        @click="() => { const audio = new Audio(formModel[subItem.key]); audio.play(); }">
+                                                        ▶️ 预览
+                                                      </NButton>
+                                                    </NSpace>
+                                                    <div class="text-xs text-gray-500">
+                                                      💡 文件将保存到您的专属文件夹，不会影响主题文件
+                                                    </div>
+                                                  </div>
+                                                  
+                                                  <div v-else-if="getAudioMode(subItem.key) === 'theme'" class="space-y-2">
+                                                    <div class="text-sm text-gray-600">
+                                                      当前主题：{{ formModel.visualTemplate || 'Cyberpunk Elite' }}
+                                                    </div>
+                                                    <NButton 
+                                                      size="small" 
+                                                      quaternary
+                                                      @click="() => { const audio = new Audio(getThemeAudioUrl(subItem.key)); audio.play(); }">
+                                                      ▶️ 预览主题音效
+                                                    </NButton>
+                                                  </div>
+                                                </div>
+
                                                 <NInput v-else v-model:value="formModel[subItem.key]" />
                                              </NFormItem>
                                         </NGridItem>
