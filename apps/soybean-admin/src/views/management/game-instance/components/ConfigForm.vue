@@ -1225,7 +1225,7 @@ function isFontSelect(item: SchemaItem): boolean {
                                                     <NSpace size="small">
                                                       <NButton 
                                                         size="small" 
-                                                        @click="triggerUpload(subItem.key, subItem.key, 'audio', null, 'audio/*')">
+                                                        @click="triggerUpload(subItem.key, subItem.key, 'audio', null, 'audio/*,audio/mpeg,audio/wav,audio/ogg,audio/mp4,.mp3,.wav,.ogg,.m4a,.aac')">
                                                         <template #icon><icon-mdi-upload /></template>
                                                         上传音效文件
                                                       </NButton>
@@ -1367,7 +1367,7 @@ function isFontSelect(item: SchemaItem): boolean {
                       <NSpace size="small">
                         <NButton 
                           size="small" 
-                          @click="triggerUpload(item.key, item.key, 'audio', null, 'audio/*')">
+                          @click="triggerUpload(item.key, item.key, 'audio', null, 'audio/*,audio/mpeg,audio/wav,audio/ogg,audio/mp4,.mp3,.wav,.ogg,.m4a,.aac')">
                           <template #icon><icon-mdi-upload /></template>
                           上传音效文件
                         </NButton>
