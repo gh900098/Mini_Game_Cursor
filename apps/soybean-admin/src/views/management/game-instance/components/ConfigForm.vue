@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, h } from 'vue';
+import { computed, ref, watch, onMounted, h, nextTick } from 'vue';
 import { NForm, NFormItem, NInput, NInputNumber, NSelect, NColorPicker, NDynamicInput, NTabs, NTabPane, NGrid, NGridItem, NButton, NSpace, NAlert, NSlider, NSwitch, NInputGroup, NInputGroupLabel, NTooltip, NImage, NCheckboxGroup, NCheckbox, NTimePicker, NRadio, NRadioGroup, NRadioButton, NCollapse, NCollapseItem, NIcon } from 'naive-ui';
 import { useI18n } from 'vue-i18n';
 import { request } from '@/service/request';
@@ -25,8 +25,10 @@ console.log('[ConfigForm] Raw gameCommon object:', JSON.stringify(gameCommon, nu
 const uploadRef = ref<HTMLInputElement | null>(null);
 const currentUploadTarget = ref<{ key: string, item?: any, name?: string, category?: string, accept?: string } | null>(null);
 
-function triggerUpload(key: string, name?: string, category?: string, item?: any, accept: string = 'image/*') {
+async function triggerUpload(key: string, name?: string, category?: string, item?: any, accept: string = 'image/*') {
   currentUploadTarget.value = { key, name, category, item, accept };
+  // Wait for Vue to update the DOM (accept attribute)
+  await nextTick();
   // Reset input value to allow selecting same file again
   if (uploadRef.value) {
     uploadRef.value.value = '';
