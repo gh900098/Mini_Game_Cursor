@@ -8,15 +8,19 @@ import { request } from '@/service/request';
 const { t, locale, availableLocales, messages } = useI18n();
 
 // DEBUG: Check i18n status
+const gameCommon = messages.value['zh-CN']?.page?.manage?.game?.common;
 console.log('[ConfigForm] i18n Debug:', {
   currentLocale: locale.value,
   availableLocales: availableLocales,
-  allMessages: messages.value,
   zhCNMessages: messages.value['zh-CN'],
   pageManageGame: messages.value['zh-CN']?.page?.manage?.game,
+  gameCommon: gameCommon,
+  gameCommonKeys: gameCommon ? Object.keys(gameCommon) : null,
+  totalProbabilityValue: gameCommon?.totalProbability,
   testTranslation: t('page.manage.game.common.totalProbability'),
   testKey: 'page.manage.game.common.totalProbability'
 });
+console.log('[ConfigForm] Raw gameCommon object:', JSON.stringify(gameCommon, null, 2));
 
 const uploadRef = ref<HTMLInputElement | null>(null);
 const currentUploadTarget = ref<{ key: string, item?: any, name?: string, category?: string, accept?: string } | null>(null);
