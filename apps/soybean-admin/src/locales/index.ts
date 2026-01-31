@@ -1,7 +1,13 @@
 import type { App } from 'vue';
 import { createI18n } from 'vue-i18n';
 import { localStg } from '@/utils/storage';
-import messages from './locale';
+import zhCN from './langs/zh-cn';
+import enUS from './langs/en-us';
+
+const messages = {
+  'zh-CN': zhCN,
+  'en-US': enUS
+};
 
 const i18n = createI18n({
   locale: localStg.get('lang') || 'zh-CN',
