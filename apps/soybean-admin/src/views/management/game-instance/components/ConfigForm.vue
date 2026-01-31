@@ -145,6 +145,19 @@ function getThemeAudioUrl(key: string): string {
   return `/api/uploads/templates/${themeSlug}/${filename}`;
 }
 
+function playAudioPreview(url: string) {
+  try {
+    const audio = new window.Audio(url);
+    audio.play().catch(err => {
+      console.error('Audio preview failed:', err);
+      window.$message?.error('无法播放音效预览');
+    });
+  } catch (err) {
+    console.error('Audio creation failed:', err);
+    window.$message?.error('音效预览失败');
+  }
+}
+
 interface SchemaItem {
   key: string;
   type: 'string' | 'number' | 'select' | 'color' | 'list' | 'prize-list' | 'vip-grid' | 'embed-code' | 'switch-group' | 'slider' | 'time-limit' | 'dynamic-prob' | 'budget-control' | 'image' | 'radio' | 'collapse-group' | 'switch' | 'file';
@@ -1172,7 +1185,7 @@ function isFontSelect(item: SchemaItem): boolean {
                                                         v-if="formModel[subItem.key] && formModel[subItem.key] !== '__THEME_DEFAULT__'" 
                                                         size="small" 
                                                         quaternary
-                                                        @click="() => { const audio = new Audio(formModel[subItem.key]); audio.play(); }">
+                                                        @click="() => playAudioPreview(formModel[subItem.key])">
                                                         ▶️ 预览
                                                       </NButton>
                                                     </NSpace>
@@ -1188,7 +1201,7 @@ function isFontSelect(item: SchemaItem): boolean {
                                                     <NButton 
                                                       size="small" 
                                                       quaternary
-                                                      @click="() => { const audio = new Audio(getThemeAudioUrl(subItem.key)); audio.play(); }">
+                                                      @click="() => playAudioPreview(getThemeAudioUrl(subItem.key))">
                                                       ▶️ 预览主题音效
                                                     </NButton>
                                                   </div>
@@ -1310,7 +1323,7 @@ function isFontSelect(item: SchemaItem): boolean {
                           v-if="formModel[item.key] && formModel[item.key] !== '__THEME_DEFAULT__'" 
                           size="small" 
                           quaternary
-                          @click="() => { const audio = new Audio(formModel[item.key]); audio.play(); }">
+                          @click="() => playAudioPreview(formModel[item.key])">
                           ▶️ 预览
                         </NButton>
                       </NSpace>
@@ -1327,7 +1340,7 @@ function isFontSelect(item: SchemaItem): boolean {
                       <NButton 
                         size="small" 
                         quaternary
-                        @click="() => { const audio = new Audio(getThemeAudioUrl(item.key)); audio.play(); }">
+                        @click="() => playAudioPreview(getThemeAudioUrl(item.key))">
                         ▶️ 预览主题音效
                       </NButton>
                     </div>

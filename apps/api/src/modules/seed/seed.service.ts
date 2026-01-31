@@ -927,8 +927,8 @@ export class SeedService {
                                 label: 'page.manage.game.effects.bgmSettings',
                                 items: [
                                     { key: 'bgmUrl', type: 'file', label: 'page.manage.game.effects.bgmUrl', span: 24 },
-                                    { key: 'bgmVolume', type: 'slider', label: 'page.manage.game.effects.bgmVolume', min: 0, max: 100, step: 5, suffix: '%', default: 40, span: 12 },
-                                    { key: 'bgmLoop', type: 'switch', label: 'page.manage.game.effects.bgmLoop', default: true, span: 12 }
+                                    { key: 'bgmVolume', type: 'slider', label: 'page.manage.game.effects.bgmVolume', min: 0, max: 100, step: 5, suffix: '%', default: 40, span: 12, condition: { key: 'bgmUrl', value: '', operator: 'neq' } },
+                                    { key: 'bgmLoop', type: 'switch', label: 'page.manage.game.effects.bgmLoop', default: true, span: 12, condition: { key: 'bgmUrl', value: '', operator: 'neq' } }
                                 ]
                             },
                             {
