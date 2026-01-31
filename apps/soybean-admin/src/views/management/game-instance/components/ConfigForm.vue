@@ -5,12 +5,15 @@ import { useI18n } from 'vue-i18n';
 import { request } from '@/service/request';
 
 // Extend the window object to potentially access parent methods or simply use local logic
-const { t, locale, availableLocales } = useI18n();
+const { t, locale, availableLocales, messages } = useI18n();
 
 // DEBUG: Check i18n status
 console.log('[ConfigForm] i18n Debug:', {
   currentLocale: locale.value,
   availableLocales: availableLocales,
+  allMessages: messages.value,
+  zhCNMessages: messages.value['zh-CN'],
+  pageManageGame: messages.value['zh-CN']?.page?.manage?.game,
   testTranslation: t('page.manage.game.common.totalProbability'),
   testKey: 'page.manage.game.common.totalProbability'
 });
