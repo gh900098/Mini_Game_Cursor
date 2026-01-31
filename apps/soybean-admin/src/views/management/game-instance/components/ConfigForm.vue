@@ -754,7 +754,7 @@ function isFontSelect(item: SchemaItem): boolean {
                  <!-- Stats Header -->
                  <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100 flex-wrap">
                      <div class="flex flex-col min-w-120px">
-                         <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">{{ t('page.manage.game.common.totalProbability') }}</span>
+                         <span class="text-xs text-gray-500 font-bold tracking-wider">{{ t('page.manage.game.common.totalProbability') }} ✓</span>
                          <span :class="['text-2xl font-black tabular-nums', getTotalChance('prizeList') === 100 ? 'text-green-500' : 'text-red-500']">
                              {{ getTotalChance('prizeList') }}%
                          </span>
