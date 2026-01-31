@@ -294,7 +294,7 @@ function previewConfetti(key: string) {
   // Load confetti library if not already loaded
   if (typeof (window as any).confetti === 'undefined') {
     const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
+    script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js';
     script.onload = () => triggerConfettiPreview(colors, shapeType, emojis);
     document.head.appendChild(script);
   } else {
@@ -308,7 +308,10 @@ function triggerConfettiPreview(colors: string[], shapeType: string, emojis: str
   const config: any = {
     particleCount: 100,
     spread: 70,
-    origin: { y: 0.6 }
+    origin: { y: 0.6 },
+    startVelocity: 30,
+    gravity: 1,
+    ticks: 200
   };
   
   if (colors.length > 0) {
@@ -316,8 +319,17 @@ function triggerConfettiPreview(colors: string[], shapeType: string, emojis: str
   }
   
   if (shapeType === 'emoji' && emojis.length > 0) {
-    config.shapes = emojis.map((emoji: string) => confetti.shapeFromText({ text: emoji }));
-    config.scalar = 2; // Make emojis bigger
+    // Check if shapeFromText is available
+    if (typeof confetti.shapeFromText === 'function') {
+      try {
+        config.shapes = emojis.map((emoji: string) => confetti.shapeFromText({ text: emoji, scalar: 4 }));
+        console.log('🎉 Preview using emoji shapes:', emojis);
+      } catch (err) {
+        console.warn('🎉 Failed to create emoji shapes for preview, using default', err);
+      }
+    } else {
+      console.warn('🎉 shapeFromText not available, using default shapes for preview');
+    }
   }
   
   confetti(config);
