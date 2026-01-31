@@ -208,7 +208,18 @@ function getPreviewButtonText(key: string, isTheme: boolean): string {
 function getColorList(key: string): string[] {
   const value = formModel.value[key];
   if (!value || value === '') return [];
-  return value.split(',').map((c: string) => c.trim()).filter((c: string) => c);
+  
+  // Support both comma-separated and space-separated formats
+  // Check if contains comma, otherwise split by space
+  const separator = value.includes(',') ? ',' : /\s+/;
+  const colors = value.split(separator).map((c: string) => c.trim()).filter((c: string) => c && c.startsWith('#'));
+  
+  // Normalize to comma-separated format if needed
+  if (!value.includes(',') && colors.length > 0) {
+    formModel.value[key] = colors.join(',');
+  }
+  
+  return colors;
 }
 
 function setColorList(key: string, colors: string[]) {
