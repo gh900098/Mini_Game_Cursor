@@ -1285,8 +1285,8 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                     });
                     
                     try {
-                        // Prepare confetti configuration
-                        const confettiConfig = {
+                        // ALWAYS fire colorful paper confetti (base layer)
+                        const paperConfig = {
                             particleCount: config.confettiParticles || 150,
                             spread: config.confettiSpread || 80,
                             origin: { y: 0.6 },
@@ -1297,38 +1297,46 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                             ticks: 200
                         };
                         
-                        // Add shapes (emoji or default)
+                        confetti(paperConfig);
+                        console.log('🎉 Colorful paper confetti triggered');
+                        
+                        // IF emoji mode, ALSO fire emoji confetti (overlay layer)
                         if (config.confettiShapeType === 'emoji' && config.confettiEmojis && typeof confetti.shapeFromText === 'function') {
                             let emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
                             
-                            // Remove variation selectors (U+FE0F, U+FE0E) that might break shapeFromText
+                            // Remove variation selectors (U+FE0F, U+FE0E)
                             emojis = emojis.map(e => e.replace(/[\uFE0E\uFE0F]/g, ''));
                             
                             if (emojis.length > 0) {
                                 try {
-                                    // Create text shapes - NOTE: canvas-confetti might not render these correctly
-                                    const emojiShapes = emojis.map(emoji => {
-                                        const shape = confetti.shapeFromText({ text: emoji, scalar: 3 });
-                                        console.log('Created shape for:', emoji, shape);
-                                        return shape;
-                                    });
+                                    const emojiShapes = emojis.map(emoji => 
+                                        confetti.shapeFromText({ text: emoji, scalar: 3 })
+                                    );
                                     
-                                    confettiConfig.shapes = emojiShapes;
-                                    confettiConfig.scalar = 3; // Make shapes bigger
-                                    console.log('🎉 Using emoji shapes (cleaned):', emojis, 'shapes:', emojiShapes);
+                                    // Fire emoji confetti with fewer particles (40% of total)
+                                    const emojiConfig = {
+                                        particleCount: Math.floor((config.confettiParticles || 150) * 0.4),
+                                        spread: config.confettiSpread || 80,
+                                        origin: { y: 0.6 },
+                                        shapes: emojiShapes,
+                                        scalar: 3,
+                                        startVelocity: 30,
+                                        gravity: 1,
+                                        drift: 0,
+                                        ticks: 200
+                                    };
+                                    
+                                    confetti(emojiConfig);
+                                    console.log('🎉 Emoji confetti triggered (MIXED with paper):', emojis);
                                 } catch (err) {
-                                    console.warn('🎉 Failed to create emoji shapes, using default shapes', err);
+                                    console.warn('🎉 Failed to create emoji confetti', err);
                                 }
                             }
-                        } else if (config.confettiShapeType === 'emoji') {
-                            console.warn('🎉 confetti.shapeFromText not available, using default shapes');
                         }
                         
-                        confetti(confettiConfig);
-                        console.log('🎉 Center confetti triggered', confettiConfig);
-                        
                         setTimeout(() => {
-                            const sideConfig = {
+                            // ALWAYS fire paper confetti from sides
+                            const sidePaperConfig = {
                                 particleCount: (config.confettiParticles || 150) / 1.5,
                                 spread: (config.confettiSpread || 80) + 20,
                                 colors: (config.confettiColors || '#eab308,#ffffff').split(',').slice(0, 2),
@@ -1338,24 +1346,38 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                                 ticks: 200
                             };
                             
-                            // Add shapes to side bursts too
+                            confetti({ ...sidePaperConfig, origin: { x: 0.2, y: 0.5 } });
+                            confetti({ ...sidePaperConfig, origin: { x: 0.8, y: 0.5 } });
+                            console.log('🎉 Side paper confetti triggered');
+                            
+                            // IF emoji mode, ALSO fire emoji from sides
                             if (config.confettiShapeType === 'emoji' && config.confettiEmojis && typeof confetti.shapeFromText === 'function') {
                                 let emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
                                 emojis = emojis.map(e => e.replace(/[\uFE0E\uFE0F]/g, ''));
                                 
                                 if (emojis.length > 0) {
                                     try {
-                                        sideConfig.shapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 3 }));
-                                        sideConfig.scalar = 3;
+                                        const emojiShapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 3 }));
+                                        
+                                        const sideEmojiConfig = {
+                                            particleCount: Math.floor((config.confettiParticles || 150) / 1.5 * 0.4),
+                                            spread: (config.confettiSpread || 80) + 20,
+                                            shapes: emojiShapes,
+                                            scalar: 3,
+                                            startVelocity: 30,
+                                            gravity: 1,
+                                            drift: 0,
+                                            ticks: 200
+                                        };
+                                        
+                                        confetti({ ...sideEmojiConfig, origin: { x: 0.2, y: 0.5 } });
+                                        confetti({ ...sideEmojiConfig, origin: { x: 0.8, y: 0.5 } });
+                                        console.log('🎉 Side emoji confetti triggered (MIXED)');
                                     } catch (err) {
                                         console.warn('🎉 Failed to create side emoji shapes', err);
                                     }
                                 }
                             }
-                            
-                            confetti({ ...sideConfig, origin: { x: 0.2, y: 0.5 } });
-                            confetti({ ...sideConfig, origin: { x: 0.8, y: 0.5 } });
-                            console.log('🎉 Side confetti bursts triggered');
                         }, 300);
                     } catch (error) {
                         console.error('🎉 Confetti error:', error);
