@@ -38,32 +38,54 @@
         <div class="relative">
           <Transition name="slide-fade">
             <div v-if="!statusCollapsed" class="status-card group">
-              <!-- Block Reason (if cannot play) - RED BACKGROUND FOR ALL REASONS -->
-              <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded-lg px-3 py-2 -mx-1 shadow-lg animate-pulse-slow">
-                <div class="i-carbon-locked text-lg drop-shadow-md"></div>
-                <span class="text-sm font-bold drop-shadow-md">
-                  <template v-if="gameStatus.blockReason === 'LEVEL_TOO_LOW'">
-                    等级不足！需要 Lv{{ gameStatus.blockDetails.required }}
-                  </template>
-                  <template v-else-if="gameStatus.blockReason === 'NOT_STARTED'">
-                    活动未开始！
-                  </template>
-                  <template v-else-if="gameStatus.blockReason === 'ENDED'">
-                    活动已结束！
-                  </template>
-                  <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
-                    今日不开放！
-                  </template>
-                  <template v-else>
-                    {{ gameStatus.blockReason }}
-                  </template>
-                </span>
+              <!-- Block Reason (if cannot play) - RED BOX WITH CURVED EXTENSION -->
+              <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="warning-box-with-button mb-2 relative">
+                <div class="flex items-center gap-2 px-3 py-2">
+                  <div class="i-carbon-locked text-lg drop-shadow-md"></div>
+                  <span class="text-sm font-bold drop-shadow-md">
+                    <template v-if="gameStatus.blockReason === 'LEVEL_TOO_LOW'">
+                      等级不足！需要 Lv{{ gameStatus.blockDetails.required }}
+                    </template>
+                    <template v-else-if="gameStatus.blockReason === 'NOT_STARTED'">
+                      活动未开始！
+                    </template>
+                    <template v-else-if="gameStatus.blockReason === 'ENDED'">
+                      活动已结束！
+                    </template>
+                    <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
+                      今日不开放！
+                    </template>
+                    <template v-else>
+                      {{ gameStatus.blockReason }}
+                    </template>
+                  </span>
+                </div>
+                <!-- Hide Button attached to warning box -->
+                <button
+                  @click="statusCollapsed = true"
+                  class="warning-hide-button group"
+                  title="Hide"
+                >
+                  <div class="i-carbon-chevron-right text-2xl font-black"></div>
+                  <div class="absolute inset-0 rounded-full border-2 border-white/30 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+                </button>
               </div>
               
               <!-- No Attempts Left Warning (even if canPlay somehow true) -->
-              <div v-if="gameStatus.dailyLimit > 0 && gameStatus.remaining === 0 && gameStatus.canPlay" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded-lg px-3 py-2 -mx-1 shadow-lg animate-pulse-slow">
-                <div class="i-carbon-warning text-lg drop-shadow-md"></div>
-                <span class="text-sm font-bold drop-shadow-md">次数已用完！</span>
+              <div v-if="gameStatus.dailyLimit > 0 && gameStatus.remaining === 0 && gameStatus.canPlay" class="warning-box-with-button mb-2 relative">
+                <div class="flex items-center gap-2 px-3 py-2">
+                  <div class="i-carbon-warning text-lg drop-shadow-md"></div>
+                  <span class="text-sm font-bold drop-shadow-md">次数已用完！</span>
+                </div>
+                <!-- Hide Button attached to warning box -->
+                <button
+                  @click="statusCollapsed = true"
+                  class="warning-hide-button group"
+                  title="Hide"
+                >
+                  <div class="i-carbon-chevron-right text-2xl font-black"></div>
+                  <div class="absolute inset-0 rounded-full border-2 border-white/30 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+                </button>
               </div>
               
               <div class="flex items-center gap-3">
@@ -92,24 +114,6 @@
                   <div class="i-carbon-renew text-lg"></div>
                 </button>
               </div>
-            </div>
-          </Transition>
-          
-          <!-- Hide Button - Floating at right edge with curved connector -->
-          <Transition name="fade">
-            <div v-if="!statusCollapsed" class="hide-button-container">
-              <!-- Curved connector bridge -->
-              <div class="hide-button-bridge"></div>
-              <!-- Hide button -->
-              <button
-                @click="statusCollapsed = true"
-                class="hide-button group"
-                title="Hide"
-              >
-                <div class="i-carbon-chevron-right text-xl font-bold text-white"></div>
-                <!-- Animated ring on hover -->
-                <div class="absolute inset-0 rounded-full border-2 border-white/30 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
-              </button>
             </div>
           </Transition>
         </div>
@@ -499,42 +503,50 @@ onUnmounted(() => {
   transform: scale(0.95);
 }
 
-/* Hide Button Container - For positioning bridge + button together */
-.hide-button-container {
-  position: absolute;
-  bottom: 0.75rem;
-  right: -0.25rem;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-}
-
-/* Curved Bridge Connector - Horizontal smooth extension from card edge */
-.hide-button-bridge {
-  width: 1.25rem;
-  height: 2.5rem;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 20, 30, 0.75) 100%);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-left: none;
+/* Warning Box with Curved Extension and Attached Button */
+.warning-box-with-button {
+  background: rgba(220, 38, 38, 0.9);
+  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.4);
+  animation: pulse-slow 2s ease-in-out infinite;
+  /* Left side rounded */
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  /* Right side curved extension */
   border-top-right-radius: 1.25rem;
   border-bottom-right-radius: 1.25rem;
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-  margin-right: -0.125rem;
+  padding-right: 1.5rem;
+  position: relative;
+  /* Extend to the right to accommodate button smoothly */
+  margin-right: -2rem;
 }
 
-/* Hide Button - Large and prominent with big arrow */
-.hide-button {
-  width: 3.25rem;
-  height: 3.25rem;
+/* Curved extension part of warning box */
+.warning-box-with-button::after {
+  content: '';
+  position: absolute;
+  right: -0.5rem;
+  top: 0;
+  bottom: 0;
+  width: 2rem;
+  background: inherit;
+  border-top-right-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  z-index: -1;
+}
+
+/* Hide Button attached to warning box */
+.warning-hide-button {
+  position: absolute;
+  right: -2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.6) 0%, rgba(168, 85, 247, 0.6) 100%);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.7) 0%, rgba(168, 85, 247, 0.7) 100%);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -544,27 +556,26 @@ onUnmounted(() => {
   box-shadow: 
     0 8px 32px rgba(99, 102, 241, 0.6),
     0 0 0 1px rgba(255, 255, 255, 0.25) inset;
-  flex-shrink: 0;
 }
 
-.hide-button:hover {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.8) 0%, rgba(168, 85, 247, 0.8) 100%);
-  border-color: rgba(255, 255, 255, 0.55);
+.warning-hide-button:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(168, 85, 247, 0.9) 100%);
+  border-color: rgba(255, 255, 255, 0.6);
   box-shadow: 
     0 12px 48px rgba(99, 102, 241, 0.8),
     0 0 0 1px rgba(255, 255, 255, 0.35) inset;
-  transform: scale(1.1) translateX(4px);
+  transform: translateY(-50%) scale(1.15) translateX(4px);
 }
 
-.hide-button:active {
-  transform: scale(0.95);
+.warning-hide-button:active {
+  transform: translateY(-50%) scale(0.95);
 }
 
-/* Make arrow bigger and more visible */
-.hide-button .i-carbon-chevron-right {
-  font-size: 2rem;
+/* Arrow icon styling */
+.warning-hide-button .i-carbon-chevron-right {
+  font-size: 1.75rem;
   font-weight: 900;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
 }
 
 /* Collapsed Button - Premium floating design */
