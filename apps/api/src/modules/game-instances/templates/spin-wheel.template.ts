@@ -780,6 +780,9 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         // ========== STATE ==========
         let isSpinning = false;
         let currentRotation = 0;
+        let canPlay = true; // Game rules status (updated by parent)
+        let blockReason = null;
+        let blockDetails = null;
         let config = ${JSON.stringify(cfg.rawConfig)};
         let prizeList = ${JSON.stringify(cfg.prizeList)};
         let weights = prizeList.map(p => Number(p.weight) || 100);
@@ -1177,6 +1180,36 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         // ========== SPIN ==========
         function spin() {
             if (isSpinning) return;
+            
+            // Check if player can play (game rules)
+            if (!canPlay) {
+                const btn = document.getElementById('spin-btn');
+                const status = document.getElementById('status-msg');
+                
+                // Show error message
+                let errorMsg = '无法游戏';
+                if (blockReason === 'LEVEL_TOO_LOW') {
+                    errorMsg = \`等级不足！需要等级 \${blockDetails?.required}\`;
+                } else if (blockReason === 'NOT_STARTED') {
+                    errorMsg = '活动尚未开始';
+                } else if (blockReason === 'ENDED') {
+                    errorMsg = '活动已结束';
+                } else if (blockReason === 'INVALID_DAY') {
+                    errorMsg = '今日不开放';
+                }
+                
+                status.innerText = errorMsg;
+                status.style.color = '#ef4444';
+                vibrate(100);
+                
+                // Reset message after 3s
+                setTimeout(() => {
+                    status.innerText = 'TAP TO SPIN';
+                    status.style.color = '';
+                }, 3000);
+                
+                return;
+            }
             
             initAudio();
             startBGM();  // Start BGM on first user interaction
@@ -1615,6 +1648,26 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                     }
                 }
                 console.log('[Sound] Sound', soundEnabled ? 'enabled' : 'disabled');
+            } else if (e.data?.type === 'game-status-update') {
+                // 游戏规则状态更新
+                const status = e.data.status;
+                canPlay = status.canPlay !== false; // Default true
+                blockReason = status.blockReason || null;
+                blockDetails = status.blockDetails || null;
+                
+                const btn = document.getElementById('spin-btn');
+                if (btn) {
+                    btn.disabled = !canPlay;
+                    if (!canPlay) {
+                        btn.style.opacity = '0.5';
+                        btn.style.cursor = 'not-allowed';
+                    } else {
+                        btn.style.opacity = '';
+                        btn.style.cursor = 'pointer';
+                    }
+                }
+                
+                console.log('[GameRules] Status updated:', { canPlay, blockReason, blockDetails });
             }
         });
         

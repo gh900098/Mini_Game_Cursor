@@ -312,6 +312,20 @@ watch(() => settingsStore.soundEnabled, (enabled) => {
   }, '*');
 });
 
+// 监听游戏状态变化，通知iframe disable/enable按钮
+watch(() => gameStatus.value, (status) => {
+  if (status && iframeRef.value) {
+    iframeRef.value.contentWindow?.postMessage({
+      type: 'game-status-update',
+      status: {
+        canPlay: status.canPlay,
+        blockReason: status.blockReason,
+        blockDetails: status.blockDetails,
+      },
+    }, '*');
+  }
+}, { deep: true });
+
 onMounted(async () => {
   // 每次加载游戏时重置音效为开启
   settingsStore.resetSound();
