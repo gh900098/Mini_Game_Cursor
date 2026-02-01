@@ -37,7 +37,7 @@
       <div v-if="gameStatus && !isPreview" class="absolute top-4 left-4 z-50">
         <Transition name="slide-fade">
           <div v-if="!statusCollapsed" class="bg-black/80 backdrop-blur-md border border-white/20 rounded-lg px-4 py-3 text-white shadow-xl">
-            <!-- Block Reason (if cannot play) - More visible with red background -->
+            <!-- Block Reason (if cannot play) - RED BACKGROUND FOR ALL REASONS -->
             <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded px-3 py-2 -mx-1">
               <div class="i-carbon-locked text-lg"></div>
               <span class="text-sm font-bold">
@@ -45,13 +45,13 @@
                   等级不足！需要 Lv{{ gameStatus.blockDetails.required }}
                 </template>
                 <template v-else-if="gameStatus.blockReason === 'NOT_STARTED'">
-                  活动未开始
+                  活动未开始！
                 </template>
                 <template v-else-if="gameStatus.blockReason === 'ENDED'">
-                  活动已结束
+                  活动已结束！
                 </template>
                 <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
-                  今日不开放
+                  今日不开放！
                 </template>
                 <template v-else>
                   {{ gameStatus.blockReason }}
@@ -59,13 +59,21 @@
               </span>
             </div>
             
+            <!-- No Attempts Left Warning (even if canPlay somehow true) -->
+            <div v-if="gameStatus.dailyLimit > 0 && gameStatus.remaining === 0 && gameStatus.canPlay" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded px-3 py-2 -mx-1">
+              <div class="i-carbon-warning text-lg"></div>
+              <span class="text-sm font-bold">次数已用完！</span>
+            </div>
+            
             <div class="flex items-center gap-3">
-              <!-- Daily Limit (only show when CAN play) -->
-              <div v-if="gameStatus.canPlay && gameStatus.dailyLimit > 0" class="flex items-center gap-2">
-                <div class="i-carbon-play-filled text-primary"></div>
-                <span class="text-sm">
+              <!-- Daily Limit Display -->
+              <div v-if="gameStatus.canPlay && gameStatus.dailyLimit > 0 && gameStatus.remaining > 0" class="flex items-center gap-2">
+                <!-- Warning if only 1 left -->
+                <div v-if="gameStatus.remaining === 1" class="i-carbon-play-filled text-yellow-500"></div>
+                <div v-else class="i-carbon-play-filled text-primary"></div>
+                <span class="text-sm" :class="gameStatus.remaining === 1 ? 'text-yellow-500 font-bold' : ''">
                   <span class="font-bold">{{ gameStatus.remaining }}</span>
-                  <span class="text-white/60">/{{ gameStatus.dailyLimit }}</span>
+                  <span :class="gameStatus.remaining === 1 ? 'text-yellow-500/80' : 'text-white/60'">/{{ gameStatus.dailyLimit }}</span>
                 </span>
               </div>
               <!-- Cooldown Timer -->
