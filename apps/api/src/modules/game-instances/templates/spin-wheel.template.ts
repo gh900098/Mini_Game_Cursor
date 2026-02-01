@@ -755,12 +755,12 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         </div>
 
         <div class="hud-bottom">
-            <button class="spin-btn" id="spin-btn" onclick="spin()">
+            <button class="spin-btn" id="spin-btn" onclick="spin()" disabled style="opacity: 0.5; cursor: not-allowed;">
                 ${!cfg.spinBtnImage ? `
                 <div class="spin-label">${cfg.spinBtnText}</div>
                 <div class="spin-sub">${cfg.spinBtnSubtext}</div>` : ''}
             </button>
-            <div id="status-msg">TAP TO SPIN</div>
+            <div id="status-msg">LOADING...</div>
         </div>
 
         <div id="result-screen">
@@ -780,7 +780,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         // ========== STATE ==========
         let isSpinning = false;
         let currentRotation = 0;
-        let canPlay = true; // Game rules status (updated by parent)
+        let canPlay = false; // Game rules status (updated by parent) - Default false for safety
         let blockReason = null;
         let blockDetails = null;
         let config = ${JSON.stringify(cfg.rawConfig)};
@@ -1656,14 +1656,35 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                 blockDetails = status.blockDetails || null;
                 
                 const btn = document.getElementById('spin-btn');
+                const statusMsg = document.getElementById('status-msg');
                 if (btn) {
                     btn.disabled = !canPlay;
                     if (!canPlay) {
                         btn.style.opacity = '0.5';
                         btn.style.cursor = 'not-allowed';
+                        // Show block reason in status message
+                        if (statusMsg) {
+                            let errorMsg = '无法游戏';
+                            if (blockReason === 'LEVEL_TOO_LOW') {
+                                errorMsg = \`等级不足！需要等级 \${blockDetails?.required}\`;
+                            } else if (blockReason === 'NOT_STARTED') {
+                                errorMsg = '活动尚未开始';
+                            } else if (blockReason === 'ENDED') {
+                                errorMsg = '活动已结束';
+                            } else if (blockReason === 'INVALID_DAY') {
+                                errorMsg = '今日不开放';
+                            }
+                            statusMsg.innerText = errorMsg;
+                            statusMsg.style.color = '#ef4444';
+                        }
                     } else {
                         btn.style.opacity = '';
                         btn.style.cursor = 'pointer';
+                        // Reset status message to ready state
+                        if (statusMsg) {
+                            statusMsg.innerText = 'TAP TO SPIN';
+                            statusMsg.style.color = '';
+                        }
                     }
                 }
                 
