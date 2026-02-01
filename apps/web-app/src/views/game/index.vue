@@ -33,14 +33,14 @@
         allow="autoplay; fullscreen"
         @load="handleIframeLoad"
       ></iframe>
-      <!-- Game Status Display (Floating & Collapsible) -->
+      <!-- Game Status Display (Floating & Collapsible) - Premium Glassmorphism Design -->
       <div v-if="gameStatus && !isPreview" class="absolute top-4 left-4 z-50">
         <Transition name="slide-fade">
-          <div v-if="!statusCollapsed" class="bg-black/80 backdrop-blur-md border border-white/20 rounded-lg px-4 py-3 text-white shadow-xl">
+          <div v-if="!statusCollapsed" class="status-card group">
             <!-- Block Reason (if cannot play) - RED BACKGROUND FOR ALL REASONS -->
-            <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded px-3 py-2 -mx-1">
-              <div class="i-carbon-locked text-lg"></div>
-              <span class="text-sm font-bold">
+            <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded-lg px-3 py-2 -mx-1 shadow-lg animate-pulse-slow">
+              <div class="i-carbon-locked text-lg drop-shadow-md"></div>
+              <span class="text-sm font-bold drop-shadow-md">
                 <template v-if="gameStatus.blockReason === 'LEVEL_TOO_LOW'">
                   等级不足！需要 Lv{{ gameStatus.blockDetails.required }}
                 </template>
@@ -60,53 +60,59 @@
             </div>
             
             <!-- No Attempts Left Warning (even if canPlay somehow true) -->
-            <div v-if="gameStatus.dailyLimit > 0 && gameStatus.remaining === 0 && gameStatus.canPlay" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded px-3 py-2 -mx-1">
-              <div class="i-carbon-warning text-lg"></div>
-              <span class="text-sm font-bold">次数已用完！</span>
+            <div v-if="gameStatus.dailyLimit > 0 && gameStatus.remaining === 0 && gameStatus.canPlay" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded-lg px-3 py-2 -mx-1 shadow-lg animate-pulse-slow">
+              <div class="i-carbon-warning text-lg drop-shadow-md"></div>
+              <span class="text-sm font-bold drop-shadow-md">次数已用完！</span>
             </div>
             
             <div class="flex items-center gap-3">
               <!-- Daily Limit Display -->
               <div v-if="gameStatus.canPlay && gameStatus.dailyLimit > 0 && gameStatus.remaining > 0" class="flex items-center gap-2">
                 <!-- Warning if only 1 left -->
-                <div v-if="gameStatus.remaining === 1" class="i-carbon-play-filled text-yellow-500"></div>
-                <div v-else class="i-carbon-play-filled text-primary"></div>
-                <span class="text-sm" :class="gameStatus.remaining === 1 ? 'text-yellow-500 font-bold' : ''">
+                <div v-if="gameStatus.remaining === 1" class="i-carbon-play-filled text-yellow-400 drop-shadow-glow-yellow"></div>
+                <div v-else class="i-carbon-play-filled text-blue-400 drop-shadow-glow-blue"></div>
+                <span class="text-sm" :class="gameStatus.remaining === 1 ? 'text-yellow-400 font-bold' : ''">
                   <span class="font-bold">{{ gameStatus.remaining }}</span>
-                  <span :class="gameStatus.remaining === 1 ? 'text-yellow-500/80' : 'text-white/60'">/{{ gameStatus.dailyLimit }}</span>
+                  <span :class="gameStatus.remaining === 1 ? 'text-yellow-400/80' : 'text-white/60'">/{{ gameStatus.dailyLimit }}</span>
                 </span>
               </div>
               <!-- Cooldown Timer -->
               <div v-if="cooldownRemaining > 0" class="flex items-center gap-2">
-                <div class="i-carbon-time text-warning"></div>
-                <span class="text-sm font-mono">{{ formatCooldown(cooldownRemaining) }}</span>
+                <div class="i-carbon-time text-orange-400 drop-shadow-glow-orange"></div>
+                <span class="text-sm font-mono text-orange-300">{{ formatCooldown(cooldownRemaining) }}</span>
               </div>
               <!-- Refresh Button -->
               <button
                 @click="fetchGameStatus"
-                class="i-carbon-renew text-white/60 hover:text-white text-lg transition-colors"
+                class="action-button"
                 :class="{ 'animate-spin': loadingStatus }"
                 title="Refresh status"
-              ></button>
+              >
+                <div class="i-carbon-renew text-lg"></div>
+              </button>
               <!-- Collapse Button -->
               <button
                 @click="statusCollapsed = true"
-                class="i-carbon-chevron-left text-white/60 hover:text-white text-lg transition-colors ml-1"
+                class="action-button ml-1"
                 title="Hide"
-              ></button>
+              >
+                <div class="i-carbon-chevron-left text-lg"></div>
+              </button>
             </div>
           </div>
         </Transition>
         
-        <!-- Collapsed State: Small Floating Button -->
+        <!-- Collapsed State: Premium Floating Button with Glow -->
         <Transition name="fade">
           <button
             v-if="statusCollapsed"
             @click="statusCollapsed = false"
-            class="w-12 h-12 rounded-full bg-black/80 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-black/90 transition-all shadow-xl"
+            class="collapsed-button group"
             title="Show status"
           >
-            <div class="i-carbon-information text-xl"></div>
+            <div class="i-carbon-information text-xl drop-shadow-glow-white"></div>
+            <!-- Animated ring on hover -->
+            <div class="absolute inset-0 rounded-full border-2 border-white/30 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
           </button>
         </Transition>
       </div>
@@ -423,12 +429,135 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* ==================== */
+/* PREMIUM GLASSMORPHISM DESIGN */
+/* Based on UI/UX Pro Max principles */
+/* ==================== */
+
+/* Status Card - Glassmorphism with depth */
+.status-card {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 20, 30, 0.9) 100%);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  color: white;
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.37),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle glow on hover */
+.status-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.status-card:hover::before {
+  opacity: 1;
+}
+
+/* Action Buttons - Interactive with smooth hover */
+.action-button {
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  padding: 0.25rem;
+  border-radius: 0.375rem;
+}
+
+.action-button:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.action-button:active {
+  transform: scale(0.95);
+}
+
+/* Collapsed Button - Premium floating design */
+.collapsed-button {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(139, 92, 246, 0.3) 100%);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 8px 32px rgba(59, 130, 246, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.collapsed-button:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.5) 0%, rgba(139, 92, 246, 0.5) 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 12px 48px rgba(59, 130, 246, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+  transform: scale(1.05);
+}
+
+.collapsed-button:active {
+  transform: scale(0.95);
+}
+
+/* Glow effects for icons */
+.drop-shadow-glow-blue {
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.8));
+}
+
+.drop-shadow-glow-yellow {
+  filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.8));
+}
+
+.drop-shadow-glow-orange {
+  filter: drop-shadow(0 0 8px rgba(251, 146, 60, 0.8));
+}
+
+.drop-shadow-glow-white {
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+}
+
+/* Pulse animation for critical warnings */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+
 /* Slide-fade transition for status card */
 .slide-fade-enter-active {
-  transition: all 0.3s ease-out;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .slide-fade-leave-active {
-  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.6, 1);
 }
 .slide-fade-enter-from {
   transform: translateX(-20px);
@@ -447,5 +576,21 @@ onUnmounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* Smooth scale on appear */
+.fade-enter-active {
+  animation: scale-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 </style>
