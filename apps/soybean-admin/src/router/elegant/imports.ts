@@ -29,6 +29,7 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   "management_game-instance": () => import("@/views/management/game-instance/index.vue"),
   management_games: () => import("@/views/management/games/index.vue"),
   management_member: () => import("@/views/management/member/index.vue"),
+  management_member_detail: () => import("@/views/management/member/detail.vue"),
   "management_play-attempts": () => import("@/views/management/play-attempts/index.vue"),
   management_scores: () => import("@/views/management/scores/index.vue"),
   "management_budget-tracking": () => import("@/views/management/budget-tracking/index.vue"),

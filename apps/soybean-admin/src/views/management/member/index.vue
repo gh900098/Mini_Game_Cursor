@@ -142,7 +142,7 @@ async function getMembers() {
 }
 
 function viewDetail(memberId: number) {
-  router.push(`/management/member/${memberId}`);
+  router.push(`/management/member/detail?id=${memberId}`);
 }
 
 async function toggleStatus(memberId: number, isActive: boolean) {

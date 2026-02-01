@@ -35,7 +35,7 @@ const route = useRoute();
 const router = useRouter();
 const { loading, startLoading, endLoading } = useLoading();
 
-const memberId = computed(() => Number(route.params.id));
+const memberId = computed(() => Number(route.query.id));
 const member = ref<Api.Management.Member | null>(null);
 const stats = ref<any>(null);
 const creditHistory = ref<Api.Management.CreditTransaction[]>([]);

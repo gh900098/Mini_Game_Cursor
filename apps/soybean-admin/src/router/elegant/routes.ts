@@ -179,6 +179,15 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
+        name: 'management_member_detail',
+        path: '/management/member/detail',
+        component: 'view.management_member_detail',
+        meta: {
+          title: 'Member Detail',
+          hideInMenu: true
+        }
+      },
+      {
         name: 'management_play-attempts',
         path: '/management/play-attempts',
         component: 'view.management_play-attempts',
