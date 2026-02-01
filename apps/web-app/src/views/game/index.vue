@@ -70,27 +70,47 @@
                 <div class="absolute inset-0 rounded-full border-2 border-white/30 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
               </button>
               
-              <!-- No Attempts Left Warning (even if canPlay somehow true) -->
-              <div v-if="gameStatus.dailyLimit > 0 && gameStatus.remaining === 0 && gameStatus.canPlay" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded-lg px-3 py-2 -mx-1 shadow-lg animate-pulse-slow">
-                <div class="i-carbon-warning text-lg drop-shadow-md"></div>
-                <span class="text-sm font-bold drop-shadow-md">次数已用完！</span>
-              </div>
-              
               <div class="flex items-center gap-3">
-                <!-- Daily Limit Display -->
-                <div v-if="gameStatus.canPlay && gameStatus.dailyLimit > 0 && gameStatus.remaining > 0" class="flex items-center gap-2">
-                  <!-- Warning if only 1 left -->
-                  <div v-if="gameStatus.remaining === 1" class="i-carbon-play-filled text-yellow-400 drop-shadow-glow-yellow"></div>
-                  <div v-else class="i-carbon-play-filled text-blue-400 drop-shadow-glow-blue"></div>
-                  <span class="text-sm" :class="gameStatus.remaining === 1 ? 'text-yellow-400 font-bold' : ''">
+                <!-- Daily Limit Display - Always show if dailyLimit > 0 -->
+                <div v-if="gameStatus.dailyLimit > 0" class="flex items-center gap-2">
+                  <!-- Icon color based on remaining -->
+                  <div 
+                    v-if="gameStatus.remaining === 0" 
+                    class="i-carbon-play-filled text-red-500 drop-shadow-glow-orange"
+                  ></div>
+                  <div 
+                    v-else-if="gameStatus.remaining === 1" 
+                    class="i-carbon-play-filled text-yellow-400 drop-shadow-glow-yellow"
+                  ></div>
+                  <div 
+                    v-else 
+                    class="i-carbon-play-filled text-blue-400 drop-shadow-glow-blue"
+                  ></div>
+                  
+                  <!-- Text color based on remaining -->
+                  <span 
+                    class="text-sm"
+                    :class="{
+                      'text-red-500 font-bold': gameStatus.remaining === 0,
+                      'text-yellow-400 font-bold': gameStatus.remaining === 1,
+                      '': gameStatus.remaining >= 2
+                    }"
+                  >
                     <span class="font-bold">{{ gameStatus.remaining }}</span>
-                    <span :class="gameStatus.remaining === 1 ? 'text-yellow-400/80' : 'text-white/60'">/{{ gameStatus.dailyLimit }}</span>
+                    <span 
+                      :class="{
+                        'text-red-500/80': gameStatus.remaining === 0,
+                        'text-yellow-400/80': gameStatus.remaining === 1,
+                        'text-white/60': gameStatus.remaining >= 2
+                      }"
+                    >/{{ gameStatus.dailyLimit }}</span>
                   </span>
                 </div>
-                <!-- Cooldown Timer -->
+                
+                <!-- Cooldown Timer - Yellow color for warning -->
                 <div v-if="cooldownRemaining > 0" class="flex items-center gap-2">
-                  <div class="i-carbon-time text-orange-400 drop-shadow-glow-orange"></div>
-                  <span class="text-sm font-mono text-orange-300">{{ formatCooldown(cooldownRemaining) }}</span>
+                  <div class="i-carbon-time text-yellow-400 drop-shadow-glow-yellow"></div>
+                  <span class="text-sm font-mono text-yellow-400 font-bold">{{ formatCooldown(cooldownRemaining) }}</span>
                 </div>
                 <!-- Refresh Button -->
                 <button
