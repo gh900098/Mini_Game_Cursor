@@ -90,21 +90,14 @@
                   <!-- Text color based on remaining -->
                   <span 
                     class="text-sm"
-                    :style="{
-                      color: gameStatus.remaining === 0 ? '#ef4444' : 
-                             gameStatus.remaining === 1 ? '#facc15' : 
-                             'white',
-                      fontWeight: gameStatus.remaining <= 1 ? 'bold' : 'normal'
+                    :class="{
+                      'remaining-red': gameStatus.remaining === 0,
+                      'remaining-yellow': gameStatus.remaining === 1,
+                      'remaining-normal': gameStatus.remaining >= 2
                     }"
                   >
                     <span class="font-bold">{{ gameStatus.remaining }}</span>
-                    <span 
-                      :style="{
-                        color: gameStatus.remaining === 0 ? 'rgba(239, 68, 68, 0.8)' : 
-                               gameStatus.remaining === 1 ? 'rgba(250, 204, 21, 0.8)' : 
-                               'rgba(255, 255, 255, 0.6)'
-                      }"
-                    >/{{ gameStatus.dailyLimit }}</span>
+                    <span class="remaining-slash">/{{ gameStatus.dailyLimit }}</span>
                   </span>
                 </div>
                 
@@ -745,5 +738,32 @@ onUnmounted(() => {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* Remaining count color overrides - Use !important to override parent .status-card-with-button color */
+.remaining-red {
+  color: #ef4444 !important;
+  font-weight: bold !important;
+}
+
+.remaining-red .remaining-slash {
+  color: rgba(239, 68, 68, 0.8) !important;
+}
+
+.remaining-yellow {
+  color: #facc15 !important;
+  font-weight: bold !important;
+}
+
+.remaining-yellow .remaining-slash {
+  color: rgba(250, 204, 21, 0.8) !important;
+}
+
+.remaining-normal {
+  color: white !important;
+}
+
+.remaining-normal .remaining-slash {
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 </style>
