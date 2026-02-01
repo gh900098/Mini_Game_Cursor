@@ -503,37 +503,52 @@ onUnmounted(() => {
   transform: scale(0.95);
 }
 
-/* Warning Box with Curved Extension and Attached Button */
+/* Warning Box with Curved Extension Tail */
 .warning-box-with-button {
-  background: rgba(220, 38, 38, 0.9);
-  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.4);
-  animation: pulse-slow 2s ease-in-out infinite;
-  /* Left side rounded */
-  border-top-left-radius: 0.5rem;
-  border-bottom-left-radius: 0.5rem;
-  /* Right side with space for button */
-  border-top-right-radius: 1.5rem;
-  border-bottom-right-radius: 1.5rem;
-  padding-right: 3rem;
   position: relative;
   display: flex;
   align-items: center;
-  /* No negative margin - button will be inside */
+  animation: pulse-slow 2s ease-in-out infinite;
+  /* Main box styling */
+  background: rgba(220, 38, 38, 0.9);
+  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.4);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  padding-right: 4.5rem;
+  /* Create space for curved tail + button */
+  margin-right: -3.5rem;
 }
 
-/* Hide Button attached inside warning box (right edge) */
+/* Curved tail extension using ::before */
+.warning-box-with-button::before {
+  content: '';
+  position: absolute;
+  right: -3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4rem;
+  height: 100%;
+  background: rgba(220, 38, 38, 0.9);
+  border-top-right-radius: 2rem;
+  border-bottom-right-radius: 2rem;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  z-index: 1;
+}
+
+/* Hide Button at the end of tail */
 .warning-hide-button {
   position: absolute;
-  right: 0.25rem;
+  right: -2rem;
   top: 50%;
   transform: translateY(-50%);
   width: 2.75rem;
   height: 2.75rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.8) 0%, rgba(168, 85, 247, 0.8) 100%);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(168, 85, 247, 0.9) 100%);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 2.5px solid rgba(255, 255, 255, 0.5);
+  border: 2.5px solid rgba(255, 255, 255, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -541,10 +556,9 @@ onUnmounted(() => {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
-    0 8px 32px rgba(99, 102, 241, 0.7),
-    0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+    0 8px 32px rgba(99, 102, 241, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.35) inset;
   z-index: 10;
-  flex-shrink: 0;
 }
 
 .warning-hide-button:hover {
