@@ -122,7 +122,10 @@
             @click="statusCollapsed = false"
             :class="[
               'collapsed-button group',
-              hasRuleViolation ? 'collapsed-button-warning' : ''
+              {
+                'collapsed-button-danger': collapsedButtonStatus === 'danger',
+                'collapsed-button-warning': collapsedButtonStatus === 'warning'
+              }
             ]"
             title="Show status"
           >
@@ -198,37 +201,50 @@ const soundButtonOpacity = computed(() => {
   return opacity / 100; // 转换成 CSS opacity (0-1)
 });
 
-// Check if there are any rule violations (for red warning indicator)
-const hasRuleViolation = computed(() => {
-  if (!gameStatus.value) return false;
+// Computed property for collapsed button status color
+const collapsedButtonStatus = computed(() => {
+  if (!gameStatus.value) return 'normal';
   
-  // Case 1: Cannot play due to block reason
+  // Case 1: Cannot play (blocked) - RED
   if (!gameStatus.value.canPlay && gameStatus.value.blockReason) {
-    return true;
+    return 'danger';
   }
   
-  // Case 2: No remaining attempts (0 out of dailyLimit)
+  // Case 2: No remaining attempts - RED
   if (gameStatus.value.dailyLimit > 0 && gameStatus.value.remaining === 0) {
-    return true;
+    return 'danger';
   }
   
-  // Case 3: Cooldown active
+  // Case 3: Cooldown active - YELLOW (warning)
   if (cooldownRemaining.value > 0) {
-    return true;
+    return 'warning';
   }
   
-  // All rules passed
-  return false;
+  // Case 4: Only 1 attempt left - YELLOW (warning)
+  if (gameStatus.value.dailyLimit > 0 && gameStatus.value.remaining === 1) {
+    return 'warning';
+  }
+  
+  // Normal state - PURPLE (default)
+  return 'normal';
 });
 
 // Computed property for remaining count color
 const remainingColor = computed(() => {
-  if (!gameStatus.value || !gameStatus.value.dailyLimit) return 'white';
+  if (!gameStatus.value || !gameStatus.value.dailyLimit) {
+    console.log('[remainingColor] No gameStatus or dailyLimit, returning white');
+    return 'white';
+  }
   
   const remaining = gameStatus.value.remaining;
-  if (remaining === 0) return '#ef4444'; // Red
-  if (remaining === 1) return '#facc15'; // Yellow
-  return 'white'; // Normal
+  let color = 'white';
+  
+  if (remaining === 0) color = '#ef4444'; // Red
+  else if (remaining === 1) color = '#facc15'; // Yellow
+  else color = 'white'; // Normal
+  
+  console.log('[remainingColor] remaining:', remaining, 'color:', color);
+  return color;
 });
 
 const remainingSlashColor = computed(() => {
@@ -651,17 +667,17 @@ onUnmounted(() => {
   transform: scale(0.95);
 }
 
-/* Red Warning State for Collapsed Button (when rules violated) */
-.collapsed-button-warning {
+/* Danger State for Collapsed Button (red - cannot play) */
+.collapsed-button-danger {
   background: linear-gradient(135deg, rgba(220, 38, 38, 0.4) 0%, rgba(239, 68, 68, 0.4) 100%);
   border-color: rgba(239, 68, 68, 0.4);
   box-shadow: 
     0 8px 32px rgba(220, 38, 38, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-  animation: pulse-red 2s ease-in-out infinite;
+  animation: pulse-danger 2s ease-in-out infinite;
 }
 
-.collapsed-button-warning:hover {
+.collapsed-button-danger:hover {
   background: linear-gradient(135deg, rgba(220, 38, 38, 0.6) 0%, rgba(239, 68, 68, 0.6) 100%);
   border-color: rgba(239, 68, 68, 0.6);
   box-shadow: 
@@ -669,7 +685,7 @@ onUnmounted(() => {
     0 0 0 1px rgba(255, 255, 255, 0.2) inset;
 }
 
-@keyframes pulse-red {
+@keyframes pulse-danger {
   0%, 100% {
     box-shadow: 
       0 8px 32px rgba(220, 38, 38, 0.5),
@@ -678,6 +694,37 @@ onUnmounted(() => {
   50% {
     box-shadow: 
       0 8px 40px rgba(220, 38, 38, 0.7),
+      0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+  }
+}
+
+/* Warning State for Collapsed Button (yellow - 1 attempt left or cooldown) */
+.collapsed-button-warning {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.4) 0%, rgba(250, 204, 21, 0.4) 100%);
+  border-color: rgba(250, 204, 21, 0.4);
+  box-shadow: 
+    0 8px 32px rgba(234, 179, 8, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  animation: pulse-warning 2s ease-in-out infinite;
+}
+
+.collapsed-button-warning:hover {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.6) 0%, rgba(250, 204, 21, 0.6) 100%);
+  border-color: rgba(250, 204, 21, 0.6);
+  box-shadow: 
+    0 12px 48px rgba(234, 179, 8, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+}
+
+@keyframes pulse-warning {
+  0%, 100% {
+    box-shadow: 
+      0 8px 32px rgba(234, 179, 8, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  }
+  50% {
+    box-shadow: 
+      0 8px 40px rgba(234, 179, 8, 0.7),
       0 0 0 1px rgba(255, 255, 255, 0.2) inset;
   }
 }
