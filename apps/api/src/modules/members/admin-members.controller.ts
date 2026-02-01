@@ -79,15 +79,17 @@ export class AdminMembersController {
         await this.membersRepo.update(id, data);
         const updated = await this.membersRepo.findOne({ where: { id } });
 
-        await this.auditLogService.create({
-            userId: req.user.userId,
-            userName: req.user.name,
-            companyId: updated.companyId,
-            module: 'Member',
-            action: 'UPDATE',
-            payload: data,
-            result: { id },
-        });
+        if (updated) {
+            await this.auditLogService.create({
+                userId: req.user.userId,
+                userName: req.user.name,
+                companyId: updated.companyId,
+                module: 'Member',
+                action: 'UPDATE',
+                payload: data,
+                result: { id },
+            });
+        }
 
         return updated;
     }
@@ -178,7 +180,7 @@ export class AdminMembersController {
         return this.scoresRepo.find({
             where: { memberId: id },
             relations: ['instance', 'instance.company'],
-            order: { achievedAt: 'DESC' },
+            order: { createdAt: 'DESC' },
             take: 100,
         });
     }
