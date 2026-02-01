@@ -444,9 +444,9 @@ onUnmounted(() => {
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  /* Curved right edge to accommodate button */
-  border-radius: 0.75rem 1.5rem 1.5rem 0.75rem;
-  padding: 0.75rem 4rem 0.75rem 1rem;
+  /* Larger curved right edge to match button size */
+  border-radius: 0.75rem 2.25rem 2.25rem 0.75rem;
+  padding: 0.75rem 5rem 0.75rem 1rem;
   color: white;
   box-shadow: 
     0 8px 32px 0 rgba(0, 0, 0, 0.37),
@@ -492,19 +492,20 @@ onUnmounted(() => {
   transform: scale(0.95);
 }
 
-/* Hide Button on status card - large and visible */
+/* Hide Button on status card - matches curved edge height */
 .status-card-hide-button {
   position: absolute;
-  right: 0.5rem;
+  right: 0.25rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 3rem;
-  height: 3rem;
+  /* Large button to match card height */
+  width: 4.25rem;
+  height: 4.25rem;
   border-radius: 50%;
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(168, 85, 247, 0.95) 100%);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 2.5px solid rgba(255, 255, 255, 0.7);
+  border: 3px solid rgba(255, 255, 255, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -513,31 +514,31 @@ onUnmounted(() => {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
     0 8px 32px rgba(99, 102, 241, 0.9),
-    0 0 0 1px rgba(255, 255, 255, 0.4) inset,
-    0 0 20px rgba(255, 255, 255, 0.3);
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+    0 0 25px rgba(255, 255, 255, 0.4);
   z-index: 100;
   flex-shrink: 0;
 }
 
 .status-card-hide-button:hover {
   background: linear-gradient(135deg, rgba(99, 102, 241, 1) 0%, rgba(168, 85, 247, 1) 100%);
-  border-color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 1);
   box-shadow: 
     0 12px 48px rgba(99, 102, 241, 1),
-    0 0 0 1px rgba(255, 255, 255, 0.5) inset,
-    0 0 30px rgba(255, 255, 255, 0.5);
-  transform: translateY(-50%) scale(1.15) translateX(4px);
+    0 0 0 1px rgba(255, 255, 255, 0.6) inset,
+    0 0 35px rgba(255, 255, 255, 0.6);
+  transform: translateY(-50%) scale(1.1) translateX(4px);
 }
 
 .status-card-hide-button:active {
   transform: translateY(-50%) scale(0.95);
 }
 
-/* Large arrow icon */
+/* Extra large arrow icon to match button size */
 .status-card-hide-button .i-carbon-chevron-right {
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: 900;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.7));
 }
 
 /* Collapsed Button - Premium floating design */
