@@ -33,6 +33,34 @@
         allow="autoplay; fullscreen"
         @load="handleIframeLoad"
       ></iframe>
+      <!-- Game Status Display -->
+      <div v-if="gameStatus && !isPreview" class="absolute top-4 left-4 z-50">
+        <div class="bg-black/60 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-3 text-white">
+          <div class="flex items-center gap-3">
+            <!-- Daily Limit -->
+            <div v-if="gameStatus.dailyLimit > 0" class="flex items-center gap-2">
+              <div class="i-carbon-play-filled text-primary"></div>
+              <span class="text-sm">
+                <span class="font-bold">{{ gameStatus.remaining }}</span>
+                <span class="text-white/60">/{{ gameStatus.dailyLimit }}</span>
+              </span>
+            </div>
+            <!-- Cooldown Timer -->
+            <div v-if="cooldownRemaining > 0" class="flex items-center gap-2">
+              <div class="i-carbon-time text-warning"></div>
+              <span class="text-sm font-mono">{{ formatCooldown(cooldownRemaining) }}</span>
+            </div>
+            <!-- Refresh Button -->
+            <button
+              @click="fetchGameStatus"
+              class="i-carbon-renew text-white/60 hover:text-white text-lg transition-colors"
+              :class="{ 'animate-spin': loadingStatus }"
+              title="Refresh status"
+            ></button>
+          </div>
+        </div>
+      </div>
+      
       <!-- 浮动音效按钮（不管是否全屏都显示） -->
       <div v-if="showSoundButton" class="absolute top-4 right-4 z-50">
         <button
@@ -77,7 +105,11 @@ const settingsStore = useSettingsStore();
 
 const instance = ref<any>(null);
 const loading = ref(true);
+const loadingStatus = ref(false);
 const gameContainer = ref<HTMLElement | null>(null);
+const gameStatus = ref<any>(null);
+const cooldownRemaining = ref(0);
+let cooldownInterval: any = null;
 
 const instanceSlug = computed(() => route.params.id);
 const isPreview = computed(() => route.query.isPreview === 'true');
@@ -128,10 +160,91 @@ async function submitScore(score: number, metadata?: any) {
       metadata,
     });
     message.success(`Score of ${score} submitted successfully!`);
-  } catch (err) {
-    message.error('Failed to submit score');
+    // Refresh game status after successful submission
+    fetchGameStatus();
+  } catch (err: any) {
+    // Handle game rule errors with user-friendly messages
+    if (err.response?.data?.code) {
+      const errorData = err.response.data;
+      switch (errorData.code) {
+        case 'DAILY_LIMIT_REACHED':
+          message.error(`每日次数已用完！明天再来吧 (${errorData.limit}次/天)`);
+          break;
+        case 'COOLDOWN_ACTIVE':
+          message.warning(`请等待 ${errorData.remainingSeconds} 秒后再玩`);
+          cooldownRemaining.value = errorData.remainingSeconds;
+          startCooldownTimer();
+          break;
+        case 'ALREADY_PLAYED':
+          message.error('您已经玩过此游戏，每人仅限一次机会');
+          break;
+        case 'INVALID_DAY':
+          message.warning(errorData.message || '今天不在开放日期');
+          break;
+        case 'LEVEL_TOO_LOW':
+          message.error(`等级不足！需要等级 ${errorData.required}，当前 ${errorData.current}`);
+          break;
+        case 'DAILY_BUDGET_EXCEEDED':
+          message.warning('今日预算已用完，明天再来吧');
+          break;
+        default:
+          message.error(errorData.message || '提交分数失败');
+      }
+    } else {
+      message.error('Failed to submit score');
+    }
     console.error(err);
+    // Refresh status to show updated info
+    fetchGameStatus();
   }
+}
+
+async function fetchGameStatus() {
+  if (isPreview.value || !authStore.token) return;
+  
+  loadingStatus.value = true;
+  try {
+    const res: any = await service.get(`/scores/status/${instanceSlug.value}`);
+    gameStatus.value = res.data || res;
+    
+    // If there's a cooldown, start the timer
+    if (gameStatus.value.cooldownRemaining > 0) {
+      cooldownRemaining.value = gameStatus.value.cooldownRemaining;
+      startCooldownTimer();
+    }
+  } catch (error) {
+    console.error('Failed to fetch game status:', error);
+  } finally {
+    loadingStatus.value = false;
+  }
+}
+
+function startCooldownTimer() {
+  // Clear existing timer
+  if (cooldownInterval) {
+    clearInterval(cooldownInterval);
+  }
+  
+  // Start countdown
+  cooldownInterval = setInterval(() => {
+    if (cooldownRemaining.value > 0) {
+      cooldownRemaining.value--;
+    } else {
+      clearInterval(cooldownInterval);
+      cooldownInterval = null;
+      // Refresh status when cooldown ends
+      fetchGameStatus();
+    }
+  }, 1000);
+}
+
+function formatCooldown(seconds: number): string {
+  if (seconds < 60) {
+    return `${seconds}s`;
+  }
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
 async function fetchInstance() {
@@ -189,9 +302,16 @@ onMounted(() => {
     return;
   }
   fetchInstance();
+  fetchGameStatus(); // Fetch game status on mount
 });
 
 onUnmounted(() => {
   window.removeEventListener('message', handleMessage);
+  
+  // Clear cooldown timer
+  if (cooldownInterval) {
+    clearInterval(cooldownInterval);
+    cooldownInterval = null;
+  }
 });
 </script>
