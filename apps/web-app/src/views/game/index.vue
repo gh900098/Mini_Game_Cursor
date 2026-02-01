@@ -502,9 +502,8 @@ onUnmounted(() => {
 /* Hide Button Container - For positioning bridge + button together */
 .hide-button-container {
   position: absolute;
-  top: 50%;
+  bottom: 0.75rem;
   right: -0.25rem;
-  transform: translateY(-50%);
   z-index: 10;
   display: flex;
   align-items: center;
