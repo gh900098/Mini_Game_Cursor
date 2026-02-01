@@ -71,11 +71,7 @@ const creditColumns: DataTableColumns<Api.Management.CreditTransaction> = [
     key: 'type',
     width: 100,
     render(row) {
-      return row.type === 'credit' ? (
-        <NTag type="success">Credit</NTag>
-      ) : (
-        <NTag type="error">Debit</NTag>
-      );
+      return row.type === 'credit' ? <NTag type="success">Credit</NTag> : <NTag type="error">Debit</NTag>;
     }
   },
   {
@@ -226,11 +222,7 @@ const loginColumns: DataTableColumns<Api.Management.LoginHistory> = [
     key: 'success',
     width: 100,
     render(row) {
-      return row.success ? (
-        <NTag type="success">Success</NTag>
-      ) : (
-        <NTag type="error">Failed</NTag>
-      );
+      return row.success ? <NTag type="success">Success</NTag> : <NTag type="error">Failed</NTag>;
     }
   },
   {
