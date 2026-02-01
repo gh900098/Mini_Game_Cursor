@@ -683,6 +683,20 @@ function getExpectedValue(key: string) {
     return total.toFixed(2);
 }
 
+function isTabValid(tabName: string): boolean {
+  // Check validation rules for each tab
+  if (tabName === 'prizes') {
+    // Prizes tab is valid if total probability = 100%
+    return getTotalChance('prizeList') === 100;
+  }
+  
+  // Add more validation rules for other tabs as needed
+  // e.g., if (tabName === 'rules') { ... }
+  
+  // Default: tab is valid
+  return true;
+}
+
 function handleFieldChange(key: string, value: any) {
   console.log('[handleFieldChange] key:', key, 'value:', value);
   console.log('[handleFieldChange] Available presets:', Object.keys(FULL_THEME_PRESETS));
@@ -1016,9 +1030,10 @@ function isFontSelect(item: SchemaItem): boolean {
       <NTabs type="line" animated class="mb-4">
         <NTabPane v-for="tab in (schema as TabSchema[])" :key="tab.name" :name="tab.name">
           <template #tab>
-            <NSpace :size="6" align="center">
+            <NSpace :size="6" align="center" :class="{ 'text-red-500': !isTabValid(tab.name) }">
               <span class="text-16px">{{ getIcon(tab.name) }}</span>
               <span class="font-medium">{{ t(`page.manage.game.tabs.${tab.name}`) || tab.label }}</span>
+              <span v-if="!isTabValid(tab.name)" class="text-xs">❌</span>
             </NSpace>
           </template>
           <div class="py-6 px-1">
