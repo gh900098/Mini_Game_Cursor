@@ -697,6 +697,50 @@ function isTabValid(tabName: string): boolean {
   return true;
 }
 
+function isSectionConfigValid(item: SchemaItem): boolean {
+  // Check if the section's configuration is complete/valid (regardless of enable state)
+  // Used to show red warning when section is collapsed but config is incomplete
+  
+  if (item.type === 'time-limit') {
+    const config = formModel.value[item.key];
+    if (!config) return true; // No config yet = valid (default state)
+    
+    // Check if config has been modified but incomplete
+    const hasPartialConfig = config.activeDays?.length > 0 || config.startTime || config.endTime;
+    if (!hasPartialConfig) return true; // Not configured yet = ok
+    
+    // If partially configured, must be complete
+    if (!config.activeDays || config.activeDays.length === 0) return false;
+    if (!config.startTime || !config.endTime) return false;
+  }
+  
+  if (item.type === 'dynamic-prob') {
+    const config = formModel.value[item.key];
+    if (!config) return true;
+    
+    // Check if user has started configuring but left it incomplete
+    const hasPartialConfig = config.lossStreakLimit !== undefined || config.lossStreakBonus !== undefined;
+    if (!hasPartialConfig) return true;
+    
+    if (!config.lossStreakLimit || config.lossStreakLimit <= 0) return false;
+    if (!config.lossStreakBonus || config.lossStreakBonus <= 0) return false;
+  }
+  
+  if (item.type === 'budget-control') {
+    const config = formModel.value[item.key];
+    if (!config) return true;
+    
+    const hasPartialConfig = config.dailyBudget !== undefined || config.monthlyBudget !== undefined;
+    if (!hasPartialConfig) return true;
+    
+    if (!config.dailyBudget || config.dailyBudget <= 0) return false;
+    if (!config.monthlyBudget || config.monthlyBudget <= 0) return false;
+  }
+  
+  // Default: section config is valid
+  return true;
+}
+
 function handleFieldChange(key: string, value: any) {
   console.log('[handleFieldChange] key:', key, 'value:', value);
   console.log('[handleFieldChange] Available presets:', Object.keys(FULL_THEME_PRESETS));
@@ -1212,7 +1256,13 @@ function isFontSelect(item: SchemaItem): boolean {
                 </div>
 
                 <!-- Time Limit Config -->
-                <div v-else-if="item.type === 'time-limit'" class="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                <div v-else-if="item.type === 'time-limit'" 
+                     :class="[
+                       'rounded-xl p-5 border',
+                       !formModel[item.key]?.enable && !isSectionConfigValid(item) 
+                         ? 'bg-red-50 border-red-200' 
+                         : 'bg-gray-50 border-gray-100'
+                     ]">
                     <div class="flex items-center justify-between mb-4">
                          <div class="text-sm font-bold text-gray-500 uppercase tracking-wide">{{ getItemLabel(item) }}</div>
                          <NSwitch v-model:value="formModel[item.key].enable" size="medium" />
@@ -1248,7 +1298,13 @@ function isFontSelect(item: SchemaItem): boolean {
                 </div>
 
                 <!-- Dynamic Probability Config -->
-                <div v-else-if="item.type === 'dynamic-prob'" class="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                <div v-else-if="item.type === 'dynamic-prob'" 
+                     :class="[
+                       'rounded-xl p-5 border',
+                       !formModel[item.key]?.enable && !isSectionConfigValid(item) 
+                         ? 'bg-red-50 border-red-200' 
+                         : 'bg-gray-50 border-gray-100'
+                     ]">
                     <div class="flex items-center justify-between mb-4">
                          <div class="text-sm font-bold text-gray-500 uppercase tracking-wide">{{ getItemLabel(item) }}</div>
                          <NSwitch v-model:value="formModel[item.key].enable" size="medium" />
@@ -1269,7 +1325,13 @@ function isFontSelect(item: SchemaItem): boolean {
                 </div>
 
                 <!-- Budget Control Config -->
-                <div v-else-if="item.type === 'budget-control'" class="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                <div v-else-if="item.type === 'budget-control'" 
+                     :class="[
+                       'rounded-xl p-5 border',
+                       !formModel[item.key]?.enable && !isSectionConfigValid(item) 
+                         ? 'bg-red-50 border-red-200' 
+                         : 'bg-gray-50 border-gray-100'
+                     ]">
                     <div class="flex items-center justify-between mb-4">
                          <div class="text-sm font-bold text-gray-500 uppercase tracking-wide">{{ getItemLabel(item) }}</div>
                          <NSwitch v-model:value="formModel[item.key].enable" size="medium" />
