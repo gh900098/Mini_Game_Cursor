@@ -72,10 +72,9 @@ const creditColumns: DataTableColumns<Api.Management.CreditTransaction> = [
     width: 100,
     render(row) {
       const txType = row.type;
-      if (txType === 'credit') {
-        return <NTag type="success">Credit</NTag>;
-      }
-      return <NTag type="error">Debit</NTag>;
+      const color = txType === 'credit' ? '#18a058' : '#d03050';
+      const text = txType === 'credit' ? 'Credit' : 'Debit';
+      return <span style={{color: color, fontWeight: 'bold'}}>{text}</span>;
     }
   },
   {
@@ -226,10 +225,9 @@ const loginColumns: DataTableColumns<Api.Management.LoginHistory> = [
     key: 'success',
     width: 100,
     render(row) {
-      if (row.success) {
-        return <NTag type="success">Success</NTag>;
-      }
-      return <NTag type="error">Failed</NTag>;
+      const color = row.success ? '#18a058' : '#d03050';
+      const text = row.success ? 'Success' : 'Failed';
+      return <span style={{color: color, fontWeight: 'bold'}}>{text}</span>;
     }
   },
   {
