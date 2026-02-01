@@ -11,7 +11,7 @@ import { BudgetTracking } from './entities/budget-tracking.entity';
 
 @Controller('admin/scores')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('admin', 'super_admin')
+@Roles('R_ADMIN', 'R_SUPER')
 export class AdminScoresController {
     constructor(
         private readonly scoresService: ScoresService,

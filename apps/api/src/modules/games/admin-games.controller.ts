@@ -8,7 +8,7 @@ import { Game } from './entities/game.entity';
 
 @Controller('admin/games')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('admin', 'super_admin')
+@Roles('R_ADMIN', 'R_SUPER')
 export class AdminGamesController {
     constructor(
         @InjectRepository(Game)
