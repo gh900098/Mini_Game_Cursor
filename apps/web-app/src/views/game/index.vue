@@ -95,18 +95,22 @@
             </div>
           </Transition>
           
-          <!-- Hide Button - Floating at bottom-left corner of card -->
+          <!-- Hide Button - Floating at right edge with curved connector -->
           <Transition name="fade">
-            <button
-              v-if="!statusCollapsed"
-              @click="statusCollapsed = true"
-              class="hide-button group"
-              title="Hide"
-            >
-              <div class="i-carbon-chevron-left text-lg drop-shadow-glow-white"></div>
-              <!-- Animated ring on hover -->
-              <div class="absolute inset-0 rounded-full border-2 border-white/30 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
-            </button>
+            <div v-if="!statusCollapsed" class="hide-button-container">
+              <!-- Curved connector bridge -->
+              <div class="hide-button-bridge"></div>
+              <!-- Hide button -->
+              <button
+                @click="statusCollapsed = true"
+                class="hide-button group"
+                title="Hide"
+              >
+                <div class="i-carbon-chevron-right text-xl font-bold text-white"></div>
+                <!-- Animated ring on hover -->
+                <div class="absolute inset-0 rounded-full border-2 border-white/30 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+              </button>
+            </div>
           </Transition>
         </div>
         
@@ -495,15 +499,43 @@ onUnmounted(() => {
   transform: scale(0.95);
 }
 
-/* Hide Button - Floating at right edge of card with curved design */
-.hide-button {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.4) 0%, rgba(168, 85, 247, 0.4) 100%);
+/* Hide Button Container - For positioning bridge + button together */
+.hide-button-container {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+/* Curved Bridge Connector - Creates smooth curve between card and button */
+.hide-button-bridge {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  width: 1.5rem;
+  height: 3rem;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(20, 20, 30, 0.85) 100%);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 2px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-left: none;
+  border-radius: 0 50% 50% 0;
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+/* Hide Button - Floating at right edge with curved design */
+.hide-button {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.5) 0%, rgba(168, 85, 247, 0.5) 100%);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -511,22 +543,22 @@ onUnmounted(() => {
   cursor: pointer;
   position: absolute;
   top: 50%;
-  right: -0.75rem;
+  right: -0.625rem;
   transform: translateY(-50%);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
-    0 6px 24px rgba(99, 102, 241, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-  z-index: 10;
+    0 8px 28px rgba(99, 102, 241, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+  z-index: 11;
 }
 
 .hide-button:hover {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.6) 0%, rgba(168, 85, 247, 0.6) 100%);
-  border-color: rgba(255, 255, 255, 0.45);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.7) 0%, rgba(168, 85, 247, 0.7) 100%);
+  border-color: rgba(255, 255, 255, 0.5);
   box-shadow: 
-    0 8px 32px rgba(99, 102, 241, 0.6),
-    0 0 0 1px rgba(255, 255, 255, 0.25) inset;
-  transform: translateY(-50%) scale(1.1) translateX(2px);
+    0 12px 40px rgba(99, 102, 241, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+  transform: translateY(-50%) scale(1.1) translateX(4px);
 }
 
 .hide-button:active {
