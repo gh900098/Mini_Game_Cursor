@@ -90,18 +90,19 @@
                   <!-- Text color based on remaining -->
                   <span 
                     class="text-sm"
-                    :class="{
-                      'text-red-500 font-bold': gameStatus.remaining === 0,
-                      'text-yellow-400 font-bold': gameStatus.remaining === 1,
-                      '': gameStatus.remaining >= 2
+                    :style="{
+                      color: gameStatus.remaining === 0 ? '#ef4444' : 
+                             gameStatus.remaining === 1 ? '#facc15' : 
+                             'white',
+                      fontWeight: gameStatus.remaining <= 1 ? 'bold' : 'normal'
                     }"
                   >
                     <span class="font-bold">{{ gameStatus.remaining }}</span>
                     <span 
-                      :class="{
-                        'text-red-500/80': gameStatus.remaining === 0,
-                        'text-yellow-400/80': gameStatus.remaining === 1,
-                        'text-white/60': gameStatus.remaining >= 2
+                      :style="{
+                        color: gameStatus.remaining === 0 ? 'rgba(239, 68, 68, 0.8)' : 
+                               gameStatus.remaining === 1 ? 'rgba(250, 204, 21, 0.8)' : 
+                               'rgba(255, 255, 255, 0.6)'
                       }"
                     >/{{ gameStatus.dailyLimit }}</span>
                   </span>
