@@ -495,7 +495,7 @@ onUnmounted(() => {
   transform: scale(0.95);
 }
 
-/* Hide Button - Floating at bottom-left corner of card with curved edge */
+/* Hide Button - Floating at right edge of card with curved design */
 .hide-button {
   width: 2.5rem;
   height: 2.5rem;
@@ -510,8 +510,9 @@ onUnmounted(() => {
   color: white;
   cursor: pointer;
   position: absolute;
-  bottom: -0.75rem;
-  left: 0.5rem;
+  top: 50%;
+  right: -0.75rem;
+  transform: translateY(-50%);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
     0 6px 24px rgba(99, 102, 241, 0.4),
@@ -525,11 +526,11 @@ onUnmounted(() => {
   box-shadow: 
     0 8px 32px rgba(99, 102, 241, 0.6),
     0 0 0 1px rgba(255, 255, 255, 0.25) inset;
-  transform: scale(1.1) translateY(-2px);
+  transform: translateY(-50%) scale(1.1) translateX(2px);
 }
 
 .hide-button:active {
-  transform: scale(0.95);
+  transform: translateY(-50%) scale(0.95);
 }
 
 /* Collapsed Button - Premium floating design */
