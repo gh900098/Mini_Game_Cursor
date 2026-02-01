@@ -34,7 +34,7 @@
         @load="handleIframeLoad"
       ></iframe>
       <!-- Game Status Display (Floating & Collapsible) - Premium Glassmorphism Design -->
-      <div v-if="gameStatus && !isPreview" class="absolute top-4 left-4 z-50">
+      <div v-if="gameStatus" class="absolute top-4 left-4 z-50">
         <div class="relative">
           <Transition name="slide-fade">
             <div v-if="!statusCollapsed" class="status-card-with-button group">
@@ -365,7 +365,8 @@ async function submitScore(score: number, metadata?: any) {
 }
 
 async function fetchGameStatus() {
-  if (isPreview.value || !authStore.token) return;
+  // Skip if not logged in, or if no instanceSlug (new instance in preview)
+  if (!authStore.token || !instanceSlug.value) return;
   
   loadingStatus.value = true;
   try {
