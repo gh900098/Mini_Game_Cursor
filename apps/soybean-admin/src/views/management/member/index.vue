@@ -16,15 +16,15 @@ const columns: DataTableColumns<Api.Management.Member> = [
   {
     title: 'ID',
     key: 'id',
-    width: 80,
-    render(row) {
-      return <span class="font-mono text-gray-600">#{row.id}</span>;
+    width: 380,
+    render(row: any) {
+      return <span class="font-mono text-gray-400 text-xs">{row.id}</span>;
     }
   },
   {
     title: 'Username',
     key: 'username',
-    render(row) {
+    render(row: any) {
       return (
         <div class="flex flex-col">
           <span class="font-medium">{row.username || 'Guest'}</span>
@@ -46,7 +46,7 @@ const columns: DataTableColumns<Api.Management.Member> = [
     title: 'Points',
     key: 'pointsBalance',
     width: 100,
-    render(row) {
+    render(row: any) {
       return <span class="font-bold text-primary text-lg">{row.pointsBalance}</span>;
     }
   },
@@ -54,7 +54,7 @@ const columns: DataTableColumns<Api.Management.Member> = [
     title: 'Level',
     key: 'level',
     width: 80,
-    render(row) {
+    render(row: any) {
       return <span class="font-semibold">Lv.{row.level || 1}</span>;
     }
   },
@@ -62,7 +62,7 @@ const columns: DataTableColumns<Api.Management.Member> = [
     title: 'VIP',
     key: 'vipTier',
     width: 80,
-    render(row) {
+    render(row: any) {
       if (!row.vipTier) return <span class="text-gray-400">-</span>;
       return <NTag type="warning">VIP {row.vipTier}</NTag>;
     }
@@ -71,7 +71,7 @@ const columns: DataTableColumns<Api.Management.Member> = [
     title: 'Type',
     key: 'isAnonymous',
     width: 100,
-    render(row) {
+    render(row: any) {
       return row.isAnonymous ? <NTag type="warning">Guest</NTag> : <NTag type="success">Member</NTag>;
     }
   },
@@ -79,7 +79,7 @@ const columns: DataTableColumns<Api.Management.Member> = [
     title: 'Status',
     key: 'isActive',
     width: 100,
-    render(row) {
+    render(row: any) {
       return row.isActive ? (
         <NTag type="success">Active</NTag>
       ) : (
@@ -91,7 +91,7 @@ const columns: DataTableColumns<Api.Management.Member> = [
     title: 'Created',
     key: 'createdAt',
     width: 180,
-    render(row) {
+    render(row: any) {
       return <span class="text-sm">{new Date(row.createdAt).toLocaleString()}</span>;
     }
   },
@@ -100,7 +100,7 @@ const columns: DataTableColumns<Api.Management.Member> = [
     key: 'actions',
     width: 220,
     fixed: 'right' as const,
-    render(row) {
+    render(row: any) {
       return (
         <NSpace>
           <NButton
@@ -141,11 +141,11 @@ async function getMembers() {
   endLoading();
 }
 
-function viewDetail(memberId: number) {
+function viewDetail(memberId: string) {
   router.push(`/management/member/detail?id=${memberId}`);
 }
 
-async function toggleStatus(memberId: number, isActive: boolean) {
+async function toggleStatus(memberId: string, isActive: boolean) {
   const { error } = await fetchToggleMemberStatus(memberId, { isActive });
   if (!error) {
     window.$message?.success(`Member ${isActive ? 'enabled' : 'disabled'} successfully`);
@@ -163,7 +163,7 @@ getMembers();
         :columns="columns"
         :data="members"
         :loading="loading"
-        :scroll-x="1400"
+        :scroll-x="1600"
         flex-height
         class="h-full"
       />

@@ -288,7 +288,7 @@ export function fetchGetAdminMember(id: string) {
     });
 }
 
-export function fetchGetMemberById(id: number) {
+export function fetchGetMemberById(id: string) {
     return request<Api.Management.Member>({
         url: `/admin/members/${id}`,
         method: 'get'
@@ -303,7 +303,7 @@ export function fetchCreateMember(data: Partial<Api.Management.Member>) {
     });
 }
 
-export function fetchUpdateMember(id: number, data: Partial<Api.Management.Member>) {
+export function fetchUpdateMember(id: string, data: Partial<Api.Management.Member>) {
     return request<Api.Management.Member>({
         url: `/admin/members/${id}`,
         method: 'patch',
@@ -311,7 +311,7 @@ export function fetchUpdateMember(id: number, data: Partial<Api.Management.Membe
     });
 }
 
-export function fetchToggleMemberStatus(id: number, data: { isActive: boolean }) {
+export function fetchToggleMemberStatus(id: string, data: { isActive: boolean }) {
     return request<Api.Management.Member>({
         url: `/admin/members/${id}/toggle-status`,
         method: 'patch',
@@ -319,7 +319,7 @@ export function fetchToggleMemberStatus(id: number, data: { isActive: boolean })
     });
 }
 
-export function fetchAdjustMemberCredits(id: number, data: { amount: number; reason: string; type: 'credit' | 'debit' }) {
+export function fetchAdjustMemberCredits(id: string, data: { amount: number; reason: string; type: 'credit' | 'debit' }) {
     return request<any>({
         url: `/admin/members/${id}/adjust-credit`,
         method: 'post',
@@ -327,42 +327,42 @@ export function fetchAdjustMemberCredits(id: number, data: { amount: number; rea
     });
 }
 
-export function fetchGetMemberStats(id: number) {
+export function fetchGetMemberStats(id: string) {
     return request<any>({
         url: `/admin/members/${id}/stats`,
         method: 'get'
     });
 }
 
-export function fetchGetMemberCreditHistory(id: number) {
+export function fetchGetMemberCreditHistory(id: string) {
     return request<Api.Management.CreditTransaction[]>({
         url: `/admin/members/${id}/credit-history`,
         method: 'get'
     });
 }
 
-export function fetchGetMemberPlayHistory(id: number) {
+export function fetchGetMemberPlayHistory(id: string) {
     return request<Api.Management.PlayAttempt[]>({
         url: `/admin/members/${id}/play-history`,
         method: 'get'
     });
 }
 
-export function fetchGetMemberScores(id: number) {
+export function fetchGetMemberScores(id: string) {
     return request<Api.Management.Score[]>({
         url: `/admin/members/${id}/scores`,
         method: 'get'
     });
 }
 
-export function fetchGetMemberLoginHistory(id: number) {
+export function fetchGetMemberLoginHistory(id: string) {
     return request<Api.Management.LoginHistory[]>({
         url: `/admin/members/${id}/login-history`,
         method: 'get'
     });
 }
 
-export function fetchGetMemberAuditLogs(id: number) {
+export function fetchGetMemberAuditLogs(id: string) {
     return request<any[]>({
         url: `/admin/members/${id}/audit-logs`,
         method: 'get'

@@ -418,6 +418,38 @@ UPDATE members SET vip_tier = 'Gold' WHERE id = 'user-id';
 
 ---
 
+## 👥 会员管理系统 (Member Management)
+
+**实现日期：** 2026-02-01  
+**状态：** 功能完善 🟢
+
+### 📍 位置
+- **Backend Controller:** `apps/api/src/modules/members/admin-members.controller.ts`
+- **Backend Service:** `apps/api/src/modules/members/members.service.ts`
+- **Frontend List:** `apps/soybean-admin/src/views/management/member/index.vue`
+- **Frontend Detail:** `apps/soybean-admin/src/views/management/member/detail.vue`
+- **API Service:** `apps/api/src/service/api/management.ts`
+
+### 🎯 功能说明
+管理平台所有注册会员和游客。支持查看会员详情、积分历史、游戏记录、登录历史，以及手动调整积分和启用/禁用账号。
+
+### ⚙️ 核心功能
+1. **统一 ID 系统**：全面使用 UUID (String) 作为会员唯一标识，确保多端和第三方集成的兼容性。
+2. **状态切换**：支持通过 `isActive` 字段即时启用或禁用会员账号。
+3. **积分管理**：支持管理员手动加减积分，并要求填写调整原因，所有操作记录入库并同步到审计日志。
+4. **多维度历史记录**：
+   - 积分交易记录 (Credit History)
+   - 游戏参与记录 (Play History)
+   - 分数记录 (Scores)
+   - 登录足迹 (Login History)
+
+### 🚨 修改影响范围
+- **API Auth**: 禁用的会员无法获取 Token 或进行外部验证。
+- **Game Rules**: 游戏规则验证会检查会员状态。
+- **Audit Logic**: 所有关键修改都会触发审计日志记录。
+
+---
+
 ## 🎮 游戏前端 (web-app)
 
 ### 1. 游戏Iframe容器

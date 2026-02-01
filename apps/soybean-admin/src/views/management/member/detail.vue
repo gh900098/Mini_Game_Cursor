@@ -35,7 +35,7 @@ const route = useRoute();
 const router = useRouter();
 const { loading, startLoading, endLoading } = useLoading();
 
-const memberId = computed(() => Number(route.query.id));
+const memberId = computed(() => route.query.id as string);
 const member = ref<Api.Management.Member | null>(null);
 const stats = ref<any>(null);
 const creditHistory = ref<Api.Management.CreditTransaction[]>([]);
@@ -62,7 +62,7 @@ const creditColumns: DataTableColumns<Api.Management.CreditTransaction> = [
     title: 'Time',
     key: 'createdAt',
     width: 180,
-    render(row) {
+    render(row: any) {
       return new Date(row.createdAt).toLocaleString();
     }
   },
@@ -70,7 +70,7 @@ const creditColumns: DataTableColumns<Api.Management.CreditTransaction> = [
     title: 'Type',
     key: 'type',
     width: 100,
-    render(row) {
+    render(row: any) {
       const txType = row.type;
       const color = txType === 'credit' ? '#18a058' : '#d03050';
       const text = txType === 'credit' ? 'Credit' : 'Debit';
@@ -82,7 +82,7 @@ const creditColumns: DataTableColumns<Api.Management.CreditTransaction> = [
     title: 'Amount',
     key: 'amount',
     width: 120,
-    render(row) {
+    render(row: any) {
       const sign = row.type === 'credit' ? '+' : '-';
       const colorClass = row.type === 'credit' ? 'text-green-600 font-bold' : 'text-red-600 font-bold';
       return (
@@ -96,14 +96,14 @@ const creditColumns: DataTableColumns<Api.Management.CreditTransaction> = [
     title: 'Balance After',
     key: 'balanceAfter',
     width: 120,
-    render(row) {
+    render(row: any) {
       return <span class="font-mono">{row.balanceAfter}</span>;
     }
   },
   {
     title: 'Reason',
     key: 'reason',
-    render(row) {
+    render(row: any) {
       return row.reason || '-';
     }
   },
@@ -111,7 +111,7 @@ const creditColumns: DataTableColumns<Api.Management.CreditTransaction> = [
     title: 'Source',
     key: 'source',
     width: 150,
-    render(row) {
+    render(row: any) {
       return <span class="text-xs text-gray-600">{row.source}</span>;
     }
   }
@@ -123,14 +123,14 @@ const playColumns: DataTableColumns<any> = [
     title: 'Time',
     key: 'playedAt',
     width: 180,
-    render(row) {
+    render(row: any) {
       return new Date(row.playedAt).toLocaleString();
     }
   },
   {
     title: 'Game',
     key: 'instance',
-    render(row) {
+    render(row: any) {
       return (
         <div>
           <div class="font-medium">{row.instance?.name || 'Unknown'}</div>
@@ -143,7 +143,7 @@ const playColumns: DataTableColumns<any> = [
     title: 'Outcome',
     key: 'outcome',
     width: 100,
-    render(row) {
+    render(row: any) {
       const tagType = row.outcome === 'win' ? 'success' : row.outcome === 'lose' ? 'error' : 'default';
       return (
         <NTag type={tagType}>
@@ -155,7 +155,7 @@ const playColumns: DataTableColumns<any> = [
   {
     title: 'Result',
     key: 'resultData',
-    render(row) {
+    render(row: any) {
       if (!row.resultData) return '-';
       return <span class="text-xs font-mono">{JSON.stringify(row.resultData).substring(0, 50)}...</span>;
     }
@@ -168,14 +168,14 @@ const scoreColumns: DataTableColumns<any> = [
     title: 'Time',
     key: 'createdAt',
     width: 180,
-    render(row) {
+    render(row: any) {
       return new Date(row.createdAt).toLocaleString();
     }
   },
   {
     title: 'Game',
     key: 'instance',
-    render(row) {
+    render(row: any) {
       return (
         <div>
           <div class="font-medium">{row.instance?.name || 'Unknown'}</div>
@@ -188,7 +188,7 @@ const scoreColumns: DataTableColumns<any> = [
     title: 'Points',
     key: 'points',
     width: 100,
-    render(row) {
+    render(row: any) {
       return <span class="font-bold text-primary text-lg">{row.points}</span>;
     }
   },
@@ -196,7 +196,7 @@ const scoreColumns: DataTableColumns<any> = [
     title: 'Multiplier',
     key: 'multiplier',
     width: 100,
-    render(row) {
+    render(row: any) {
       if (row.multiplier === 1) return '-';
       return <NTag type="warning">x{row.multiplier}</NTag>;
     }
@@ -205,7 +205,7 @@ const scoreColumns: DataTableColumns<any> = [
     title: 'Final',
     key: 'finalPoints',
     width: 100,
-    render(row) {
+    render(row: any) {
       return <span class="font-bold">{row.points * (row.multiplier || 1)}</span>;
     }
   }
@@ -217,7 +217,7 @@ const loginColumns: DataTableColumns<Api.Management.LoginHistory> = [
     title: 'Time',
     key: 'loginAt',
     width: 180,
-    render(row) {
+    render(row: any) {
       return new Date(row.loginAt).toLocaleString();
     }
   },
@@ -225,7 +225,7 @@ const loginColumns: DataTableColumns<Api.Management.LoginHistory> = [
     title: 'Status',
     key: 'success',
     width: 100,
-    render(row) {
+    render(row: any) {
       const color = row.success ? '#18a058' : '#d03050';
       const text = row.success ? 'Success' : 'Failed';
       const styleObj = { color, fontWeight: 'bold' };
@@ -236,14 +236,14 @@ const loginColumns: DataTableColumns<Api.Management.LoginHistory> = [
     title: 'IP Address',
     key: 'ipAddress',
     width: 150,
-    render(row) {
+    render(row: any) {
       return <span class="font-mono text-sm">{row.ipAddress || '-'}</span>;
     }
   },
   {
     title: 'User Agent',
     key: 'userAgent',
-    render(row) {
+    render(row: any) {
       return <span class="text-xs text-gray-600">{row.userAgent?.substring(0, 80) || '-'}...</span>;
     }
   }
@@ -308,7 +308,9 @@ async function submitAdjustment() {
 }
 
 onMounted(() => {
-  loadMemberData();
+  if (memberId.value) {
+    loadMemberData();
+  }
 });
 </script>
 

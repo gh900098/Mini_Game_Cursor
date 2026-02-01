@@ -95,11 +95,20 @@ export class AdminMembersController {
     }
 
     @Patch(':id/toggle-status')
-    async toggleStatus(@Param('id') id: string, @Request() req: any) {
+    async toggleStatus(
+        @Param('id') id: string,
+        @Body() body: { isActive?: boolean },
+        @Request() req: any
+    ) {
         const member = await this.membersRepo.findOne({ where: { id } });
         if (!member) throw new Error('Member not found');
 
-        member.isActive = !member.isActive;
+        if (body.isActive !== undefined) {
+            member.isActive = body.isActive;
+        } else {
+            member.isActive = !member.isActive;
+        }
+
         await this.membersRepo.save(member);
 
         await this.auditLogService.create({
@@ -113,6 +122,7 @@ export class AdminMembersController {
 
         return member;
     }
+
 
     @Post(':id/adjust-credit')
     async adjustCredit(
@@ -198,14 +208,14 @@ export class AdminMembersController {
     async getAuditLogs(@Param('id') id: string) {
         const member = await this.membersRepo.findOne({ where: { id } });
         if (!member) throw new Error('Member not found');
-        
+
         // Get audit logs for this member (by module=Member and payload/result containing member ID)
         const result = await this.auditLogService.findAll({
             module: 'Member',
             companyId: member.companyId,
             limit: 100,
         });
-        
+
         return result.items;
     }
 

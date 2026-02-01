@@ -248,7 +248,7 @@ ssh root@154.26.136.139 "cd /opt/minigame && \
 ❌ Wrong: Fix UI → Deploy → Fix backend → Deploy again  
 ✅ Right: Analyze all affected code → Fix everything → Deploy once
 
-**See AGENTS.md Rule #1 for details.**
+**See [AGENTS.md](../AGENTS.md) Rule #1 for details.**
 
 ### 2. Update Documentation Immediately
 **After any code change:**
@@ -279,7 +279,7 @@ ssh root@154.26.136.139 "cd /opt/minigame && \
 - Pre-delivery checklist - Mandatory
 - Anti-patterns to avoid
 
-**See AGENTS.md for complete framework.**
+**See [AGENTS.md](../AGENTS.md) for complete framework.**
 
 ---
 

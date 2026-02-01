@@ -56,7 +56,7 @@
 ## 🎨 Standards & Guidelines
 
 - **[UI-STANDARDS.md](./UI-STANDARDS.md)** - UI/UX design standards
-- **AGENTS.md** (in root `clawd/`) - AI agent behavior rules
+- **[AGENTS.md](../AGENTS.md)** - AI agent behavior rules (Mandatory Recording Policy)
 
 ---
 

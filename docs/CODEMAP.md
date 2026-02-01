@@ -1,6 +1,6 @@
 # MiniGame 代码位置映射
 
-**最后更新：** 2026-01-31
+**最后更新：** 2026-02-01
 
 快速查找代码位置的参考指南。
 
@@ -52,7 +52,9 @@
 - 配置表单：`apps/soybean-admin/src/views/management/game-instance/components/ConfigForm.vue`
 
 **会员管理**
-- 会员列表：`apps/soybean-admin/src/views/management/member/`
+- 会员列表：`apps/soybean-admin/src/views/management/member/index.vue`
+- 会员详情：`apps/soybean-admin/src/views/management/member/detail.vue`
+- API 服务：`apps/soybean-admin/src/service/api/management.ts`
 
 **用户管理**
 - 用户列表：`apps/soybean-admin/src/views/management/user/`
@@ -102,7 +104,10 @@
 
 **会员管理**
 - Members模块：`apps/api/src/modules/members/`
+  - Controller：`admin-members.controller.ts` (管理端专用)
+  - Service：`members.service.ts`
   - Entity：`entities/member.entity.ts`
+  - Entity：`entities/credit-transaction.entity.ts`
 
 **权限系统**
 - Roles模块：`apps/api/src/modules/roles/`
