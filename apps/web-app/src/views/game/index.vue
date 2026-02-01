@@ -234,6 +234,20 @@ async function fetchGameStatus() {
       cooldownRemaining.value = gameStatus.value.cooldownRemaining;
       startCooldownTimer();
     }
+    
+    // Send status to iframe immediately
+    if (iframeRef.value) {
+      const simpleStatus = {
+        canPlay: gameStatus.value.canPlay,
+        blockReason: gameStatus.value.blockReason,
+        blockDetails: gameStatus.value.blockDetails ? JSON.parse(JSON.stringify(gameStatus.value.blockDetails)) : null,
+      };
+      
+      iframeRef.value.contentWindow?.postMessage({
+        type: 'game-status-update',
+        status: simpleStatus,
+      }, '*');
+    }
   } catch (error) {
     console.error('Failed to fetch game status:', error);
   } finally {
@@ -315,13 +329,16 @@ watch(() => settingsStore.soundEnabled, (enabled) => {
 // 监听游戏状态变化，通知iframe disable/enable按钮
 watch(() => gameStatus.value, (status) => {
   if (status && iframeRef.value) {
+    // Only send serializable data (no functions, no DOM elements)
+    const simpleStatus = {
+      canPlay: status.canPlay,
+      blockReason: status.blockReason,
+      blockDetails: status.blockDetails ? JSON.parse(JSON.stringify(status.blockDetails)) : null,
+    };
+    
     iframeRef.value.contentWindow?.postMessage({
       type: 'game-status-update',
-      status: {
-        canPlay: status.canPlay,
-        blockReason: status.blockReason,
-        blockDetails: status.blockDetails,
-      },
+      status: simpleStatus,
     }, '*');
   }
 }, { deep: true });
