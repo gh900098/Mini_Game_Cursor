@@ -111,7 +111,10 @@
           <button
             v-if="statusCollapsed"
             @click="statusCollapsed = false"
-            class="collapsed-button group"
+            :class="[
+              'collapsed-button group',
+              hasRuleViolation ? 'collapsed-button-warning' : ''
+            ]"
             title="Show status"
           >
             <div class="i-carbon-information text-xl drop-shadow-glow-white"></div>
@@ -184,6 +187,29 @@ const showSoundButton = computed(() => {
 const soundButtonOpacity = computed(() => {
   const opacity = instance.value?.config?.soundButtonOpacity ?? 80; // 默认 80%
   return opacity / 100; // 转换成 CSS opacity (0-1)
+});
+
+// Check if there are any rule violations (for red warning indicator)
+const hasRuleViolation = computed(() => {
+  if (!gameStatus.value) return false;
+  
+  // Case 1: Cannot play due to block reason
+  if (!gameStatus.value.canPlay && gameStatus.value.blockReason) {
+    return true;
+  }
+  
+  // Case 2: No remaining attempts (0 out of dailyLimit)
+  if (gameStatus.value.dailyLimit > 0 && gameStatus.value.remaining === 0) {
+    return true;
+  }
+  
+  // Case 3: Cooldown active
+  if (cooldownRemaining.value > 0) {
+    return true;
+  }
+  
+  // All rules passed
+  return false;
 });
 
 const gameUrl = computed(() => {
@@ -573,6 +599,37 @@ onUnmounted(() => {
 
 .collapsed-button:active {
   transform: scale(0.95);
+}
+
+/* Red Warning State for Collapsed Button (when rules violated) */
+.collapsed-button-warning {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.4) 0%, rgba(239, 68, 68, 0.4) 100%);
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 
+    0 8px 32px rgba(220, 38, 38, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  animation: pulse-red 2s ease-in-out infinite;
+}
+
+.collapsed-button-warning:hover {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.6) 0%, rgba(239, 68, 68, 0.6) 100%);
+  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 
+    0 12px 48px rgba(220, 38, 38, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 
+      0 8px 32px rgba(220, 38, 38, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  }
+  50% {
+    box-shadow: 
+      0 8px 40px rgba(220, 38, 38, 0.7),
+      0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+  }
 }
 
 /* Glow effects for icons */
