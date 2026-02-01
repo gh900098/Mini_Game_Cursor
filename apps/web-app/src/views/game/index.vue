@@ -33,54 +33,74 @@
         allow="autoplay; fullscreen"
         @load="handleIframeLoad"
       ></iframe>
-      <!-- Game Status Display -->
+      <!-- Game Status Display (Floating & Collapsible) -->
       <div v-if="gameStatus && !isPreview" class="absolute top-4 left-4 z-50">
-        <div class="bg-black/60 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-3 text-white">
-          <!-- Block Reason (if cannot play) -->
-          <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="mb-2 flex items-center gap-2 text-error">
-            <div class="i-carbon-locked text-lg"></div>
-            <span class="text-sm font-semibold">
-              <template v-if="gameStatus.blockReason === 'LEVEL_TOO_LOW'">
-                等级不足（需要Lv{{ gameStatus.blockDetails.required }}）
-              </template>
-              <template v-else-if="gameStatus.blockReason === 'NOT_STARTED'">
-                活动未开始
-              </template>
-              <template v-else-if="gameStatus.blockReason === 'ENDED'">
-                活动已结束
-              </template>
-              <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
-                今日不开放
-              </template>
-              <template v-else>
-                {{ gameStatus.blockReason }}
-              </template>
-            </span>
-          </div>
-          
-          <div class="flex items-center gap-3">
-            <!-- Daily Limit -->
-            <div v-if="gameStatus.dailyLimit > 0" class="flex items-center gap-2">
-              <div class="i-carbon-play-filled text-primary"></div>
-              <span class="text-sm">
-                <span class="font-bold">{{ gameStatus.remaining }}</span>
-                <span class="text-white/60">/{{ gameStatus.dailyLimit }}</span>
+        <Transition name="slide-fade">
+          <div v-if="!statusCollapsed" class="bg-black/80 backdrop-blur-md border border-white/20 rounded-lg px-4 py-3 text-white shadow-xl">
+            <!-- Block Reason (if cannot play) - More visible with red background -->
+            <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded px-3 py-2 -mx-1">
+              <div class="i-carbon-locked text-lg"></div>
+              <span class="text-sm font-bold">
+                <template v-if="gameStatus.blockReason === 'LEVEL_TOO_LOW'">
+                  等级不足！需要 Lv{{ gameStatus.blockDetails.required }}
+                </template>
+                <template v-else-if="gameStatus.blockReason === 'NOT_STARTED'">
+                  活动未开始
+                </template>
+                <template v-else-if="gameStatus.blockReason === 'ENDED'">
+                  活动已结束
+                </template>
+                <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
+                  今日不开放
+                </template>
+                <template v-else>
+                  {{ gameStatus.blockReason }}
+                </template>
               </span>
             </div>
-            <!-- Cooldown Timer -->
-            <div v-if="cooldownRemaining > 0" class="flex items-center gap-2">
-              <div class="i-carbon-time text-warning"></div>
-              <span class="text-sm font-mono">{{ formatCooldown(cooldownRemaining) }}</span>
+            
+            <div class="flex items-center gap-3">
+              <!-- Daily Limit (only show when CAN play) -->
+              <div v-if="gameStatus.canPlay && gameStatus.dailyLimit > 0" class="flex items-center gap-2">
+                <div class="i-carbon-play-filled text-primary"></div>
+                <span class="text-sm">
+                  <span class="font-bold">{{ gameStatus.remaining }}</span>
+                  <span class="text-white/60">/{{ gameStatus.dailyLimit }}</span>
+                </span>
+              </div>
+              <!-- Cooldown Timer -->
+              <div v-if="cooldownRemaining > 0" class="flex items-center gap-2">
+                <div class="i-carbon-time text-warning"></div>
+                <span class="text-sm font-mono">{{ formatCooldown(cooldownRemaining) }}</span>
+              </div>
+              <!-- Refresh Button -->
+              <button
+                @click="fetchGameStatus"
+                class="i-carbon-renew text-white/60 hover:text-white text-lg transition-colors"
+                :class="{ 'animate-spin': loadingStatus }"
+                title="Refresh status"
+              ></button>
+              <!-- Collapse Button -->
+              <button
+                @click="statusCollapsed = true"
+                class="i-carbon-chevron-left text-white/60 hover:text-white text-lg transition-colors ml-1"
+                title="Hide"
+              ></button>
             </div>
-            <!-- Refresh Button -->
-            <button
-              @click="fetchGameStatus"
-              class="i-carbon-renew text-white/60 hover:text-white text-lg transition-colors"
-              :class="{ 'animate-spin': loadingStatus }"
-              title="Refresh status"
-            ></button>
           </div>
-        </div>
+        </Transition>
+        
+        <!-- Collapsed State: Small Floating Button -->
+        <Transition name="fade">
+          <button
+            v-if="statusCollapsed"
+            @click="statusCollapsed = false"
+            class="w-12 h-12 rounded-full bg-black/80 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-black/90 transition-all shadow-xl"
+            title="Show status"
+          >
+            <div class="i-carbon-information text-xl"></div>
+          </button>
+        </Transition>
       </div>
       
       <!-- 浮动音效按钮（不管是否全屏都显示） -->
@@ -131,6 +151,7 @@ const loadingStatus = ref(false);
 const gameContainer = ref<HTMLElement | null>(null);
 const gameStatus = ref<any>(null);
 const cooldownRemaining = ref(0);
+const statusCollapsed = ref(false);
 let cooldownInterval: any = null;
 
 const instanceSlug = computed(() => route.params.id);
@@ -392,3 +413,31 @@ onUnmounted(() => {
   }
 });
 </script>
+
+<style scoped>
+/* Slide-fade transition for status card */
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+.slide-fade-leave-active {
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter-from {
+  transform: translateX(-20px);
+  opacity: 0;
+}
+.slide-fade-leave-to {
+  transform: translateX(-20px);
+  opacity: 0;
+}
+
+/* Fade transition for collapse button */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
