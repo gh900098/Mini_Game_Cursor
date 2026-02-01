@@ -35,72 +35,80 @@
       ></iframe>
       <!-- Game Status Display (Floating & Collapsible) - Premium Glassmorphism Design -->
       <div v-if="gameStatus && !isPreview" class="absolute top-4 left-4 z-50">
-        <Transition name="slide-fade">
-          <div v-if="!statusCollapsed" class="status-card group">
-            <!-- Block Reason (if cannot play) - RED BACKGROUND FOR ALL REASONS -->
-            <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded-lg px-3 py-2 -mx-1 shadow-lg animate-pulse-slow">
-              <div class="i-carbon-locked text-lg drop-shadow-md"></div>
-              <span class="text-sm font-bold drop-shadow-md">
-                <template v-if="gameStatus.blockReason === 'LEVEL_TOO_LOW'">
-                  等级不足！需要 Lv{{ gameStatus.blockDetails.required }}
-                </template>
-                <template v-else-if="gameStatus.blockReason === 'NOT_STARTED'">
-                  活动未开始！
-                </template>
-                <template v-else-if="gameStatus.blockReason === 'ENDED'">
-                  活动已结束！
-                </template>
-                <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
-                  今日不开放！
-                </template>
-                <template v-else>
-                  {{ gameStatus.blockReason }}
-                </template>
-              </span>
-            </div>
-            
-            <!-- No Attempts Left Warning (even if canPlay somehow true) -->
-            <div v-if="gameStatus.dailyLimit > 0 && gameStatus.remaining === 0 && gameStatus.canPlay" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded-lg px-3 py-2 -mx-1 shadow-lg animate-pulse-slow">
-              <div class="i-carbon-warning text-lg drop-shadow-md"></div>
-              <span class="text-sm font-bold drop-shadow-md">次数已用完！</span>
-            </div>
-            
-            <div class="flex items-center gap-3">
-              <!-- Daily Limit Display -->
-              <div v-if="gameStatus.canPlay && gameStatus.dailyLimit > 0 && gameStatus.remaining > 0" class="flex items-center gap-2">
-                <!-- Warning if only 1 left -->
-                <div v-if="gameStatus.remaining === 1" class="i-carbon-play-filled text-yellow-400 drop-shadow-glow-yellow"></div>
-                <div v-else class="i-carbon-play-filled text-blue-400 drop-shadow-glow-blue"></div>
-                <span class="text-sm" :class="gameStatus.remaining === 1 ? 'text-yellow-400 font-bold' : ''">
-                  <span class="font-bold">{{ gameStatus.remaining }}</span>
-                  <span :class="gameStatus.remaining === 1 ? 'text-yellow-400/80' : 'text-white/60'">/{{ gameStatus.dailyLimit }}</span>
+        <div class="relative">
+          <Transition name="slide-fade">
+            <div v-if="!statusCollapsed" class="status-card group">
+              <!-- Block Reason (if cannot play) - RED BACKGROUND FOR ALL REASONS -->
+              <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded-lg px-3 py-2 -mx-1 shadow-lg animate-pulse-slow">
+                <div class="i-carbon-locked text-lg drop-shadow-md"></div>
+                <span class="text-sm font-bold drop-shadow-md">
+                  <template v-if="gameStatus.blockReason === 'LEVEL_TOO_LOW'">
+                    等级不足！需要 Lv{{ gameStatus.blockDetails.required }}
+                  </template>
+                  <template v-else-if="gameStatus.blockReason === 'NOT_STARTED'">
+                    活动未开始！
+                  </template>
+                  <template v-else-if="gameStatus.blockReason === 'ENDED'">
+                    活动已结束！
+                  </template>
+                  <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
+                    今日不开放！
+                  </template>
+                  <template v-else>
+                    {{ gameStatus.blockReason }}
+                  </template>
                 </span>
               </div>
-              <!-- Cooldown Timer -->
-              <div v-if="cooldownRemaining > 0" class="flex items-center gap-2">
-                <div class="i-carbon-time text-orange-400 drop-shadow-glow-orange"></div>
-                <span class="text-sm font-mono text-orange-300">{{ formatCooldown(cooldownRemaining) }}</span>
+              
+              <!-- No Attempts Left Warning (even if canPlay somehow true) -->
+              <div v-if="gameStatus.dailyLimit > 0 && gameStatus.remaining === 0 && gameStatus.canPlay" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded-lg px-3 py-2 -mx-1 shadow-lg animate-pulse-slow">
+                <div class="i-carbon-warning text-lg drop-shadow-md"></div>
+                <span class="text-sm font-bold drop-shadow-md">次数已用完！</span>
               </div>
-              <!-- Refresh Button -->
-              <button
-                @click="fetchGameStatus"
-                class="action-button"
-                :class="{ 'animate-spin': loadingStatus }"
-                title="Refresh status"
-              >
-                <div class="i-carbon-renew text-lg"></div>
-              </button>
-              <!-- Collapse Button -->
-              <button
-                @click="statusCollapsed = true"
-                class="action-button ml-1"
-                title="Hide"
-              >
-                <div class="i-carbon-chevron-left text-lg"></div>
-              </button>
+              
+              <div class="flex items-center gap-3">
+                <!-- Daily Limit Display -->
+                <div v-if="gameStatus.canPlay && gameStatus.dailyLimit > 0 && gameStatus.remaining > 0" class="flex items-center gap-2">
+                  <!-- Warning if only 1 left -->
+                  <div v-if="gameStatus.remaining === 1" class="i-carbon-play-filled text-yellow-400 drop-shadow-glow-yellow"></div>
+                  <div v-else class="i-carbon-play-filled text-blue-400 drop-shadow-glow-blue"></div>
+                  <span class="text-sm" :class="gameStatus.remaining === 1 ? 'text-yellow-400 font-bold' : ''">
+                    <span class="font-bold">{{ gameStatus.remaining }}</span>
+                    <span :class="gameStatus.remaining === 1 ? 'text-yellow-400/80' : 'text-white/60'">/{{ gameStatus.dailyLimit }}</span>
+                  </span>
+                </div>
+                <!-- Cooldown Timer -->
+                <div v-if="cooldownRemaining > 0" class="flex items-center gap-2">
+                  <div class="i-carbon-time text-orange-400 drop-shadow-glow-orange"></div>
+                  <span class="text-sm font-mono text-orange-300">{{ formatCooldown(cooldownRemaining) }}</span>
+                </div>
+                <!-- Refresh Button -->
+                <button
+                  @click="fetchGameStatus"
+                  class="action-button"
+                  :class="{ 'animate-spin': loadingStatus }"
+                  title="Refresh status"
+                >
+                  <div class="i-carbon-renew text-lg"></div>
+                </button>
+              </div>
             </div>
-          </div>
-        </Transition>
+          </Transition>
+          
+          <!-- Hide Button - Floating at bottom-left corner of card -->
+          <Transition name="fade">
+            <button
+              v-if="!statusCollapsed"
+              @click="statusCollapsed = true"
+              class="hide-button group"
+              title="Hide"
+            >
+              <div class="i-carbon-chevron-left text-lg drop-shadow-glow-white"></div>
+              <!-- Animated ring on hover -->
+              <div class="absolute inset-0 rounded-full border-2 border-white/30 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+            </button>
+          </Transition>
+        </div>
         
         <!-- Collapsed State: Premium Floating Button with Glow -->
         <Transition name="fade">
@@ -484,6 +492,43 @@ onUnmounted(() => {
 }
 
 .action-button:active {
+  transform: scale(0.95);
+}
+
+/* Hide Button - Floating at bottom-left corner of card with curved edge */
+.hide-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.4) 0%, rgba(168, 85, 247, 0.4) 100%);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  position: absolute;
+  bottom: -0.75rem;
+  left: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 6px 24px rgba(99, 102, 241, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+  z-index: 10;
+}
+
+.hide-button:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.6) 0%, rgba(168, 85, 247, 0.6) 100%);
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 
+    0 8px 32px rgba(99, 102, 241, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.25) inset;
+  transform: scale(1.1) translateY(-2px);
+}
+
+.hide-button:active {
   transform: scale(0.95);
 }
 
