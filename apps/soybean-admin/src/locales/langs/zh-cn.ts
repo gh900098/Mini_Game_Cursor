@@ -500,7 +500,10 @@ const local: App.I18n.Schema = {
           winTitle: '中奖标题',
           winSubtitle: '中奖副标题',
           loseTitle: '未中标题',
-          loseSubtitle: '未中副标题'
+          loseSubtitle: '未中副标题',
+          audioModeTheme: '🎵 使用主题默认音效',
+          audioModeCustom: '📤 自定义上传',
+          audioModeNone: '🔇 不使用音效'
         },
         tabEmbed: '嵌入设置',
         iframeCode: 'HTML Iframe 代码'

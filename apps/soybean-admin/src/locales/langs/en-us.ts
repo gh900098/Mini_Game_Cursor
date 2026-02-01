@@ -504,7 +504,10 @@ const local: App.I18n.Schema = {
           winTitle: 'Win Title',
           winSubtitle: 'Win Subtitle',
           loseTitle: 'Lose Title',
-          loseSubtitle: 'Lose Subtitle'
+          loseSubtitle: 'Lose Subtitle',
+          audioModeTheme: '🎵 Use Theme Default',
+          audioModeCustom: '📤 Custom Upload',
+          audioModeNone: '🔇 No Audio'
         },
         tabEmbed: 'Embed Settings',
         iframeCode: 'HTML Iframe Code'

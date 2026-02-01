@@ -1406,13 +1406,13 @@ function isFontSelect(item: SchemaItem): boolean {
                                                   <NRadioGroup :value="getAudioMode(subItem.key)" @update:value="(val) => setAudioMode(subItem.key, val)">
                                                     <NSpace>
                                                       <NRadio value="theme">
-                                                        <span class="text-sm">🎵 使用主题默认音效</span>
+                                                        <span class="text-sm">{{ $t('page.manage.game.effects.audioModeTheme') }}</span>
                                                       </NRadio>
                                                       <NRadio value="custom">
-                                                        <span class="text-sm">📤 自定义上传</span>
+                                                        <span class="text-sm">{{ $t('page.manage.game.effects.audioModeCustom') }}</span>
                                                       </NRadio>
                                                       <NRadio value="none">
-                                                        <span class="text-sm">🔇 不使用音效</span>
+                                                        <span class="text-sm">{{ $t('page.manage.game.effects.audioModeNone') }}</span>
                                                       </NRadio>
                                                     </NSpace>
                                                   </NRadioGroup>
@@ -1623,13 +1623,13 @@ function isFontSelect(item: SchemaItem): boolean {
                     <NRadioGroup :value="getAudioMode(item.key)" @update:value="(val) => setAudioMode(item.key, val)">
                       <NSpace>
                         <NRadio value="theme">
-                          <span class="text-sm">🎵 使用主题默认音效</span>
+                          <span class="text-sm">{{ $t('page.manage.game.effects.audioModeTheme') }}</span>
                         </NRadio>
                         <NRadio value="custom">
-                          <span class="text-sm">📤 自定义上传</span>
+                          <span class="text-sm">{{ $t('page.manage.game.effects.audioModeCustom') }}</span>
                         </NRadio>
                         <NRadio value="none">
-                          <span class="text-sm">🔇 不使用音效</span>
+                          <span class="text-sm">{{ $t('page.manage.game.effects.audioModeNone') }}</span>
                         </NRadio>
                       </NSpace>
                     </NRadioGroup>
