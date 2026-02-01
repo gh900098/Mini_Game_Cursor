@@ -36,6 +36,28 @@
       <!-- Game Status Display -->
       <div v-if="gameStatus && !isPreview" class="absolute top-4 left-4 z-50">
         <div class="bg-black/60 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-3 text-white">
+          <!-- Block Reason (if cannot play) -->
+          <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="mb-2 flex items-center gap-2 text-error">
+            <div class="i-carbon-locked text-lg"></div>
+            <span class="text-sm font-semibold">
+              <template v-if="gameStatus.blockReason === 'LEVEL_TOO_LOW'">
+                等级不足（需要Lv{{ gameStatus.blockDetails.required }}）
+              </template>
+              <template v-else-if="gameStatus.blockReason === 'NOT_STARTED'">
+                活动未开始
+              </template>
+              <template v-else-if="gameStatus.blockReason === 'ENDED'">
+                活动已结束
+              </template>
+              <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
+                今日不开放
+              </template>
+              <template v-else>
+                {{ gameStatus.blockReason }}
+              </template>
+            </span>
+          </div>
+          
           <div class="flex items-center gap-3">
             <!-- Daily Limit -->
             <div v-if="gameStatus.dailyLimit > 0" class="flex items-center gap-2">
