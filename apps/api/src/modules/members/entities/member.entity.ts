@@ -31,6 +31,12 @@ export class Member {
     @Column({ default: false })
     isAnonymous: boolean;
 
+    @Column({ default: true })
+    isActive: boolean;
+
+    @Column({ type: 'timestamp', nullable: true })
+    lastLoginAt: Date;
+
     @Column({ type: 'jsonb', nullable: true })
     metadata: Record<string, any>;
 
