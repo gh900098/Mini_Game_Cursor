@@ -74,7 +74,8 @@ const creditColumns: DataTableColumns<Api.Management.CreditTransaction> = [
       const txType = row.type;
       const color = txType === 'credit' ? '#18a058' : '#d03050';
       const text = txType === 'credit' ? 'Credit' : 'Debit';
-      return <span style={{color: color, fontWeight: 'bold'}}>{text}</span>;
+      const styleObj = { color, fontWeight: 'bold' };
+      return <span style={styleObj}>{text}</span>;
     }
   },
   {
@@ -227,7 +228,8 @@ const loginColumns: DataTableColumns<Api.Management.LoginHistory> = [
     render(row) {
       const color = row.success ? '#18a058' : '#d03050';
       const text = row.success ? 'Success' : 'Failed';
-      return <span style={{color: color, fontWeight: 'bold'}}>{text}</span>;
+      const styleObj = { color, fontWeight: 'bold' };
+      return <span style={styleObj}>{text}</span>;
     }
   },
   {
