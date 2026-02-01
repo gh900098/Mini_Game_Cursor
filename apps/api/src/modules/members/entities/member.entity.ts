@@ -19,6 +19,15 @@ export class Member {
     @Column({ type: 'integer', default: 0 })
     pointsBalance: number;
 
+    @Column({ type: 'integer', default: 1 })
+    level: number;
+
+    @Column({ nullable: true, length: 20 })
+    vipTier: string;
+
+    @Column({ type: 'integer', default: 0 })
+    experience: number;
+
     @Column({ default: false })
     isAnonymous: boolean;
 

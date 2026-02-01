@@ -5,6 +5,7 @@ import { Score } from './entities/score.entity';
 import { SubmitScoreDto } from './dto/submit-score.dto';
 import { GameInstancesService } from '../game-instances/game-instances.service';
 import { MembersService } from '../members/members.service';
+import { GameRulesService } from './game-rules.service';
 
 @Injectable()
 export class ScoresService {
@@ -13,13 +14,17 @@ export class ScoresService {
         private readonly scoreRepository: Repository<Score>,
         private readonly instanceService: GameInstancesService,
         private readonly membersService: MembersService,
+        private readonly gameRulesService: GameRulesService,
     ) { }
 
-    async submit(memberId: string, instanceSlug: string, scoreValue: number, metadata?: any): Promise<Score> {
+    async submit(memberId: string, instanceSlug: string, scoreValue: number, metadata?: any, ipAddress?: string): Promise<Score> {
         // 1. Find Game Instance
         const instance = await this.instanceService.findBySlug(instanceSlug);
 
-        // 2. Log Score
+        // 2. Validate Game Rules (NEW!)
+        await this.gameRulesService.validatePlay(memberId, instance);
+
+        // 3. Log Score
         const score = this.scoreRepository.create({
             memberId,
             instanceId: instance.id,
@@ -28,7 +33,10 @@ export class ScoresService {
         });
         const savedScore = await this.scoreRepository.save(score);
 
-        // 3. Update Member's points balance (Atomic increment)
+        // 4. Record Play Attempt (NEW!)
+        await this.gameRulesService.recordAttempt(memberId, instance.id, true, ipAddress);
+
+        // 5. Update Member's points balance (Atomic increment)
         await this.membersService.updatePoints(memberId, scoreValue);
 
         return savedScore;
