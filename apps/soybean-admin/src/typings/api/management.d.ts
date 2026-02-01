@@ -94,5 +94,53 @@ declare namespace Api {
             gameTemplate?: Api.Game.Game;
             company?: Company;
         }
+
+        interface PlayAttempt {
+            id: string;
+            memberId: string;
+            instanceId: string;
+            attemptedAt: string;
+            success: boolean;
+            ipAddress?: string;
+            member?: Member;
+            instance?: GameInstance;
+        }
+
+        interface Score {
+            id: string;
+            memberId: string;
+            instanceId: string;
+            score: number;
+            metadata?: any;
+            achievedAt: string;
+            member?: Member;
+            instance?: GameInstance;
+        }
+
+        interface BudgetTracking {
+            id: string;
+            instanceId: string;
+            trackingDate: string;
+            totalCost: number;
+            playCount: number;
+            instance?: GameInstance;
+        }
+
+        interface Game {
+            id: string;
+            name: string;
+            slug: string;
+            description?: string;
+            type: string;
+            thumbnailUrl?: string;
+            baseWidth?: number;
+            baseHeight?: number;
+            isPortrait?: boolean;
+            isActive: boolean;
+            config?: any;
+            configSchema?: any;
+            createdAt: string;
+            updatedAt: string;
+        }
     }
 }

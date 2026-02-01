@@ -255,6 +255,10 @@ const local: App.I18n.Schema = {
     'management_audit-log': '审计日志',
     management_member: '会员管理',
     'management_game-instance': '游戏实例',
+    management_games: '游戏模板',
+    'management_play-attempts': '游戏记录',
+    management_scores: '分数记录',
+    'management_budget-tracking': '预算追踪',
     games: '游戏中心',
     games_list: '游戏列表'
   },

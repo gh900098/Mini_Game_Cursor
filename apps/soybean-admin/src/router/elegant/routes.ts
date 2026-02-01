@@ -151,7 +151,20 @@ export const generatedRoutes: GeneratedRoute[] = [
         component: 'view.management_game-instance',
         meta: {
           title: 'management_game-instance',
-          i18nKey: 'route.management_game-instance'
+          i18nKey: 'route.management_game-instance',
+          icon: 'carbon:game-console',
+          order: 5
+        }
+      },
+      {
+        name: 'management_games',
+        path: '/management/games',
+        component: 'view.management_games',
+        meta: {
+          title: 'management_games',
+          i18nKey: 'route.management_games',
+          icon: 'carbon:gamification',
+          order: 6
         }
       },
       {
@@ -160,7 +173,42 @@ export const generatedRoutes: GeneratedRoute[] = [
         component: 'view.management_member',
         meta: {
           title: 'management_member',
-          i18nKey: 'route.management_member'
+          i18nKey: 'route.management_member',
+          icon: 'carbon:user-multiple',
+          order: 7
+        }
+      },
+      {
+        name: 'management_play-attempts',
+        path: '/management/play-attempts',
+        component: 'view.management_play-attempts',
+        meta: {
+          title: 'management_play-attempts',
+          i18nKey: 'route.management_play-attempts',
+          icon: 'carbon:activity',
+          order: 8
+        }
+      },
+      {
+        name: 'management_scores',
+        path: '/management/scores',
+        component: 'view.management_scores',
+        meta: {
+          title: 'management_scores',
+          i18nKey: 'route.management_scores',
+          icon: 'carbon:trophy',
+          order: 9
+        }
+      },
+      {
+        name: 'management_budget-tracking',
+        path: '/management/budget-tracking',
+        component: 'view.management_budget-tracking',
+        meta: {
+          title: 'management_budget-tracking',
+          i18nKey: 'route.management_budget-tracking',
+          icon: 'carbon:money',
+          order: 10
         }
       },
       {

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScoresService } from './scores.service';
 import { ScoresController } from './scores.controller';
+import { AdminScoresController } from './admin-scores.controller';
 import { GameRulesService } from './game-rules.service';
 import { Score } from './entities/score.entity';
 import { PlayAttempt } from './entities/play-attempt.entity';
@@ -16,7 +17,7 @@ import { Member } from '../members/entities/member.entity';
         GameInstancesModule,
         MembersModule,
     ],
-    controllers: [ScoresController],
+    controllers: [ScoresController, AdminScoresController],
     providers: [ScoresService, GameRulesService],
     exports: [ScoresService, GameRulesService],
 })

@@ -219,3 +219,55 @@ export function fetchDeleteGameInstance(id: string) {
         method: 'delete'
     });
 }
+
+/** Get play attempts */
+export function fetchGetPlayAttempts(params?: { companyId?: string }) {
+    return request<Api.Management.PlayAttempt[]>({
+        url: '/admin/scores/play-attempts',
+        method: 'get',
+        params
+    });
+}
+
+/** Get all scores */
+export function fetchGetScores(params?: { companyId?: string }) {
+    return request<Api.Management.Score[]>({
+        url: '/admin/scores/all',
+        method: 'get',
+        params
+    });
+}
+
+/** Get scores stats */
+export function fetchGetScoresStats(params?: { companyId?: string }) {
+    return request<any>({
+        url: '/admin/scores/stats',
+        method: 'get',
+        params
+    });
+}
+
+/** Get budget tracking */
+export function fetchGetBudgetTracking(params?: { companyId?: string }) {
+    return request<Api.Management.BudgetTracking[]>({
+        url: '/admin/scores/budget-tracking',
+        method: 'get',
+        params
+    });
+}
+
+/** Get all games */
+export function fetchGetGames() {
+    return request<Api.Management.Game[]>({
+        url: '/admin/games/all',
+        method: 'get'
+    });
+}
+
+/** Get games stats */
+export function fetchGetGamesStats() {
+    return request<any>({
+        url: '/admin/games/stats',
+        method: 'get'
+    });
+}
