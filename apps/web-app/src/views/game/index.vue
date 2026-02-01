@@ -307,6 +307,23 @@ function handleIframeLoad() {
     type: 'sound-toggle',
     enabled: settingsStore.soundEnabled,
   }, '*');
+  
+  // Also send game status if available
+  if (gameStatus.value) {
+    const simpleStatus = {
+      canPlay: gameStatus.value.canPlay,
+      blockReason: gameStatus.value.blockReason,
+      blockDetails: gameStatus.value.blockDetails ? JSON.parse(JSON.stringify(gameStatus.value.blockDetails)) : null,
+    };
+    
+    // Wait a bit for game template to be ready
+    setTimeout(() => {
+      iframeRef.value?.contentWindow?.postMessage({
+        type: 'game-status-update',
+        status: simpleStatus,
+      }, '*');
+    }, 500);
+  }
 }
 
 function toggleSound() {
