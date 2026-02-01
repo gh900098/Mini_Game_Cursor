@@ -511,42 +511,29 @@ onUnmounted(() => {
   /* Left side rounded */
   border-top-left-radius: 0.5rem;
   border-bottom-left-radius: 0.5rem;
-  /* Right side curved extension */
-  border-top-right-radius: 1.25rem;
-  border-bottom-right-radius: 1.25rem;
-  padding-right: 1.5rem;
-  position: relative;
-  /* Extend to the right to accommodate button smoothly */
-  margin-right: -2rem;
-}
-
-/* Curved extension part of warning box */
-.warning-box-with-button::after {
-  content: '';
-  position: absolute;
-  right: -0.5rem;
-  top: 0;
-  bottom: 0;
-  width: 2rem;
-  background: inherit;
+  /* Right side with space for button */
   border-top-right-radius: 1.5rem;
   border-bottom-right-radius: 1.5rem;
-  z-index: -1;
+  padding-right: 3rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  /* No negative margin - button will be inside */
 }
 
-/* Hide Button attached to warning box */
+/* Hide Button attached inside warning box (right edge) */
 .warning-hide-button {
   position: absolute;
-  right: -2.5rem;
+  right: 0.25rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 3rem;
-  height: 3rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.7) 0%, rgba(168, 85, 247, 0.7) 100%);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.8) 0%, rgba(168, 85, 247, 0.8) 100%);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border: 2.5px solid rgba(255, 255, 255, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -554,8 +541,10 @@ onUnmounted(() => {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
-    0 8px 32px rgba(99, 102, 241, 0.6),
-    0 0 0 1px rgba(255, 255, 255, 0.25) inset;
+    0 8px 32px rgba(99, 102, 241, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+  z-index: 10;
+  flex-shrink: 0;
 }
 
 .warning-hide-button:hover {
