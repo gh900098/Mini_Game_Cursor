@@ -503,52 +503,34 @@ onUnmounted(() => {
   transform: scale(0.95);
 }
 
-/* Warning Box with Curved Extension Tail */
+/* Warning Box with visible button on right - simple approach */
 .warning-box-with-button {
   position: relative;
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   animation: pulse-slow 2s ease-in-out infinite;
-  /* Main box styling */
+  /* Main box styling with extra padding for button */
   background: rgba(220, 38, 38, 0.9);
   box-shadow: 0 8px 32px rgba(220, 38, 38, 0.4);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  padding-right: 4.5rem;
-  /* Create space for curved tail + button */
-  margin-right: -3.5rem;
+  border-radius: 0.5rem 1.5rem 1.5rem 0.5rem;
+  padding: 0.5rem 3.5rem 0.5rem 0.75rem;
+  overflow: visible !important;
 }
 
-/* Curved tail extension using ::before */
-.warning-box-with-button::before {
-  content: '';
-  position: absolute;
-  right: -3rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4rem;
-  height: 100%;
-  background: rgba(220, 38, 38, 0.9);
-  border-top-right-radius: 2rem;
-  border-bottom-right-radius: 2rem;
-  border-top-left-radius: 0.5rem;
-  border-bottom-left-radius: 0.5rem;
-  z-index: 1;
-}
-
-/* Hide Button at the end of tail */
+/* Hide Button positioned inside the box on the right */
 .warning-hide-button {
   position: absolute;
-  right: -2rem;
+  right: 0.375rem;
   top: 50%;
   transform: translateY(-50%);
   width: 2.75rem;
   height: 2.75rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(168, 85, 247, 0.9) 100%);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(168, 85, 247, 0.95) 100%);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 2.5px solid rgba(255, 255, 255, 0.6);
+  border: 2.5px solid rgba(255, 255, 255, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -556,9 +538,11 @@ onUnmounted(() => {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
-    0 8px 32px rgba(99, 102, 241, 0.8),
-    0 0 0 1px rgba(255, 255, 255, 0.35) inset;
-  z-index: 10;
+    0 8px 32px rgba(99, 102, 241, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.4) inset,
+    0 0 20px rgba(255, 255, 255, 0.3);
+  z-index: 100;
+  flex-shrink: 0;
 }
 
 .warning-hide-button:hover {
