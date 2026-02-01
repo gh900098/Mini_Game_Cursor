@@ -290,11 +290,18 @@ watch(() => settingsStore.soundEnabled, (enabled) => {
   }, '*');
 });
 
-onMounted(() => {
+onMounted(async () => {
   // 每次加载游戏时重置音效为开启
   settingsStore.resetSound();
   
   window.addEventListener('message', handleMessage);
+  
+  // Auto-login if token in URL query
+  const urlToken = route.query.token as string;
+  if (urlToken && !authStore.isLoggedIn) {
+    console.log('[Game] Auto-login with URL token');
+    authStore.setToken(urlToken);
+  }
   
   if (!authStore.isLoggedIn && !isPreview.value) {
     message.warning('Please log in to play and save your scores!');
