@@ -36,8 +36,26 @@ export class ScoresService {
         // 4. Record Play Attempt (NEW!)
         await this.gameRulesService.recordAttempt(memberId, instance.id, true, ipAddress);
 
-        // 5. Update Member's points balance (Atomic increment)
-        await this.membersService.updatePoints(memberId, scoreValue);
+        // 5. Update Budget (if prize has cost) (NEW!)
+        if (metadata?.prizeIndex !== undefined && instance.config?.prizeList) {
+            const prize = instance.config.prizeList[metadata.prizeIndex];
+            if (prize?.cost) {
+                await this.gameRulesService.updateBudget(instance.id, prize.cost);
+            }
+        }
+
+        // 6. Apply VIP multiplier to score (NEW!)
+        let finalScore = scoreValue;
+        const member = await this.membersService.findById(memberId);
+        if (member?.vipTier && instance.config?.vipTiers) {
+            const vipConfig = instance.config.vipTiers.find((t: any) => t.name === member.vipTier);
+            if (vipConfig?.multiplier) {
+                finalScore = Math.floor(scoreValue * vipConfig.multiplier);
+            }
+        }
+
+        // 7. Update Member's points balance (Atomic increment)
+        await this.membersService.updatePoints(memberId, finalScore);
 
         return savedScore;
     }

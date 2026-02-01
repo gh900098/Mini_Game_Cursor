@@ -5,6 +5,7 @@ import { PlayAttempt } from './entities/play-attempt.entity';
 import { BudgetTracking } from './entities/budget-tracking.entity';
 import { Member } from '../members/entities/member.entity';
 import { GameInstance } from '../game-instances/entities/game-instance.entity';
+import { Score } from './entities/score.entity';
 
 @Injectable()
 export class GameRulesService {
@@ -15,6 +16,8 @@ export class GameRulesService {
     private budgetRepo: Repository<BudgetTracking>,
     @InjectRepository(Member)
     private membersRepo: Repository<Member>,
+    @InjectRepository(Score)
+    private scoresRepo: Repository<Score>,
   ) {}
 
   /**
@@ -27,9 +30,9 @@ export class GameRulesService {
     await this.checkDailyLimit(memberId, instance);
     await this.checkCooldown(memberId, instance);
 
-    // 中优先级规则（可选）
-    // await this.checkMinLevel(memberId, instance);
-    // await this.checkBudget(instance);
+    // 中优先级规则
+    await this.checkMinLevel(memberId, instance);
+    await this.checkBudget(instance);
   }
 
   /**
@@ -259,6 +262,92 @@ export class GameRulesService {
         resetAt: tomorrow.toISOString(),
       });
     }
+  }
+
+  /**
+   * 更新预算（在玩家赢奖后调用）
+   */
+  async updateBudget(instanceId: string, prizeCost: number): Promise<void> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Upsert budget tracking
+    const existingTracking = await this.budgetRepo.findOne({
+      where: {
+        instanceId,
+        trackingDate: today,
+      },
+    });
+
+    if (existingTracking) {
+      existingTracking.totalCost = Number(existingTracking.totalCost) + prizeCost;
+      existingTracking.playCount += 1;
+      await this.budgetRepo.save(existingTracking);
+    } else {
+      const tracking = this.budgetRepo.create({
+        instanceId,
+        trackingDate: today,
+        totalCost: prizeCost,
+        playCount: 1,
+      });
+      await this.budgetRepo.save(tracking);
+    }
+  }
+
+  /**
+   * 规则7: 动态概率调整（保底机制）
+   */
+  async getDynamicWeights(
+    memberId: string,
+    instance: GameInstance,
+    baseWeights: number[],
+  ): Promise<number[]> {
+    const config = instance.config?.dynamicProbConfig;
+
+    if (!config?.enable) return baseWeights;
+
+    // 查询最近的游戏记录
+    const recentScores = await this.playAttemptsRepo
+      .createQueryBuilder('attempt')
+      .leftJoin('scores', 'score', 'score.memberId = attempt.memberId AND score.instanceId = attempt.instanceId')
+      .where('attempt.memberId = :memberId', { memberId })
+      .andWhere('attempt.instanceId = :instanceId', { instanceId: instance.id })
+      .andWhere('attempt.success = :success', { success: true })
+      .orderBy('attempt.attemptedAt', 'DESC')
+      .limit(10)
+      .select(['attempt.id', 'score.metadata'])
+      .getRawMany();
+
+    // 计算连输次数
+    let lossStreak = 0;
+    for (const record of recentScores) {
+      if (record.score_metadata?.isLose) {
+        lossStreak++;
+      } else {
+        break; // 赢了一次，连输中断
+      }
+    }
+
+    // 未达到连输阈值
+    if (lossStreak < config.lossStreakLimit) {
+      return baseWeights;
+    }
+
+    // 调整权重：降低输奖品概率，提高赢奖品概率
+    const adjustedWeights = baseWeights.map((weight, idx) => {
+      const prize = instance.config?.prizeList?.[idx];
+      if (prize?.isLose) {
+        return weight * 0.5; // 输奖品概率减半
+      } else {
+        return weight * (1 + config.lossStreakBonus / 100); // 赢奖品概率增加
+      }
+    });
+
+    console.log(
+      `[DynamicProb] User ${memberId} loss streak: ${lossStreak}, adjusting weights`,
+    );
+
+    return adjustedWeights;
   }
 
   /**
