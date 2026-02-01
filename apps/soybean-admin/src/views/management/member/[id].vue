@@ -71,7 +71,8 @@ const creditColumns: DataTableColumns<Api.Management.CreditTransaction> = [
     key: 'type',
     width: 100,
     render(row) {
-      if (row.type === 'credit') {
+      const txType = row.type;
+      if (txType === 'credit') {
         return <NTag type="success">Credit</NTag>;
       }
       return <NTag type="error">Debit</NTag>;
