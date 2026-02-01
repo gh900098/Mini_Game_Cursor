@@ -71,10 +71,10 @@ const creditColumns: DataTableColumns<Api.Management.CreditTransaction> = [
     key: 'type',
     width: 100,
     render(row) {
-      return (
-        <NTag type={row.type === 'credit' ? 'success' : 'error'}>
-          {row.type === 'credit' ? 'Credit' : 'Debit'}
-        </NTag>
+      return row.type === 'credit' ? (
+        <NTag type="success">Credit</NTag>
+      ) : (
+        <NTag type="error">Debit</NTag>
       );
     }
   },
@@ -84,8 +84,9 @@ const creditColumns: DataTableColumns<Api.Management.CreditTransaction> = [
     width: 120,
     render(row) {
       const sign = row.type === 'credit' ? '+' : '-';
+      const colorClass = row.type === 'credit' ? 'text-green-600 font-bold' : 'text-red-600 font-bold';
       return (
-        <span class={row.type === 'credit' ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}>
+        <span class={colorClass}>
           {sign}{row.amount}
         </span>
       );
@@ -143,8 +144,9 @@ const playColumns: DataTableColumns<any> = [
     key: 'outcome',
     width: 100,
     render(row) {
+      const tagType = row.outcome === 'win' ? 'success' : row.outcome === 'lose' ? 'error' : 'default';
       return (
-        <NTag type={row.outcome === 'win' ? 'success' : row.outcome === 'lose' ? 'error' : 'default'}>
+        <NTag type={tagType}>
           {row.outcome.toUpperCase()}
         </NTag>
       );
