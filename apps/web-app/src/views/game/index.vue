@@ -315,6 +315,13 @@ async function fetchGameStatus() {
     const res: any = await service.get(`/scores/status/${instanceSlug.value}`);
     gameStatus.value = res.data || res;
     
+    // DEBUG: Log status for color debugging
+    console.log('[GameStatus] Remaining:', gameStatus.value.remaining, 'DailyLimit:', gameStatus.value.dailyLimit);
+    console.log('[GameStatus] Color should be:', 
+      gameStatus.value.remaining === 0 ? 'RED' : 
+      gameStatus.value.remaining === 1 ? 'YELLOW' : 
+      'BLUE/WHITE');
+    
     // If there's a cooldown, start the timer
     if (gameStatus.value.cooldownRemaining > 0) {
       cooldownRemaining.value = gameStatus.value.cooldownRemaining;
