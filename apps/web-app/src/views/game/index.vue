@@ -87,17 +87,12 @@
                     class="i-carbon-play-filled text-blue-400 drop-shadow-glow-blue"
                   ></div>
                   
-                  <!-- Text color based on remaining -->
+                  <!-- Text color based on remaining - Using computed inline styles -->
                   <span 
-                    class="text-sm"
-                    :class="{
-                      'remaining-red': gameStatus.remaining === 0,
-                      'remaining-yellow': gameStatus.remaining === 1,
-                      'remaining-normal': gameStatus.remaining >= 2
-                    }"
+                    class="text-sm font-bold"
+                    :style="{ color: remainingColor }"
                   >
-                    <span class="font-bold">{{ gameStatus.remaining }}</span>
-                    <span class="remaining-slash">/{{ gameStatus.dailyLimit }}</span>
+                    {{ gameStatus.remaining }}<span :style="{ color: remainingSlashColor, fontWeight: 'normal' }">/{{ gameStatus.dailyLimit }}</span>
                   </span>
                 </div>
                 
@@ -224,6 +219,25 @@ const hasRuleViolation = computed(() => {
   
   // All rules passed
   return false;
+});
+
+// Computed property for remaining count color
+const remainingColor = computed(() => {
+  if (!gameStatus.value || !gameStatus.value.dailyLimit) return 'white';
+  
+  const remaining = gameStatus.value.remaining;
+  if (remaining === 0) return '#ef4444'; // Red
+  if (remaining === 1) return '#facc15'; // Yellow
+  return 'white'; // Normal
+});
+
+const remainingSlashColor = computed(() => {
+  if (!gameStatus.value || !gameStatus.value.dailyLimit) return 'rgba(255, 255, 255, 0.6)';
+  
+  const remaining = gameStatus.value.remaining;
+  if (remaining === 0) return 'rgba(239, 68, 68, 0.8)';
+  if (remaining === 1) return 'rgba(250, 204, 21, 0.8)';
+  return 'rgba(255, 255, 255, 0.6)';
 });
 
 const gameUrl = computed(() => {
@@ -739,32 +753,5 @@ onUnmounted(() => {
     transform: scale(1);
     opacity: 1;
   }
-}
-
-/* Remaining count color overrides - Use !important to override parent .status-card-with-button color */
-.remaining-red {
-  color: #ef4444 !important;
-  font-weight: bold !important;
-}
-
-.remaining-red .remaining-slash {
-  color: rgba(239, 68, 68, 0.8) !important;
-}
-
-.remaining-yellow {
-  color: #facc15 !important;
-  font-weight: bold !important;
-}
-
-.remaining-yellow .remaining-slash {
-  color: rgba(250, 204, 21, 0.8) !important;
-}
-
-.remaining-normal {
-  color: white !important;
-}
-
-.remaining-normal .remaining-slash {
-  color: rgba(255, 255, 255, 0.6) !important;
 }
 </style>
