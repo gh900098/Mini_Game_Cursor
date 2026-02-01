@@ -503,66 +503,69 @@ onUnmounted(() => {
 .hide-button-container {
   position: absolute;
   top: 50%;
-  right: 0;
+  right: -0.25rem;
   transform: translateY(-50%);
   z-index: 10;
+  display: flex;
+  align-items: center;
 }
 
-/* Curved Bridge Connector - Creates smooth curve between card and button */
+/* Curved Bridge Connector - Horizontal smooth extension from card edge */
 .hide-button-bridge {
-  position: absolute;
-  top: 50%;
-  right: 1rem;
-  transform: translateY(-50%);
-  width: 1.5rem;
-  height: 3rem;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(20, 20, 30, 0.85) 100%);
+  width: 1.25rem;
+  height: 2.5rem;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 20, 30, 0.75) 100%);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-left: none;
-  border-radius: 0 50% 50% 0;
+  border-top-right-radius: 1.25rem;
+  border-bottom-right-radius: 1.25rem;
   box-shadow: 
     0 4px 16px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  margin-right: -0.125rem;
 }
 
-/* Hide Button - Floating at right edge with curved design */
+/* Hide Button - Large and prominent with big arrow */
 .hide-button {
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 3.25rem;
+  height: 3.25rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.5) 0%, rgba(168, 85, 247, 0.5) 100%);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.6) 0%, rgba(168, 85, 247, 0.6) 100%);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   cursor: pointer;
-  position: absolute;
-  top: 50%;
-  right: -0.625rem;
-  transform: translateY(-50%);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
-    0 8px 28px rgba(99, 102, 241, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-  z-index: 11;
+    0 8px 32px rgba(99, 102, 241, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.25) inset;
+  flex-shrink: 0;
 }
 
 .hide-button:hover {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.7) 0%, rgba(168, 85, 247, 0.7) 100%);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.8) 0%, rgba(168, 85, 247, 0.8) 100%);
+  border-color: rgba(255, 255, 255, 0.55);
   box-shadow: 
-    0 12px 40px rgba(99, 102, 241, 0.7),
-    0 0 0 1px rgba(255, 255, 255, 0.3) inset;
-  transform: translateY(-50%) scale(1.1) translateX(4px);
+    0 12px 48px rgba(99, 102, 241, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+  transform: scale(1.1) translateX(4px);
 }
 
 .hide-button:active {
-  transform: translateY(-50%) scale(0.95);
+  transform: scale(0.95);
+}
+
+/* Make arrow bigger and more visible */
+.hide-button .i-carbon-chevron-right {
+  font-size: 2rem;
+  font-weight: 900;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 /* Collapsed Button - Premium floating design */
