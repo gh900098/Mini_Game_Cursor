@@ -43,16 +43,19 @@
                 <div class="i-carbon-locked text-lg drop-shadow-md"></div>
                 <span class="text-sm font-bold drop-shadow-md">
                   <template v-if="gameStatus.blockReason === 'LEVEL_TOO_LOW'">
-                    等级不足！需要 Lv{{ gameStatus.blockDetails.required }}
+                    Level too low! Need Lv{{ gameStatus.blockDetails.required }}
                   </template>
                   <template v-else-if="gameStatus.blockReason === 'NOT_STARTED'">
-                    活动未开始！
+                    Event not started yet
                   </template>
                   <template v-else-if="gameStatus.blockReason === 'ENDED'">
-                    活动已结束！
+                    Event has ended
                   </template>
                   <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
-                    今日不开放！
+                    Not available today
+                  </template>
+                  <template v-else-if="gameStatus.blockReason === 'ALREADY_PLAYED'">
+                    Already played (one time only)
                   </template>
                   <template v-else>
                     {{ gameStatus.blockReason }}
@@ -74,8 +77,8 @@
                 <!-- One Time Only Warning -->
                 <div v-if="gameStatus.oneTimeOnly" class="flex items-center gap-2">
                   <div class="i-carbon-warning text-yellow-400 drop-shadow-glow-yellow"></div>
-                  <span class="text-sm font-bold text-yellow-400">⚠️ 仅限一次</span>
-                  <span v-if="gameStatus.hasPlayedEver" class="text-sm font-bold text-red-500">(已使用)</span>
+                  <span class="text-sm font-bold text-yellow-400">⚠️ One Time Only</span>
+                  <span v-if="gameStatus.hasPlayedEver" class="text-sm font-bold text-red-500">(Used)</span>
                 </div>
                 
                 <!-- Daily Limit Display - Only show if NOT oneTimeOnly AND dailyLimit > 0 -->
@@ -450,14 +453,14 @@ function formatCooldown(seconds: number): string {
 }
 
 function formatTimeLimit(config: any): string {
-  const dayNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const parts: string[] = [];
   
   // Format active days
   if (config.activeDays && config.activeDays.length > 0) {
     const sortedDays = [...config.activeDays].sort((a, b) => a - b);
     const dayLabels = sortedDays.map((d: number) => dayNames[d]);
-    parts.push(dayLabels.join('、'));
+    parts.push(dayLabels.join(', '));
   }
   
   // Format time range
@@ -476,7 +479,7 @@ function formatTimeLimit(config: any): string {
     parts.push(`${formatTime(config.startTime)}-${formatTime(config.endTime)}`);
   }
   
-  return parts.join(' ') || '时间限制已启用';
+  return parts.join(' ') || 'Time limit enabled';
 }
 
 async function fetchInstance() {

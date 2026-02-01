@@ -1187,19 +1187,19 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                 const status = document.getElementById('status-msg');
                 
                 // Show error message
-                let errorMsg = '无法游戏';
+                let errorMsg = 'Cannot play';
                 if (blockReason === 'LEVEL_TOO_LOW') {
-                    errorMsg = \`等级不足！需要等级 \${blockDetails?.required}\`;
+                    errorMsg = \`Level too low! Need Lv\${blockDetails?.required}\`;
                 } else if (blockReason === 'NOT_STARTED') {
-                    errorMsg = '活动尚未开始';
+                    errorMsg = 'Event not started yet';
                 } else if (blockReason === 'ENDED') {
-                    errorMsg = '活动已结束';
+                    errorMsg = 'Event has ended';
                 } else if (blockReason === 'INVALID_DAY') {
-                    errorMsg = '今日不开放';
+                    errorMsg = 'Not available today';
                 } else if (blockReason === 'ALREADY_PLAYED') {
-                    errorMsg = '您已经玩过此游戏，每人仅限一次机会';
+                    errorMsg = 'Already played (one time only)';
                 } else if (blockReason === 'NO_ATTEMPTS_LEFT') {
-                    errorMsg = '今日次数已用完';
+                    errorMsg = 'No attempts left today';
                 }
                 
                 status.innerText = errorMsg;
@@ -1672,7 +1672,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                         btn.style.cursor = 'not-allowed';
                         // Show block reason or cooldown in status message
                         if (statusMsg) {
-                            let errorMsg = '无法游戏';
+                            let errorMsg = 'Cannot play';
                             if (cooldownRemaining > 0) {
                                 // Format cooldown time
                                 const minutes = Math.floor(cooldownRemaining / 60);
@@ -1680,19 +1680,19 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                                 const timeStr = minutes > 0 
                                     ? \`\${minutes}m \${seconds}s\`
                                     : \`\${seconds}s\`;
-                                errorMsg = \`冷却中... \${timeStr}\`;
+                                errorMsg = \`Cooldown: \${timeStr}\`;
                             } else if (blockReason === 'LEVEL_TOO_LOW') {
-                                errorMsg = \`等级不足！需要等级 \${blockDetails?.required}\`;
+                                errorMsg = \`Level too low! Need Lv\${blockDetails?.required}\`;
                             } else if (blockReason === 'NOT_STARTED') {
-                                errorMsg = '活动尚未开始';
+                                errorMsg = 'Event not started yet';
                             } else if (blockReason === 'ENDED') {
-                                errorMsg = '活动已结束';
+                                errorMsg = 'Event has ended';
                             } else if (blockReason === 'INVALID_DAY') {
-                                errorMsg = '今日不开放';
+                                errorMsg = 'Not available today';
                             } else if (blockReason === 'ALREADY_PLAYED') {
-                                errorMsg = '您已经玩过此游戏，每人仅限一次机会';
+                                errorMsg = 'Already played (one time only)';
                             } else if (blockReason === 'NO_ATTEMPTS_LEFT') {
-                                errorMsg = '今日次数已用完';
+                                errorMsg = 'No attempts left today';
                             }
                             statusMsg.innerText = errorMsg;
                             statusMsg.style.color = '#ef4444';
