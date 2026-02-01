@@ -441,12 +441,52 @@ export class GameRulesService {
       }
     }
 
+    // Check oneTimeOnly rule for display
+    const oneTimeOnly = instance.config?.oneTimeOnly || false;
+    let hasPlayedEver = false;
+    if (oneTimeOnly) {
+      hasPlayedEver = await this.playAttemptsRepo.exists({
+        where: {
+          memberId,
+          instanceId: instance.id,
+          success: true,
+        },
+      });
+    }
+
+    // Determine if currently in active time (for UI coloring)
+    let isInActiveTime = true;
+    if (instance.config?.timeLimitConfig?.enable) {
+      const now = new Date();
+      const config = instance.config.timeLimitConfig;
+
+      // Check date range
+      if (config.startTime && new Date(config.startTime) > now) {
+        isInActiveTime = false;
+      } else if (config.endTime && new Date(config.endTime) < now) {
+        isInActiveTime = false;
+      }
+
+      // Check active days
+      if (isInActiveTime && config.activeDays && config.activeDays.length > 0) {
+        const dayOfWeek = now.getDay();
+        if (!config.activeDays.includes(dayOfWeek)) {
+          isInActiveTime = false;
+        }
+      }
+    }
+
     const result: any = {
       canPlay,
       dailyLimit: effectiveLimit,
       played,
       remaining: effectiveLimit === 0 ? -1 : Math.max(0, effectiveLimit - played),
       resetAt: tomorrow.toISOString(),
+      // Additional info for UI
+      oneTimeOnly,
+      hasPlayedEver,
+      timeLimitConfig: instance.config?.timeLimitConfig || null,
+      isInActiveTime,
     };
 
     if (!canPlay && blockReason) {

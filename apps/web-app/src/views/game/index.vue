@@ -70,9 +70,16 @@
                 <div class="absolute inset-0 rounded-full border-2 border-white/30 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
               </button>
               
-              <div class="flex items-center gap-3">
-                <!-- Daily Limit Display - Always show if dailyLimit > 0 -->
-                <div v-if="gameStatus.dailyLimit > 0" class="flex items-center gap-2">
+              <div class="flex flex-col gap-2">
+                <!-- One Time Only Warning -->
+                <div v-if="gameStatus.oneTimeOnly" class="flex items-center gap-2">
+                  <div class="i-carbon-warning text-yellow-400 drop-shadow-glow-yellow"></div>
+                  <span class="text-sm font-bold text-yellow-400">⚠️ 仅限一次</span>
+                  <span v-if="gameStatus.hasPlayedEver" class="text-sm font-bold text-red-500">(已使用)</span>
+                </div>
+                
+                <!-- Daily Limit Display - Only show if NOT oneTimeOnly AND dailyLimit > 0 -->
+                <div v-if="!gameStatus.oneTimeOnly && gameStatus.dailyLimit > 0" class="flex items-center gap-2">
                   <!-- Icon color based on remaining -->
                   <div 
                     v-if="gameStatus.remaining === 0" 
@@ -96,20 +103,37 @@
                   </span>
                 </div>
                 
+                <!-- Time Limit Display -->
+                <div v-if="gameStatus.timeLimitConfig?.enable" class="flex items-center gap-2">
+                  <div 
+                    :class="gameStatus.isInActiveTime ? 'i-carbon-calendar text-blue-400' : 'i-carbon-calendar text-red-500'"
+                    class="drop-shadow-glow-blue"
+                  ></div>
+                  <span 
+                    class="text-sm font-bold"
+                    :style="{ color: gameStatus.isInActiveTime ? '#60a5fa' : '#ef4444' }"
+                  >
+                    📅 {{ formatTimeLimit(gameStatus.timeLimitConfig) }}
+                  </span>
+                </div>
+                
                 <!-- Cooldown Timer - Yellow color for warning -->
                 <div v-if="cooldownRemaining > 0" class="flex items-center gap-2">
                   <div class="i-carbon-time text-yellow-400 drop-shadow-glow-yellow"></div>
-                  <span class="text-sm font-mono text-yellow-400 font-bold">{{ formatCooldown(cooldownRemaining) }}</span>
+                  <span class="text-sm font-mono text-yellow-400 font-bold">⏱️ {{ formatCooldown(cooldownRemaining) }}</span>
                 </div>
+                
                 <!-- Refresh Button -->
-                <button
-                  @click="fetchGameStatus"
-                  class="action-button"
-                  :class="{ 'animate-spin': loadingStatus }"
-                  title="Refresh status"
-                >
-                  <div class="i-carbon-renew text-lg"></div>
-                </button>
+                <div class="flex justify-end">
+                  <button
+                    @click="fetchGameStatus"
+                    class="action-button"
+                    :class="{ 'animate-spin': loadingStatus }"
+                    title="Refresh status"
+                  >
+                    <div class="i-carbon-renew text-lg"></div>
+                  </button>
+                </div>
               </div>
             </div>
           </Transition>
@@ -210,17 +234,27 @@ const collapsedButtonStatus = computed(() => {
     return 'danger';
   }
   
-  // Case 2: No remaining attempts - RED
+  // Case 2: One Time Only and already played - RED
+  if (gameStatus.value.oneTimeOnly && gameStatus.value.hasPlayedEver) {
+    return 'danger';
+  }
+  
+  // Case 3: Not in active time (time limit enabled but not active) - RED
+  if (gameStatus.value.timeLimitConfig?.enable && !gameStatus.value.isInActiveTime) {
+    return 'danger';
+  }
+  
+  // Case 4: No remaining attempts - RED
   if (gameStatus.value.dailyLimit > 0 && gameStatus.value.remaining === 0) {
     return 'danger';
   }
   
-  // Case 3: Cooldown active - YELLOW (warning)
+  // Case 5: Cooldown active - YELLOW (warning)
   if (cooldownRemaining.value > 0) {
     return 'warning';
   }
   
-  // Case 4: Only 1 attempt left - YELLOW (warning)
+  // Case 6: Only 1 attempt left - YELLOW (warning)
   if (gameStatus.value.dailyLimit > 0 && gameStatus.value.remaining === 1) {
     return 'warning';
   }
@@ -412,6 +446,36 @@ function formatCooldown(seconds: number): string {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function formatTimeLimit(config: any): string {
+  const dayNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+  const parts: string[] = [];
+  
+  // Format active days
+  if (config.activeDays && config.activeDays.length > 0) {
+    const sortedDays = [...config.activeDays].sort((a, b) => a - b);
+    const dayLabels = sortedDays.map((d: number) => dayNames[d]);
+    parts.push(dayLabels.join('、'));
+  }
+  
+  // Format time range
+  if (config.startTime && config.endTime) {
+    // Extract HH:mm from ISO strings or time strings
+    const formatTime = (timeStr: string) => {
+      if (!timeStr) return '';
+      // If it's an ISO date, extract time part
+      if (timeStr.includes('T')) {
+        const date = new Date(timeStr);
+        return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+      }
+      // Otherwise assume it's already HH:mm format
+      return timeStr;
+    };
+    parts.push(`${formatTime(config.startTime)}-${formatTime(config.endTime)}`);
+  }
+  
+  return parts.join(' ') || '时间限制已启用';
 }
 
 async function fetchInstance() {
