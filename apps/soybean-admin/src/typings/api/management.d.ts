@@ -75,10 +75,40 @@ declare namespace Api {
             externalId?: string;
             username?: string;
             pointsBalance: number;
+            level: number;
+            vipTier?: string;
+            experience: number;
             isAnonymous: boolean;
+            isActive: boolean;
+            lastLoginAt?: string;
+            metadata?: Record<string, any>;
             createdAt: string;
             updatedAt: string;
             company?: Company;
+        }
+
+        interface CreditTransaction {
+            id: string;
+            memberId: string;
+            amount: number;
+            balanceBefore: number;
+            balanceAfter: number;
+            type: string;
+            reason?: string;
+            adminUserId?: string;
+            metadata?: Record<string, any>;
+            createdAt: string;
+        }
+
+        interface LoginHistory {
+            id: string;
+            memberId: string;
+            ipAddress?: string;
+            userAgent?: string;
+            success: boolean;
+            failureReason?: string;
+            metadata?: Record<string, any>;
+            createdAt: string;
         }
 
         interface GameInstance {
