@@ -1196,6 +1196,10 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                     errorMsg = '活动已结束';
                 } else if (blockReason === 'INVALID_DAY') {
                     errorMsg = '今日不开放';
+                } else if (blockReason === 'ALREADY_PLAYED') {
+                    errorMsg = '您已经玩过此游戏，每人仅限一次机会';
+                } else if (blockReason === 'NO_ATTEMPTS_LEFT') {
+                    errorMsg = '今日次数已用完';
                 }
                 
                 status.innerText = errorMsg;
@@ -1685,6 +1689,10 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                                 errorMsg = '活动已结束';
                             } else if (blockReason === 'INVALID_DAY') {
                                 errorMsg = '今日不开放';
+                            } else if (blockReason === 'ALREADY_PLAYED') {
+                                errorMsg = '您已经玩过此游戏，每人仅限一次机会';
+                            } else if (blockReason === 'NO_ATTEMPTS_LEFT') {
+                                errorMsg = '今日次数已用完';
                             }
                             statusMsg.innerText = errorMsg;
                             statusMsg.style.color = '#ef4444';

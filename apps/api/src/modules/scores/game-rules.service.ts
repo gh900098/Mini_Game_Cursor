@@ -452,6 +452,13 @@ export class GameRulesService {
           success: true,
         },
       });
+      
+      // If user has played and oneTimeOnly is enabled, block them
+      if (canPlay && hasPlayedEver) {
+        canPlay = false;
+        blockReason = 'ALREADY_PLAYED';
+        blockDetails = { message: '您已经玩过此游戏，每人仅限一次机会' };
+      }
     }
 
     // Determine if currently in active time (for UI coloring)
