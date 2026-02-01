@@ -306,6 +306,7 @@ async function fetchGameStatus() {
         canPlay: gameStatus.value.canPlay,
         blockReason: gameStatus.value.blockReason,
         blockDetails: gameStatus.value.blockDetails ? JSON.parse(JSON.stringify(gameStatus.value.blockDetails)) : null,
+        cooldownRemaining: cooldownRemaining.value,
       };
       
       iframeRef.value.contentWindow?.postMessage({
@@ -330,6 +331,19 @@ function startCooldownTimer() {
   cooldownInterval = setInterval(() => {
     if (cooldownRemaining.value > 0) {
       cooldownRemaining.value--;
+      
+      // Update iframe with new cooldown value
+      if (iframeRef.value && gameStatus.value) {
+        iframeRef.value.contentWindow?.postMessage({
+          type: 'game-status-update',
+          status: {
+            canPlay: gameStatus.value.canPlay,
+            blockReason: gameStatus.value.blockReason,
+            blockDetails: gameStatus.value.blockDetails ? JSON.parse(JSON.stringify(gameStatus.value.blockDetails)) : null,
+            cooldownRemaining: cooldownRemaining.value,
+          },
+        }, '*');
+      }
     } else {
       clearInterval(cooldownInterval);
       cooldownInterval = null;

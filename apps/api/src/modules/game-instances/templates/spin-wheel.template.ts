@@ -1654,18 +1654,30 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                 canPlay = status.canPlay !== false; // Default true
                 blockReason = status.blockReason || null;
                 blockDetails = status.blockDetails || null;
+                const cooldownRemaining = status.cooldownRemaining || 0;
                 
                 const btn = document.getElementById('spin-btn');
                 const statusMsg = document.getElementById('status-msg');
                 if (btn) {
-                    btn.disabled = !canPlay;
-                    if (!canPlay) {
+                    // Disable button if canPlay is false OR cooldown is active
+                    const shouldDisable = !canPlay || cooldownRemaining > 0;
+                    btn.disabled = shouldDisable;
+                    
+                    if (shouldDisable) {
                         btn.style.opacity = '0.5';
                         btn.style.cursor = 'not-allowed';
-                        // Show block reason in status message
+                        // Show block reason or cooldown in status message
                         if (statusMsg) {
                             let errorMsg = '无法游戏';
-                            if (blockReason === 'LEVEL_TOO_LOW') {
+                            if (cooldownRemaining > 0) {
+                                // Format cooldown time
+                                const minutes = Math.floor(cooldownRemaining / 60);
+                                const seconds = cooldownRemaining % 60;
+                                const timeStr = minutes > 0 
+                                    ? \`\${minutes}m \${seconds}s\`
+                                    : \`\${seconds}s\`;
+                                errorMsg = \`冷却中... \${timeStr}\`;
+                            } else if (blockReason === 'LEVEL_TOO_LOW') {
                                 errorMsg = \`等级不足！需要等级 \${blockDetails?.required}\`;
                             } else if (blockReason === 'NOT_STARTED') {
                                 errorMsg = '活动尚未开始';
@@ -1688,7 +1700,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                     }
                 }
                 
-                console.log('[GameRules] Status updated:', { canPlay, blockReason, blockDetails });
+                console.log('[GameRules] Status updated:', { canPlay, blockReason, blockDetails, cooldownRemaining });
             }
         });
         
