@@ -37,55 +37,43 @@
       <div v-if="gameStatus && !isPreview" class="absolute top-4 left-4 z-50">
         <div class="relative">
           <Transition name="slide-fade">
-            <div v-if="!statusCollapsed" class="status-card group">
-              <!-- Block Reason (if cannot play) - RED BOX WITH CURVED EXTENSION -->
-              <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="warning-box-with-button mb-2 relative">
-                <div class="flex items-center gap-2 px-3 py-2">
-                  <div class="i-carbon-locked text-lg drop-shadow-md"></div>
-                  <span class="text-sm font-bold drop-shadow-md">
-                    <template v-if="gameStatus.blockReason === 'LEVEL_TOO_LOW'">
-                      等级不足！需要 Lv{{ gameStatus.blockDetails.required }}
-                    </template>
-                    <template v-else-if="gameStatus.blockReason === 'NOT_STARTED'">
-                      活动未开始！
-                    </template>
-                    <template v-else-if="gameStatus.blockReason === 'ENDED'">
-                      活动已结束！
-                    </template>
-                    <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
-                      今日不开放！
-                    </template>
-                    <template v-else>
-                      {{ gameStatus.blockReason }}
-                    </template>
-                  </span>
-                </div>
-                <!-- Hide Button attached to warning box -->
-                <button
-                  @click="statusCollapsed = true"
-                  class="warning-hide-button group"
-                  title="Hide"
-                >
-                  <div class="i-carbon-chevron-right text-2xl font-black"></div>
-                  <div class="absolute inset-0 rounded-full border-2 border-white/30 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
-                </button>
+            <div v-if="!statusCollapsed" class="status-card-with-button group">
+              <!-- Block Reason (if cannot play) - RED BOX -->
+              <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded-lg px-3 py-2 -mx-1 shadow-lg animate-pulse-slow">
+                <div class="i-carbon-locked text-lg drop-shadow-md"></div>
+                <span class="text-sm font-bold drop-shadow-md">
+                  <template v-if="gameStatus.blockReason === 'LEVEL_TOO_LOW'">
+                    等级不足！需要 Lv{{ gameStatus.blockDetails.required }}
+                  </template>
+                  <template v-else-if="gameStatus.blockReason === 'NOT_STARTED'">
+                    活动未开始！
+                  </template>
+                  <template v-else-if="gameStatus.blockReason === 'ENDED'">
+                    活动已结束！
+                  </template>
+                  <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
+                    今日不开放！
+                  </template>
+                  <template v-else>
+                    {{ gameStatus.blockReason }}
+                  </template>
+                </span>
               </div>
               
+              <!-- Hide Button attached to main status card (not warning box) -->
+              <button
+                @click="statusCollapsed = true"
+                class="status-card-hide-button group"
+                title="Hide"
+              >
+                <div class="i-carbon-chevron-right text-3xl font-black"></div>
+                <div class="absolute inset-0 rounded-full border-2 border-white/30 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+              </button>
+              
               <!-- No Attempts Left Warning (even if canPlay somehow true) -->
-              <div v-if="gameStatus.dailyLimit > 0 && gameStatus.remaining === 0 && gameStatus.canPlay" class="warning-box-with-button mb-2 relative">
-                <div class="flex items-center gap-2 px-3 py-2">
-                  <div class="i-carbon-warning text-lg drop-shadow-md"></div>
-                  <span class="text-sm font-bold drop-shadow-md">次数已用完！</span>
-                </div>
-                <!-- Hide Button attached to warning box -->
-                <button
-                  @click="statusCollapsed = true"
-                  class="warning-hide-button group"
-                  title="Hide"
-                >
-                  <div class="i-carbon-chevron-right text-2xl font-black"></div>
-                  <div class="absolute inset-0 rounded-full border-2 border-white/30 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
-                </button>
+              <div v-if="gameStatus.dailyLimit > 0 && gameStatus.remaining === 0 && gameStatus.canPlay" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded-lg px-3 py-2 -mx-1 shadow-lg animate-pulse-slow">
+                <div class="i-carbon-warning text-lg drop-shadow-md"></div>
+                <span class="text-sm font-bold drop-shadow-md">次数已用完！</span>
               </div>
               
               <div class="flex items-center gap-3">
@@ -450,24 +438,25 @@ onUnmounted(() => {
 /* Based on UI/UX Pro Max principles */
 /* ==================== */
 
-/* Status Card - Glassmorphism with depth */
-.status-card {
+/* Status Card with Button - Glassmorphism with curved right edge + button */
+.status-card-with-button {
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 20, 30, 0.9) 100%);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 12px;
-  padding: 0.75rem 1rem;
+  /* Curved right edge to accommodate button */
+  border-radius: 0.75rem 1.5rem 1.5rem 0.75rem;
+  padding: 0.75rem 4rem 0.75rem 1rem;
   color: white;
   box-shadow: 
     0 8px 32px 0 rgba(0, 0, 0, 0.37),
     0 0 0 1px rgba(255, 255, 255, 0.1) inset;
   position: relative;
-  overflow: hidden;
+  overflow: visible !important;
 }
 
 /* Subtle glow on hover */
-.status-card::before {
+.status-card-with-button::before {
   content: '';
   position: absolute;
   top: 0;
@@ -479,7 +468,7 @@ onUnmounted(() => {
   transition: opacity 0.3s ease;
 }
 
-.status-card:hover::before {
+.status-card-with-button:hover::before {
   opacity: 1;
 }
 
@@ -503,29 +492,14 @@ onUnmounted(() => {
   transform: scale(0.95);
 }
 
-/* Warning Box with visible button on right - simple approach */
-.warning-box-with-button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  animation: pulse-slow 2s ease-in-out infinite;
-  /* Main box styling with extra padding for button */
-  background: rgba(220, 38, 38, 0.9);
-  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.4);
-  border-radius: 0.5rem 1.5rem 1.5rem 0.5rem;
-  padding: 0.5rem 3.5rem 0.5rem 0.75rem;
-  overflow: visible !important;
-}
-
-/* Hide Button positioned inside the box on the right */
-.warning-hide-button {
+/* Hide Button on status card - large and visible */
+.status-card-hide-button {
   position: absolute;
-  right: 0.375rem;
+  right: 0.5rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(168, 85, 247, 0.95) 100%);
   backdrop-filter: blur(16px) saturate(180%);
@@ -545,22 +519,23 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
-.warning-hide-button:hover {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(168, 85, 247, 0.9) 100%);
-  border-color: rgba(255, 255, 255, 0.6);
+.status-card-hide-button:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 1) 0%, rgba(168, 85, 247, 1) 100%);
+  border-color: rgba(255, 255, 255, 0.9);
   box-shadow: 
-    0 12px 48px rgba(99, 102, 241, 0.8),
-    0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+    0 12px 48px rgba(99, 102, 241, 1),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+    0 0 30px rgba(255, 255, 255, 0.5);
   transform: translateY(-50%) scale(1.15) translateX(4px);
 }
 
-.warning-hide-button:active {
+.status-card-hide-button:active {
   transform: translateY(-50%) scale(0.95);
 }
 
-/* Arrow icon styling */
-.warning-hide-button .i-carbon-chevron-right {
-  font-size: 1.75rem;
+/* Large arrow icon */
+.status-card-hide-button .i-carbon-chevron-right {
+  font-size: 2rem;
   font-weight: 900;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
 }
