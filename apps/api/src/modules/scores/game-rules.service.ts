@@ -380,12 +380,84 @@ export class GameRulesService {
     const tomorrow = new Date(startOfDay);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    return {
-      canPlay: effectiveLimit === 0 || played < effectiveLimit,
+    // Check all rules to determine if player can play
+    let canPlay = effectiveLimit === 0 || played < effectiveLimit;
+    let blockReason = null;
+    let blockDetails: any = {};
+
+    // Check minLevel rule
+    if (canPlay && instance.config?.minLevel) {
+      if (!member || member.level < instance.config.minLevel) {
+        canPlay = false;
+        blockReason = 'LEVEL_TOO_LOW';
+        blockDetails = {
+          required: instance.config.minLevel,
+          current: member?.level || 0,
+          missing: instance.config.minLevel - (member?.level || 0),
+        };
+      }
+    }
+
+    // Check timeLimit rule
+    if (canPlay && instance.config?.timeLimitConfig?.enable) {
+      const now = new Date();
+      const config = instance.config.timeLimitConfig;
+
+      // Check date range
+      if (config.startTime && new Date(config.startTime) > now) {
+        canPlay = false;
+        blockReason = 'NOT_STARTED';
+        blockDetails = { startTime: config.startTime };
+      } else if (config.endTime && new Date(config.endTime) < now) {
+        canPlay = false;
+        blockReason = 'ENDED';
+        blockDetails = { endTime: config.endTime };
+      }
+
+      // Check active days
+      if (canPlay && config.activeDays && config.activeDays.length > 0) {
+        const dayOfWeek = now.getDay();
+        if (!config.activeDays.includes(dayOfWeek)) {
+          canPlay = false;
+          blockReason = 'INVALID_DAY';
+          blockDetails = { activeDays: config.activeDays };
+        }
+      }
+    }
+
+    // Check cooldown (if recently played)
+    if (canPlay) {
+      const lastAttempt = await this.playAttemptsRepo.findOne({
+        where: { memberId, instanceId: instance.id },
+        order: { attemptedAt: 'DESC' },
+      });
+
+      if (lastAttempt && instance.config?.cooldown) {
+        const secondsSince = (Date.now() - lastAttempt.attemptedAt.getTime()) / 1000;
+        const cooldownRemaining = Math.max(0, instance.config.cooldown - secondsSince);
+        if (cooldownRemaining > 0) {
+          blockDetails.cooldownRemaining = Math.ceil(cooldownRemaining);
+        }
+      }
+    }
+
+    const result: any = {
+      canPlay,
       dailyLimit: effectiveLimit,
       played,
       remaining: effectiveLimit === 0 ? -1 : Math.max(0, effectiveLimit - played),
       resetAt: tomorrow.toISOString(),
     };
+
+    if (!canPlay && blockReason) {
+      result.blockReason = blockReason;
+      result.blockDetails = blockDetails;
+    }
+
+    if (blockDetails.cooldownRemaining) {
+      result.cooldownRemaining = blockDetails.cooldownRemaining;
+    }
+
+    return result;
   }
 }
