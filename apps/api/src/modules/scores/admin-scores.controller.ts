@@ -2,7 +2,7 @@ import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ScoresService } from './scores.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { Roles } from '../../common/decorators/roles.decorator';
+import { Roles, RoleLevel } from '../../common/decorators/roles.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Score } from './entities/score.entity';
@@ -11,7 +11,7 @@ import { BudgetTracking } from './entities/budget-tracking.entity';
 
 @Controller('admin/scores')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('R_ADMIN', 'R_SUPER')
+@Roles(RoleLevel.STAFF)
 export class AdminScoresController {
     constructor(
         private readonly scoresService: ScoresService,

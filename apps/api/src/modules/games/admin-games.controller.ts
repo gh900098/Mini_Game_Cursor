@@ -1,14 +1,14 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { Roles } from '../../common/decorators/roles.decorator';
+import { Roles, RoleLevel } from '../../common/decorators/roles.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Game } from './entities/game.entity';
 
 @Controller('admin/games')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('R_ADMIN', 'R_SUPER')
+@Roles(RoleLevel.STAFF)
 export class AdminGamesController {
     constructor(
         @InjectRepository(Game)
