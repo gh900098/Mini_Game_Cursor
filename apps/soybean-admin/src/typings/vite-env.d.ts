@@ -110,6 +110,8 @@ declare namespace Env {
     readonly VITE_PROXY_LOG?: CommonType.YesOrNo;
     /** The launch editor */
     readonly VITE_DEVTOOLS_LAUNCH_EDITOR?: import('vite-plugin-vue-devtools').VitePluginVueDevToolsOptions['launchEditor'];
+    /** game webapp base url */
+    readonly VITE_WEBAPP_BASE_URL: string;
   }
 }
 

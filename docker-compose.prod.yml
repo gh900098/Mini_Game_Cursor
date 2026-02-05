@@ -15,7 +15,7 @@ services:
     networks:
       - minigame-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,7 +28,7 @@ services:
     networks:
       - minigame-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -72,6 +72,7 @@ services:
       dockerfile: Dockerfile.admin
       args:
         VITE_API_URL: /api
+        VITE_WEBAPP_BASE_URL: http://localhost:3102
     container_name: minigame-admin
     restart: unless-stopped
     ports:

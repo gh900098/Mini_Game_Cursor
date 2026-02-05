@@ -35,7 +35,7 @@ const templateOptions = computed(() => templates.value.map(t => ({ label: t.name
 
 const previewUrl = computed(() => {
   if (!previewSlug.value) return '';
-  const webAppUrl = import.meta.env.PROD ? 'https://game.xseo.me' : window.location.origin.replace(':9527', ':9529');
+  const webAppUrl = import.meta.env.VITE_WEBAPP_BASE_URL || window.location.origin.replace(':9527', ':9529');
   return `${webAppUrl}/game/${previewSlug.value}?isPreview=true&hideHeader=true`;
 });
 

@@ -38,105 +38,104 @@
         <div class="relative">
           <Transition name="slide-fade">
             <div v-if="!statusCollapsed" class="status-card-with-button group">
-              <!-- Block Reason (if cannot play) - RED BOX -->
-              <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="mb-2 flex items-center gap-2 bg-red-600/90 rounded-lg px-3 py-2 -mx-1 shadow-lg animate-pulse-slow">
-                <div class="i-carbon-locked text-lg drop-shadow-md"></div>
-                <span class="text-sm font-bold drop-shadow-md">
-                  <template v-if="gameStatus.blockReason === 'LEVEL_TOO_LOW'">
-                    Level too low! Need Lv{{ gameStatus.blockDetails.required }}
-                  </template>
-                  <template v-else-if="gameStatus.blockReason === 'NOT_STARTED'">
-                    Event not started yet
-                  </template>
-                  <template v-else-if="gameStatus.blockReason === 'ENDED'">
-                    Event has ended
-                  </template>
-                  <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
-                    Not available today
-                  </template>
-                  <template v-else-if="gameStatus.blockReason === 'ALREADY_PLAYED'">
-                    Already played (one time only)
-                  </template>
-                  <template v-else>
-                    {{ gameStatus.blockReason }}
-                  </template>
-                </span>
-              </div>
-              
-              <!-- Hide Button attached to main status card (not warning box) -->
-              <button
-                @click="statusCollapsed = true"
-                class="status-card-hide-button group"
-                title="Hide"
-              >
-                <div class="i-carbon-chevron-right text-3xl font-black"></div>
-                <div class="absolute inset-0 rounded-full border-2 border-white/30 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
-              </button>
-              
-              <div class="flex flex-col gap-2">
-                <!-- One Time Only Warning -->
-                <div v-if="gameStatus.oneTimeOnly" class="flex items-center gap-2">
-                  <div class="i-carbon-warning text-yellow-400 drop-shadow-glow-yellow"></div>
-                  <span class="text-sm font-bold text-yellow-400">⚠️ One Time Only</span>
-                  <span v-if="gameStatus.hasPlayedEver" class="text-sm font-bold text-red-500">(Used)</span>
+              <!-- Left side: Info content -->
+              <div class="flex flex-col gap-2 flex-1 min-w-0 py-1">
+                <!-- Integrated Block Reason Pill -->
+                <div v-if="!gameStatus.canPlay && gameStatus.blockReason" class="flex items-center gap-2 bg-red-500/20 border border-red-500/30 rounded-full px-3 py-1 mr-2 shadow-inner">
+                  <div class="i-carbon-locked text-red-500 text-sm drop-shadow-glow-red"></div>
+                  <span class="text-xs font-bold text-red-400 uppercase tracking-wider truncate">
+                    <template v-if="gameStatus.blockReason === 'LEVEL_TOO_LOW'">
+                      Lv{{ gameStatus.blockDetails.required }} Required
+                    </template>
+                    <template v-else-if="gameStatus.blockReason === 'NOT_STARTED'">
+                      Not Started
+                    </template>
+                    <template v-else-if="gameStatus.blockReason === 'ENDED'">
+                      Ended
+                    </template>
+                    <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
+                      Not available today
+                    </template>
+                    <template v-else-if="gameStatus.blockReason === 'ALREADY_PLAYED'">
+                      Already played
+                    </template>
+                    <template v-else-if="gameStatus.blockReason === 'LOGIN_REQUIRED'">
+                      Login Required
+                    </template>
+                    <template v-else>
+                      {{ gameStatus.blockReason }}
+                    </template>
+                  </span>
                 </div>
                 
-                <!-- Daily Limit Display - Only show if NOT oneTimeOnly AND dailyLimit > 0 -->
-                <div v-if="!gameStatus.oneTimeOnly && gameStatus.dailyLimit > 0" class="flex items-center gap-2">
-                  <!-- Icon color based on remaining -->
-                  <div 
-                    v-if="gameStatus.remaining === 0" 
-                    class="i-carbon-play-filled text-red-500 drop-shadow-glow-orange"
-                  ></div>
-                  <div 
-                    v-else-if="gameStatus.remaining === 1" 
-                    class="i-carbon-play-filled text-yellow-400 drop-shadow-glow-yellow"
-                  ></div>
-                  <div 
-                    v-else 
-                    class="i-carbon-play-filled text-blue-400 drop-shadow-glow-blue"
-                  ></div>
+                <!-- Main Info Rows -->
+                <div class="flex flex-col gap-1.5 pl-1">
+                  <!-- One Time Only Warning -->
+                  <div v-if="gameStatus.oneTimeOnly" class="flex items-center gap-2">
+                    <div class="i-carbon-warning text-yellow-400 drop-shadow-glow-yellow text-[1em]"></div>
+                    <span class="text-[0.85em] font-bold text-yellow-500/90 whitespace-nowrap">One Time Only</span>
+                    <span v-if="gameStatus.hasPlayedEver" class="text-[0.8em] font-bold text-red-500">(Used)</span>
+                  </div>
                   
-                  <!-- Text color based on remaining - Using computed inline styles -->
-                  <span 
-                    class="text-sm font-bold"
-                    :style="{ color: remainingColor }"
-                  >
-                    {{ gameStatus.remaining }}<span :style="{ color: remainingSlashColor, fontWeight: 'normal' }">/{{ gameStatus.dailyLimit }}</span>
-                  </span>
+                  <!-- Daily Limit Display -->
+                  <div v-if="!gameStatus.oneTimeOnly && gameStatus.dailyLimit > 0" class="flex items-center gap-2">
+                    <div 
+                      class="i-carbon-play-filled drop-shadow-glow text-[1em]"
+                      :style="{ color: remainingColor }"
+                    ></div>
+                    
+                    <span 
+                      class="text-[0.9em] font-bold whitespace-nowrap"
+                      :style="{ color: remainingColor }"
+                    >
+                      {{ gameStatus.remaining }}<span :style="{ color: remainingSlashColor, fontWeight: 'normal' }">/{{ gameStatus.dailyLimit }}</span>
+                    </span>
+
+                    <button
+                      @click="fetchGameStatus"
+                      class="action-button-compact"
+                      :class="{ 'animate-spin': loadingStatus }"
+                      title="Refresh"
+                    >
+                      <div class="i-carbon-renew text-[0.9em]"></div>
+                    </button>
+                  </div>
+                  
+                  <!-- Time Limit Display -->
+                  <div v-if="gameStatus.timeLimitConfig?.enable" class="flex items-center gap-2 text-[0.85em]">
+                    <div 
+                      :class="gameStatus.isInActiveTime ? 'i-carbon-calendar text-blue-400' : 'i-carbon-calendar text-red-500'"
+                      class="drop-shadow-glow-blue"
+                    ></div>
+                    <span 
+                      class="font-bold whitespace-nowrap"
+                      :style="{ color: gameStatus.isInActiveTime ? '#60a5fa' : '#ef4444' }"
+                    >
+                      {{ formatDaysLocal(gameStatus.timeLimitConfig.activeDays) }} {{ formatTimeLocal(gameStatus.timeLimitConfig.startTime) }}~{{ formatTimeLocal(gameStatus.timeLimitConfig.endTime) }}
+                    </span>
+                  </div>
+                  
+                  <!-- Cooldown Timer -->
+                  <div v-if="cooldownRemaining > 0" class="flex items-center gap-2 text-[0.85em]">
+                    <div 
+                      class="i-carbon-time drop-shadow-glow"
+                      :style="{ color: remainingColor }"
+                    ></div>
+                    <span class="font-mono text-yellow-400 font-bold whitespace-nowrap">{{ formatCooldown(cooldownRemaining) }}</span>
+                  </div>
                 </div>
-                
-                <!-- Time Limit Display -->
-                <div v-if="gameStatus.timeLimitConfig?.enable" class="flex items-center gap-2">
-                  <div 
-                    :class="gameStatus.isInActiveTime ? 'i-carbon-calendar text-blue-400' : 'i-carbon-calendar text-red-500'"
-                    class="drop-shadow-glow-blue"
-                  ></div>
-                  <span 
-                    class="text-sm font-bold"
-                    :style="{ color: gameStatus.isInActiveTime ? '#60a5fa' : '#ef4444' }"
-                  >
-                    📅 {{ formatTimeLimit(gameStatus.timeLimitConfig) }}
-                  </span>
-                </div>
-                
-                <!-- Cooldown Timer - Yellow color for warning -->
-                <div v-if="cooldownRemaining > 0" class="flex items-center gap-2">
-                  <div class="i-carbon-time text-yellow-400 drop-shadow-glow-yellow"></div>
-                  <span class="text-sm font-mono text-yellow-400 font-bold">⏱️ {{ formatCooldown(cooldownRemaining) }}</span>
-                </div>
-                
-                <!-- Refresh Button -->
-                <div class="flex justify-end">
-                  <button
-                    @click="fetchGameStatus"
-                    class="action-button"
-                    :class="{ 'animate-spin': loadingStatus }"
-                    title="Refresh status"
-                  >
-                    <div class="i-carbon-renew text-lg"></div>
-                  </button>
-                </div>
+              </div>
+
+              <!-- Right side: Circle Hide Button - Full Scale Nesting -->
+              <div class="flex items-center justify-center py-1 self-stretch">
+                <button
+                  @click="statusCollapsed = true"
+                  class="status-card-hide-button group"
+                  title="Hide Status"
+                >
+                  <div class="i-carbon-chevron-right text-[1.4em] font-black"></div>
+                  <div class="absolute inset-0 rounded-full border-2 border-white/20 scale-100 group-hover:scale-105 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+                </button>
               </div>
             </div>
           </Transition>
@@ -368,8 +367,38 @@ async function submitScore(score: number, metadata?: any) {
 }
 
 async function fetchGameStatus() {
-  // Skip if not logged in, or if no instanceSlug (new instance in preview)
-  if (!authStore.token || !instanceSlug.value) return;
+  // Skip if no instanceSlug (new instance in preview)
+  if (!instanceSlug.value) return;
+
+  // Handle preview mode without token
+  if (!authStore.token && isPreview.value) {
+    const config = instance.value?.config;
+    const { canPlay, blockReason, blockDetails, isInActiveTime } = checkRulesLocally(config);
+    
+    const limit = config?.dailyLimit ?? 3;
+    gameStatus.value = {
+      canPlay,
+      blockReason,
+      blockDetails,
+      dailyLimit: limit,
+      played: 0,
+      remaining: limit,
+      oneTimeOnly: config?.oneTimeOnly || false,
+      hasPlayedEver: false,
+      isInActiveTime,
+      timeLimitConfig: config?.timeLimitConfig || null,
+    };
+    
+    // DEBUG: Log for unauth preview
+    console.log('[Preview] Status calculated:', gameStatus.value);
+    
+    // IMPORTANT: Sync to iframe even in preview!
+    syncStatusToIframe();
+    return;
+  }
+  
+  // Skip if not logged in
+  if (!authStore.token) return;
   
   loadingStatus.value = true;
   try {
@@ -390,25 +419,91 @@ async function fetchGameStatus() {
       startCooldownTimer();
     }
     
-    // Send status to iframe immediately
-    if (iframeRef.value) {
-      const simpleStatus = {
-        canPlay: gameStatus.value.canPlay,
-        blockReason: gameStatus.value.blockReason,
-        blockDetails: gameStatus.value.blockDetails ? JSON.parse(JSON.stringify(gameStatus.value.blockDetails)) : null,
-        cooldownRemaining: cooldownRemaining.value,
-      };
-      
-      iframeRef.value.contentWindow?.postMessage({
-        type: 'game-status-update',
-        status: simpleStatus,
-      }, '*');
-    }
+    // Send status to iframe
+    syncStatusToIframe();
   } catch (error) {
     console.error('Failed to fetch game status:', error);
   } finally {
     loadingStatus.value = false;
   }
+}
+
+function syncStatusToIframe() {
+  if (!iframeRef.value || !gameStatus.value) return;
+
+  const simpleStatus = {
+    canPlay: gameStatus.value.canPlay,
+    blockReason: gameStatus.value.blockReason,
+    blockDetails: gameStatus.value.blockDetails ? JSON.parse(JSON.stringify(gameStatus.value.blockDetails)) : null,
+    cooldownRemaining: cooldownRemaining.value,
+  };
+  
+  console.log('[Sync] Sending status to iframe:', simpleStatus);
+  
+  iframeRef.value.contentWindow?.postMessage({
+    type: 'game-status-update',
+    status: simpleStatus,
+  }, '*');
+}
+
+function checkRulesLocally(config: any) {
+  let canPlay = true;
+  let blockReason: string | null = null;
+  let blockDetails: any = null;
+  let isInActiveTime = true;
+
+  if (config?.timeLimitConfig?.enable) {
+    const now = new Date();
+    const tConfig = config.timeLimitConfig;
+    console.log('[PreviewRule] TimeLimit enabled. ActiveDays:', tConfig.activeDays, 'Today:', now.getDay());
+
+    // Check date range
+    if (tConfig.startTime && new Date(tConfig.startTime) > now) {
+      canPlay = false;
+      isInActiveTime = false;
+      blockReason = 'NOT_STARTED';
+      blockDetails = { startTime: tConfig.startTime };
+    } else if (tConfig.endTime && new Date(tConfig.endTime) < now) {
+      canPlay = false;
+      isInActiveTime = false;
+      blockReason = 'ENDED';
+      blockDetails = { endTime: tConfig.endTime };
+    }
+
+    // Check active days
+    if (canPlay && tConfig.activeDays && Array.isArray(tConfig.activeDays) && tConfig.activeDays.length > 0) {
+      const dayOfWeek = now.getDay();
+      if (!tConfig.activeDays.includes(dayOfWeek)) {
+        canPlay = false;
+        isInActiveTime = false;
+        blockReason = 'INVALID_DAY';
+        blockDetails = { activeDays: tConfig.activeDays };
+        console.log('[PreviewRule] Blocked by INVALID_DAY');
+      }
+    }
+  }
+
+  // Check requireLogin
+  if (canPlay && config?.requireLogin && !authStore.token) {
+    canPlay = false;
+    blockReason = 'LOGIN_REQUIRED';
+    console.log('[PreviewRule] Blocked by LOGIN_REQUIRED');
+  }
+
+  // Check oneTimeOnly (mocking hasPlayedEver as false for preview, but we can simulate the block if they want to see it)
+  // For preview, we'll only block if it's explicitly set and we want to SHOW the "Already Played" state.
+  // Actually, usually they just want to see the rule icon. 
+  // Let's keep it playable unless Login/Time/Level blocks it.
+
+  // Check minLevel (default user level 0 for preview)
+  if (canPlay && config?.minLevel > 0) {
+    canPlay = false;
+    blockReason = 'LEVEL_TOO_LOW';
+    blockDetails = { required: config.minLevel, current: 0 };
+    console.log('[PreviewRule] Blocked by LEVEL_TOO_LOW');
+  }
+
+  return { canPlay, blockReason, blockDetails, isInActiveTime };
 }
 
 function startCooldownTimer() {
@@ -507,12 +602,18 @@ function handleIframeLoad() {
     enabled: settingsStore.soundEnabled,
   }, '*');
   
-  // Also send game status if available
-  if (gameStatus.value) {
+  // Also send game status if available (or empty success status for preview)
+  if (gameStatus.value || isPreview.value) {
+    const status = gameStatus.value || {
+      canPlay: true,
+      blockReason: null,
+      blockDetails: null,
+    };
+
     const simpleStatus = {
-      canPlay: gameStatus.value.canPlay,
-      blockReason: gameStatus.value.blockReason,
-      blockDetails: gameStatus.value.blockDetails ? JSON.parse(JSON.stringify(gameStatus.value.blockDetails)) : null,
+      canPlay: status.canPlay,
+      blockReason: status.blockReason,
+      blockDetails: status.blockDetails ? JSON.parse(JSON.stringify(status.blockDetails)) : null,
     };
     
     // Wait a bit for game template to be ready
@@ -542,6 +643,13 @@ watch(() => settingsStore.soundEnabled, (enabled) => {
   }, '*');
 });
 
+// 监听游戏数据加载，加载后更新预览状态
+watch(() => instance.value, (inst) => {
+  if (inst && isPreview.value && !authStore.token) {
+    fetchGameStatus();
+  }
+});
+
 // 监听游戏状态变化，通知iframe disable/enable按钮
 watch(() => gameStatus.value, (status) => {
   if (status && iframeRef.value) {
@@ -558,6 +666,19 @@ watch(() => gameStatus.value, (status) => {
     }, '*');
   }
 }, { deep: true });
+
+function formatTimeLocal(timeStr: string) {
+  if (!timeStr) return '';
+  return timeStr.split(':').slice(0, 2).join(':');
+}
+
+function formatDaysLocal(days: string[]) {
+  if (!days?.length) return '';
+  const dayNames: any = {
+    '1': 'Mon', '2': 'Tue', '3': 'Wed', '4': 'Thu', '5': 'Fri', '6': 'Sat', '0': 'Sun'
+  };
+  return days.map(d => dayNames[d]).join(', ');
+}
 
 onMounted(async () => {
   // 每次加载游戏时重置音效为开启
@@ -598,74 +719,76 @@ onUnmounted(() => {
 /* Based on UI/UX Pro Max principles */
 /* ==================== */
 
-/* Status Card with Button - Glassmorphism with curved right edge + button */
+/* Status Card with Button - Glassmorphism Half-Capsule Design */
 .status-card-with-button {
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 20, 30, 0.9) 100%);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  /* Larger curved right edge to match button size */
-  border-radius: 0.75rem 2.25rem 2.25rem 0.75rem;
-  padding: 0.75rem 5rem 0.75rem 1rem;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(15, 15, 25, 0.95) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  /* Sharp Left, Rounded Right - Half Capsule look */
+  border-radius: 0 999px 999px 0;
+  border-left: none; /* Make left side look even sharper */
+  /* Proportional padding - Left-heavy to balance the large button on right */
+  /* Increased right padding (second value) to inset button further from edge */
+  padding: 0.5em 1em 0.5em 1.5em;
   color: white;
   box-shadow: 
-    0 8px 32px 0 rgba(0, 0, 0, 0.37),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   position: relative;
-  overflow: visible !important;
+  display: flex;
+  align-items: stretch;
+  gap: 1.25em;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Prevent jumping when content appears */
+  min-width: 12em;
 }
 
-/* Subtle glow on hover */
+/* Subtle gloss effect - adjusted for sharp left */
 .status-card-with-button::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
+  right: 15%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.status-card-with-button:hover::before {
-  opacity: 1;
+  background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255, 255, 255, 0.1), transparent);
+  opacity: 0.5;
 }
 
 /* Action Buttons - Interactive with smooth hover */
-.action-button {
-  color: rgba(255, 255, 255, 0.6);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+.action-button-compact {
+  color: #60a5fa;
+  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.3));
+  transition: all 0.2s ease;
   cursor: pointer;
-  position: relative;
-  padding: 0.25rem;
-  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.4em;
+  width: 1.4em;
+  padding: 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.action-button:hover {
+.action-button-compact:hover {
   color: white;
-  background: rgba(255, 255, 255, 0.1);
-  transform: scale(1.1);
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(96, 165, 250, 0.4);
 }
 
-.action-button:active {
-  transform: scale(0.95);
-}
-
-/* Hide Button on status card - matches curved edge height */
+/* Hide Button - Auto-scaling to fill capsule height */
 .status-card-hide-button {
-  position: absolute;
-  right: 0.25rem;
-  top: 50%;
-  transform: translateY(-50%);
-  /* Large button to match card height */
-  width: 4.25rem;
-  height: 4.25rem;
+  /* Using aspect-ratio and height: 100% relative to stretchy flex container */
+  height: 100%;
+  aspect-ratio: 1/1;
+  min-height: 2.5em; /* Minimum size for visibility */
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(168, 85, 247, 0.95) 100%);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 3px solid rgba(255, 255, 255, 0.8);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%);
+  backdrop-filter: blur(8px);
+  border: 0.15em solid rgba(255, 255, 255, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -673,32 +796,28 @@ onUnmounted(() => {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
-    0 8px 32px rgba(99, 102, 241, 0.9),
-    0 0 0 1px rgba(255, 255, 255, 0.5) inset,
-    0 0 25px rgba(255, 255, 255, 0.4);
-  z-index: 100;
-  flex-shrink: 0;
+    0 4px 12px rgba(99, 102, 241, 0.5),
+    0 0 10px rgba(168, 85, 247, 0.3);
+  position: relative;
 }
 
 .status-card-hide-button:hover {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 1) 0%, rgba(168, 85, 247, 1) 100%);
-  border-color: rgba(255, 255, 255, 1);
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
   box-shadow: 
-    0 12px 48px rgba(99, 102, 241, 1),
-    0 0 0 1px rgba(255, 255, 255, 0.6) inset,
-    0 0 35px rgba(255, 255, 255, 0.6);
-  transform: translateY(-50%) scale(1.1) translateX(4px);
+    0 6px 20px rgba(99, 102, 241, 0.7),
+    0 0 15px rgba(168, 85, 247, 0.5);
+  transform: scale(1.02);
 }
 
 .status-card-hide-button:active {
-  transform: translateY(-50%) scale(0.95);
+  transform: scale(0.95);
 }
 
-/* Extra large arrow icon to match button size */
+/* Proportional chevron icon */
 .status-card-hide-button .i-carbon-chevron-right {
-  font-size: 2.5rem;
+  font-size: 1.5em;
   font-weight: 900;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.7));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
 }
 
 /* Collapsed Button - Premium floating design */
