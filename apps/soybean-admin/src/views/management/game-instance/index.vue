@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { ref, reactive, computed } from 'vue';
 import { NCard, NButton, NTag, NSpace, NModal, NForm, NFormItem, NInput, NSelect, NSwitch, NGrid, NGridItem, NEmpty, NImage, NDivider } from 'naive-ui';
-import { fetchGetGameInstances, fetchCreateGameInstance, fetchUpdateGameInstance, fetchDeleteGameInstance } from '@/service/api/management';
+import { fetchGetGameInstances, fetchCreateGameInstance, fetchUpdateGameInstance, fetchDeleteGameInstance, fetchCheckGameInstanceUsage } from '@/service/api/management';
 import { fetchGetGames } from '@/service/api/game';
 import { useLoading, useBoolean } from '@sa/hooks';
 import { useAuthStore } from '@/store/modules/auth';
@@ -105,11 +105,57 @@ async function handleSaveConfig() {
 }
 
 async function handleDelete(id: string) {
-  const { error } = await fetchDeleteGameInstance(id);
-  if (!error) {
-    window.$message?.success('Deleted');
-    getData();
-  }
+  const { data, error } = await fetchCheckGameInstanceUsage(id);
+  if (error) return;
+
+  const hasRecords = data?.hasRecords;
+  const count = data?.recordCount || 0;
+
+  window.$dialog?.create({
+    title: hasRecords ? 'Archive Game Instance?' : 'Delete Game Instance?',
+    type: hasRecords ? 'warning' : 'error',
+    showIcon: true,
+    content: () => (
+      <div class="flex flex-col gap-4 mt-2">
+        <div class={`p-4 rounded-lg border ${hasRecords ? 'bg-amber-50 border-amber-200' : 'bg-red-50 border-red-200'}`}>
+          <div class="flex items-center gap-3 mb-2">
+            <div class={`text-24px ${hasRecords ? 'text-amber-500' : 'text-red-500'}`}>
+              {hasRecords ? <icon-mdi-archive /> : <icon-mdi-alert />}
+            </div>
+            <div class={`font-bold text-base ${hasRecords ? 'text-amber-800' : 'text-red-800'}`}>
+              {hasRecords ? 'Preserving Data Integrity' : 'Irreversible Action'}
+            </div>
+          </div>
+          <div class={`text-sm ${hasRecords ? 'text-amber-700' : 'text-red-700'}`}>
+            {hasRecords 
+              ? <span>This game has <strong>{count}</strong> gameplay records.</span>
+              : <span>This game has <strong>NO</strong> records.</span>
+            }
+          </div>
+        </div>
+        
+        <div class="text-gray-500 text-sm leading-relaxed">
+          {hasRecords 
+            ? 'To prevent data loss, this instance will be marked as INACTIVE. It can be reactivated later if needed.'
+            : 'Since no data is associated with this instance, it will be PERMANENTLY DELETED. This action cannot be undone.'
+          }
+        </div>
+      </div>
+    ),
+    positiveText: hasRecords ? 'Archive (Safe)' : 'Delete Permanently',
+    negativeText: 'Cancel',
+    positiveButtonProps: { 
+      type: hasRecords ? 'warning' : 'error',
+      size: 'medium'
+    },
+    onPositiveClick: async () => {
+      const { error: deleteError } = await fetchDeleteGameInstance(id);
+      if (!deleteError) {
+        window.$message?.success(hasRecords ? 'Game archived successfully' : 'Game deleted permanently');
+        getData();
+      }
+    }
+  });
 }
 
 getData();
@@ -228,8 +274,9 @@ getData();
 
     <!-- Configuration Modal -->
     <NModal v-model:show="configVisible" preset="card" title="Game Configuration" class="w-1000px rounded-16px">
-      <div v-if="selectedTemplate" class="py-2">
-        <div class="mb-6 flex items-center bg-primary/5 p-4 rounded-12px border border-primary/10">
+      <div v-if="selectedTemplate">
+        <!-- Header Info -->
+        <div class="mb-4 flex items-center bg-primary/5 p-4 rounded-12px border border-primary/10">
           <div class="w-48px h-48px rounded-8px bg-primary/10 flex items-center justify-center mr-4">
              <icon-mdi-gamepad-variant class="text-24px text-primary" />
           </div>
@@ -239,10 +286,21 @@ getData();
           </div>
         </div>
 
+        <!-- Warning Message -->
+        <div class="mb-4 flex items-center gap-2 bg-warning/10 border border-warning/30 rounded-lg p-3">
+          <icon-mdi-alert class="text-warning text-20px flex-shrink-0" />
+          <div class="text-sm text-warning-700">
+            <span class="font-semibold">Remember:</span> Changes are previewed instantly, but you must click 
+            <span class="font-bold">"Apply Changes"</span> below to save permanently.
+          </div>
+        </div>
+
+        <!-- ConfigForm with internal scrolling -->
         <ConfigForm
           v-if="selectedTemplate.configSchema"
           v-model:modelValue="configModel"
           :schema="selectedTemplate.configSchema"
+          :image-spec="selectedTemplate.imageSpec"
           :instance-id="editingId"
           :company-id="authStore.userInfo.currentCompanyId || undefined"
         />
@@ -251,10 +309,15 @@ getData();
         </div>
       </div>
       <template #footer>
-        <NSpace justify="end">
-          <NButton @click="closeConfig">Cancel</NButton>
-          <NButton type="primary" @click="handleSaveConfig">Apply Changes</NButton>
-        </NSpace>
+        <div class="border-t pt-4">
+          <NSpace justify="end">
+            <NButton @click="closeConfig">Cancel</NButton>
+            <NButton type="primary" @click="handleSaveConfig">
+              <template #icon><icon-mdi-content-save /></template>
+              Apply Changes
+            </NButton>
+          </NSpace>
+        </div>
       </template>
     </NModal>
 

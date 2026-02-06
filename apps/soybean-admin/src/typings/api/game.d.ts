@@ -13,6 +13,10 @@ declare namespace Api {
             isActive: boolean;
             config?: any;
             configSchema?: any;
+            imageSpec?: {
+                assets: Array<{ name: string; size: string; format: string; note: string; mappingKey?: string; category?: string }>;
+                performanceTips: string[];
+            };
             createdAt: string;
             updatedAt: string;
         }

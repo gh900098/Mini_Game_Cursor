@@ -46,10 +46,10 @@ export class SeedService {
 
     async refreshGameSchemas(): Promise<{ message: string; updated: number }> {
         this.logger.log('Refreshing game template schemas...');
-        
+
         // Re-seed the game templates to get fresh schemas
         await this.seedGames();
-        
+
         this.logger.log('Game templates refreshed with latest schemas');
         this.logger.log('Admin panel will fetch the latest schema on next load');
         return { message: 'Game templates refreshed successfully', updated: 1 };
@@ -362,6 +362,30 @@ export class SeedService {
                 thumbnailUrl: 'https://images.unsplash.com/photo-1596838132731-1820627709c3?w=400&h=250&fit=crop',
                 type: 'arcade',
                 isActive: true,
+                imageSpec: {
+                    assets: [
+                        { name: 'Main Background', size: '1080 x 1920 px', format: 'WebP', note: 'Mobile-first portrait. Under 150KB.', mappingKey: 'bgImage', category: 'images' },
+                        { name: 'Brand Logo', size: '600 x 300 px', format: 'WebP/PNG', note: 'Transparent background.', mappingKey: 'titleImage', category: 'images' },
+                        { name: 'Wheel Border', size: '1024 x 1024 px', format: 'WebP/PNG', note: 'Circular frame around the wheel.', mappingKey: 'wheelBorderImage', category: 'images' },
+                        { name: 'Center Hub', size: '256 x 256 px', format: 'WebP/PNG', note: 'Static center cap.', mappingKey: 'centerImage', category: 'images' },
+                        { name: 'Pointer', size: '128 x 256 px', format: 'SVG/PNG', note: 'Indicator at the top.', mappingKey: 'pointerImage', category: 'images' },
+                        { name: 'Slider Divider', size: '64 x 512 px', format: 'SVG/PNG', note: 'Image for slice separators.', mappingKey: 'dividerImage', category: 'images' },
+                        { name: 'Token Bar', size: '600 x 120 px', format: 'WebP/PNG', note: 'Custom background for balance bar.', mappingKey: 'tokenBarImage', category: 'images' },
+                        { name: 'Spin Button', size: '600 x 160 px', format: 'WebP/PNG', note: 'Bottom interaction button.', mappingKey: 'spinBtnImage', category: 'images' },
+                        { name: 'Win Frame', size: '760 x 1000 px', format: 'WebP/PNG', note: 'Background for win prompt.', mappingKey: 'resultWinBackground', category: 'images' },
+                        { name: 'Lose Frame', size: '760 x 1000 px', format: 'WebP/PNG', note: 'Background for lose prompt.', mappingKey: 'resultLoseBackground', category: 'images' },
+                        { name: 'Win Title', size: '600 x 160 px', format: 'WebP/PNG', note: 'Custom "Congratulations" image.', mappingKey: 'resultWinTitleImage', category: 'images' },
+                        { name: 'Lose Title', size: '600 x 160 px', format: 'WebP/PNG', note: 'Custom "Try Again" image.', mappingKey: 'resultLoseTitleImage', category: 'images' },
+                        { name: 'Win Button', size: '560 x 140 px', format: 'WebP/PNG', note: 'Custom "Collect" button image.', mappingKey: 'resultWinButtonImage', category: 'images' },
+                        { name: 'Lose Button', size: '560 x 140 px', format: 'WebP/PNG', note: 'Custom "Try Again" button image.', mappingKey: 'resultLoseButtonImage', category: 'images' },
+                        { name: 'Prize Icons', size: '256 x 256 px', format: 'SVG/PNG', note: 'Individual slice icons.', mappingKey: 'prizeList.0.icon', category: 'images' }
+                    ],
+                    performanceTips: [
+                        'Use WebP format for 30% smaller file sizes.',
+                        'Use SVG for icons and pointers for perfect sharpness.',
+                        'Keep total asset size under 500KB for instant loading.'
+                    ]
+                },
                 config: {
                     prizeList: [
                         { icon: '💰', label: '500 PTS', color: '#3b82f6', textColor: '#fff', weight: 25, isJackpot: false, isLose: false },
@@ -637,10 +661,10 @@ export class SeedService {
                                 loadPreset: true,
                                 span: 12
                             },
-                            { 
-                                key: 'fontPreset', 
-                                type: 'font-select', 
-                                label: 'page.manage.game.visuals.gameFont', 
+                            {
+                                key: 'fontPreset',
+                                type: 'font-select',
+                                label: 'page.manage.game.visuals.gameFont',
                                 span: 12,
                                 default: 'Orbitron',
                                 options: [
@@ -727,6 +751,7 @@ export class SeedService {
                                     { key: 'wheelBorderSize', type: 'slider', label: 'page.manage.game.visuals.wheelBorderSize', min: 100, max: 150, step: 1, suffix: '%', default: 110, span: 12 },
                                     { key: 'wheelBorderOpacity', type: 'slider', label: 'page.manage.game.visuals.bgOpacity', min: 0, max: 100, step: 5, suffix: '%', default: 100, span: 12 },
                                     { key: 'wheelBorderTop', type: 'slider', label: 'page.manage.game.visuals.verticalOffset', min: -50, max: 50, step: 1, suffix: 'px', default: 0, span: 12 },
+                                    { key: 'wheelBorderRotation', type: 'slider', label: 'page.manage.game.visuals.rotation', min: 0, max: 360, step: 5, suffix: 'deg', default: 0, span: 12 },
                                     {
                                         key: 'wheelBorderLayer',
                                         type: 'select',
@@ -891,18 +916,32 @@ export class SeedService {
                                 ]
                             },
 
-                            // ═══════════════════════════════════════════════════════════
-                            // ⚙️ SECTION 4: ANIMATION & INTERACTION (动画与交互)
-                            // ═══════════════════════════════════════════════════════════
-                            { key: 'spinDuration', type: 'slider', label: 'page.manage.game.visuals.spinDuration', min: 1, max: 10, step: 0.5, suffix: 's', default: 4, span: 12 },
-                            { key: 'spinTurns', type: 'slider', label: 'page.manage.game.visuals.spinTurns', min: 1, max: 20, step: 1, default: 5, span: 12 },
                             {
-                                key: 'interact_bools',
-                                type: 'switch-group',
-                                label: 'page.manage.game.visuals.interact',
+                                key: 'result_prompt_section',
+                                type: 'collapse-group',
+                                label: 'page.manage.game.visuals.resultPrompts',
                                 span: 24,
                                 items: [
-                                    { key: 'swipeToSpin', label: 'page.manage.game.visuals.swipeToSpin' }
+                                    // Win Outcome Group
+                                    { key: 'win_group_title', type: 'divider', label: 'page.manage.game.visuals.winOutcome', span: 24 },
+                                    { key: 'resultWinBackground', type: 'image', label: 'page.manage.game.visuals.winBackground', span: 12 },
+                                    { key: 'resultWinTitleImage', type: 'image', label: 'page.manage.game.visuals.winTitleImage', span: 12 },
+                                    { key: 'winTitle', type: 'text', label: 'page.manage.game.effects.winTitle', default: '🎊 WINNER! 🎊', span: 12 },
+                                    { key: 'winSubtitle', type: 'text', label: 'page.manage.game.effects.winSubtitle', default: 'Congratulations!', span: 12 },
+                                    { key: 'resultWinButtonImage', type: 'image', label: 'page.manage.game.visuals.winButtonImage', span: 24 },
+
+                                    // Lose Outcome Group
+                                    { key: 'lose_group_title', type: 'divider', label: 'page.manage.game.visuals.loseOutcome', span: 24 },
+                                    { key: 'resultLoseBackground', type: 'image', label: 'page.manage.game.visuals.loseBackground', span: 12 },
+                                    { key: 'resultLoseTitleImage', type: 'image', label: 'page.manage.game.visuals.loseTitleImage', span: 12 },
+                                    { key: 'loseTitle', type: 'text', label: 'page.manage.game.effects.loseTitle', default: '😅 Better luck next time!', span: 12 },
+                                    { key: 'loseSubtitle', type: 'text', label: 'page.manage.game.effects.loseSubtitle', default: 'Try again?', span: 12 },
+                                    { key: 'resultLoseButtonImage', type: 'image', label: 'page.manage.game.visuals.loseButtonImage', span: 24 },
+
+                                    // Jackpot Outcome Group
+                                    { key: 'jackpot_group_title', type: 'divider', label: 'page.manage.game.visuals.jackpotOutcome', span: 24 },
+                                    { key: 'jackpotTitle', type: 'text', label: 'page.manage.game.effects.jackpotTitle', default: '🎉 JACKPOT!!! 🎉', span: 12 },
+                                    { key: 'jackpotSubtitle', type: 'text', label: 'page.manage.game.effects.jackpotSubtitle', default: 'INCREDIBLE WIN!', span: 12 }
                                 ]
                             }
                         ]
@@ -911,17 +950,23 @@ export class SeedService {
                         name: 'effects',
                         label: 'page.manage.game.tabs.effects',
                         items: [
+                            // ⚙️ ANIMATION & INTERACTION
+                            { key: 'spinDuration', type: 'slider', label: 'page.manage.game.effects.spinDuration', min: 1, max: 10, step: 0.5, suffix: 's', default: 4, span: 12 },
+                            { key: 'spinTurns', type: 'slider', label: 'page.manage.game.effects.spinTurns', min: 1, max: 20, step: 1, default: 5, span: 12 },
+
                             {
                                 key: 'ultra_features',
                                 type: 'switch-group',
                                 label: 'page.manage.game.effects.ultraFeatures',
                                 items: [
-                                    { key: 'enableBGM', label: 'page.manage.game.effects.enableBGM' },
-                                    { key: 'enableLedRing', label: 'page.manage.game.effects.enableLedRing' },
-                                    { key: 'enableConfetti', label: 'page.manage.game.effects.enableConfetti' },
-                                    { key: 'enableStartScreen', label: 'page.manage.game.effects.enableStartScreen' },
-                                    { key: 'enableHexagons', label: 'page.manage.game.effects.enableHexagons' },
-                                    { key: 'enableGridFloor', label: 'page.manage.game.effects.enableGridFloor' }
+                                    { key: 'enableBGM', label: 'page.manage.game.effects.enableBGM', default: true },
+                                    { key: 'enableLedRing', label: 'page.manage.game.effects.enableLedRing', default: true },
+                                    { key: 'enableConfetti', label: 'page.manage.game.effects.enableConfetti', default: true },
+                                    { key: 'enableStartScreen', label: 'page.manage.game.effects.enableStartScreen', default: true },
+                                    { key: 'enableHexagons', label: 'page.manage.game.effects.enableHexagons', default: true },
+                                    { key: 'enableFloatingParticles', label: 'page.manage.game.effects.enableFloatingParticles', default: true },
+                                    { key: 'enableGridFloor', label: 'page.manage.game.effects.enableGridFloor', default: true },
+                                    { key: 'swipeToSpin', label: 'page.manage.game.effects.swipeToSpin', default: true }
                                 ]
                             },
                             {
@@ -992,19 +1037,6 @@ export class SeedService {
                                     { key: 'darkBg', type: 'color', label: 'page.manage.game.effects.darkBg', default: '#0a0a12', span: 8 }
                                 ]
                             },
-                            {
-                                key: 'result_messages',
-                                type: 'collapse-group',
-                                label: 'page.manage.game.effects.resultMessages',
-                                items: [
-                                    { key: 'jackpotTitle', type: 'text', label: 'page.manage.game.effects.jackpotTitle', default: '🎉 JACKPOT!!! 🎉', span: 24 },
-                                    { key: 'jackpotSubtitle', type: 'text', label: 'page.manage.game.effects.jackpotSubtitle', default: 'INCREDIBLE WIN!', span: 24 },
-                                    { key: 'winTitle', type: 'text', label: 'page.manage.game.effects.winTitle', default: '🎊 WINNER! 🎊', span: 24 },
-                                    { key: 'winSubtitle', type: 'text', label: 'page.manage.game.effects.winSubtitle', default: 'Congratulations!', span: 24 },
-                                    { key: 'loseTitle', type: 'text', label: 'page.manage.game.effects.loseTitle', default: '😅 Better luck next time!', span: 24 },
-                                    { key: 'loseSubtitle', type: 'text', label: 'page.manage.game.effects.loseSubtitle', default: 'Try again?', span: 24 }
-                                ]
-                            }
                         ]
                     },
                     {
@@ -1035,13 +1067,17 @@ export class SeedService {
                     cardColor: '#c0c0c0'
                 },
                 configSchema: [
-                    { name: 'prizes', label: 'page.manage.game.common.prizes', items: [
-                        { key: 'prizeList', type: 'prize-list', label: 'page.manage.game.common.prizeList' }
-                    ]},
-                    { name: 'settings', label: 'page.manage.game.common.settings', items: [
-                        { key: 'scratchPercent', type: 'slider', label: 'page.manage.game.common.scratchPercent', min: 30, max: 90, default: 60, suffix: '%' },
-                        { key: 'cardColor', type: 'color', label: 'page.manage.game.common.scratchLayer', default: '#c0c0c0' }
-                    ]}
+                    {
+                        name: 'prizes', label: 'page.manage.game.common.prizes', items: [
+                            { key: 'prizeList', type: 'prize-list', label: 'page.manage.game.common.prizeList' }
+                        ]
+                    },
+                    {
+                        name: 'settings', label: 'page.manage.game.common.settings', items: [
+                            { key: 'scratchPercent', type: 'slider', label: 'page.manage.game.common.scratchPercent', min: 30, max: 90, default: 60, suffix: '%' },
+                            { key: 'cardColor', type: 'color', label: 'page.manage.game.common.scratchLayer', default: '#c0c0c0' }
+                        ]
+                    }
                 ]
             },
             {
@@ -1057,13 +1093,17 @@ export class SeedService {
                     resetOnMiss: true
                 },
                 configSchema: [
-                    { name: 'rewards', label: 'page.manage.game.common.rewards', items: [
-                        { key: 'dailyRewards', type: 'list', label: 'page.manage.game.common.dailyRewards' },
-                        { key: 'resetOnMiss', type: 'switch', label: 'page.manage.game.common.resetOnMiss', default: true }
-                    ]},
-                    { name: 'milestones', label: 'page.manage.game.common.milestones', items: [
-                        { key: 'streakBonus', type: 'vip-grid', label: 'page.manage.game.common.streakBonus' }
-                    ]}
+                    {
+                        name: 'rewards', label: 'page.manage.game.common.rewards', items: [
+                            { key: 'dailyRewards', type: 'list', label: 'page.manage.game.common.dailyRewards' },
+                            { key: 'resetOnMiss', type: 'switch', label: 'page.manage.game.common.resetOnMiss', default: true }
+                        ]
+                    },
+                    {
+                        name: 'milestones', label: 'page.manage.game.common.milestones', items: [
+                            { key: 'streakBonus', type: 'vip-grid', label: 'page.manage.game.common.streakBonus' }
+                        ]
+                    }
                 ]
             },
             {
@@ -1083,14 +1123,18 @@ export class SeedService {
                     jackpotAmount: 10000
                 },
                 configSchema: [
-                    { name: 'symbols', label: 'page.manage.game.common.symbols', items: [
-                        { key: 'symbols', type: 'list', label: 'page.manage.game.common.reelSymbols' },
-                        { key: 'payouts', type: 'vip-grid', label: 'page.manage.game.common.payoutTable' }
-                    ]},
-                    { name: 'settings', label: 'page.manage.game.common.gameSettings', items: [
-                        { key: 'betAmount', type: 'number', label: 'page.manage.game.common.betAmount', default: 10 },
-                        { key: 'jackpotAmount', type: 'number', label: 'page.manage.game.common.jackpotAmount', default: 10000 }
-                    ]}
+                    {
+                        name: 'symbols', label: 'page.manage.game.common.symbols', items: [
+                            { key: 'symbols', type: 'list', label: 'page.manage.game.common.reelSymbols' },
+                            { key: 'payouts', type: 'vip-grid', label: 'page.manage.game.common.payoutTable' }
+                        ]
+                    },
+                    {
+                        name: 'settings', label: 'page.manage.game.common.gameSettings', items: [
+                            { key: 'betAmount', type: 'number', label: 'page.manage.game.common.betAmount', default: 10 },
+                            { key: 'jackpotAmount', type: 'number', label: 'page.manage.game.common.jackpotAmount', default: 10000 }
+                        ]
+                    }
                 ]
             },
             {
@@ -1110,13 +1154,17 @@ export class SeedService {
                     betAmount: 10
                 },
                 configSchema: [
-                    { name: 'board', label: 'page.manage.game.common.board', items: [
-                        { key: 'rows', type: 'slider', label: 'page.manage.game.common.numberOfRows', min: 8, max: 16, default: 12 },
-                        { key: 'betAmount', type: 'number', label: 'page.manage.game.common.betAmount', default: 10 }
-                    ]},
-                    { name: 'multipliers', label: 'page.manage.game.common.multipliers', items: [
-                        { key: 'riskLevels', type: 'vip-grid', label: 'page.manage.game.common.riskMultipliers' }
-                    ]}
+                    {
+                        name: 'board', label: 'page.manage.game.common.board', items: [
+                            { key: 'rows', type: 'slider', label: 'page.manage.game.common.numberOfRows', min: 8, max: 16, default: 12 },
+                            { key: 'betAmount', type: 'number', label: 'page.manage.game.common.betAmount', default: 10 }
+                        ]
+                    },
+                    {
+                        name: 'multipliers', label: 'page.manage.game.common.multipliers', items: [
+                            { key: 'riskLevels', type: 'vip-grid', label: 'page.manage.game.common.riskMultipliers' }
+                        ]
+                    }
                 ]
             },
             {
@@ -1134,14 +1182,18 @@ export class SeedService {
                     timeBonus: 5
                 },
                 configSchema: [
-                    { name: 'gameplay', label: 'page.manage.game.common.gameplay', items: [
-                        { key: 'gridSize', type: 'select', label: 'page.manage.game.common.gridSize', options: ['3', '4', '5'], default: '4' },
-                        { key: 'timeLimit', type: 'slider', label: 'page.manage.game.common.timeLimit', min: 30, max: 120, default: 60, suffix: 's' }
-                    ]},
-                    { name: 'scoring', label: 'page.manage.game.common.scoring', items: [
-                        { key: 'baseScore', type: 'number', label: 'page.manage.game.common.baseScore', default: 100 },
-                        { key: 'timeBonus', type: 'number', label: 'page.manage.game.common.timeBonus', default: 5 }
-                    ]}
+                    {
+                        name: 'gameplay', label: 'page.manage.game.common.gameplay', items: [
+                            { key: 'gridSize', type: 'select', label: 'page.manage.game.common.gridSize', options: ['3', '4', '5'], default: '4' },
+                            { key: 'timeLimit', type: 'slider', label: 'page.manage.game.common.timeLimit', min: 30, max: 120, default: 60, suffix: 's' }
+                        ]
+                    },
+                    {
+                        name: 'scoring', label: 'page.manage.game.common.scoring', items: [
+                            { key: 'baseScore', type: 'number', label: 'page.manage.game.common.baseScore', default: 100 },
+                            { key: 'timeBonus', type: 'number', label: 'page.manage.game.common.timeBonus', default: 5 }
+                        ]
+                    }
                 ]
             },
             {
@@ -1163,10 +1215,12 @@ export class SeedService {
                     betAmount: 50
                 },
                 configSchema: [
-                    { name: 'bets', label: 'page.manage.game.common.bets', items: [
-                        { key: 'betOptions', type: 'vip-grid', label: 'page.manage.game.common.bettingOptions' },
-                        { key: 'betAmount', type: 'number', label: 'page.manage.game.common.defaultBet', default: 50 }
-                    ]}
+                    {
+                        name: 'bets', label: 'page.manage.game.common.bets', items: [
+                            { key: 'betOptions', type: 'vip-grid', label: 'page.manage.game.common.bettingOptions' },
+                            { key: 'betAmount', type: 'number', label: 'page.manage.game.common.defaultBet', default: 50 }
+                        ]
+                    }
                 ]
             },
             {
@@ -1188,13 +1242,17 @@ export class SeedService {
                     ]
                 },
                 configSchema: [
-                    { name: 'boxes', label: 'page.manage.game.common.boxes', items: [
-                        { key: 'boxCount', type: 'number', label: 'page.manage.game.common.numberOfBoxes', default: 9 },
-                        { key: 'picksAllowed', type: 'number', label: 'page.manage.game.common.picksAllowed', default: 3 }
-                    ]},
-                    { name: 'prizes', label: 'page.manage.game.common.prizes', items: [
-                        { key: 'prizeList', type: 'prize-list', label: 'page.manage.game.common.prizeConfiguration' }
-                    ]}
+                    {
+                        name: 'boxes', label: 'page.manage.game.common.boxes', items: [
+                            { key: 'boxCount', type: 'number', label: 'page.manage.game.common.numberOfBoxes', default: 9 },
+                            { key: 'picksAllowed', type: 'number', label: 'page.manage.game.common.picksAllowed', default: 3 }
+                        ]
+                    },
+                    {
+                        name: 'prizes', label: 'page.manage.game.common.prizes', items: [
+                            { key: 'prizeList', type: 'prize-list', label: 'page.manage.game.common.prizeConfiguration' }
+                        ]
+                    }
                 ]
             },
             {
@@ -1211,14 +1269,18 @@ export class SeedService {
                     streakBonus: 10
                 },
                 configSchema: [
-                    { name: 'categories', label: 'page.manage.game.common.categories', items: [
-                        { key: 'categories', type: 'list', label: 'page.manage.game.common.quizCategories' }
-                    ]},
-                    { name: 'gameplay', label: 'page.manage.game.common.gameplay', items: [
-                        { key: 'timePerQuestion', type: 'slider', label: 'page.manage.game.common.timePerQuestion', min: 5, max: 30, default: 10, suffix: 's' },
-                        { key: 'basePoints', type: 'number', label: 'page.manage.game.common.basePoints', default: 100 },
-                        { key: 'streakBonus', type: 'number', label: 'page.manage.game.common.streakBonus', default: 10 }
-                    ]}
+                    {
+                        name: 'categories', label: 'page.manage.game.common.categories', items: [
+                            { key: 'categories', type: 'list', label: 'page.manage.game.common.quizCategories' }
+                        ]
+                    },
+                    {
+                        name: 'gameplay', label: 'page.manage.game.common.gameplay', items: [
+                            { key: 'timePerQuestion', type: 'slider', label: 'page.manage.game.common.timePerQuestion', min: 5, max: 30, default: 10, suffix: 's' },
+                            { key: 'basePoints', type: 'number', label: 'page.manage.game.common.basePoints', default: 100 },
+                            { key: 'streakBonus', type: 'number', label: 'page.manage.game.common.streakBonus', default: 10 }
+                        ]
+                    }
                 ]
             }
         ];
@@ -1235,6 +1297,7 @@ export class SeedService {
                 // Explicitly reassigned purely to ensure dirty checking picks it up if it was a deep object issue
                 existing.configSchema = gameData.configSchema;
                 existing.config = gameData.config;
+                existing.imageSpec = gameData.imageSpec;
                 await this.gameRepository.save(existing);
                 this.logger.log(`Updated demo game (Forced Schema): ${gameData.name}`);
             }

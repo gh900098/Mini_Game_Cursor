@@ -38,6 +38,9 @@ export class Game {
     @Column({ type: 'jsonb', nullable: true })
     configSchema: any;
 
+    @Column({ type: 'jsonb', nullable: true })
+    imageSpec: any;
+
     @CreateDateColumn()
     createdAt: Date;
 

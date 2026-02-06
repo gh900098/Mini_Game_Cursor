@@ -13,10 +13,12 @@ ENV VITE_SERVICE_BASE_URL=$VITE_API_URL
 ENV VITE_WEBAPP_BASE_URL=$VITE_WEBAPP_BASE_URL
 
 # Copy root package files
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
 
-# Copy admin package files (including internal packages)
+# Copy all package files to ensure workspace resolution
+COPY apps/api/package.json ./apps/api/
 COPY apps/soybean-admin/package.json ./apps/soybean-admin/
+COPY apps/web-app/package.json ./apps/web-app/
 COPY apps/soybean-admin/packages ./apps/soybean-admin/packages
 
 # Install dependencies
@@ -25,9 +27,8 @@ RUN pnpm install --frozen-lockfile
 # Copy admin source
 COPY apps/soybean-admin ./apps/soybean-admin
 
-# Build
-WORKDIR /app/apps/soybean-admin
-RUN pnpm build
+# Build from root
+RUN pnpm --filter soybean-admin build
 
 # ============ Production (Nginx) ============
 FROM nginx:alpine AS production
@@ -39,9 +40,11 @@ RUN echo 'server { \
     listen 80; \
     root /usr/share/nginx/html; \
     index index.html; \
+    client_max_body_size 20M; \
     location / { try_files $uri $uri/ /index.html; } \
     location /assets { expires 1y; add_header Cache-Control "public, immutable"; } \
     location /api { \
+    client_max_body_size 20M; \
     proxy_pass http://api:3000; \
     proxy_set_header Host $host; \
     proxy_set_header X-Real-IP $remote_addr; \

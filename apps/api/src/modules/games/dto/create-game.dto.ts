@@ -38,4 +38,8 @@ export class CreateGameDto {
     @IsOptional()
     @IsObject()
     config?: Record<string, any>;
+
+    @IsOptional()
+    @IsObject()
+    imageSpec?: any;
 }

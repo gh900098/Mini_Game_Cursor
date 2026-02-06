@@ -18,7 +18,7 @@ export class GameRulesService {
     private membersRepo: Repository<Member>,
     @InjectRepository(Score)
     private scoresRepo: Repository<Score>,
-  ) {}
+  ) { }
 
   /**
    * 验证所有规则（在玩游戏前调用）
@@ -32,7 +32,30 @@ export class GameRulesService {
 
     // 中优先级规则
     await this.checkMinLevel(memberId, instance);
+    await this.checkBalance(memberId, instance);
     await this.checkBudget(instance);
+  }
+
+  /**
+   * 规则7: 余额检查
+   */
+  async checkBalance(memberId: string, instance: GameInstance): Promise<void> {
+    const cost = instance.config?.costPerSpin || 0;
+    if (cost <= 0) return;
+
+    const member = await this.membersRepo.findOne({
+      where: { id: memberId },
+      select: ['pointsBalance'],
+    });
+
+    if (!member || member.pointsBalance < cost) {
+      throw new BadRequestException({
+        code: 'INSUFFICIENT_BALANCE',
+        message: '您的余额不足，无法开始游戏',
+        required: cost,
+        current: member?.pointsBalance || 0,
+      });
+    }
   }
 
   /**
@@ -425,6 +448,21 @@ export class GameRulesService {
       }
     }
 
+    // Check balance rule
+    if (canPlay) {
+      const cost = instance.config?.costPerSpin || 0;
+      if (cost > 0) {
+        if (!member || member.pointsBalance < cost) {
+          canPlay = false;
+          blockReason = 'INSUFFICIENT_BALANCE';
+          blockDetails = {
+            required: cost,
+            current: member?.pointsBalance || 0,
+          };
+        }
+      }
+    }
+
     // Check cooldown (if recently played)
     if (canPlay) {
       const lastAttempt = await this.playAttemptsRepo.findOne({
@@ -452,7 +490,7 @@ export class GameRulesService {
           success: true,
         },
       });
-      
+
       // If user has played and oneTimeOnly is enabled, block them
       if (canPlay && hasPlayedEver) {
         canPlay = false;

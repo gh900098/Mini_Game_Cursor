@@ -220,6 +220,14 @@ export function fetchDeleteGameInstance(id: string) {
     });
 }
 
+/** Check game instance usage */
+export function fetchCheckGameInstanceUsage(id: string) {
+    return request<{ hasRecords: boolean; recordCount: number }>({
+        url: `/game-instances/${id}/usage-check`,
+        method: 'get'
+    });
+}
+
 /** Get play attempts */
 export function fetchGetPlayAttempts(params?: { companyId?: string }) {
     return request<Api.Management.PlayAttempt[]>({

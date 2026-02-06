@@ -11,9 +11,11 @@ ARG VITE_API_URL=http://localhost:3000
 ENV VITE_API_BASE_URL=$VITE_API_URL
 
 # Copy root package files
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
 
-# Copy web-app package files
+# Copy all package files to ensure workspace resolution
+COPY apps/api/package.json ./apps/api/
+COPY apps/soybean-admin/package.json ./apps/soybean-admin/
 COPY apps/web-app/package.json ./apps/web-app/
 
 # Install dependencies
@@ -22,9 +24,8 @@ RUN pnpm install --frozen-lockfile
 # Copy web-app source
 COPY apps/web-app ./apps/web-app
 
-# Build
-WORKDIR /app/apps/web-app
-RUN pnpm build
+# Build from root
+RUN pnpm --filter web-app build
 
 # ============ Production (Nginx) ============
 FROM nginx:alpine AS production

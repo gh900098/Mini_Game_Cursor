@@ -1,0 +1,10 @@
+**/node_modules
+**/dist
+**/.git
+**/.vscode
+**/tmp
+**/coverage
+apps/api/uploads/*
+!apps/api/uploads/templates
+.env
+*.log

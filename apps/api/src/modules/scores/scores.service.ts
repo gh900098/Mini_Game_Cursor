@@ -54,8 +54,11 @@ export class ScoresService {
             }
         }
 
-        // 7. Update Member's points balance (Atomic increment)
-        await this.membersService.updatePoints(memberId, finalScore);
+        // 7. Update Member's points balance (Atomic increment/decrement)
+        const costPerSpin = instance.config?.costPerSpin || 0;
+        const netPointsChange = finalScore - costPerSpin;
+
+        await this.membersService.updatePoints(memberId, netPointsChange);
 
         return savedScore;
     }

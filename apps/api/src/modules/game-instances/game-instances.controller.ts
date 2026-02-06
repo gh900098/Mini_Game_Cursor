@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, Request, Query, Header, UseInterceptors, UploadedFile, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query, Header, UseInterceptors, UploadedFile, NotFoundException, BadRequestException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { GameInstancesService } from './game-instances.service';
@@ -16,8 +16,8 @@ export class GameInstancesController {
     @Get(':slug/play')
     @Header('Content-Type', 'text/html')
     async play(
-        @Param('slug') slug: string, 
-        @Query('token') token: string, 
+        @Param('slug') slug: string,
+        @Query('token') token: string,
         @Query('isPreview') isPreview?: string,
         @Query('v') version?: string
     ) {
@@ -26,7 +26,7 @@ export class GameInstancesController {
 
         const config = await this.instancesService.getEffectiveConfig(instance);
         const gameSlug = instance.gameTemplate?.slug;
-        
+
         // Check if user selected a visual template (other than 'default')
         const visualTemplate = config.visualTemplate || 'default';
         if (visualTemplate !== 'default' && gameSlug) {
@@ -42,7 +42,7 @@ export class GameInstancesController {
             // If template file not found, fall through to default dynamic template
             console.log(`[Template] Visual template file not found: ${templatePath}, using default`);
         }
-        
+
         // Debug log
         console.log('[Server Debug] Effective config - dividerType:', config.dividerType, 'dividerImage:', config.dividerImage);
 
@@ -87,7 +87,7 @@ export class GameInstancesController {
                 spinDuration: rawDuration,
                 spinTurns: Number(config.spinTurns) || 12,
                 costPerSpin: config.costPerSpin || 0,
-                
+
                 bgType: config.bgType || (config.bgImage ? 'image' : config.bgGradStart ? 'gradient' : 'color'),
                 bgColor: config.bgColor || '#1a1a1a',
                 bgGradient,
@@ -95,13 +95,13 @@ export class GameInstancesController {
                 bgFit: config.bgFit || 'cover',
                 bgBlur: config.bgBlur || 0,
                 bgOpacity: (config.bgOpacity !== undefined ? config.bgOpacity : 100) / 100,
-                
+
                 titleImage: getUrl(config.titleImage),
                 logoWidth: config.logoWidth || 80,
                 logoTopMargin: config.logoTopMargin !== undefined ? config.logoTopMargin : 10,
                 logoOpacity: (config.logoOpacity !== undefined ? config.logoOpacity : 100) / 100,
                 logoShadow: config.logoDropShadow ? 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' : 'none',
-                
+
                 wheelBorderImage: getUrl(config.wheelBorderImage),
                 dividerType: config.dividerType || (config.dividerImage ? 'image' : 'line'),
                 dividerColor: config.dividerColor || 'rgba(255,255,255,0.2)',
@@ -110,21 +110,21 @@ export class GameInstancesController {
                 dividerWidth: config.dividerWidth || 20,
                 dividerHeight: config.dividerHeight || 180,
                 dividerTop: config.dividerTop || 0,
-                
+
                 pointerImage: getUrl(config.pointerImage),
                 pointerSize: config.pointerSize || 50,
                 pointerTop: config.pointerTop !== undefined ? config.pointerTop : -35,
                 pointerShadow: config.pointerShadow !== undefined ? config.pointerShadow : true,
                 pointerDirection: pointerDir,
                 pointerRotation: dirMap[pointerDir] || 0,
-                
+
                 centerImage: getUrl(config.centerImage),
                 centerType: config.centerType || 'emoji',
                 centerEmoji: config.centerEmoji || '🎯',
                 centerSize: config.centerSize || 60,
                 centerBorder: config.centerBorder !== undefined ? config.centerBorder : true,
                 centerShadow: config.centerShadow !== undefined ? config.centerShadow : true,
-                
+
                 spinBtnImage: getUrl(config.spinBtnImage),
                 spinBtnText: config.spinBtnText || 'SPIN NOW',
                 spinBtnSubtext: config.spinBtnSubtext || `1 PLAY = ${config.costPerSpin || 0} TOKEN`,
@@ -133,26 +133,26 @@ export class GameInstancesController {
                 spinBtnShadow: config.spinBtnShadow !== undefined ? config.spinBtnShadow : true,
                 spinBtnWidth: config.spinBtnWidth || 320,
                 spinBtnHeight: config.spinBtnHeight || 70,
-                
+
                 tokenBarImage: getUrl(config.tokenBarImage),
                 tokenBarColor: config.tokenBarColor || '#ca8a04',
                 tokenBarTextColor: config.tokenBarTextColor || '#ffffff',
                 tokenBarShadow: config.tokenBarShadow !== undefined ? config.tokenBarShadow : true,
-                
+
                 gameFont: getUrl(config.gameFont),
                 enableSound: config.enableSound !== false,
                 isPreview: !!isPreview,
                 rawConfig: config,
-                
+
                 // LED Colors (for visual templates like Christmas Joy)
                 ledColor1: config.ledColor1 || '',
                 ledColor2: config.ledColor2 || '',
                 ledColor3: config.ledColor3 || '',
-                
+
                 // Background Gradient (alternative)
                 bgGradStart: config.bgGradStart || '',
                 bgGradEnd: config.bgGradEnd || '',
-                
+
                 // Confetti effects
                 enableConfetti: config.enableConfetti !== false,
                 confettiParticles: config.confettiParticles || 150,
@@ -298,7 +298,7 @@ export class GameInstancesController {
                     z-index: 50; margin-top: 10px;
                 }
                 .token-bar {
-                    background: ${tokenBarImg ? `url(${tokenBarImg}) center/100% 100% no-repeat` : tokenBarColor};
+                    background: ${tokenBarImg ? `url("${tokenBarImg}") center/100% 100% no-repeat` : tokenBarColor};
                     color: ${tokenBarTextColor};
                     padding: 8px 24px; border-radius: 12px; font-weight: 700; font-family: ${gameFont ? "'CustomGameFont'" : "'Orbitron'"};
                     filter: ${tokenBarShadow ? 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))' : 'none'};
@@ -381,13 +381,13 @@ export class GameInstancesController {
                 }
                 .pointer-asset {
                     width: 100%; height: 100%;
-                    ${pointerImg ? `background: url(${pointerImg}) center/no-repeat; background-size: contain;` : 'background: #22c55e; clip-path: polygon(0 0, 100% 0, 50% 100%); border-radius: 4px;'}
+                    ${pointerImg ? `background: url("${pointerImg}") center/no-repeat; background-size: contain;` : 'background: #22c55e; clip-path: polygon(0 0, 100% 0, 50% 100%); border-radius: 4px;'}
                 }
 
                 .center-hub {
                     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                     width: ${centerSize}px; height: ${centerSize}px;
-                    ${centerType === 'image' && centerImg ? `background: url(${centerImg}) center/cover no-repeat;` : `background: radial-gradient(circle, #fff, #94a3b8);`}
+                    ${centerType === 'image' && centerImg ? `background: url("${centerImg}") center/cover no-repeat;` : `background: radial-gradient(circle, #fff, #94a3b8);`}
                     border: ${centerBorder ? '5px solid #1e293b' : 'none'};
                     box-shadow: ${centerShadow ? '0 10px 30px rgba(0,0,0,0.8), inset 0 2px 5px #fff' : 'none'};
                     z-index: 20;
@@ -404,7 +404,7 @@ export class GameInstancesController {
                     border-radius: 12px; position: relative; transition: all 0.1s;
                     box-shadow: ${spinBtnShadow ? '0 8px 25px rgba(0,0,0,0.6)' : 'none'};
                     display: flex; flex-direction: column; align-items: center; justify-content: center;
-                    ${spinBtnImg ? `background: url(${spinBtnImg}) center/100% 100% no-repeat;` : `background: ${spinBtnColor}; border-bottom: 6px solid rgba(0,0,0,0.2);`}
+                    ${spinBtnImg ? `background: url("${spinBtnImg}") center/100% 100% no-repeat;` : `background: ${spinBtnColor}; border-bottom: 6px solid rgba(0,0,0,0.2);`}
                 }
                 .spin-btn:active:not(:disabled) { transform: translateY(4px); ${!spinBtnImg ? 'border-bottom-width: 2px;' : ''} }
                 .spin-btn:disabled { opacity: 0.6; filter: grayscale(0.8); cursor: not-allowed; }
@@ -440,7 +440,7 @@ export class GameInstancesController {
                     ${bgType === 'image' ? `filter: blur(${bgBlur}); opacity: ${bgOpacity};` : ''}
                     ${bgType === 'color' ? `background: ${bgColor};` : ''}
                     ${bgType === 'gradient' ? `background: ${bgGradient};` : ''}
-                    ${bgType === 'image' ? `background: url(${bgImg}) center/${bgFit} no-repeat;` : ''}
+                    ${bgType === 'image' ? `background: url("${bgImg}") center/${bgFit} no-repeat;` : ''}
                 "></div>
                 
                 <div class="hud-top">
@@ -658,6 +658,7 @@ export class GameInstancesController {
                     });
 
                     function updateVisuals() {
+                        console.log('[updateVisuals] Called. config.wheelBorderImage:', config.wheelBorderImage);
                         try {
                             const root = document.documentElement;
                             if (config.themeColor) root.style.setProperty('--primary', config.themeColor);
@@ -686,7 +687,7 @@ export class GameInstancesController {
                                     bgLayer.style.background = config.bgGradient || 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)';
                                 }
                             } else if (type === 'image') {
-                                bgLayer.style.background = 'url(' + getUrlLocal(config.bgImage) + ') center/' + (config.bgFit || 'cover') + ' no-repeat';
+                                bgLayer.style.background = 'url("' + getUrlLocal(config.bgImage) + '") center/' + (config.bgFit || 'cover') + ' no-repeat';
                                 bgLayer.style.filter = 'blur(' + blur + ')';
                                 bgLayer.style.opacity = opacity;
                             } else if (type === 'color') {
@@ -794,6 +795,8 @@ export class GameInstancesController {
                             const wheelContainer = document.getElementById('wheel-container-el');
 
                             if (config.wheelBorderImage && wheelBorderPlate) {
+                                console.log('[Wheel Border Debug] Applying wheel border:', config.wheelBorderImage);
+                                console.log('[Wheel Border Debug] URL:', getUrlLocal(config.wheelBorderImage));
                                 wheelBorderPlate.style.display = 'block';
                                 wheelBorderPlate.style.backgroundImage = 'url(' + getUrlLocal(config.wheelBorderImage) + ')';
 
@@ -821,7 +824,9 @@ export class GameInstancesController {
                                     wheelContainer.style.border = 'none';
                                     wheelContainer.style.boxShadow = 'none';
                                 }
+                                console.log('[Wheel Border Debug] Applied successfully');
                             } else {
+                                console.log('[Wheel Border Debug] NOT applying wheel border. Image:', config.wheelBorderImage, 'Element:', wheelBorderPlate);
                                 if (wheelBorderPlate) wheelBorderPlate.style.display = 'none';
                                 if (outerRing) outerRing.style.display = 'block';
                                 if (wheelContainer) {
@@ -868,10 +873,10 @@ export class GameInstancesController {
     create(@Request() req: any, @Body() body: any) {
         // Super Admin can specify companyId, otherwise use current company
         // Fallback to default company if currentCompanyId is not set
-        const companyId = req.user.isSuperAdmin && body.companyId 
-            ? body.companyId 
-            : (req.user.currentCompanyId || 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
-        
+        const companyId = req.user.isSuperAdmin && body.companyId
+            ? body.companyId
+            : (req.user.currentCompanyId || 'f6605a10-7b87-415f-bce9-2fa55e495c87');
+
         return this.instancesService.create({
             ...body,
             companyId,
@@ -909,8 +914,16 @@ export class GameInstancesController {
             },
             filename: (req: any, file, cb) => {
                 if (req.body.customName) {
+                    // Sanitize customName to prevent filesystem issues
+                    // Replace spaces, slashes, and other problematic characters
+                    const sanitizedName = req.body.customName
+                        .replace(/\\/g, '-')           // Replace backslash with hyphen
+                        .replace(/\//g, '-')            // Replace forward slash with hyphen
+                        .replace(/\s+/g, '_')           // Replace spaces with underscore
+                        .replace(/[^a-zA-Z0-9._-]/g, '_'); // Replace other special chars with underscore
+
                     const ext = extname(file.originalname);
-                    return cb(null, `${req.body.customName}${ext}`);
+                    return cb(null, `${sanitizedName}${ext}`);
                 }
                 const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('');
                 return cb(null, `${randomName}${extname(file.originalname)}`);
@@ -971,5 +984,19 @@ export class GameInstancesController {
     @RequirePermission('games:manage')
     update(@Param('id') id: string, @Body() body: any) {
         return this.instancesService.update(id, body);
+    }
+
+    @Delete(':id')
+    @UseGuards(JwtAuthGuard, PermissionsGuard)
+    @RequirePermission('games:manage')
+    remove(@Param('id') id: string) {
+        return this.instancesService.remove(id);
+    }
+
+    @Get(':id/usage-check')
+    @UseGuards(JwtAuthGuard, PermissionsGuard)
+    @RequirePermission('games:manage')
+    checkUsage(@Param('id') id: string) {
+        return this.instancesService.checkUsage(id);
     }
 }

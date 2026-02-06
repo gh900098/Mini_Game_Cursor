@@ -19,7 +19,7 @@ export interface SpinWheelConfig {
     spinDuration: number;
     spinTurns: number;
     costPerSpin: number;
-    
+
     // Background
     bgType: 'color' | 'gradient' | 'image';
     bgColor: string;
@@ -28,16 +28,22 @@ export interface SpinWheelConfig {
     bgFit: string;
     bgBlur: number;
     bgOpacity: number;
-    
+
     // Branding
     titleImage: string;
     logoWidth: number;
     logoTopMargin: number;
     logoOpacity: number;
     logoShadow: string;
-    
+
     // Wheel
     wheelBorderImage: string;
+    wheelBorderSize?: number;
+    wheelBorderOpacity?: number;
+    wheelBorderTop?: number;
+    wheelBorderRotation?: number;
+    wheelBorderLayer?: 'front' | 'behind';
+
     dividerType: 'line' | 'image';
     dividerColor: string;
     dividerStroke: number;
@@ -45,7 +51,7 @@ export interface SpinWheelConfig {
     dividerWidth: number;
     dividerHeight: number;
     dividerTop: number;
-    
+
     // Pointer
     pointerImage: string;
     pointerSize: number;
@@ -53,7 +59,7 @@ export interface SpinWheelConfig {
     pointerShadow: boolean;
     pointerDirection: string;
     pointerRotation: number;
-    
+
     // Center
     centerImage: string;
     centerType: 'emoji' | 'image';
@@ -61,7 +67,7 @@ export interface SpinWheelConfig {
     centerSize: number;
     centerBorder: boolean;
     centerShadow: boolean;
-    
+
     // Button
     spinBtnImage: string;
     spinBtnText: string;
@@ -71,19 +77,27 @@ export interface SpinWheelConfig {
     spinBtnShadow: boolean;
     spinBtnWidth: number;
     spinBtnHeight: number;
-    
+
     // Token Bar
     tokenBarImage: string;
     tokenBarColor: string;
     tokenBarTextColor: string;
     tokenBarShadow: boolean;
-    
+
+    // Result Popup
+    resultWinBackground?: string;
+    resultLoseBackground?: string;
+    resultWinTitleImage?: string;
+    resultLoseTitleImage?: string;
+    resultWinButtonImage?: string;
+    resultLoseButtonImage?: string;
+
     // Font
     gameFont: string;
-    
+
     // Sound (new)
     enableSound: boolean;
-    
+
     // Confetti effects
     enableConfetti: boolean;
     confettiParticles: number;
@@ -91,18 +105,18 @@ export interface SpinWheelConfig {
     confettiColors: string;
     confettiShapeType: 'default' | 'emoji';
     confettiEmojis: string;
-    
+
     // Preview mode
     isPreview: boolean;
-    
+
     // Raw config for sync
     rawConfig: Record<string, any>;
-    
+
     // LED Colors (for visual templates like Christmas Joy)
     ledColor1: string;
     ledColor2: string;
     ledColor3: string;
-    
+
     // Background Gradient (alternative to bgGradient)
     bgGradStart: string;
     bgGradEnd: string;
@@ -114,15 +128,15 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
     const googleFonts = ['Press Start 2P', 'Bangers', 'Bungee', 'Russo One', 'Black Ops One', 'Righteous', 'Permanent Marker', 'Creepster', 'Lobster'];
     const isGoogleFont = googleFonts.includes(fontPreset);
     const isCustomFont = fontPreset === 'custom' && cfg.gameFont;
-    
+
     // Google Fonts URL
-    const googleFontUrl = isGoogleFont 
+    const googleFontUrl = isGoogleFont
         ? `https://fonts.googleapis.com/css2?family=${fontPreset.replace(/ /g, '+')}:wght@400;700;900&display=swap`
         : '';
-    
+
     // Font family to use
     const selectedFont = isGoogleFont ? `'${fontPreset}'` : (isCustomFont ? "'CustomGameFont'" : "'Orbitron'");
-    
+
     const fontCss = isCustomFont ? `
         @font-face {
             font-family: 'CustomGameFont';
@@ -149,34 +163,34 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         'Gold Royale': 'gold-royale'
     };
     const themeSlug = themeSlugMap[visualTemplate] || 'cyberpunk-elite';
-    
+
     // Audio URL resolver - Handle three modes properly
     function resolveAudioUrl(audioUrl: string | undefined, themeSlug: string, audioType: string): string {
         // Mode 1: Explicitly empty string = User chose "none" - no audio
         if (audioUrl === '') {
             return '';
         }
-        
+
         // Mode 2: __CUSTOM_PENDING__ = User chose custom but hasn't uploaded yet - no audio
         if (audioUrl === '__CUSTOM_PENDING__') {
             return '';
         }
-        
+
         // Mode 3: __THEME_DEFAULT__ or undefined = Use theme default
         if (!audioUrl || audioUrl === '__THEME_DEFAULT__') {
             return `/api/uploads/templates/${themeSlug}/${audioType}`;
         }
-        
+
         // Mode 4: Has URL = User uploaded custom audio
         return audioUrl;
     }
-    
+
     // Resolve audio URLs - preserve empty strings (mode: none)
     const resolvedBgmUrl = resolveAudioUrl(cfg.rawConfig?.bgmUrl, themeSlug, 'bgm.mp3');
     const resolvedWinSound = resolveAudioUrl(cfg.rawConfig?.winSound, themeSlug, 'win.mp3');
     const resolvedLoseSound = resolveAudioUrl(cfg.rawConfig?.loseSound, themeSlug, 'lose.mp3');
     const resolvedJackpotSound = resolveAudioUrl(cfg.rawConfig?.jackpotSound, themeSlug, 'jackpot.mp3');
-    
+
     // Override config with resolved URLs
     cfg.rawConfig = {
         ...cfg.rawConfig,
@@ -282,7 +296,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
             ${cfg.bgType === 'gradient' ? `background: ${cfg.bgGradient || (cfg.bgGradStart && cfg.bgGradEnd ? `linear-gradient(135deg, ${cfg.bgGradStart} 0%, ${cfg.bgGradEnd} 100%)` : '')};` : ''}
             ${cfg.bgGradStart && cfg.bgGradEnd && cfg.bgType !== 'image' ? `background: linear-gradient(135deg, ${cfg.bgGradStart} 0%, ${cfg.bgGradEnd} 100%);` : ''}
             ${cfg.bgType === 'image' ? `
-                background: url(${cfg.bgImage}) center/${cfg.bgFit} no-repeat;
+                background: url("${cfg.bgImage}") center/${cfg.bgFit} no-repeat;
                 filter: blur(${cfg.bgBlur}px);
                 opacity: ${cfg.bgOpacity};
             ` : ''}
@@ -420,7 +434,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         }
         
         .token-bar {
-            background: ${cfg.tokenBarImage ? `url(${cfg.tokenBarImage}) center/100% 100% no-repeat` : cfg.tokenBarColor};
+            background: ${cfg.tokenBarImage ? `url("${cfg.tokenBarImage}") center/100% 100% no-repeat` : cfg.tokenBarColor};
             color: ${cfg.tokenBarTextColor};
             padding: 10px 28px; border-radius: 50px; font-weight: 700;
             font-family: ${cfg.gameFont ? "'CustomGameFont'" : "'Orbitron'"}, sans-serif;
@@ -549,22 +563,22 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         }
         .pointer-asset {
             width: 100%; height: 100%;
-            ${cfg.pointerImage ? 
-                `background: url(${cfg.pointerImage}) center/contain no-repeat;` : 
-                `background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            ${cfg.pointerImage ?
+            `background: url("${cfg.pointerImage}") center/contain no-repeat;` :
+            `background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
                  clip-path: polygon(0 0, 100% 0, 50% 100%);
                  border-radius: 4px;
                  box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);`
-            }
+        }
         }
         
         .center-hub {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: ${cfg.centerSize}px; height: ${cfg.centerSize}px;
-            ${cfg.centerType === 'image' && cfg.centerImage ? 
-                `background: url(${cfg.centerImage}) center/cover no-repeat;` : 
-                `background: radial-gradient(circle at 30% 30%, #fff, #94a3b8);`
-            }
+            ${cfg.centerType === 'image' && cfg.centerImage ?
+            `background: url("${cfg.centerImage}") center/cover no-repeat;` :
+            `background: radial-gradient(circle at 30% 30%, #fff, #94a3b8);`
+        }
             border: ${cfg.centerBorder ? '5px solid #1e293b' : 'none'};
             box-shadow: ${cfg.centerShadow ? '0 10px 30px rgba(0,0,0,0.8), inset 0 2px 5px #fff' : 'none'};
             z-index: 20; border-radius: 50%;
@@ -585,10 +599,10 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
             transition: all 0.15s ease;
             box-shadow: ${cfg.spinBtnShadow ? '0 8px 30px rgba(0,0,0,0.5), 0 4px 0 rgba(0,0,0,0.2)' : 'none'};
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            ${cfg.spinBtnImage ? 
-                `background: url(${cfg.spinBtnImage}) center/100% 100% no-repeat;` : 
-                `background: linear-gradient(180deg, ${cfg.spinBtnColor} 0%, ${adjustColor(cfg.spinBtnColor, -20)} 100%);`
-            }
+            ${cfg.spinBtnImage ?
+            `background: url("${cfg.spinBtnImage}") center/100% 100% no-repeat;` :
+            `background: linear-gradient(180deg, ${cfg.spinBtnColor} 0%, ${adjustColor(cfg.spinBtnColor, -20)} 100%);`
+        }
         }
         .spin-btn::before {
             content: '';
@@ -661,6 +675,13 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
             animation: card-reveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: flex; flex-direction: column; align-items: center;
             position: relative; z-index: 10;
+            background-size: 100% 100% !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+        }
+        .result-card.has-bg {
+            border: none;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.8);
         }
         @keyframes card-reveal { 
             from { transform: scale(0.5) translateY(50px); opacity: 0; } 
@@ -671,6 +692,12 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
             font-family: 'Orbitron', sans-serif; font-size: 0.75rem;
             color: var(--gold); letter-spacing: 6px; text-transform: uppercase;
             font-weight: 900; margin-bottom: 15px;
+        }
+
+        .result-title-img {
+            max-width: 80%; max-height: 80px;
+            object-fit: contain; margin-bottom: 15px;
+            display: none;
         }
         
         .result-icon {
@@ -703,6 +730,15 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
             font-weight: 950; font-size: 1.3rem;
             box-shadow: 0 6px 20px rgba(234, 179, 8, 0.4);
             transition: all 0.15s;
+            background-size: 100% 100% !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .collect-btn.has-img {
+            background-color: transparent !important;
+            box-shadow: none !important;
+            height: 70px;
         }
         .collect-btn:active {
             transform: translateY(3px);
@@ -766,12 +802,15 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         <div id="result-screen">
             <div class="result-rays"></div>
             <div id="result-stars" class="result-stars"></div>
-            <div class="result-card">
-                <div class="result-badge">🎉 CONGRATULATIONS 🎉</div>
+            <div class="result-card" id="result-card">
+                <div id="result-title-container">
+                    <div id="result-badge" class="result-badge">🎉 CONGRATULATIONS 🎉</div>
+                    <img id="result-title-img" class="result-title-img" src="" alt="Result Title" />
+                </div>
                 <div id="winner-icon" class="result-icon">🎁</div>
                 <div id="winner-text" class="result-prize"></div>
                 <p id="winner-msg" class="result-msg">You've won an amazing prize!</p>
-                <button class="collect-btn" onclick="closeOverlay()">COLLECT</button>
+                <button class="collect-btn" id="collect-btn" onclick="closeOverlay()">COLLECT</button>
             </div>
         </div>
     </div>
@@ -936,25 +975,43 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
             // Stop any existing result sound first
             stopResultSound();
             
-            // Auto-detect prize type if flags not explicitly set
-            const isJackpot = prize.isJackpot || 
-                (prize.label && prize.label.toLowerCase().includes('jackpot')) ||
-                (prize.value && prize.value >= 500);
+            // Explicit check only (Auto-detection removed by request)
+            const isJackpot = prize.isJackpot;
             
             const isLose = prize.isLose || 
                 (prize.value === 0 || prize.value === '0') ||
                 (prize.label && /try again|lose|sorry|better luck|没中|再试/i.test(prize.label));
             
             let soundUrl = null;
-            if (isJackpot && config.jackpotSound) {
-                soundUrl = config.jackpotSound;
-                console.log('[Sound] Playing JACKPOT sound');
-            } else if (isLose && config.loseSound) {
-                soundUrl = config.loseSound;
-                console.log('[Sound] Playing LOSE sound');
-            } else if (config.winSound) {
-                soundUrl = config.winSound;
-                console.log('[Sound] Playing WIN sound');
+            let shouldPlaySynthesized = false;
+
+            if (isJackpot) {
+                if (config.jackpotSound) {
+                    soundUrl = config.jackpotSound;
+                    console.log('[Sound] Playing JACKPOT sound');
+                } else if (config.winSound) {
+                    // Fallback to Win sound for Jackpot (often desired)
+                    soundUrl = config.winSound;
+                    console.log('[Sound] Jackpot! (Using WIN sound fallback)');
+                } else {
+                    shouldPlaySynthesized = true;
+                }
+            } else if (isLose) {
+                if (config.loseSound) {
+                    soundUrl = config.loseSound;
+                    console.log('[Sound] Playing LOSE sound');
+                } else {
+                    // Explicitly silent for Lose if no sound configured
+                    console.log('[Sound] LOSE detected, but no sound configured - staying silent');
+                }
+            } else {
+                // Regular Win
+                if (config.winSound) {
+                    soundUrl = config.winSound;
+                    console.log('[Sound] Playing WIN sound');
+                } else {
+                    shouldPlaySynthesized = true;
+                }
             }
             
             if (soundEnabled) {
@@ -965,8 +1022,8 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                     currentResultAudio = new Audio(fullUrl);
                     currentResultAudio.volume = 0.7;
                     currentResultAudio.play().catch(e => console.log('[Sound] Play failed:', e));
-                } else {
-                    // Fallback to synthesized sound
+                } else if (shouldPlaySynthesized) {
+                    // Fallback to synthesized sound (ONLY for wins/jackpots now)
                     console.log('[playResultSound] No sound URL, using synthesized sound');
                     playWinSound();
                 }
@@ -991,6 +1048,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         
         // ========== PARTICLES ==========
         function createParticles() {
+            if (!config.enableFloatingParticles) return;
             const container = document.getElementById('particles');
             const colors = ['var(--primary)', 'var(--gold)', '#fff', 'var(--secondary)'];
             
@@ -1042,7 +1100,8 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         // ========== START SCREEN ==========
         function initStartScreen() {
             console.log('[initStartScreen] enableStartScreen:', config.enableStartScreen);
-            if (!config.enableStartScreen) {
+            // Robust check for false/disabled state (handles boolean false, string "false", or undefined)
+            if (!config.enableStartScreen || String(config.enableStartScreen) === 'false') {
                 console.log('[initStartScreen] Start screen disabled, skipping');
                 return;
             }
@@ -1295,153 +1354,238 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                 
                 // Show result
                 const prize = prizeList[winnerIdx];
-                document.getElementById('winner-icon').innerText = wonIcon;
-                document.getElementById('winner-text').innerText = won;
-                document.getElementById('winner-msg').innerText = \`You've unlocked \${won}!\`;
-                createResultStars();
-                document.getElementById('result-screen').style.display = 'flex';
-                
-                // Effects - play custom sound based on prize type
-                playResultSound(prize);
-                vibrate([100, 50, 100, 50, 200]);
-                
-                // Confetti effect (if enabled)
-                if (config.enableConfetti !== false) {
-                    // Check if confetti library is loaded
-                    if (typeof confetti === 'undefined') {
-                        console.warn('🎉 Confetti library not loaded yet, skipping confetti effect');
-                        return;
+                const isLose = prize.isLose || 
+                    (prize.value === 0 || prize.value === '0') ||
+                    (prize.label && /try again|lose|sorry|better luck|没中|再试/i.test(prize.label));
+                const isJackpot = prize.isJackpot || (prize.label && prize.label.toLowerCase().includes('jackpot'));
+
+                const resultCard = document.getElementById('result-card');
+                const resultBadge = document.getElementById('result-badge');
+                const resultTitleImg = document.getElementById('result-title-img');
+                const collectBtn = document.getElementById('collect-btn');
+                const winnerIcon = document.getElementById('winner-icon');
+                const winnerText = document.getElementById('winner-text');
+                const winnerMsg = document.getElementById('winner-msg');
+
+                // Apply images and text hierarchy
+                if (isLose) {
+                    // LOSE Case
+                    if (config.resultLoseBackground) {
+                        resultCard.style.backgroundImage = 'url("' + getUrlLocal(config.resultLoseBackground) + '")';
+                        resultCard.classList.add('has-bg');
+                    } else {
+                        resultCard.style.backgroundImage = '';
+                        resultCard.classList.remove('has-bg');
                     }
-                    
-                    console.log('🎉 Triggering confetti:', {
-                        particles: config.confettiParticles,
-                        spread: config.confettiSpread,
-                        colors: config.confettiColors,
-                        shapeType: config.confettiShapeType,
-                        emojis: config.confettiEmojis
-                    });
-                    
+
+                    if (config.resultLoseTitleImage) {
+                        resultTitleImg.src = getUrlLocal(config.resultLoseTitleImage);
+                        resultTitleImg.style.display = 'block';
+                        resultBadge.style.display = 'none';
+                        winnerMsg.style.display = 'none';
+                    } else {
+                        resultTitleImg.style.display = 'none';
+                        resultBadge.style.display = 'block';
+                        winnerMsg.style.display = 'block';
+                        resultBadge.innerText = config.loseTitle || '💔 TRY AGAIN 💔';
+                        winnerMsg.innerText = config.loseSubtitle || "Better luck next time!";
+                    }
+
+                    if (config.resultLoseButtonImage) {
+                        collectBtn.style.backgroundImage = 'url("' + getUrlLocal(config.resultLoseButtonImage) + '")';
+                        collectBtn.classList.add('has-img');
+                        collectBtn.innerText = '';
+                    } else {
+                        collectBtn.style.backgroundImage = '';
+                        collectBtn.classList.remove('has-img');
+                        collectBtn.innerText = 'TRY AGAIN';
+                    }
+                } else {
+                    // WIN / JACKPOT Case
+                    if (config.resultWinBackground) {
+                        resultCard.style.backgroundImage = 'url("' + getUrlLocal(config.resultWinBackground) + '")';
+                        resultCard.classList.add('has-bg');
+                    } else {
+                        resultCard.style.backgroundImage = '';
+                        resultCard.classList.remove('has-bg');
+                    }
+
+                    if (config.resultWinTitleImage) {
+                        resultTitleImg.src = getUrlLocal(config.resultWinTitleImage);
+                        resultTitleImg.style.display = 'block';
+                        resultBadge.style.display = 'none';
+                        winnerMsg.style.display = 'none';
+                    } else {
+                        resultTitleImg.style.display = 'none';
+                        resultBadge.style.display = 'block';
+                        winnerMsg.style.display = 'block';
+                        if (isJackpot) {
+                            resultBadge.innerText = config.jackpotTitle || '🌟 JACKPOT! 🌟';
+                            winnerMsg.innerText = config.jackpotSubtitle || \`You've won \${won}!\`;
+                        } else {
+                            resultBadge.innerText = config.winTitle || '🎉 CONGRATULATIONS 🎉';
+                            winnerMsg.innerText = config.winSubtitle || \`You've won \${won}!\`;
+                        }
+                    }
+
+                    if (config.resultWinButtonImage) {
+                        collectBtn.style.backgroundImage = 'url("' + getUrlLocal(config.resultWinButtonImage) + '")';
+                        collectBtn.classList.add('has-img');
+                        collectBtn.innerText = '';
+                    } else {
+                        collectBtn.style.backgroundImage = '';
+                        collectBtn.classList.remove('has-img');
+                        collectBtn.innerText = 'COLLECT';
+                    }
+                }
+
+winnerIcon.innerText = wonIcon;
+winnerText.innerText = won;
+
+createResultStars();
+document.getElementById('result-screen').style.display = 'flex';
+
+// Effects - play custom sound based on prize type
+playResultSound(prize);
+vibrate([100, 50, 100, 50, 200]);
+
+// Confetti effect (if enabled)
+if (config.enableConfetti !== false) {
+    // Check if confetti library is loaded
+    if (typeof confetti === 'undefined') {
+        console.warn('🎉 Confetti library not loaded yet, skipping confetti effect');
+        return;
+    }
+
+    console.log('🎉 Triggering confetti:', {
+        particles: config.confettiParticles,
+        spread: config.confettiSpread,
+        colors: config.confettiColors,
+        shapeType: config.confettiShapeType,
+        emojis: config.confettiEmojis
+    });
+
+    try {
+        // ALWAYS fire colorful paper confetti (base layer)
+        const paperConfig = {
+            particleCount: config.confettiParticles || 150,
+            spread: config.confettiSpread || 80,
+            origin: { y: 0.6 },
+            colors: (config.confettiColors || '#eab308,#ffffff,#3b82f6,#22c55e').split(','),
+            startVelocity: 30,
+            gravity: 1,
+            drift: 0,
+            ticks: 200
+        };
+
+        confetti(paperConfig);
+        console.log('🎉 Colorful paper confetti triggered');
+
+        // IF emoji mode, ALSO fire emoji confetti (overlay layer)
+        if (config.confettiShapeType === 'emoji' && config.confettiEmojis && typeof confetti.shapeFromText === 'function') {
+            let emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
+
+            // Remove variation selectors (U+FE0F, U+FE0E)
+            emojis = emojis.map(e => e.replace(/[\uFE0E\uFE0F]/g, ''));
+
+            if (emojis.length > 0) {
+                try {
+                    const emojiShapes = emojis.map(emoji =>
+                        confetti.shapeFromText({ text: emoji, scalar: 3 })
+                    );
+
+                    // Fire emoji confetti with fewer particles (40% of total)
+                    const emojiConfig = {
+                        particleCount: Math.floor((config.confettiParticles || 150) * 0.4),
+                        spread: config.confettiSpread || 80,
+                        origin: { y: 0.6 },
+                        shapes: emojiShapes,
+                        scalar: 3,
+                        startVelocity: 30,
+                        gravity: 1,
+                        drift: 0,
+                        ticks: 200
+                    };
+
+                    confetti(emojiConfig);
+                    console.log('🎉 Emoji confetti triggered (MIXED with paper):', emojis);
+                } catch (err) {
+                    console.warn('🎉 Failed to create emoji confetti', err);
+                }
+            }
+        }
+
+        setTimeout(() => {
+            // ALWAYS fire paper confetti from sides
+            const sidePaperConfig = {
+                particleCount: (config.confettiParticles || 150) / 1.5,
+                spread: (config.confettiSpread || 80) + 20,
+                colors: (config.confettiColors || '#eab308,#ffffff').split(',').slice(0, 2),
+                startVelocity: 30,
+                gravity: 1,
+                drift: 0,
+                ticks: 200
+            };
+
+            confetti({ ...sidePaperConfig, origin: { x: 0.2, y: 0.5 } });
+            confetti({ ...sidePaperConfig, origin: { x: 0.8, y: 0.5 } });
+            console.log('🎉 Side paper confetti triggered');
+
+            // IF emoji mode, ALSO fire emoji from sides
+            if (config.confettiShapeType === 'emoji' && config.confettiEmojis && typeof confetti.shapeFromText === 'function') {
+                let emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
+                emojis = emojis.map(e => e.replace(/[\uFE0E\uFE0F]/g, ''));
+
+                if (emojis.length > 0) {
                     try {
-                        // ALWAYS fire colorful paper confetti (base layer)
-                        const paperConfig = {
-                            particleCount: config.confettiParticles || 150,
-                            spread: config.confettiSpread || 80,
-                            origin: { y: 0.6 },
-                            colors: (config.confettiColors || '#eab308,#ffffff,#3b82f6,#22c55e').split(','),
+                        const emojiShapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 3 }));
+
+                        const sideEmojiConfig = {
+                            particleCount: Math.floor((config.confettiParticles || 150) / 1.5 * 0.4),
+                            spread: (config.confettiSpread || 80) + 20,
+                            shapes: emojiShapes,
+                            scalar: 3,
                             startVelocity: 30,
                             gravity: 1,
                             drift: 0,
                             ticks: 200
                         };
-                        
-                        confetti(paperConfig);
-                        console.log('🎉 Colorful paper confetti triggered');
-                        
-                        // IF emoji mode, ALSO fire emoji confetti (overlay layer)
-                        if (config.confettiShapeType === 'emoji' && config.confettiEmojis && typeof confetti.shapeFromText === 'function') {
-                            let emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
-                            
-                            // Remove variation selectors (U+FE0F, U+FE0E)
-                            emojis = emojis.map(e => e.replace(/[\uFE0E\uFE0F]/g, ''));
-                            
-                            if (emojis.length > 0) {
-                                try {
-                                    const emojiShapes = emojis.map(emoji => 
-                                        confetti.shapeFromText({ text: emoji, scalar: 3 })
-                                    );
-                                    
-                                    // Fire emoji confetti with fewer particles (40% of total)
-                                    const emojiConfig = {
-                                        particleCount: Math.floor((config.confettiParticles || 150) * 0.4),
-                                        spread: config.confettiSpread || 80,
-                                        origin: { y: 0.6 },
-                                        shapes: emojiShapes,
-                                        scalar: 3,
-                                        startVelocity: 30,
-                                        gravity: 1,
-                                        drift: 0,
-                                        ticks: 200
-                                    };
-                                    
-                                    confetti(emojiConfig);
-                                    console.log('🎉 Emoji confetti triggered (MIXED with paper):', emojis);
-                                } catch (err) {
-                                    console.warn('🎉 Failed to create emoji confetti', err);
-                                }
-                            }
-                        }
-                        
-                        setTimeout(() => {
-                            // ALWAYS fire paper confetti from sides
-                            const sidePaperConfig = {
-                                particleCount: (config.confettiParticles || 150) / 1.5,
-                                spread: (config.confettiSpread || 80) + 20,
-                                colors: (config.confettiColors || '#eab308,#ffffff').split(',').slice(0, 2),
-                                startVelocity: 30,
-                                gravity: 1,
-                                drift: 0,
-                                ticks: 200
-                            };
-                            
-                            confetti({ ...sidePaperConfig, origin: { x: 0.2, y: 0.5 } });
-                            confetti({ ...sidePaperConfig, origin: { x: 0.8, y: 0.5 } });
-                            console.log('🎉 Side paper confetti triggered');
-                            
-                            // IF emoji mode, ALSO fire emoji from sides
-                            if (config.confettiShapeType === 'emoji' && config.confettiEmojis && typeof confetti.shapeFromText === 'function') {
-                                let emojis = config.confettiEmojis.split(',').map(e => e.trim()).filter(e => e);
-                                emojis = emojis.map(e => e.replace(/[\uFE0E\uFE0F]/g, ''));
-                                
-                                if (emojis.length > 0) {
-                                    try {
-                                        const emojiShapes = emojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 3 }));
-                                        
-                                        const sideEmojiConfig = {
-                                            particleCount: Math.floor((config.confettiParticles || 150) / 1.5 * 0.4),
-                                            spread: (config.confettiSpread || 80) + 20,
-                                            shapes: emojiShapes,
-                                            scalar: 3,
-                                            startVelocity: 30,
-                                            gravity: 1,
-                                            drift: 0,
-                                            ticks: 200
-                                        };
-                                        
-                                        confetti({ ...sideEmojiConfig, origin: { x: 0.2, y: 0.5 } });
-                                        confetti({ ...sideEmojiConfig, origin: { x: 0.8, y: 0.5 } });
-                                        console.log('🎉 Side emoji confetti triggered (MIXED)');
-                                    } catch (err) {
-                                        console.warn('🎉 Failed to create side emoji shapes', err);
-                                    }
-                                }
-                            }
-                        }, 300);
-                    } catch (error) {
-                        console.error('🎉 Confetti error:', error);
+
+                        confetti({ ...sideEmojiConfig, origin: { x: 0.2, y: 0.5 } });
+                        confetti({ ...sideEmojiConfig, origin: { x: 0.8, y: 0.5 } });
+                        console.log('🎉 Side emoji confetti triggered (MIXED)');
+                    } catch (err) {
+                        console.warn('🎉 Failed to create side emoji shapes', err);
                     }
                 }
-                
-                window.parent.postMessage({ type: 'score-submit', score: 10, metadata: { prize: won } }, '*');
+            }
+        }, 300);
+    } catch (error) {
+        console.error('🎉 Confetti error:', error);
+    }
+}
+
+window.parent.postMessage({ type: 'score-submit', score: 10, metadata: { prize: won } }, '*');
             }, duration + 200);
         }
-        
-        function closeOverlay() {
-            document.getElementById('result-screen').style.display = 'none';
-            stopResultSound(); // Stop any playing result sound
-            vibrate(30);
-        }
-        
-        // ========== SWIPE TO SPIN ==========
-        function initSwipeToSpin() {
-            if (!config.swipeToSpin) return;
-            
-            const wheelStage = document.querySelector('.wheel-stage');
-            const wheelContainer = document.getElementById('wheel-container-el');
-            
-            // Add animated hand gesture overlay
-            const gestureOverlay = document.createElement('div');
-            gestureOverlay.id = 'gesture-overlay';
-            gestureOverlay.innerHTML = \`
+
+function closeOverlay() {
+    document.getElementById('result-screen').style.display = 'none';
+    stopResultSound(); // Stop any playing result sound
+    vibrate(30);
+}
+
+// ========== SWIPE TO SPIN ==========
+function initSwipeToSpin() {
+    if (!config.swipeToSpin) return;
+
+    const wheelStage = document.querySelector('.wheel-stage');
+    const wheelContainer = document.getElementById('wheel-container-el');
+
+    // Add animated hand gesture overlay
+    const gestureOverlay = document.createElement('div');
+    gestureOverlay.id = 'gesture-overlay';
+    gestureOverlay.innerHTML = \`
                 <div class="gesture-hand">👆</div>
                 <div class="gesture-arrow">↻</div>
                 <div class="gesture-text">滑动旋转<br>Swipe to Spin</div>
@@ -1630,6 +1774,191 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         }
         
         // ========== CONFIG SYNC ==========
+        function getUrlLocal(val) {
+            if (!val) return '';
+            if (val.startsWith('http') || val.startsWith('/')) return val;
+            return '/api/uploads/' + val;
+        }
+
+        function adjustColorLocal(hex, percent) {
+            if (!hex || hex[0] !== '#') return hex;
+            const num = parseInt(hex.slice(1), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+            const G = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amt));
+            const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+            return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+        }
+
+        function updateVisuals() {
+            try {
+                const root = document.documentElement;
+                if (config.themeColor) root.style.setProperty('--primary', config.themeColor);
+                if (config.secondaryColor) root.style.setProperty('--secondary', config.secondaryColor);
+
+                // Update Background
+                const bgLayer = document.getElementById('bg-layer');
+                const type = config.bgType || (config.bgImage ? 'image' : config.bgGradStart ? 'gradient' : 'color');
+                const blur = (config.bgBlur || 0) + 'px';
+                const opacity = (config.bgOpacity !== undefined ? config.bgOpacity : 100) / 100;
+
+                bgLayer.style.background = '';
+                bgLayer.style.filter = '';
+                bgLayer.style.opacity = '';
+
+                if (type === 'gradient') {
+                    if (config.bgGradStart && config.bgGradEnd) {
+                        if (config.bgGradDir === 'radial') {
+                            bgLayer.style.background = 'radial-gradient(circle at center, ' + config.bgGradStart + ', ' + config.bgGradEnd + ')';
+                        } else {
+                            const dir = config.bgGradDir || '135deg';
+                            bgLayer.style.background = 'linear-gradient(' + dir + ', ' + config.bgGradStart + ' 0%, ' + config.bgGradEnd + ' 100%)';
+                        }
+                    } else {
+                        bgLayer.style.background = config.bgGradient || 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)';
+                    }
+                } else if (type === 'image') {
+                    bgLayer.style.background = 'url("' + getUrlLocal(config.bgImage) + '") center/' + (config.bgFit || 'cover') + ' no-repeat';
+                    bgLayer.style.filter = 'blur(' + blur + ')';
+                    bgLayer.style.opacity = opacity;
+                } else if (type === 'color') {
+                    bgLayer.style.backgroundColor = config.bgColor || '#1a1a1a';
+                }
+
+                // Logos/Branding
+                const branding = document.getElementById('branding-el');
+                if (branding) {
+                    if (config.titleImage) {
+                        branding.innerHTML = '<img src="' + getUrlLocal(config.titleImage) + '" alt="Logo" />';
+                        const img = branding.querySelector('img');
+                        if (img) {
+                            img.style.width = (config.logoWidth || 80) + '%';
+                            img.style.opacity = (config.logoOpacity !== undefined ? config.logoOpacity : 100) / 100;
+                            img.style.filter = config.logoDropShadow ? 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' : 'none';
+                            img.style.marginTop = (config.logoTopMargin || 0) + 'px';
+                        }
+                    } else {
+                        branding.innerHTML = '<div class="default-title">' + (config.titleText || 'SPIN & WIN') + '</div>';
+                    }
+                }
+
+                // Token Bar
+                const tokenBar = document.getElementById('token-bar-el');
+                if (tokenBar) {
+                    if (config.tokenBarImage) {
+                        tokenBar.style.background = 'url("' + getUrlLocal(config.tokenBarImage) + '") center/100% 100% no-repeat';
+                    } else {
+                        tokenBar.style.background = config.tokenBarColor || '#ca8a04';
+                    }
+                    tokenBar.style.color = config.tokenBarTextColor || '#ffffff';
+                }
+
+                // Spin Button
+                const btn = document.getElementById('spin-btn');
+                if (btn) {
+                    if (config.spinBtnImage) {
+                        btn.style.background = 'url("' + getUrlLocal(config.spinBtnImage) + '") center/100% 100% no-repeat';
+                        btn.innerHTML = '';
+                    } else {
+                        const btnColor = config.spinBtnColor || '#f59e0b';
+                        btn.style.background = 'linear-gradient(180deg, ' + btnColor + ' 0%, ' + adjustColorLocal(btnColor, -20) + ' 100%)';
+                        const txt = config.spinBtnText || 'SPIN NOW';
+                        const sub = config.spinBtnSubtext || '1 PLAY = ' + (config.costPerSpin || 0) + ' TOKEN';
+                        const col = config.spinBtnTextColor || '#451a03';
+                        btn.innerHTML = '<div class="spin-label" style="color:' + col + '">' + txt + '</div><div class="spin-sub" style="color:' + col + '">' + sub + '</div>';
+                    }
+                    btn.style.width = 'min(85vw, ' + (config.spinBtnWidth || 320) + 'px)';
+                    btn.style.height = (config.spinBtnHeight || 70) + 'px';
+                }
+
+                // Center Hub
+                const hub = document.getElementById('center-hub');
+                if (hub) {
+                    const cSize = config.centerSize || 60;
+                    hub.style.width = cSize + 'px';
+                    hub.style.height = cSize + 'px';
+                    const cType = config.centerType || 'emoji';
+                    if (cType === 'image' && config.centerImage) {
+                        hub.style.background = 'url("' + getUrlLocal(config.centerImage) + '") center/cover no-repeat';
+                        hub.innerText = '';
+                    } else {
+                        hub.style.background = 'radial-gradient(circle at 30% 30%, #fff, #94a3b8)';
+                        hub.innerText = config.centerEmoji || '🎯';
+                    }
+                }
+
+                // Pointer
+                const pointer = document.getElementById('pointer-el');
+                const pointerStg = document.getElementById('pointer-stage');
+                if (pointer && pointerStg) {
+                    const pSize = config.pointerSize || 50;
+                    pointerStg.style.width = pSize + 'px';
+                    pointerStg.style.height = (pSize * 1.5) + 'px';
+                    pointerStg.style.top = (config.pointerTop !== undefined ? config.pointerTop : -35) + 'px';
+                    if (config.pointerImage) {
+                        pointer.style.background = 'url("' + getUrlLocal(config.pointerImage) + '") center/contain no-repeat';
+                        pointer.style.clipPath = 'none';
+                        pointer.style.borderRadius = '0';
+                    } else {
+                        pointer.style.background = 'linear-gradient(180deg, #22c55e 0%, #16a34a 100%)';
+                        pointer.style.clipPath = 'polygon(0 0, 100% 0, 50% 100%)';
+                    }
+                }
+
+                // Wheel Border Plate
+                const wheelBorderPlate = document.getElementById('wheel-border-plate');
+                const outerRing = document.getElementById('led-ring');
+                const wheelContainer = document.getElementById('wheel-container-el');
+
+                console.log('[updateVisuals Debug] Checking wheel border. Image:', config.wheelBorderImage, 'Element:', !!wheelBorderPlate);
+
+                if (config.wheelBorderImage && wheelBorderPlate) {
+                    console.log('[updateVisuals Debug] Applying wheel border:', config.wheelBorderImage);
+                    wheelBorderPlate.style.display = 'block';
+                    wheelBorderPlate.style.backgroundImage = 'url("' + getUrlLocal(config.wheelBorderImage) + '")';
+
+                    const bSize = (config.wheelBorderSize || 110) + '%';
+                    wheelBorderPlate.style.width = bSize;
+                    wheelBorderPlate.style.height = bSize;
+
+                    const bOp = (config.wheelBorderOpacity !== undefined ? config.wheelBorderOpacity : 100) / 100;
+                    wheelBorderPlate.style.opacity = bOp;
+
+                    const bTop = config.wheelBorderTop || 0;
+                    wheelBorderPlate.style.transform = 'translate(-50%, calc(-50% + ' + bTop + 'px))';
+                    
+                    const bRot = config.wheelBorderRotation || 0;
+                    if (bRot) {
+                        wheelBorderPlate.style.transform += ' rotate(' + bRot + 'deg)';
+                    }
+
+                    const layer = config.wheelBorderLayer || 'behind';
+                    if (layer === 'front') {
+                        wheelBorderPlate.style.zIndex = '15'; 
+                        if (wheelContainer) wheelContainer.style.background = '#fff';
+                    } else {
+                        wheelBorderPlate.style.zIndex = '5';
+                        if (wheelContainer) wheelContainer.style.background = 'transparent';
+                    }
+
+                    // Hide neon ring if custom border is used
+                    if (outerRing) outerRing.style.display = 'none';
+                    if (wheelContainer) {
+                        wheelContainer.style.border = 'none';
+                        wheelContainer.style.boxShadow = 'none';
+                    }
+                } else {
+                    if (wheelBorderPlate) wheelBorderPlate.style.display = 'none';
+                    if (outerRing) outerRing.style.display = 'block';
+                    if (wheelContainer) {
+                        wheelContainer.style.border = '8px solid #0f172a';
+                        wheelContainer.style.boxShadow = '0 0 0 4px var(--primary), 0 0 30px rgba(0,0,0,0.5)';
+                        wheelContainer.style.background = '#fff';
+                    }
+                }
+            } catch(err) { console.error('[Sync Error]', err); }
+        }
+
         window.addEventListener('message', (e) => {
             if (e.data?.type === 'sync-config') {
                 config = e.data.config;
@@ -1640,7 +1969,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                     icons = prizeList.map(p => p.icon || '🎁');
                 }
                 createWheel();
-                // Additional visual updates can be added here
+                updateVisuals();
             } else if (e.data?.type === 'sound-toggle') {
                 // 音效开关控制
                 soundEnabled = e.data.enabled;
@@ -1719,6 +2048,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         // Create visual elements
         if (config.enableLedRing !== false) createLeds();
         createWheel();
+        updateVisuals(); // Apply initial configuration styles
         createParticles();
         createHexagons();
         initGridFloor();

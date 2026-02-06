@@ -53,6 +53,12 @@
                     <template v-else-if="gameStatus.blockReason === 'ENDED'">
                       Ended
                     </template>
+                    <template v-else-if="gameStatus.blockReason === 'NO_ATTEMPTS_LEFT'">
+                      No attempts left today
+                    </template>
+                    <template v-else-if="gameStatus.blockReason === 'INSUFFICIENT_BALANCE'">
+                      Insufficient Balance
+                    </template>
                     <template v-else-if="gameStatus.blockReason === 'INVALID_DAY'">
                       Not available today
                     </template>
@@ -180,6 +186,14 @@
           <p class="text-white/40 mt-2">Authentication and Token verification in progress.</p>
         </div>
       </div>
+      <!-- Preview Mode Simulation Banner -->
+      <div v-if="isPreview" class="absolute top-0 left-0 right-0 z-[60] pointer-events-none">
+        <div class="bg-amber-500/90 backdrop-blur-md text-white text-[10px] font-bold py-1 px-4 text-center tracking-widest shadow-lg border-b border-amber-400/30">
+          <span class="opacity-80">PROTOTYPE SIMULATION</span>
+          <span class="mx-3 opacity-30">|</span>
+          <span>NO TOKENS WILL BE DEDUCTED</span>
+        </div>
+      </div>
       <div v-else-if="!instance" class="absolute inset-0 flex-center bg-slate-800">
         <div class="text-center">
           <div class="i-carbon-error text-6xl text-error mb-4"></div>
@@ -210,7 +224,7 @@ const loadingStatus = ref(false);
 const gameContainer = ref<HTMLElement | null>(null);
 const gameStatus = ref<any>(null);
 const cooldownRemaining = ref(0);
-const statusCollapsed = ref(false);
+const statusCollapsed = ref(true);
 let cooldownInterval: any = null;
 
 const instanceSlug = computed(() => route.params.id);
@@ -353,6 +367,9 @@ async function submitScore(score: number, metadata?: any) {
           break;
         case 'DAILY_BUDGET_EXCEEDED':
           message.warning('今日预算已用完，明天再来吧');
+          break;
+        case 'INSUFFICIENT_BALANCE':
+          message.error(`余额不足！本次游戏需要 ${errorData.required} 点数，当前仅剩 ${errorData.current}`);
           break;
         default:
           message.error(errorData.message || '提交分数失败');

@@ -5,22 +5,8 @@ import { useI18n } from 'vue-i18n';
 import { request } from '@/service/request';
 
 // Extend the window object to potentially access parent methods or simply use local logic
-const { t, locale, availableLocales, messages } = useI18n();
+const { t, te, locale, availableLocales } = useI18n();
 
-// DEBUG: Check i18n status
-const gameCommon = messages.value['zh-CN']?.page?.manage?.game?.common;
-console.log('[ConfigForm] i18n Debug:', {
-  currentLocale: locale.value,
-  availableLocales: availableLocales,
-  zhCNMessages: messages.value['zh-CN'],
-  pageManageGame: messages.value['zh-CN']?.page?.manage?.game,
-  gameCommon: gameCommon,
-  gameCommonKeys: gameCommon ? Object.keys(gameCommon) : null,
-  totalProbabilityValue: gameCommon?.totalProbability,
-  testTranslation: t('page.manage.game.common.totalProbability'),
-  testKey: 'page.manage.game.common.totalProbability'
-});
-console.log('[ConfigForm] Raw gameCommon object:', JSON.stringify(gameCommon, null, 2));
 
 const uploadRef = ref<HTMLInputElement | null>(null);
 const currentUploadTarget = ref<{ key: string, item?: any, name?: string, category?: string, accept?: string } | null>(null);
@@ -68,10 +54,33 @@ async function handleFileChange(event: Event) {
   if (!error && data?.url) {
     if (currentUploadTarget.value.item) {
       currentUploadTarget.value.item.icon = data.url;
+    } else if (currentUploadTarget.value.key.includes('.')) {
+      // Handle nested mapping keys (e.g., prizeList.0.icon)
+      const keys = currentUploadTarget.value.key.split('.');
+      let current = formModel.value;
+      for (let i = 0; i < keys.length - 1; i++) {
+        const k = keys[i];
+        if (!current[k]) current[k] = isNaN(Number(keys[i + 1])) ? {} : [];
+        current = current[k];
+      }
+      current[keys[keys.length - 1]] = data.url;
     } else {
       formModel.value[currentUploadTarget.value.key] = data.url;
     }
-    window.$message?.success(t('common.updateSuccess'));
+
+    // Auto-apply feature settings
+    const key = currentUploadTarget.value.key;
+    if (key === 'bgImage') {
+      formModel.value.bgType = 'image';
+    } else if (key === 'centerImage' || key === 'centerHubImage') {
+      formModel.value.centerType = 'image';
+    } else if (key === 'dividerImage') {
+      formModel.value.dividerType = 'image';
+    } else if (key === 'titleImage' || key === 'brandingLogo') {
+      formModel.value.enableStartScreen = true;
+    }
+
+    window.$message?.success(t('page.manage.game.assetGuide.uploadSuccess') || '素材上传成功');
   }
 }
 
@@ -80,7 +89,35 @@ function clearAsset(key: string, item?: any) {
     item.icon = '';
   } else {
     formModel.value[key] = '';
+    // If clearing background image, automatically switch to gradient
+    if (key === 'bgImage') {
+      formModel.value.bgType = 'gradient';
+    }
   }
+}
+
+function getAssetFilename(url: any): string {
+  if (!url || typeof url !== 'string') return '';
+  if (url.startsWith('data:')) return 'Base64 Image';
+  try {
+    const parts = url.split('/');
+    return decodeURIComponent(parts[parts.length - 1]);
+  } catch (e) {
+    return url;
+  }
+}
+
+
+// Preview uploaded images/audio
+const showPreviewModal = ref(false);
+const previewUrl = ref('');
+const previewTitle = ref('');
+
+function openPreview(url: string, title: string = 'Asset Preview') {
+  if (!url) return;
+  previewUrl.value = url;
+  previewTitle.value = title;
+  showPreviewModal.value = true;
 }
 
 // Audio Mode Helpers
@@ -178,7 +215,9 @@ function toggleAudioPreview(key: string, url: string) {
     
     currentAudio.play().catch(err => {
       console.error('Audio preview failed:', err);
-      window.$message?.error('无法播放音效预览');
+      console.error('Audio preview failed:', err);
+      window.$message?.error(t('page.manage.game.common.audioPlayFailed'));
+      audioPlayingStates.value[key] = false;
       audioPlayingStates.value[key] = false;
       currentAudio = null;
     });
@@ -192,16 +231,18 @@ function toggleAudioPreview(key: string, url: string) {
     });
   } catch (err) {
     console.error('Audio creation failed:', err);
-    window.$message?.error('音效预览失败');
+    console.error('Audio creation failed:', err);
+    window.$message?.error(t('page.manage.game.common.previewFailed'));
+    audioPlayingStates.value[key] = false;
     audioPlayingStates.value[key] = false;
   }
 }
 
 function getPreviewButtonText(key: string, isTheme: boolean): string {
   if (audioPlayingStates.value[key]) {
-    return '⏸️ 停止';
+    return `⏸️ ${t('page.manage.game.common.stop')}`;
   }
-  return isTheme ? '▶️ 预览主题音效' : '▶️ 预览';
+  return isTheme ? `▶️ ${t('page.manage.game.common.previewThemeAudio')}` : `▶️ ${t('page.manage.game.common.preview')}`;
 }
 
 // Color list helpers
@@ -229,7 +270,7 @@ function setColorList(key: string, colors: string[]) {
 function addColor(key: string, color: string = '#ff0000') {
   const colors = getColorList(key);
   if (colors.length >= 8) {
-    window.$message?.warning($t('page.manage.game.effects.confettiMaxColors'));
+    window.$message?.warning(t('page.manage.game.effects.confettiMaxColors'));
     return;
   }
   colors.push(color);
@@ -337,7 +378,7 @@ function triggerConfettiPreview(colors: string[], shapeType: string, emojis: str
 
 interface SchemaItem {
   key: string;
-  type: 'string' | 'number' | 'select' | 'color' | 'list' | 'prize-list' | 'vip-grid' | 'embed-code' | 'switch-group' | 'slider' | 'time-limit' | 'dynamic-prob' | 'budget-control' | 'image' | 'radio' | 'collapse-group' | 'switch' | 'file';
+  type: 'string' | 'number' | 'select' | 'color' | 'list' | 'prize-list' | 'vip-grid' | 'embed-code' | 'switch-group' | 'slider' | 'time-limit' | 'dynamic-prob' | 'budget-control' | 'image' | 'radio' | 'collapse-group' | 'switch' | 'file' | 'color-list' | 'emoji-list' | 'font-select' | 'divider';
   label: string;
   default?: any;
   options?: string[] | { label: string; value: string }[];
@@ -423,6 +464,10 @@ interface Props {
   modelValue: Record<string, any>;
   instanceId?: string;
   companyId?: string;
+  imageSpec?: {
+    assets: Array<{ name: string; size: string; format: string; note: string; mappingKey?: string; category?: string }>;
+    performanceTips: string[];
+  };
 }
 
 const props = defineProps<Props>();
@@ -432,6 +477,14 @@ const formModel = computed({
   get: () => props.modelValue,
   set: (val) => emit('update:modelValue', val)
 });
+
+const activeTab = ref<string>('visuals');
+
+watch(() => props.schema, (newSchema) => {
+  if (newSchema && newSchema.length > 0 && 'name' in newSchema[0] && !activeTab.value) {
+    activeTab.value = (newSchema[0] as TabSchema).name;
+  }
+}, { immediate: true });
 
 function initializeDefaults(items: SchemaItem[]) {
   items.forEach(item => {
@@ -471,7 +524,7 @@ const FULL_THEME_PRESETS: Record<string, any> = {
     themeColor: '#00f5ff', secondaryColor: '#ff00ff', 
     neonCyan: '#00f5ff', neonPink: '#ff00ff', neonPurple: '#9d00ff', neonGold: '#ffd700', neonGreen: '#00ff88', darkBg: '#0a0a12',
     // Effects - 全开
-    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: true, enableGridFloor: true,
+    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: true, enableFloatingParticles: true, enableGridFloor: true,
     // LED - 霓虹三色
     ledColor1: '#00f5ff', ledColor2: '#ff00ff', ledColor3: '#ffd700', ledCount: 32, ledSpeed: 50,
     // Confetti - 科技色
@@ -493,7 +546,7 @@ const FULL_THEME_PRESETS: Record<string, any> = {
     themeColor: '#f72585', secondaryColor: '#4cc9f0',
     neonCyan: '#4cc9f0', neonPink: '#f72585', neonPurple: '#7209b7', neonGold: '#ffd60a', neonGreen: '#06ffa5',
     // Effects - 霓虹感但不要太cyber
-    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: false, enableGridFloor: false,
+    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: false, enableFloatingParticles: true, enableGridFloor: false,
     // LED - 粉蓝紫
     ledColor1: '#f72585', ledColor2: '#4cc9f0', ledColor3: '#7209b7', ledCount: 28, ledSpeed: 60,
     // Confetti - 霓虹
@@ -515,7 +568,7 @@ const FULL_THEME_PRESETS: Record<string, any> = {
     themeColor: '#ffdd00', secondaryColor: '#ff0055',
     neonCyan: '#00fff7', neonPink: '#ff0055', neonGold: '#ffdd00', neonGreen: '#39ff14',
     // Effects - 经典街机感
-    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: false, enableGridFloor: false,
+    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: false, enableFloatingParticles: true, enableGridFloor: false,
     // LED - 街机三色（黄红绿）
     ledColor1: '#ffdd00', ledColor2: '#ff0055', ledColor3: '#39ff14', ledCount: 24, ledSpeed: 40,
     // Confetti - 鲜艳
@@ -537,7 +590,7 @@ const FULL_THEME_PRESETS: Record<string, any> = {
     themeColor: '#ff0000', secondaryColor: '#00aa00',
     neonCyan: '#00ff00', neonPink: '#ff0000', neonGold: '#ffd700', neonGreen: '#00aa00',
     // Effects - 节日氛围
-    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: false, enableGridFloor: false,
+    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: false, enableFloatingParticles: true, enableGridFloor: false,
     // LED - 红绿金（圣诞色）
     ledColor1: '#ff0000', ledColor2: '#00ff00', ledColor3: '#ffd700', ledCount: 24, ledSpeed: 80,
     // Confetti - 雪花感
@@ -559,7 +612,7 @@ const FULL_THEME_PRESETS: Record<string, any> = {
     themeColor: '#ffd700', secondaryColor: '#b8860b',
     neonCyan: '#ffd700', neonPink: '#daa520', neonGold: '#ffdf00', neonGreen: '#c9b037',
     // Effects - 奢华但低调
-    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: false, enableGridFloor: false,
+    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: false, enableFloatingParticles: true, enableGridFloor: false,
     // LED - 全金色系
     ledColor1: '#ffd700', ledColor2: '#ffdf00', ledColor3: '#daa520', ledCount: 32, ledSpeed: 70,
     // Confetti - 金色闪耀
@@ -835,13 +888,14 @@ const getIcon = (tabName: string) => {
     case 'visuals': return '🎨';
     case 'ux': return '🧠';
     case 'embed': return '🔗';
+    case 'assets': return '📦';
+    case 'assetGuide': return '📦';
+    case 'effects': return '✨';
     default: return '⚙️';
   }
 };
 
 function getItemLabel(item: SchemaItem) {
-    const { te, t } = useI18n();
-
     // 1. Try translating the label itself (handles i18n keys used as labels)
     if (te(item.label)) return t(item.label);
 
@@ -865,8 +919,6 @@ function getItemLabel(item: SchemaItem) {
 }
 
 function getSubItemLabel(sub: { key: string; label: string }) {
-    const { te, t } = useI18n();
-    
     // Check in order of specificity
     const scopes = ['effects', 'rules', 'visuals', 'prizes', 'common'];
     for (const scope of scopes) {
@@ -968,7 +1020,7 @@ function getFontClass(fontName: string): string {
 }
 
 // Custom render function for font options with preview (dropdown items)
-function renderFontOption(option: { label: string; value: string }) {
+function renderFontOption(option: any) {
     const fontValue = option?.value || '';
     const label = option?.label || fontValue;
     const isSpecialOption = fontValue.toLowerCase() === 'custom' || fontValue.toLowerCase().includes('upload') || fontValue.toLowerCase().includes('default');
@@ -1020,7 +1072,7 @@ function renderFontOption(option: { label: string; value: string }) {
 }
 
 // Render selected font value with its actual font style
-function renderFontTag(props: { option: { label: string; value: string } }) {
+function renderFontTag(props: any) {
     const fontValue = props.option?.value || '';
     const label = props.option?.label || fontValue;
     
@@ -1071,7 +1123,7 @@ function isFontSelect(item: SchemaItem): boolean {
 <template>
   <NForm label-placement="top" :show-feedback="false">
     <template v-if="isTabbed">
-      <NTabs type="line" animated class="mb-4">
+      <NTabs v-model:value="activeTab" type="line" animated class="mb-4">
         <NTabPane v-for="tab in (schema as TabSchema[])" :key="tab.name" :name="tab.name">
           <template #tab>
             <NSpace :size="6" align="center" :class="{ 'text-red-500': !isTabValid(tab.name) }">
@@ -1080,9 +1132,11 @@ function isFontSelect(item: SchemaItem): boolean {
               <span v-if="!isTabValid(tab.name)" class="text-xs">❌</span>
             </NSpace>
           </template>
-          <div class="py-6 px-1">
-             <!-- Special Layout for Prize Tab -->
-             <div v-if="tab.name === 'prizes'" class="space-y-6">
+          <!-- Scrollable content wrapper -->
+          <div style="max-height: 60vh; overflow-y: auto;" class="pr-2">
+            <div class="py-6 px-1">
+              <!-- Special Layout for Prize Tab -->
+              <div v-if="tab.name === 'prizes'" class="space-y-6">
                  <!-- Stats Header -->
                  <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100 flex-wrap">
                      <div class="flex flex-col min-w-120px">
@@ -1092,7 +1146,7 @@ function isFontSelect(item: SchemaItem): boolean {
                          </span>
                      </div>
                       <div class="w-px h-10 bg-gray-200 hidden sm:block"></div>
-                      <div class="flex flex-col min-w-150px">
+                      <div class="flex flex-col min-w-120px">
                          <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">{{ t('page.manage.game.common.expectedValue') }}</span>
                          <span class="text-2xl font-black text-gray-700 tabular-nums">${{ getExpectedValue('prizeList') }}</span>
                      </div>
@@ -1133,7 +1187,7 @@ function isFontSelect(item: SchemaItem): boolean {
                               </div>
                              
                               <!-- Color Picker & Hex Input -->
-                               <div class="w-160px flex-shrink-0">
+                               <div class="w-100px flex-shrink-0">
                                    <NColorPicker
                                       v-model:value="p.color"
                                       :show-alpha="false"
@@ -1155,18 +1209,18 @@ function isFontSelect(item: SchemaItem): boolean {
                               <div class="w-12 h-12 flex-shrink-0 flex items-center justify-center bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden group/icon relative">
                                   <img v-if="p.icon && (p.icon.startsWith('http') || p.icon.startsWith('/'))" :src="p.icon" class="w-full h-full object-contain p-1" />
                                   <NInput v-else v-model:value="p.icon" :bordered="false" class="text-center p-0" />
-                                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/icon:opacity-100 flex items-center justify-center transition-opacity cursor-pointer" @click="triggerUpload(item.key, p)">
+                                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/icon:opacity-100 flex items-center justify-center transition-opacity cursor-pointer" @click="triggerUpload(item.key, undefined, 'prizes', p)">
                                       <span class="text-white text-14px">📁</span>
                                   </div>
                               </div>
 
                               <!-- Label -->
-                              <div class="flex-grow min-w-150px">
+                              <div class="flex-grow min-w-120px">
                                   <NInput v-model:value="p.label" :placeholder="t('page.manage.game.common.prizeName')" round />
                               </div>
 
                               <!-- Value -->
-                              <div class="w-120px flex-shrink-0">
+                              <div class="w-90px flex-shrink-0">
                                   <NInputGroup>
                                     <NInputGroupLabel>$</NInputGroupLabel>
                                     <NInputNumber v-model:value="p.value" :show-button="false" placeholder="0" />
@@ -1174,13 +1228,13 @@ function isFontSelect(item: SchemaItem): boolean {
                               </div>
 
                               <!-- Probability Slider -->
-                              <div class="flex-1 min-w-250px px-4 flex items-center gap-4">
+                              <div class="flex-1 min-w-180px px-2 flex items-center gap-2">
                                   <NSlider v-model:value="p.weight" :step="1" :min="0" :max="100" class="flex-1" :tooltip="false">
                                       <template #thumb>
                                           <div class="w-4 h-4 rounded-full shadow-sm border-2 border-white" :style="{ backgroundColor: p.color }"></div>
                                       </template>
                                   </NSlider>
-                                  <div class="w-20">
+                                  <div class="w-16">
                                       <NInputNumber v-model:value="p.weight" size="small" :show-button="false">
                                           <template #suffix>%</template>
                                       </NInputNumber>
@@ -1210,7 +1264,12 @@ function isFontSelect(item: SchemaItem): boolean {
                               </div>
 
                               <!-- Active Toggle -->
-                              <NSwitch size="small" :default-value="true" />
+                              <NTooltip>
+                                <template #trigger>
+                                  <NSwitch size="small" :default-value="true" />
+                                </template>
+                                Enable/Disable Prize
+                              </NTooltip>
 
                               <!-- Actions -->
                               <NButton quaternary circle type="error" @click="removePrizeItem(item.key, idx)">
@@ -1374,8 +1433,16 @@ function isFontSelect(item: SchemaItem): boolean {
                                 <NGrid :x-gap="24" :y-gap="16" :cols="24">
                                     <template v-for="subItem in item.items" :key="subItem.key">
                                         <NGridItem :span="subItem.span || 24" v-if="checkCondition(subItem)">
+                                             <!-- Divider / Section Title -->
+                                             <div v-if="subItem.type === 'divider'" class="py-2 mt-2 mb-1 border-b border-gray-100">
+                                                 <div class="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] flex items-center gap-2">
+                                                     <div class="w-1 h-3 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.4)]"></div>
+                                                     {{ getItemLabel(subItem) }}
+                                                 </div>
+                                             </div>
+
                                              <!-- RECURSIVE FIELD RENDERING (Simplified for this depth) -->
-                                             <NFormItem :label="getItemLabel(subItem)" :path="subItem.key">
+                                             <NFormItem v-else :label="getItemLabel(subItem)" :path="subItem.key">
                                                 <template #label><span class="font-bold text-gray-700 text-sm">{{ getItemLabel(subItem) }}</span></template>
                                                 
                                                 <NRadioGroup v-if="subItem.type === 'radio'" v-model:value="formModel[subItem.key]" :name="subItem.key">
@@ -1466,15 +1533,27 @@ function isFontSelect(item: SchemaItem): boolean {
                                                   :render-label="isFontSelect(subItem) ? renderFontOption : undefined"
                                                   :render-tag="isFontSelect(subItem) ? renderFontTag : undefined"
                                                 />
-                                                
-                                                <NInput v-else-if="subItem.type === 'image'" v-model:value="formModel[subItem.key]" :placeholder="getItemLabel(subItem)">
-                                                    <template #suffix>
-                                                        <NSpace size="small">
-                                                            <NButton v-if="formModel[subItem.key]" size="tiny" quaternary type="error" @click="clearAsset(subItem.key)">🗑️</NButton>
-                                                            <NButton size="tiny" quaternary @click="triggerUpload(subItem.key, subItem.key, 'branding')">📁</NButton>
-                                                        </NSpace>
-                                                    </template>
-                                                </NInput>
+                                                 <NInput 
+                                                   v-else-if="subItem.type === 'image'" 
+                                                   :value="getAssetFilename(formModel[subItem.key])" 
+                                                   :placeholder="getItemLabel(subItem)" 
+                                                   size="large" 
+                                                   readonly
+                                                 >
+                                                   <template #suffix>
+                                                       <NSpace size="small">
+                                                           <NButton v-if="formModel[subItem.key]" size="tiny" quaternary type="primary" @click="openPreview(formModel[subItem.key], getItemLabel(subItem))">
+                                                               👁️
+                                                           </NButton>
+                                                           <NButton v-if="formModel[subItem.key]" size="tiny" quaternary type="error" @click="clearAsset(subItem.key)">
+                                                               🗑️
+                                                           </NButton>
+                                                           <NButton size="tiny" quaternary @click="triggerUpload(subItem.key, subItem.key, 'branding')">
+                                                               📁
+                                                           </NButton>
+                                                       </NSpace>
+                                                   </template>
+                                                 </NInput>
                                                 
                                                 <NSwitch v-else-if="subItem.type === 'switch'" v-model:value="formModel[subItem.key]" />
 
@@ -1495,19 +1574,19 @@ function isFontSelect(item: SchemaItem): boolean {
                                                   </NRadioGroup>
                                                   
                                                   <div v-if="getAudioMode(subItem.key) === 'custom'" class="space-y-2">
-                                                    <NInput 
-                                                      :value="formModel[subItem.key] === '__CUSTOM_PENDING__' ? '' : formModel[subItem.key]" 
-                                                      placeholder="请上传音效文件" 
-                                                      size="small" 
-                                                      readonly>
-                                                      <template #prefix>🎵</template>
-                                                    </NInput>
+                                                     <NInput 
+                                                       :value="formModel[subItem.key] === '__CUSTOM_PENDING__' ? '' : getAssetFilename(formModel[subItem.key])" 
+                                                       :placeholder="$t('page.manage.game.common.uploadAudioPlaceholder')" 
+                                                       size="small" 
+                                                       readonly>
+                                                       <template #prefix>🎵</template>
+                                                     </NInput>
                                                     <NSpace size="small">
                                                       <NButton 
                                                         size="small" 
                                                         @click="triggerUpload(subItem.key, subItem.key, 'audio', null, 'audio/*,audio/mpeg,audio/wav,audio/ogg,audio/mp4,.mp3,.wav,.ogg,.m4a,.aac')">
                                                         <template #icon><icon-mdi-upload /></template>
-                                                        上传音效文件
+                                                        {{ $t('page.manage.game.common.uploadAudio') }}
                                                       </NButton>
                                                       <NButton 
                                                         v-if="formModel[subItem.key] && formModel[subItem.key] !== '__THEME_DEFAULT__' && formModel[subItem.key] !== '__CUSTOM_PENDING__'" 
@@ -1518,7 +1597,7 @@ function isFontSelect(item: SchemaItem): boolean {
                                                       </NButton>
                                                     </NSpace>
                                                     <div class="text-xs text-gray-500">
-                                                      💡 文件将保存到您的专属文件夹，不会影响主题文件
+                                                      {{ $t('page.manage.game.common.audioCustomTip') }}
                                                     </div>
                                                   </div>
                                                   
@@ -1682,9 +1761,18 @@ function isFontSelect(item: SchemaItem): boolean {
                     :render-tag="isFontSelect(item) ? renderFontTag : undefined"
                   />
                   
-                  <NInput v-else-if="item.type === 'image'" v-model:value="formModel[item.key]" :placeholder="getItemLabel(item)" size="large">
+                  <NInput 
+                    v-else-if="item.type === 'image'" 
+                    :value="getAssetFilename(formModel[item.key])" 
+                    :placeholder="getItemLabel(item)" 
+                    size="large" 
+                    readonly
+                  >
                     <template #suffix>
                         <NSpace size="small">
+                            <NButton v-if="formModel[item.key]" size="tiny" quaternary type="primary" @click="openPreview(formModel[item.key], getItemLabel(item))">
+                                👁️
+                            </NButton>
                             <NButton v-if="formModel[item.key]" size="tiny" quaternary type="error" @click="clearAsset(item.key)">
                                 🗑️
                             </NButton>
@@ -1714,8 +1802,8 @@ function isFontSelect(item: SchemaItem): boolean {
                     <!-- Show current file when custom mode -->
                     <div v-if="getAudioMode(item.key) === 'custom'" class="space-y-2">
                       <NInput 
-                        :value="formModel[item.key] === '__CUSTOM_PENDING__' ? '' : formModel[item.key]" 
-                        placeholder="请上传音效文件" 
+                        :value="formModel[item.key] === '__CUSTOM_PENDING__' ? '' : getAssetFilename(formModel[item.key])" 
+                        :placeholder="$t('page.manage.game.common.uploadAudioPlaceholder')" 
                         size="small" 
                         readonly>
                         <template #prefix>🎵</template>
@@ -1725,7 +1813,7 @@ function isFontSelect(item: SchemaItem): boolean {
                           size="small" 
                           @click="triggerUpload(item.key, item.key, 'audio', null, 'audio/*,audio/mpeg,audio/wav,audio/ogg,audio/mp4,.mp3,.wav,.ogg,.m4a,.aac')">
                           <template #icon><icon-mdi-upload /></template>
-                          上传音效文件
+                          {{ $t('page.manage.game.common.uploadAudio') }}
                         </NButton>
                         <NButton 
                           v-if="formModel[item.key] && formModel[item.key] !== '__THEME_DEFAULT__' && formModel[item.key] !== '__CUSTOM_PENDING__'" 
@@ -1736,7 +1824,7 @@ function isFontSelect(item: SchemaItem): boolean {
                         </NButton>
                       </NSpace>
                       <div class="text-xs text-gray-500">
-                        💡 文件将保存到您的专属文件夹，不会影响主题文件
+                        {{ $t('page.manage.game.common.audioCustomTip') }}
                       </div>
                     </div>
                     
@@ -1767,7 +1855,7 @@ function isFontSelect(item: SchemaItem): boolean {
                               quaternary 
                               @click="triggerUpload(item.key, item.key, 'fonts', null, '.ttf,.otf,.woff,.woff2')">
                                 <template #icon><icon-mdi-upload /></template>
-                                Upload Font
+                                {{ $t('page.manage.game.common.uploadFont') }}
                             </NButton>
                         </NSpace>
                     </template>
@@ -1780,6 +1868,118 @@ function isFontSelect(item: SchemaItem): boolean {
               </template>
             </NGrid>
           </div>
+          </div><!-- Close scrollable wrapper -->
+        </NTabPane>
+
+        <NTabPane v-if="imageSpec" name="assets">
+          <template #tab>
+            <NSpace :size="6" align="center">
+              <span class="text-16px">{{ getIcon('assets') }}</span>
+              <span class="font-medium">{{ $t('page.manage.game.tabs.assetGuide') }}</span>
+            </NSpace>
+          </template>
+          <!-- Scrollable content wrapper -->
+          <div style="max-height: 60vh; overflow-y: auto;" class="pr-2">
+            <div class="p-4">
+              <NAlert type="info" :title="$t('page.manage.game.assetGuide.optimizationTitle')" class="mb-6">
+                {{ $t('page.manage.game.assetGuide.optimizationDesc') }}
+              </NAlert>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div 
+                  v-for="asset in imageSpec.assets" 
+                  :key="asset.name"
+                  class="bg-white rounded-12px border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
+                >
+                  <div>
+                    <div class="flex items-center justify-between mb-3">
+                      <span class="font-bold text-gray-800">{{ asset.name }}</span>
+                      <NTag size="small" :bordered="false" type="primary">{{ asset.format }}</NTag>
+                    </div>
+                    <div class="space-y-2">
+                      <div class="flex items-center text-sm">
+                        <span class="text-gray-500 w-24">{{ $t('page.manage.game.assetGuide.targetSize') }}:</span>
+                        <span class="font-mono text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{{ asset.size }}</span>
+                      </div>
+                      <div class="text-xs text-gray-400 mt-2 italic">
+                        {{ asset.note }}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div v-if="asset.mappingKey" class="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-2">
+                    <!-- Special handling for Prizes: Redirect to Prize Config Tab -->
+                    <div v-if="asset.mappingKey.toLowerCase().includes('prize')" class="flex flex-col gap-2">
+                      <NButton 
+                        block 
+                        dashed 
+                        type="warning" 
+                        @click="activeTab = 'prizes'"
+                      >
+                        <template #icon><icon-mdi-gift /></template>
+                        {{ $t('page.manage.game.common.managePrizes') || 'Manage Prizes & Icons' }}
+                      </NButton>
+                      <div class="text-xs text-gray-400 text-center italic">
+                        {{ $t('page.manage.game.assetGuide.prizeRedirectTip') || 'Please configure prize icons in the Prizes tab' }}
+                      </div>
+                    </div>
+
+                    <!-- Standard Asset Controls -->
+                    <div v-else class="flex gap-2">
+                      <NButton 
+                        class="flex-1"
+                        :secondary="!formModel[asset.mappingKey]" 
+                        :type="formModel[asset.mappingKey] ? 'success' : 'primary'" 
+                        size="small"
+                        @click="triggerUpload(asset.mappingKey, asset.mappingKey, 'branding')"
+                      >
+                        <template #icon><icon-mdi-upload /></template>
+                        {{ formModel[asset.mappingKey] ? $t('page.manage.game.common.uploadSuccessCheck') : $t('page.manage.game.assetGuide.clickToUpload') }}
+                      </NButton>
+                      <NTooltip v-if="formModel[asset.mappingKey]" trigger="hover">
+                        <template #trigger>
+                          <NButton 
+                            secondary
+                            type="primary"
+                            size="small"
+                            @click="openPreview(formModel[asset.mappingKey], asset.name)"
+                          >
+                            <template #icon><icon-mdi-eye /></template>
+                          </NButton>
+                        </template>
+                        {{ $t('page.manage.game.common.preview') }}
+                      </NTooltip>
+                      <NTooltip v-if="formModel[asset.mappingKey]" trigger="hover">
+                        <template #trigger>
+                          <NButton 
+                            secondary
+                            type="error"
+                            size="small"
+                            @click="clearAsset(asset.mappingKey)"
+                          >
+                            <template #icon><icon-mdi-delete /></template>
+                          </NButton>
+                        </template>
+                        {{ $t('page.manage.game.common.removeAsset') }}
+                      </NTooltip>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="imageSpec.performanceTips?.length" class="mt-8 bg-amber-50 rounded-12px p-6 border border-amber-100">
+                <h4 class="text-amber-800 font-bold mb-4 flex items-center">
+                  <icon-mdi-lightning-bolt class="mr-2" />
+                  {{ $t('page.manage.game.assetGuide.performanceTips') }}
+                </h4>
+                <ul class="space-y-2 text-sm text-amber-700">
+                  <li v-for="(tip, idx) in imageSpec.performanceTips" :key="idx" class="flex items-start">
+                    <span class="mr-2">🔥</span> {{ tip }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div><!-- Close scrollable wrapper -->
         </NTabPane>
       </NTabs>
     </template>
@@ -1793,4 +1993,20 @@ function isFontSelect(item: SchemaItem): boolean {
   </NForm>
   
   <input type="file" ref="uploadRef" class="hidden" :accept="currentUploadTarget?.accept || 'image/*'" :key="currentUploadTarget?.accept" @change="handleFileChange" />
+
+  <NModal v-model:show="showPreviewModal" preset="card" :title="previewTitle" class="w-11/12 max-w-600px">
+    <div class="flex flex-col items-center">
+      <NImage 
+        v-if="previewUrl && !previewUrl.endsWith('.mp3') && !previewUrl.endsWith('.wav') && !previewUrl.endsWith('.ogg')" 
+        :src="previewUrl" 
+        class="max-w-full max-h-500px object-contain rounded-lg shadow-lg"
+        preview-disabled
+      />
+      <div v-else-if="previewUrl" class="w-full py-8 text-center bg-gray-50 rounded-lg">
+        <span class="text-4xl mb-4 block">🎵</span>
+        <div class="text-lg font-bold mb-4">{{ getAssetFilename(previewUrl) }}</div>
+        <audio :src="previewUrl" controls class="mx-auto" />
+      </div>
+    </div>
+  </NModal>
 </template>

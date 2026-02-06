@@ -7,10 +7,12 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Copy root package files (monorepo)
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
 
-# Copy API package files
+# Copy all package files to ensure workspace resolution
 COPY apps/api/package.json ./apps/api/
+COPY apps/soybean-admin/package.json ./apps/soybean-admin/
+COPY apps/web-app/package.json ./apps/web-app/
 
 # Install all dependencies
 RUN pnpm install --frozen-lockfile
@@ -18,12 +20,8 @@ RUN pnpm install --frozen-lockfile
 # Copy API source
 COPY apps/api ./apps/api
 
-# Copy shared .env if exists
-COPY .env* ./
-
-# Build API
-WORKDIR /app/apps/api
-RUN pnpm build
+# Build API from root
+RUN pnpm --filter api build
 
 # ============ Production ============
 FROM node:20-alpine AS production
@@ -35,12 +33,14 @@ COPY apps/api/package.json ./
 
 # Copy built files from builder
 COPY --from=builder /app/apps/api/dist ./dist
+# Copy template assets
+COPY --from=builder /app/apps/api/uploads ./uploads
 
 # Install production dependencies directly
 RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --prod
 
-# Create uploads directory
-RUN mkdir -p uploads public
+# Create public directory
+RUN mkdir -p public
 
 ENV NODE_ENV=production
 ENV PORT=3000
