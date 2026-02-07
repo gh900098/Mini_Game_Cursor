@@ -940,8 +940,11 @@ export class SeedService {
 
                                     // Jackpot Outcome Group
                                     { key: 'jackpot_group_title', type: 'divider', label: 'page.manage.game.visuals.jackpotOutcome', span: 24 },
+                                    { key: 'resultJackpotBackground', type: 'image', label: 'page.manage.game.visuals.jackpotBackground', span: 12 },
+                                    { key: 'resultJackpotTitleImage', type: 'image', label: 'page.manage.game.visuals.jackpotTitle', span: 12 },
                                     { key: 'jackpotTitle', type: 'text', label: 'page.manage.game.effects.jackpotTitle', default: '🎉 JACKPOT!!! 🎉', span: 12 },
-                                    { key: 'jackpotSubtitle', type: 'text', label: 'page.manage.game.effects.jackpotSubtitle', default: 'INCREDIBLE WIN!', span: 12 }
+                                    { key: 'jackpotSubtitle', type: 'text', label: 'page.manage.game.effects.jackpotSubtitle', default: 'INCREDIBLE WIN!', span: 12 },
+                                    { key: 'resultJackpotButtonImage', type: 'image', label: 'page.manage.game.visuals.jackpotButton', span: 24 }
                                 ]
                             }
                         ]
@@ -1284,6 +1287,7 @@ export class SeedService {
                 ]
             }
         ];
+        console.log('🌱 Seeding Games... Force Update v3');
 
         for (const gameData of games) {
             const existing = await this.gameRepository.findOne({ where: { slug: gameData.slug } });

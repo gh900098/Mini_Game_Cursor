@@ -273,7 +273,14 @@ getData();
     </NModal>
 
     <!-- Configuration Modal -->
-    <NModal v-model:show="configVisible" preset="card" title="Game Configuration" class="w-1000px rounded-16px">
+    <NModal 
+      v-model:show="configVisible" 
+      preset="card" 
+      title="Game Configuration" 
+      class="w-1000px rounded-16px"
+      :mask-closable="false"
+      :close-on-esc="false"
+    >
       <div v-if="selectedTemplate">
         <!-- Header Info -->
         <div class="mb-4 flex items-center bg-primary/5 p-4 rounded-12px border border-primary/10">

@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, h, nextTick } from 'vue';
-import { NForm, NFormItem, NInput, NInputNumber, NSelect, NColorPicker, NDynamicInput, NTabs, NTabPane, NGrid, NGridItem, NButton, NSpace, NAlert, NSlider, NSwitch, NInputGroup, NInputGroupLabel, NTooltip, NImage, NCheckboxGroup, NCheckbox, NTimePicker, NRadio, NRadioGroup, NRadioButton, NCollapse, NCollapseItem, NIcon } from 'naive-ui';
+import { NForm, NFormItem, NInput, NInputNumber, NSelect, NColorPicker, NDynamicInput, NTabs, NTabPane, NGrid, NGridItem, NButton, NSpace, NAlert, NSlider, NSwitch, NInputGroup, NInputGroupLabel, NTooltip, NImage, NCheckboxGroup, NCheckbox, NTimePicker, NRadio, NRadioGroup, NRadioButton, NCollapse, NCollapseItem, NIcon, NModal, NCard, NScrollbar, NPopover } from 'naive-ui';
 import { useI18n } from 'vue-i18n';
 import { request } from '@/service/request';
+import { fetchDesignGuide } from '@/service/api/management';
 
 // Extend the window object to potentially access parent methods or simply use local logic
 const { t, te, locale, availableLocales } = useI18n();
 
 
 const uploadRef = ref<HTMLInputElement | null>(null);
-const currentUploadTarget = ref<{ key: string, item?: any, name?: string, category?: string, accept?: string } | null>(null);
+const currentUploadTarget = ref<{ key: string, item?: any, name?: string, category?: string, accept?: string, targetField?: string } | null>(null);
 
-async function triggerUpload(key: string, name?: string, category?: string, item?: any, accept: string = 'image/*') {
-  currentUploadTarget.value = { key, name, category, item, accept };
+async function triggerUpload(key: string, name?: string, category?: string, item?: any, accept: string = 'image/*', targetField: string = 'icon') {
+  currentUploadTarget.value = { key, name, category, item, accept, targetField };
   // Wait for Vue to update the DOM (accept attribute)
   await nextTick();
   // Reset input value to allow selecting same file again
@@ -53,7 +54,9 @@ async function handleFileChange(event: Event) {
 
   if (!error && data?.url) {
     if (currentUploadTarget.value.item) {
-      currentUploadTarget.value.item.icon = data.url;
+      // Use the specified target field (default 'icon')
+      const field = currentUploadTarget.value.targetField || 'icon';
+      currentUploadTarget.value.item[field] = data.url;
     } else if (currentUploadTarget.value.key.includes('.')) {
       // Handle nested mapping keys (e.g., prizeList.0.icon)
       const keys = currentUploadTarget.value.key.split('.');
@@ -63,9 +66,12 @@ async function handleFileChange(event: Event) {
         if (!current[k]) current[k] = isNaN(Number(keys[i + 1])) ? {} : [];
         current = current[k];
       }
-      current[keys[keys.length - 1]] = data.url;
+      const timestamp = new Date().getTime();
+      const urlWithTimestamp = `${data.url}?t=${timestamp}`;
+      current[keys[keys.length - 1]] = urlWithTimestamp;
     } else {
-      formModel.value[currentUploadTarget.value.key] = data.url;
+      const timestamp = new Date().getTime();
+      formModel.value[currentUploadTarget.value.key] = `${data.url}?t=${timestamp}`;
     }
 
     // Auto-apply feature settings
@@ -113,11 +119,62 @@ const showPreviewModal = ref(false);
 const previewUrl = ref('');
 const previewTitle = ref('');
 
+// Design Guide Modal
+const showDesignGuideModal = ref(false);
+const designGuideContent = ref('');
+const designGuideThemeName = ref('');
+const loadingDesignGuide = ref(false);
+
 function openPreview(url: string, title: string = 'Asset Preview') {
   if (!url) return;
   previewUrl.value = url;
   previewTitle.value = title;
   showPreviewModal.value = true;
+}
+
+// Design Guide Functions
+async function openDesignGuide() {
+  // Get game slug from parent's selectedTemplate (passed via config modal)
+  const gameSlug = window.parent?.document?.querySelector('[data-game-slug]')?.getAttribute('data-game-slug');
+  
+  if (!formModel.value.themePreset) {
+    window.$message?.warning(t('page.manage.game.assetGuide.noThemeSelected') || 'Please select a theme first');
+    return;
+  }
+
+  // Default to 'spin-wheel' if we can't determine the game slug
+  const slug = gameSlug || 'spin-wheel';
+
+  loadingDesignGuide.value = true;
+  showDesignGuideModal.value = true;
+
+  const { data, error } = await fetchDesignGuide(slug);
+  
+  loadingDesignGuide.value = false;
+
+  if (!error && data) {
+    designGuideContent.value = data.content;
+    designGuideThemeName.value = data.themeName;
+  } else {
+    window.$message?.error(t('page.manage.game.assetGuide.designGuideNotFound') || 'Design guide not found for this theme');
+    showDesignGuideModal.value = false;
+  }
+}
+
+function downloadDesignGuide() {
+  if (!designGuideContent.value) return;
+
+  const blob = new Blob([designGuideContent.value], { type: 'text/markdown' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${formModel.value.themePreset || 'theme'}-design-guide.md`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+
+  window.$message?.success(t('page.manage.game.assetGuide.downloadSuccess') || 'Design guide downloaded successfully');
 }
 
 // Audio Mode Helpers
@@ -290,7 +347,11 @@ function updateColor(key: string, index: number, color: string) {
 }
 
 // Emoji list helpers
-const presetEmojis = ['🎉', '🎊', '🎈', '🎁', '⭐', '🌟', '💫', '✨', '❤️', '💙', '💚', '💛', '💜', '🧡', '🏆', '🥇', '👑', '💎', '🔥', '🎯'];
+const presetEmojis = [
+  '🎉', '🎊', '🎈', '🎁', '⭐', '🌟', '💫', '✨', '❤️', '💙', '💚', '💛', '💜', '🧡', '🏆', 
+  '🥇', '👑', '💎', '🔥', '🎯', '💰', '💵', '💸', '🤑', '🤣', '🤔', '👍', '👎', '💩', '👻', 
+  '💀', '👽', '🤖', '🎃', '🎄', '🎅', '🎆', '🎇', '🧨', '🧧', '🎰', '🎲', '🎱', '🎳', '🎼'
+];
 
 function getEmojiList(key: string): string[] {
   const value = formModel.value[key];
@@ -378,7 +439,7 @@ function triggerConfettiPreview(colors: string[], shapeType: string, emojis: str
 
 interface SchemaItem {
   key: string;
-  type: 'string' | 'number' | 'select' | 'color' | 'list' | 'prize-list' | 'vip-grid' | 'embed-code' | 'switch-group' | 'slider' | 'time-limit' | 'dynamic-prob' | 'budget-control' | 'image' | 'radio' | 'collapse-group' | 'switch' | 'file' | 'color-list' | 'emoji-list' | 'font-select' | 'divider';
+  type: 'string' | 'text' | 'number' | 'select' | 'color' | 'list' | 'prize-list' | 'vip-grid' | 'embed-code' | 'switch-group' | 'slider' | 'time-limit' | 'dynamic-prob' | 'budget-control' | 'image' | 'radio' | 'collapse-group' | 'switch' | 'file' | 'color-list' | 'emoji-list' | 'font-select' | 'divider';
   label: string;
   default?: any;
   options?: string[] | { label: string; value: string }[];
@@ -515,6 +576,36 @@ watch(() => props.schema, (newSchema) => {
     }
   }
 }, { immediate: true, deep: true });
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (val) {
+      // Create a deep copy to avoid direct mutation of prop
+      const data = JSON.parse(JSON.stringify(val));
+      let changed = false;
+      
+      // Ensure all prizes have a prizeType (default to 'cash')
+      if (Array.isArray(data.prizeList)) {
+        data.prizeList.forEach((p: any) => {
+          if (!p.prizeType) {
+             p.prizeType = 'cash';
+             changed = true;
+          }
+          if (p.description === undefined) {
+             p.description = '';
+             changed = true;
+          }
+        });
+      }
+      
+      if (changed) {
+        formModel.value = data;
+      }
+    }
+  },
+  { immediate: true, deep: true }
+);
 
 // Full theme presets with all settings (background, colors, effects, BGM, etc.)
 const FULL_THEME_PRESETS: Record<string, any> = {
@@ -726,14 +817,32 @@ function getTotalChance(key: string) {
 
 function getExpectedValue(key: string) {
     const list = formModel.value[key];
-    if (!Array.isArray(list)) return 0;
-    // Expected Value = Sum(Value * (Weight/100))
-    const total = list.reduce((acc, curr) => {
-        const val = Number(curr.value) || 0;
-        const weight = Number(curr.weight) || 0;
-        return acc + (val * (weight / 100));
+    if (!Array.isArray(list)) return '0.00';
+    
+    // Expected Value = Sum(Value * (Weight/100)) for cash prizes
+    const cashTotal = list.reduce((acc, curr) => {
+        if (!curr.prizeType || curr.prizeType === 'cash') {
+            const val = Number(curr.value) || 0;
+            const weight = Number(curr.weight) || 0;
+            return acc + (val * (weight / 100));
+        }
+        return acc;
     }, 0);
-    return total.toFixed(2);
+
+    const physicalCount = list.filter(p => p.prizeType === 'physical').length;
+    const egiftCount = list.filter(p => p.prizeType === 'egift').length;
+
+    let result = `$${cashTotal.toFixed(2)}`;
+    
+    if (physicalCount > 0) {
+        result += ` + ${physicalCount} Physical`;
+    }
+    
+    if (egiftCount > 0) {
+        result += ` + ${egiftCount} E-Gift`;
+    }
+    
+    return result;
 }
 
 function isTabValid(tabName: string): boolean {
@@ -860,7 +969,7 @@ function moveItem(key: string, index: number | string, direction: 'up' | 'down')
 
 function addPrizeItem(key: string) {
   if (!Array.isArray(formModel.value[key])) formModel.value[key] = [];
-  formModel.value[key].push({ icon: '🎁', label: 'New Prize', weight: 10, color: '#3b82f6', value: 0, isJackpot: false, isLose: false });
+  formModel.value[key].push({ icon: '🎁', label: 'New Prize', weight: 10, color: '#3b82f6', value: 0, isJackpot: false, isLose: false, prizeType: 'cash', description: '' });
 }
 
 function removePrizeItem(key: string, index: number | string) {
@@ -1118,6 +1227,15 @@ function isFontSelect(item: SchemaItem): boolean {
     return result;
 }
 
+function editIconText(p: any) {
+    // Determine current value to show in prompt
+    const current = (p.icon && !p.icon.startsWith('http') && !p.icon.startsWith('/')) ? p.icon : '🎁';
+    const newVal = window.prompt('Enter emoji or text (e.g. 🎁, 💎, $):', current);
+    if (newVal !== null) {
+        p.icon = newVal;
+    }
+}
+
 </script>
 
 <template>
@@ -1148,7 +1266,7 @@ function isFontSelect(item: SchemaItem): boolean {
                       <div class="w-px h-10 bg-gray-200 hidden sm:block"></div>
                       <div class="flex flex-col min-w-120px">
                          <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">{{ t('page.manage.game.common.expectedValue') }}</span>
-                         <span class="text-2xl font-black text-gray-700 tabular-nums">${{ getExpectedValue('prizeList') }}</span>
+                         <span class="text-2xl font-black text-gray-700 tabular-nums">{{ getExpectedValue('prizeList') }}</span>
                      </div>
                      <div class="flex-1"></div>
                      <NSpace align="center">
@@ -1187,7 +1305,7 @@ function isFontSelect(item: SchemaItem): boolean {
                               </div>
                              
                               <!-- Color Picker & Hex Input -->
-                               <div class="w-100px flex-shrink-0">
+                               <div class="w-16 flex-shrink-0">
                                    <NColorPicker
                                       v-model:value="p.color"
                                       :show-alpha="false"
@@ -1205,44 +1323,158 @@ function isFontSelect(item: SchemaItem): boolean {
                                    />
                                </div>
 
+                               <!-- Background Image Upload -->
+                               <div class="w-10 flex-shrink-0 flex justify-center">
+                                   <NTooltip trigger="hover">
+                                       <template #trigger>
+                                           <div 
+                                               class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center cursor-pointer hover:border-primary hover:bg-gray-50 transition-colors relative overflow-hidden"
+                                               @click="triggerUpload(item.key, undefined, 'prizes', p, 'image/*', 'backgroundImage')"
+                                               :style="p.backgroundImage ? { backgroundImage: `url(${p.backgroundImage})`, backgroundSize: 'cover' } : {}"
+                                           >
+                                               <span v-if="!p.backgroundImage" class="text-xs opacity-50">🖼️</span>
+                                               <!-- Remove Overlay (Top-Right Badge) -->
+                                               <div v-if="p.backgroundImage" 
+                                                    class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-red-600 transition-colors z-10"
+                                                    @click.stop="p.backgroundImage = ''"
+                                               >
+                                                   <span class="text-[10px] font-bold">✕</span>
+                                               </div>
+                                           </div>
+                                       </template>
+                                       Slice Background
+                                   </NTooltip>
+                               </div>
+
                               <!-- Icon / Image -->
-                              <div class="w-12 h-12 flex-shrink-0 flex items-center justify-center bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden group/icon relative">
-                                  <img v-if="p.icon && (p.icon.startsWith('http') || p.icon.startsWith('/'))" :src="p.icon" class="w-full h-full object-contain p-1" />
-                                  <NInput v-else v-model:value="p.icon" :bordered="false" class="text-center p-0" />
-                                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/icon:opacity-100 flex items-center justify-center transition-opacity cursor-pointer" @click="triggerUpload(item.key, undefined, 'prizes', p)">
-                                      <span class="text-white text-14px">📁</span>
+                              <!-- Icon / Image -->
+                              <div class="w-12 h-12 flex-shrink-0 relative group/icon">
+                                  <div class="w-full h-full flex items-center justify-center bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden cursor-pointer hover:border-primary transition-colors"
+                                       @click="triggerUpload(item.key, undefined, 'prizes', p)">
+                                      <img v-if="p.icon && (p.icon.startsWith('http') || p.icon.startsWith('/'))" :src="p.icon" class="w-full h-full object-contain p-1" />
+                                      <span v-else class="text-2xl select-none">{{ p.icon || '🎁' }}</span>
+                                  </div>
+                                  
+                                  <!-- Always Visible Remove Badge (Images) -->
+                                  <div v-if="p.icon && (p.icon.startsWith('http') || p.icon.startsWith('/'))"
+                                       class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-red-600 transition-colors z-10"
+                                       @click.stop="clearAsset(item.key, p)"
+                                       title="Remove Image">
+                                      <span class="text-xs font-bold">✕</span>
+                                  </div>
+
+                                  <!-- Image Settings (Scale) -->
+                                  <div v-if="p.icon && (p.icon.startsWith('http') || p.icon.startsWith('/'))" @click.stop class="absolute -bottom-2 -right-2 z-10 w-5 h-5">
+                                    <n-popover trigger="click" placement="bottom" style="padding: 0;">
+                                      <template #trigger>
+                                        <div class="w-5 h-5 bg-gray-600 rounded-full text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-gray-700 transition-colors"
+                                             title="Image Settings">
+                                            <span class="text-[10px]">⚙️</span>
+                                        </div>
+                                      </template>
+                                      <div class="p-3 w-48">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-xs font-bold">Image Size</span>
+                                            <span class="text-xs text-gray-500">{{ Math.round((p.imageScale || 1) * 100) }}%</span>
+                                        </div>
+                                        <n-slider v-model:value="p.imageScale" :min="0.5" :max="2.5" :step="0.1" size="small" :default-value="1" class="mb-4" />
+                                        
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-xs font-bold">Rotation</span>
+                                            <span class="text-xs text-gray-500">{{ p.imageRotation || 0 }}°</span>
+                                        </div>
+                                        <n-slider v-model:value="p.imageRotation" :min="0" :max="360" :step="15" size="small" :default-value="0" />
+                                      </div>
+                                    </n-popover>
+                                  </div>
+
+                                  <!-- Edit Emoji Button (Text/Emoji) -->
+                                  <div v-else @click.stop class="absolute -top-2 -right-2 z-10">
+                                    <n-popover trigger="click" placement="right" style="padding: 0;">
+                                      <template #trigger>
+                                        <div class="w-5 h-5 bg-blue-500 rounded-full text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-blue-600 transition-colors"
+                                             title="Edit Emoji">
+                                            <span class="text-xs font-bold">✎</span>
+                                        </div>
+                                      </template>
+                                      <div class="p-4 w-72">
+                                        <div class="font-bold mb-2">Select Icon</div>
+                                        <n-input v-model:value="p.icon" placeholder="Type text or emoji (e.g. 🎁)" class="mb-3" />
+                                        <div class="grid grid-cols-6 gap-2 max-h-48 overflow-y-auto">
+                                           <div v-for="emoji in presetEmojis" :key="emoji" 
+                                                class="cursor-pointer hover:bg-gray-100 p-1 text-center rounded text-xl border border-transparent hover:border-gray-200"
+                                                @click="p.icon = emoji">
+                                              {{ emoji }}
+                                           </div>
+                                        </div>
+                                      </div>
+                                    </n-popover>
                                   </div>
                               </div>
 
                               <!-- Label -->
-                              <div class="flex-grow min-w-120px">
-                                  <NInput v-model:value="p.label" :placeholder="t('page.manage.game.common.prizeName')" round />
+                              <div class="w-28 md:w-32 flex-shrink-0">
+                                  <NInput v-model:value="p.label" :placeholder="t('page.manage.game.common.prizeName')" round size="small" />
                               </div>
 
-                              <!-- Value -->
-                              <div class="w-90px flex-shrink-0">
+                              <!-- Prize Type Selector -->
+                              <div class="w-16 flex-shrink-0">
+                                  <NTooltip trigger="hover">
+                                    <template #trigger>
+                                      <NSelect 
+                                          v-model:value="p.prizeType" 
+                                          :options="[
+                                              { label: '💰', value: 'cash', title: 'Cash' },
+                                              { label: '🎁', value: 'physical', title: 'Physical Item' },
+                                              { label: '📧', value: 'egift', title: 'E-Gift' }
+                                          ]"
+                                          size="small"
+                                          :fallback-option="false"
+                                          @update:value="() => { if (!p.prizeType) p.prizeType = 'cash'; }"
+                                          :render-label="(option) => option.label"
+                                      />
+                                    </template>
+                                    {{ 
+                                      p.prizeType === 'cash' ? 'Cash / Token' : 
+                                      p.prizeType === 'physical' ? 'Physical Prize' : 
+                                      'E-Gift / Voucher' 
+                                    }}
+                                  </NTooltip>
+                              </div>
+
+                              <!-- Value (only for cash type) -->
+                              <div v-if="!p.prizeType || p.prizeType === 'cash'" class="w-90px flex-shrink-0">
                                   <NInputGroup>
                                     <NInputGroupLabel>$</NInputGroupLabel>
                                     <NInputNumber v-model:value="p.value" :show-button="false" placeholder="0" />
                                   </NInputGroup>
                               </div>
 
+                              <!-- Description (for physical/egift) -->
+                              <div v-else class="w-150px flex-shrink-0">
+                                  <NInput 
+                                      v-model:value="p.description" 
+                                      :placeholder="p.prizeType === 'physical' ? 'e.g., iPhone 15 Pro' : 'e.g., $50 Amazon Card'"
+                                      size="small"
+                                  />
+                              </div>
+
                               <!-- Probability Slider -->
-                              <div class="flex-1 min-w-180px px-2 flex items-center gap-2">
+                              <div class="w-32 px-1 flex items-center gap-1 flex-shrink-0">
                                   <NSlider v-model:value="p.weight" :step="1" :min="0" :max="100" class="flex-1" :tooltip="false">
                                       <template #thumb>
-                                          <div class="w-4 h-4 rounded-full shadow-sm border-2 border-white" :style="{ backgroundColor: p.color }"></div>
+                                          <div class="w-3 h-3 rounded-full shadow-sm border border-white" :style="{ backgroundColor: p.color }"></div>
                                       </template>
                                   </NSlider>
-                                  <div class="w-16">
-                                      <NInputNumber v-model:value="p.weight" size="small" :show-button="false">
-                                          <template #suffix>%</template>
+                                  <div class="w-11">
+                                      <NInputNumber v-model:value="p.weight" size="tiny" :show-button="false">
+                                          <template #suffix><span class="text-[10px]">%</span></template>
                                       </NInputNumber>
                                   </div>
                               </div>
 
                               <!-- Prize Type Toggles -->
-                              <div class="flex items-center gap-3 flex-shrink-0">
+                              <div class="flex items-center gap-1 flex-shrink-0">
                                   <NTooltip>
                                       <template #trigger>
                                           <div class="flex items-center gap-1">
@@ -1614,9 +1846,15 @@ function isFontSelect(item: SchemaItem): boolean {
                                                   </div>
                                                 </div>
 
-                                                <NInput v-else v-model:value="formModel[subItem.key]" />
+                                                <NInputNumber v-else-if="subItem.type === 'number'" v-model:value="formModel[subItem.key]" :show-button="false" class="w-full">
+     <template v-if="subItem.suffix" #suffix>{{ subItem.suffix }}</template>
+</NInputNumber>
+
+<NInput v-else v-model:value="formModel[subItem.key]" />
                                              </NFormItem>
-                                        </NGridItem>
+                                             
+                                             
+                                          </NGridItem>
                                     </template>
                                 </NGrid>
                             </div>
@@ -1885,6 +2123,20 @@ function isFontSelect(item: SchemaItem): boolean {
                 {{ $t('page.manage.game.assetGuide.optimizationDesc') }}
               </NAlert>
 
+              <!-- Design Guide Button -->
+              <div class="mb-6 flex justify-end">
+                <NButton 
+                  type="primary" 
+                  @click="openDesignGuide"
+                  :disabled="!formModel.themePreset"
+                >
+                  <template #icon>
+                    <icon-mdi-file-document-outline />
+                  </template>
+                  {{ $t('page.manage.game.assetGuide.viewDesignGuide') || 'View Design Guide' }}
+                </NButton>
+              </div>
+
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div 
                   v-for="asset in imageSpec.assets" 
@@ -2009,4 +2261,47 @@ function isFontSelect(item: SchemaItem): boolean {
       </div>
     </div>
   </NModal>
+
+  <!-- Design Guide Modal -->
+  <NModal 
+    v-model:show="showDesignGuideModal" 
+    preset="card" 
+    :title="$t('page.manage.game.assetGuide.designGuideTitle') || 'Theme Design Guide'"
+    class="w-11/12 max-w-1200px"
+    :segmented="{ content: true, footer: 'soft' }"
+  >
+    <template #header-extra>
+      <NButton 
+        type="primary" 
+        @click="downloadDesignGuide"
+        :disabled="!designGuideContent"
+      >
+        <template #icon>
+          <icon-mdi-download />
+        </template>
+        {{ $t('page.manage.game.assetGuide.downloadGuide') || 'Download Guide' }}
+      </NButton>
+    </template>
+
+    <NScrollbar style="max-height: 70vh">
+      <div v-if="loadingDesignGuide" class="flex justify-center items-center py-20">
+        <NSpace vertical align="center">
+          <icon-mdi-loading class="animate-spin text-4xl text-primary" />
+          <span class="text-gray-500">{{ $t('common.loading') || 'Loading...' }}</span>
+        </NSpace>
+      </div>
+      
+      <div v-else-if="designGuideContent" class="prose prose-sm max-w-none p-6">
+        <pre class="whitespace-pre-wrap font-sans text-sm leading-relaxed">{{ designGuideContent }}</pre>
+      </div>
+
+      <div v-else class="flex justify-center items-center py-20">
+        <NSpace vertical align="center">
+          <icon-mdi-file-document-outline class="text-6xl text-gray-300" />
+          <span class="text-gray-500">{{ $t('page.manage.game.assetGuide.noContent') || 'No content available' }}</span>
+        </NSpace>
+      </div>
+    </NScrollbar>
+  </NModal>
 </template>
+
