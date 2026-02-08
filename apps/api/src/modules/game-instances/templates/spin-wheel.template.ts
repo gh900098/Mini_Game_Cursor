@@ -92,6 +92,11 @@ export interface SpinWheelConfig {
     resultWinButtonImage?: string;
     resultLoseButtonImage?: string;
 
+    // Jackpot Popup
+    jackpotResultBackground?: string;
+    jackpotResultTitleImage?: string;
+    jackpotResultButtonImage?: string;
+
     // Font
     gameFont: string;
 
@@ -792,9 +797,9 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
 
         <div class="hud-bottom">
             <button class="spin-btn" id="spin-btn" onclick="spin()" disabled style="opacity: 0.5; cursor: not-allowed;">
-                ${!cfg.spinBtnImage ? `
-                <div class="spin-label">${cfg.spinBtnText}</div>
-                <div class="spin-sub">${cfg.spinBtnSubtext}</div>` : ''}
+                ${cfg.spinBtnText || cfg.spinBtnSubtext ? `
+                <div class="spin-label">${cfg.spinBtnText || ''}</div>
+                <div class="spin-sub">${cfg.spinBtnSubtext || ''}</div>` : ''}
             </button>
             <div id="status-msg">LOADING...</div>
         </div>
@@ -978,9 +983,11 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
             // Explicit check only (Auto-detection removed by request)
             const isJackpot = prize.isJackpot;
             
-            const isLose = prize.isLose || 
-                (prize.value === 0 || prize.value === '0') ||
-                (prize.label && /try again|lose|sorry|better luck|没中|再试/i.test(prize.label));
+            // A prize is a loss ONLY if it's not a jackpot AND meets loss criteria
+            // Criteria: marked as isLose OR (Value is 0 AND it's a cash prize) OR label contains loss keywords
+            const isLose = !isJackpot && (prize.isLose || 
+                ((prize.value === 0 || prize.value === '0') && (!prize.prizeType || prize.prizeType === 'cash')) ||
+                (prize.label && /try again|lose|sorry|better luck|没中|再试/i.test(prize.label)));
             
             let soundUrl = null;
             let shouldPlaySynthesized = false;
@@ -1164,11 +1171,21 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
             // Gradient definitions
             svg += '<defs>';
             prizeList.forEach((p, i) => {
-                const color = p.color || ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4'][i % 6];
-                svg += \`<linearGradient id="g\${i}" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="\${color}" stop-opacity="1"/>
-                    <stop offset="100%" stop-color="\${color}" stop-opacity="0.7"/>
-                </linearGradient>\`;
+                if (p.backgroundImage) {
+                    const imgUrl = getUrlLocal(p.backgroundImage);
+                    const midAngle = (i + 0.5) * angle;
+                    const rotate = midAngle; 
+                    
+                    svg += \`<pattern id="fill-\${i}" patternUnits="userSpaceOnUse" width="400" height="400" patternTransform="rotate(\${rotate}, 200, 200)">
+                        <image href="\${imgUrl}" x="0" y="0" width="400" height="400" preserveAspectRatio="none" />
+                    </pattern>\`;
+                } else {
+                    const color = p.color || ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4'][i % 6];
+                    svg += \`<linearGradient id="fill-\${i}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="\${color}" stop-opacity="1"/>
+                        <stop offset="100%" stop-color="\${color}" stop-opacity="0.7"/>
+                    </linearGradient>\`;
+                }
             });
             svg += '</defs>';
 
@@ -1180,7 +1197,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                 const y1 = 200 + 200 * Math.sin((start - 90) * Math.PI / 180);
                 const x2 = 200 + 200 * Math.cos((end - 90) * Math.PI / 180);
                 const y2 = 200 + 200 * Math.sin((end - 90) * Math.PI / 180);
-                svg += \`<path d="M200,200 L\${x1},\${y1} A200,200 0 0,1 \${x2},\${y2} Z" fill="url(#g\${i})"/>\`;
+                svg += \`<path d="M200,200 L\${x1},\${y1} A200,200 0 0,1 \${x2},\${y2} Z" fill="url(#fill-\${i})"/>\`;
             });
             
             // Dividers (image only, line dividers removed)
@@ -1207,9 +1224,23 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                 const ty = 200 + dist * Math.sin((mid - 90) * Math.PI / 180);
                 const textColor = p.textColor || '#fff';
                 svg += \`<g transform="translate(\${tx},\${ty}) rotate(\${mid})">
-                    <text fill="\${textColor}" font-size="10" font-weight="bold" text-anchor="middle" dy="-8">\${p.label}</text>
-                    <text font-size="28" text-anchor="middle" dy="22">\${p.icon || '🎁'}</text>
-                </g>\`;
+                    <text fill="\${textColor}" font-size="10" font-weight="bold" text-anchor="middle" dy="-8">\${p.label}</text>\`;
+                
+                if (p.icon && (p.icon.startsWith('http') || p.icon.startsWith('/') || p.icon.startsWith('data:'))) {
+                     const scale = p.imageScale || 1;
+                     const size = 30 * scale;
+                     const x = -size / 2;
+                     const y = 20 - size / 2; // Center at y=20 (original center of text at dy=22 roughly, or icon box)
+                     const rotation = p.imageRotation || 0;
+                     // Rotate around the center of the image (0, 20)
+                     const transform = rotation ? \` transform="rotate(\${rotation}, 0, 20)"\` : '';
+                     
+                     svg += \`<image href="\${getUrlLocal(p.icon)}" x="\${x}" y="\${y}" width="\${size}" height="\${size}" preserveAspectRatio="xMidYMid meet"\${transform} />\`;
+                } else {
+                     svg += \`<text font-size="28" text-anchor="middle" dy="22">\${p.icon || '🎁'}</text>\`;
+                }
+                
+                svg += '</g>';
             });
             
             svg += '</svg>';
@@ -1354,10 +1385,15 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                 
                 // Show result
                 const prize = prizeList[winnerIdx];
-                const isLose = prize.isLose || 
-                    (prize.value === 0 || prize.value === '0') ||
-                    (prize.label && /try again|lose|sorry|better luck|没中|再试/i.test(prize.label));
+                
+                // PRIORITY: If it's a Jackpot, it's NOT a loss, even if value is 0
                 const isJackpot = prize.isJackpot || (prize.label && prize.label.toLowerCase().includes('jackpot'));
+                
+                // A prize is a loss ONLY if it's not a jackpot AND meets loss criteria
+                // Criteria: marked as isLose OR (Value is 0 AND it's a cash prize) OR label contains loss keywords
+                const isLose = !isJackpot && (prize.isLose || 
+                    ((prize.value === 0 || prize.value === '0') && (!prize.prizeType || prize.prizeType === 'cash')) ||
+                    (prize.label && /try again|lose|sorry|better luck|没中|再试/i.test(prize.label)));
 
                 const resultCard = document.getElementById('result-card');
                 const resultBadge = document.getElementById('result-badge');
@@ -1402,44 +1438,90 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
                     }
                 } else {
                     // WIN / JACKPOT Case
-                    if (config.resultWinBackground) {
-                        resultCard.style.backgroundImage = 'url("' + getUrlLocal(config.resultWinBackground) + '")';
-                        resultCard.classList.add('has-bg');
-                    } else {
-                        resultCard.style.backgroundImage = '';
-                        resultCard.classList.remove('has-bg');
-                    }
+                    if (isJackpot) {
+                        // JACKPOT Case
+                        if (config.jackpotResultBackground) {
+                            resultCard.style.backgroundImage = 'url("' + getUrlLocal(config.jackpotResultBackground) + '")';
+                            resultCard.classList.add('has-bg');
+                        } else if (config.resultWinBackground) {
+                            resultCard.style.backgroundImage = 'url("' + getUrlLocal(config.resultWinBackground) + '")';
+                            resultCard.classList.add('has-bg');
+                        } else {
+                            resultCard.style.backgroundImage = '';
+                            resultCard.classList.remove('has-bg');
+                        }
 
-                    if (config.resultWinTitleImage) {
-                        resultTitleImg.src = getUrlLocal(config.resultWinTitleImage);
-                        resultTitleImg.style.display = 'block';
-                        resultBadge.style.display = 'none';
-                        winnerMsg.style.display = 'none';
-                    } else {
-                        resultTitleImg.style.display = 'none';
-                        resultBadge.style.display = 'block';
-                        winnerMsg.style.display = 'block';
-                        if (isJackpot) {
+                        if (config.jackpotResultTitleImage) {
+                            resultTitleImg.src = getUrlLocal(config.jackpotResultTitleImage);
+                            resultTitleImg.style.display = 'block';
+                            resultBadge.style.display = 'none';
+                            winnerMsg.style.display = 'none';
+                        } else if (config.resultWinTitleImage) {
+                            resultTitleImg.src = getUrlLocal(config.resultWinTitleImage);
+                            resultTitleImg.style.display = 'block';
+                            resultBadge.style.display = 'none';
+                            winnerMsg.style.display = 'none';
+                        } else {
+                            resultTitleImg.style.display = 'none';
+                            resultBadge.style.display = 'block';
+                            winnerMsg.style.display = 'block';
                             resultBadge.innerText = config.jackpotTitle || '🌟 JACKPOT! 🌟';
                             winnerMsg.innerText = config.jackpotSubtitle || \`You've won \${won}!\`;
+                        }
+
+                        if (config.jackpotResultButtonImage) {
+                            collectBtn.style.backgroundImage = 'url("' + getUrlLocal(config.jackpotResultButtonImage) + '")';
+                            collectBtn.classList.add('has-img');
+                            collectBtn.innerText = '';
+                        } else if (config.resultWinButtonImage) {
+                            collectBtn.style.backgroundImage = 'url("' + getUrlLocal(config.resultWinButtonImage) + '")';
+                            collectBtn.classList.add('has-img');
+                            collectBtn.innerText = '';
                         } else {
+                            collectBtn.style.backgroundImage = '';
+                            collectBtn.classList.remove('has-img');
+                            collectBtn.innerText = 'COLLECT';
+                        }
+                    } else {
+                        // STANDARD WIN Case
+                        if (config.resultWinBackground) {
+                            resultCard.style.backgroundImage = 'url("' + getUrlLocal(config.resultWinBackground) + '")';
+                            resultCard.classList.add('has-bg');
+                        } else {
+                            resultCard.style.backgroundImage = '';
+                            resultCard.classList.remove('has-bg');
+                        }
+
+                        if (config.resultWinTitleImage) {
+                            resultTitleImg.src = getUrlLocal(config.resultWinTitleImage);
+                            resultTitleImg.style.display = 'block';
+                            resultBadge.style.display = 'none';
+                            winnerMsg.style.display = 'none';
+                        } else {
+                            resultTitleImg.style.display = 'none';
+                            resultBadge.style.display = 'block';
+                            winnerMsg.style.display = 'block';
                             resultBadge.innerText = config.winTitle || '🎉 CONGRATULATIONS 🎉';
                             winnerMsg.innerText = config.winSubtitle || \`You've won \${won}!\`;
                         }
-                    }
 
-                    if (config.resultWinButtonImage) {
-                        collectBtn.style.backgroundImage = 'url("' + getUrlLocal(config.resultWinButtonImage) + '")';
-                        collectBtn.classList.add('has-img');
-                        collectBtn.innerText = '';
-                    } else {
-                        collectBtn.style.backgroundImage = '';
-                        collectBtn.classList.remove('has-img');
-                        collectBtn.innerText = 'COLLECT';
+                        if (config.resultWinButtonImage) {
+                            collectBtn.style.backgroundImage = 'url("' + getUrlLocal(config.resultWinButtonImage) + '")';
+                            collectBtn.classList.add('has-img');
+                            collectBtn.innerText = '';
+                        } else {
+                            collectBtn.style.backgroundImage = '';
+                            collectBtn.classList.remove('has-img');
+                            collectBtn.innerText = 'COLLECT';
+                        }
                     }
                 }
-
-winnerIcon.innerText = wonIcon;
+                
+                if (wonIcon && (wonIcon.startsWith('http') || wonIcon.startsWith('/') || wonIcon.startsWith('data:'))) {
+    winnerIcon.innerHTML = '<img src="' + getUrlLocal(wonIcon) + '" style="width: 100%; height: 100%; object-fit: contain;">';
+} else {
+    winnerIcon.innerText = wonIcon;
+}
 winnerText.innerText = won;
 
 createResultStars();
@@ -1858,14 +1940,19 @@ function initSwipeToSpin() {
                 if (btn) {
                     if (config.spinBtnImage) {
                         btn.style.background = 'url("' + getUrlLocal(config.spinBtnImage) + '") center/100% 100% no-repeat';
-                        btn.innerHTML = '';
                     } else {
                         const btnColor = config.spinBtnColor || '#f59e0b';
                         btn.style.background = 'linear-gradient(180deg, ' + btnColor + ' 0%, ' + adjustColorLocal(btnColor, -20) + ' 100%)';
-                        const txt = config.spinBtnText || 'SPIN NOW';
-                        const sub = config.spinBtnSubtext || '1 PLAY = ' + (config.costPerSpin || 0) + ' TOKEN';
+                    }
+                    
+                    // Always show text unless explicitly empty
+                    if (config.spinBtnText || config.spinBtnSubtext) {
+                        const txt = config.spinBtnText || '';
+                        const sub = config.spinBtnSubtext || '';
                         const col = config.spinBtnTextColor || '#451a03';
                         btn.innerHTML = '<div class="spin-label" style="color:' + col + '">' + txt + '</div><div class="spin-sub" style="color:' + col + '">' + sub + '</div>';
+                    } else {
+                        btn.innerHTML = '';
                     }
                     btn.style.width = 'min(85vw, ' + (config.spinBtnWidth || 320) + 'px)';
                     btn.style.height = (config.spinBtnHeight || 70) + 'px';

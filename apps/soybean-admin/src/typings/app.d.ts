@@ -591,6 +591,13 @@ declare namespace App {
               clickToUpload: string;
               featureApply: string;
               prizeRedirectTip: string;
+              viewDesignGuide: string;
+              designGuideTitle: string;
+              downloadGuide: string;
+              downloadSuccess: string;
+              noThemeSelected: string;
+              designGuideNotFound: string;
+              noContent: string;
             };
             rules: {
               enableTimeLimit: string;
@@ -714,6 +721,11 @@ declare namespace App {
               tokenBarSection: string;
               spinButtonSection: string;
               resultPrompts: string;
+              resultTitle: string;
+              resultSubtitle: string;
+              resultBackground: string;
+              resultTitleImage: string;
+              resultButtonImage: string;
               winBackground: string;
               loseBackground: string;
               winTitleImage: string;
@@ -723,6 +735,11 @@ declare namespace App {
               winOutcome: string;
               loseOutcome: string;
               jackpotOutcome: string;
+              jackpotBackground: string;
+              jackpotTitleImage: string;
+              jackpotTitle: string;
+              jackpotSubtitle: string;
+              jackpotButtonImage: string;
               showSoundButton: string;
               soundButtonOpacity: string;
             };
@@ -787,8 +804,6 @@ declare namespace App {
               neonGreen: string;
               darkBg: string;
               resultMessages: string;
-              jackpotTitle: string;
-              jackpotSubtitle: string;
               winTitle: string;
               winSubtitle: string;
               loseTitle: string;

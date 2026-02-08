@@ -106,7 +106,8 @@ function getAssetFilename(url: any): string {
   if (!url || typeof url !== 'string') return '';
   if (url.startsWith('data:')) return 'Base64 Image';
   try {
-    const parts = url.split('/');
+    const cleanUrl = url.split('?')[0];
+    const parts = cleanUrl.split('/');
     return decodeURIComponent(parts[parts.length - 1]);
   } catch (e) {
     return url;
@@ -1290,223 +1291,238 @@ function editIconText(p: any) {
 
                  <!-- Render only the prize-list items from this tab -->
                  <div v-for="item in tab.items" :key="item.key">
-                     <!-- Prize List Editor -->
-                     <div v-if="item.type === 'prize-list'" class="flex flex-col gap-3">
+                     <div v-if="item.type === 'prize-list'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div 
                             v-for="(p, idx) in formModel[item.key]" 
                             :key="idx" 
-                            class="flex flex-wrap md:flex-nowrap items-center gap-3 p-3 rounded-xl border-2 transition-all duration-200 group relative bg-white hover:shadow-lg"
+                            class="flex flex-col p-4 rounded-xl border-2 transition-all duration-200 group relative bg-white hover:shadow-lg"
                             :style="{ borderColor: p.color + '40', backgroundColor: p.color + '05' }"
                         >
-                              <!-- Drag Handle/Order -->
-                              <div class="flex flex-col gap-1 text-gray-400">
-                                   <button class="hover:text-primary transition-colors text-10px" @click="moveItem(item.key, idx, 'up')" :disabled="idx===0">▲</button>
-                                   <button class="hover:text-primary transition-colors text-10px" @click="moveItem(item.key, idx, 'down')">▼</button>
+                              <!-- Card Header: Color, Sort, Delete -->
+                              <div class="flex justify-between items-center w-full pb-3 border-b border-gray-100/50 mb-3">
+                                  <div class="flex items-center gap-2">
+                                      <!-- Color Picker -->
+                                      <div class="relative w-6 h-6 rounded-full shadow-sm overflow-hidden flex-shrink-0 ring-2 ring-offset-1" :style="{ '--tw-ring-color': p.color }">
+                                          <NColorPicker
+                                              v-model:value="p.color"
+                                              :show-alpha="false"
+                                              :actions="['confirm']"
+                                              size="small"
+                                              class="w-full h-full p-0 border-none opacity-0 absolute inset-0 cursor-pointer"
+                                              :style="{ backgroundColor: p.color }"
+                                          >
+                                            <template #label>&nbsp;</template>
+                                          </NColorPicker>
+                                          <div class="w-full h-full" :style="{ backgroundColor: p.color }"></div>
+                                      </div>
+                                      
+                                      <!-- Sort Buttons -->
+                                      <div class="flex bg-gray-100 rounded-lg p-0.5 gap-0.5">
+                                           <button class="w-6 h-6 flex items-center justify-center rounded bg-white shadow-sm hover:text-primary disabled:opacity-50 text-[10px]" @click="moveItem(item.key, idx, 'up')" :disabled="idx===0">◀</button>
+                                           <button class="w-6 h-6 flex items-center justify-center rounded bg-white shadow-sm hover:text-primary disabled:opacity-50 text-[10px]" @click="moveItem(item.key, idx, 'down')">▶</button>
+                                      </div>
                               </div>
-                             
-                              <!-- Color Picker & Hex Input -->
-                               <div class="w-16 flex-shrink-0">
-                                   <NColorPicker
-                                      v-model:value="p.color"
-                                      :show-alpha="false"
-                                      :actions="['confirm']"
-                                      size="small"
-                                      class="font-mono font-bold text-center justify-center"
-                                      :render-label="() => p.color"
-                                      :style="{
-                                          '--n-color': p.color,
-                                          '--n-text-color': getContrastColor(p.color),
-                                          '--n-border': '1px solid ' + p.color,
-                                          backgroundColor: p.color,
-                                          color: getContrastColor(p.color)
-                                      }"
-                                   />
-                               </div>
 
-                               <!-- Background Image Upload -->
-                               <div class="w-10 flex-shrink-0 flex justify-center">
-                                   <NTooltip trigger="hover">
-                                       <template #trigger>
-                                           <div 
-                                               class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center cursor-pointer hover:border-primary hover:bg-gray-50 transition-colors relative overflow-hidden"
-                                               @click="triggerUpload(item.key, undefined, 'prizes', p, 'image/*', 'backgroundImage')"
-                                               :style="p.backgroundImage ? { backgroundImage: `url(${p.backgroundImage})`, backgroundSize: 'cover' } : {}"
-                                           >
-                                               <span v-if="!p.backgroundImage" class="text-xs opacity-50">🖼️</span>
-                                               <!-- Remove Overlay (Top-Right Badge) -->
-                                               <div v-if="p.backgroundImage" 
-                                                    class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-red-600 transition-colors z-10"
-                                                    @click.stop="p.backgroundImage = ''"
-                                               >
-                                                   <span class="text-[10px] font-bold">✕</span>
-                                               </div>
-                                           </div>
-                                       </template>
-                                       Slice Background
-                                   </NTooltip>
-                               </div>
-
-                              <!-- Icon / Image -->
-                              <!-- Icon / Image -->
-                              <div class="w-12 h-12 flex-shrink-0 relative group/icon">
-                                  <div class="w-full h-full flex items-center justify-center bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden cursor-pointer hover:border-primary transition-colors"
-                                       @click="triggerUpload(item.key, undefined, 'prizes', p)">
-                                      <img v-if="p.icon && (p.icon.startsWith('http') || p.icon.startsWith('/'))" :src="p.icon" class="w-full h-full object-contain p-1" />
-                                      <span v-else class="text-2xl select-none">{{ p.icon || '🎁' }}</span>
-                                  </div>
-                                  
-                                  <!-- Always Visible Remove Badge (Images) -->
-                                  <div v-if="p.icon && (p.icon.startsWith('http') || p.icon.startsWith('/'))"
-                                       class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-red-600 transition-colors z-10"
-                                       @click.stop="clearAsset(item.key, p)"
-                                       title="Remove Image">
+                                  <!-- Delete Button -->
+                                  <div 
+                                      class="w-6 h-6 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-full flex items-center justify-center cursor-pointer transition-colors"
+                                      @click="removePrizeItem(item.key, idx)"
+                                      title="Delete Prize"
+                                  >
                                       <span class="text-xs font-bold">✕</span>
                                   </div>
+                              </div>
 
-                                  <!-- Image Settings (Scale) -->
-                                  <div v-if="p.icon && (p.icon.startsWith('http') || p.icon.startsWith('/'))" @click.stop class="absolute -bottom-2 -right-2 z-10 w-5 h-5">
-                                    <n-popover trigger="click" placement="bottom" style="padding: 0;">
-                                      <template #trigger>
-                                        <div class="w-5 h-5 bg-gray-600 rounded-full text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-gray-700 transition-colors"
-                                             title="Image Settings">
-                                            <span class="text-[10px]">⚙️</span>
-                                        </div>
-                                      </template>
-                                      <div class="p-3 w-48">
-                                        <div class="flex justify-between items-center mb-2">
-                                            <span class="text-xs font-bold">Image Size</span>
-                                            <span class="text-xs text-gray-500">{{ Math.round((p.imageScale || 1) * 100) }}%</span>
-                                        </div>
-                                        <n-slider v-model:value="p.imageScale" :min="0.5" :max="2.5" :step="0.1" size="small" :default-value="1" class="mb-4" />
-                                        
-                                        <div class="flex justify-between items-center mb-2">
-                                            <span class="text-xs font-bold">Rotation</span>
-                                            <span class="text-xs text-gray-500">{{ p.imageRotation || 0 }}°</span>
-                                        </div>
-                                        <n-slider v-model:value="p.imageRotation" :min="0" :max="360" :step="15" size="small" :default-value="0" />
-                                      </div>
-                                    </n-popover>
-                                  </div>
+                              <!-- Card Body -->
+                              <div class="flex gap-3 mb-2">
+                                  <!-- Visual Assets (Vertical Stack) -->
+                                  <div class="flex flex-col gap-2 items-center w-12 flex-shrink-0 pt-1">
+                                       <!-- Icon / Image -->
+                                       <div class="relative group/icon w-12 h-12">
+                                            <div class="w-full h-full flex items-center justify-center bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden cursor-pointer hover:border-primary transition-colors"
+                                                 @click="triggerUpload(item.key, undefined, 'prizes', p)">
+                                                <img v-if="p.icon && (p.icon.startsWith('http') || p.icon.startsWith('/'))" :src="p.icon" class="w-full h-full object-contain p-1" />
+                                                <span v-else class="text-2xl select-none">{{ p.icon || '🎁' }}</span>
+                                            </div>
+                                            
+                                            <!-- Remove Badge -->
+                                            <div v-if="p.icon && (p.icon.startsWith('http') || p.icon.startsWith('/'))"
+                                                 class="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 rounded-full text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-red-600 transition-colors z-10"
+                                                 @click.stop="clearAsset(item.key, p)">
+                                                <span class="text-[9px] font-bold">✕</span>
+                                            </div>
 
-                                  <!-- Edit Emoji Button (Text/Emoji) -->
-                                  <div v-else @click.stop class="absolute -top-2 -right-2 z-10">
-                                    <n-popover trigger="click" placement="right" style="padding: 0;">
-                                      <template #trigger>
-                                        <div class="w-5 h-5 bg-blue-500 rounded-full text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-blue-600 transition-colors"
-                                             title="Edit Emoji">
-                                            <span class="text-xs font-bold">✎</span>
-                                        </div>
-                                      </template>
-                                      <div class="p-4 w-72">
-                                        <div class="font-bold mb-2">Select Icon</div>
-                                        <n-input v-model:value="p.icon" placeholder="Type text or emoji (e.g. 🎁)" class="mb-3" />
-                                        <div class="grid grid-cols-6 gap-2 max-h-48 overflow-y-auto">
-                                           <div v-for="emoji in presetEmojis" :key="emoji" 
-                                                class="cursor-pointer hover:bg-gray-100 p-1 text-center rounded text-xl border border-transparent hover:border-gray-200"
-                                                @click="p.icon = emoji">
-                                              {{ emoji }}
+                                            <!-- Settings Badge -->
+                                            <div v-if="p.icon && (p.icon.startsWith('http') || p.icon.startsWith('/'))" @click.stop class="absolute -bottom-1.5 -right-1.5 z-10 w-4 h-4">
+                                              <n-popover trigger="click" placement="bottom" style="padding: 0;">
+                                                <template #trigger>
+                                                  <div class="w-4 h-4 bg-gray-600 rounded-full text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-gray-700 transition-colors">
+                                                      <span class="text-[8px]">⚙️</span>
+                                                  </div>
+                                                </template>
+                                                <div class="p-3 w-48">
+                                                    <div class="flex justify-between items-center mb-2">
+                                                        <span class="text-xs font-bold">Image Size</span>
+                                                        <span class="text-xs text-gray-500">{{ Math.round((p.imageScale || 1) * 100) }}%</span>
+                                                    </div>
+                                                    <n-slider v-model:value="p.imageScale" :min="0.5" :max="2.5" :step="0.1" size="small" :default-value="1" class="mb-4" />
+                                                    <div class="flex justify-between items-center mb-2">
+                                                        <span class="text-xs font-bold">Rotation</span>
+                                                        <span class="text-xs text-gray-500">{{ p.imageRotation || 0 }}°</span>
+                                                    </div>
+                                                    <n-slider v-model:value="p.imageRotation" :min="0" :max="360" :step="15" size="small" :default-value="0" />
+                                                </div>
+                                              </n-popover>
+                                            </div>
+
+                                            <!-- Text/Emoji Edit Badge -->
+                                            <div v-else @click.stop class="absolute -top-1.5 -right-1.5 z-10">
+                                              <n-popover trigger="click" placement="right" style="padding: 0;">
+                                                <template #trigger>
+                                                  <div class="w-4 h-4 bg-blue-500 rounded-full text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-blue-600 transition-colors">
+                                                      <span class="text-[8px] font-bold">✎</span>
+                                                  </div>
+                                                </template>
+                                                <div class="p-4 w-72">
+                                                  <div class="font-bold mb-2">Select Icon</div>
+                                                  <n-input v-model:value="p.icon" placeholder="Type text or emoji (e.g. 🎁)" class="mb-3" />
+                                                  <div class="grid grid-cols-6 gap-2 max-h-48 overflow-y-auto">
+                                                     <div v-for="emoji in presetEmojis" :key="emoji" 
+                                                          class="cursor-pointer hover:bg-gray-100 p-1 text-center rounded text-xl border border-transparent hover:border-gray-200"
+                                                          @click="p.icon = emoji">
+                                                        {{ emoji }}
+                                                     </div>
+                                                  </div>
+                                                </div>
+                                              </n-popover>
+                                            </div>
+                                       </div>
+
+                                       <!-- Slice Background (Small) -->
+                                       <div class="relative w-8 h-8 flex justify-center mt-1">
+                                            <NTooltip trigger="hover">
+                                               <template #trigger>
+                                                   <div 
+                                                       class="w-full h-full rounded-full border border-gray-200 flex items-center justify-center cursor-pointer hover:border-primary hover:bg-gray-50 transition-colors overflow-hidden bg-gray-50"
+                                                       @click="triggerUpload(item.key, undefined, 'prizes', p, 'image/*', 'backgroundImage')"
+                                                       :style="p.backgroundImage ? { backgroundImage: `url(${p.backgroundImage})`, backgroundSize: 'cover' } : {}"
+                                                   >
+                                                       <span v-if="!p.backgroundImage" class="text-[10px] opacity-50">🖼️</span>
+                                                   </div>
+                                               </template>
+                                               Slice Background
+                                           </NTooltip>
+                                           <div v-if="p.backgroundImage" 
+                                                class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-red-600 transition-colors z-20"
+                                                @click.stop="p.backgroundImage = ''"
+                                           >
+                                               <span class="text-[8px] font-bold">✕</span>
                                            </div>
-                                        </div>
+                                       </div>
+                                  </div>
+
+                                  <!-- Inputs (Right) -->
+                                  <div class="flex flex-col gap-2 w-full min-w-0">
+                                      <!-- Name -->
+                                      <div class="flex flex-col gap-1 w-full">
+                                          <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Prize Name</label>
+                                          <NInput v-model:value="p.label" :placeholder="t('page.manage.game.common.prizeName')" round size="small" class="w-full" />
                                       </div>
-                                    </n-popover>
+
+                                      <!-- Grid for Type & Value -->
+                                      <div class="grid grid-cols-2 gap-2 w-full">
+                                          <!-- Type -->
+                                          <div class="flex flex-col gap-1 overflow-hidden">
+                                               <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Type</label>
+                                               <NSelect 
+                                                  v-model:value="p.prizeType" 
+                                                  :options="[
+                                                      { label: '💰 Cash', value: 'cash' },
+                                                      { label: '🎁 Item', value: 'physical' },
+                                                      { label: '📧 E-Gift', value: 'egift' }
+                                                  ]"
+                                                  size="small"
+                                                  class="w-full"
+                                                  :fallback-option="false"
+                                                  :show-checkmark="false"
+                                                  @update:value="() => { if (!p.prizeType) p.prizeType = 'cash'; }"
+                                              />
+                                          </div>
+                                          <!-- Value/Description -->
+                                          <div class="flex flex-col gap-1 min-w-0">
+                                              <label v-if="!p.prizeType || p.prizeType === 'cash'" class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Amount</label>
+                                              <label v-else class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Description</label>
+                                              
+                                              <NInputGroup v-if="!p.prizeType || p.prizeType === 'cash'" class="w-full">
+                                                  <NInputGroupLabel class="px-2 text-xs flex items-center justify-center min-w-[24px]">$</NInputGroupLabel>
+                                                  <NInputNumber v-model:value="p.value" :show-button="false" placeholder="0" class="flex-1 w-full" />
+                                              </NInputGroup>
+                                              <NInput v-else v-model:value="p.description" :placeholder="p.prizeType === 'physical' ? 'Item Name' : 'Card Value'" round size="small" class="w-full" />
+                                          </div>
+                                      </div>
                                   </div>
                               </div>
 
-                              <!-- Label -->
-                              <div class="w-28 md:w-32 flex-shrink-0">
-                                  <NInput v-model:value="p.label" :placeholder="t('page.manage.game.common.prizeName')" round size="small" />
-                              </div>
+                              <!-- Footer: Sliders & Toggles -->
+                              <div class="mt-auto pt-3 border-t border-gray-100/50 flex flex-col gap-3">
+                                  <!-- Probability Slider -->
+                                  <div class="flex flex-col gap-1">
+                                      <div class="flex justify-between items-center px-1">
+                                          <span class="text-[10px] font-bold text-gray-500 uppercase">Probability</span>
+                                          <span class="text-xs font-bold" :style="{ color: p.color }">{{ p.weight }}%</span>
+                                      </div>
+                                      <NSlider v-model:value="p.weight" :step="1" :min="0" :max="100" :tooltip="false">
+                                          <template #thumb>
+                                              <div class="w-3 h-3 rounded-full shadow-sm border border-white" :style="{ backgroundColor: p.color }"></div>
+                                          </template>
+                                      </NSlider>
+                                  </div>
 
-                              <!-- Prize Type Selector -->
-                              <div class="w-16 flex-shrink-0">
-                                  <NTooltip trigger="hover">
-                                    <template #trigger>
-                                      <NSelect 
-                                          v-model:value="p.prizeType" 
-                                          :options="[
-                                              { label: '💰', value: 'cash', title: 'Cash' },
-                                              { label: '🎁', value: 'physical', title: 'Physical Item' },
-                                              { label: '📧', value: 'egift', title: 'E-Gift' }
-                                          ]"
-                                          size="small"
-                                          :fallback-option="false"
-                                          @update:value="() => { if (!p.prizeType) p.prizeType = 'cash'; }"
-                                          :render-label="(option) => option.label"
-                                      />
-                                    </template>
-                                    {{ 
-                                      p.prizeType === 'cash' ? 'Cash / Token' : 
-                                      p.prizeType === 'physical' ? 'Physical Prize' : 
-                                      'E-Gift / Voucher' 
-                                    }}
-                                  </NTooltip>
-                              </div>
+                                  <!-- Bottom Toggles (Compact Icon-Based) -->
+                                  <div class="flex justify-between items-center gap-2">
+                                      <!-- Status Buttons (Icon Only with Tooltip) -->
+                                      <div class="flex gap-2">
+                                          <NTooltip trigger="hover">
+                                              <template #trigger>
+                                                  <div 
+                                                      class="w-8 h-8 rounded-md border flex items-center justify-center cursor-pointer transition-all"
+                                                      :class="p.isJackpot ? 'bg-blue-50 border-blue-200 text-blue-600 shadow-sm' : 'bg-gray-50 border-gray-100 text-gray-400 hover:bg-gray-100'"
+                                                      @click="p.isJackpot = !p.isJackpot; if(p.isJackpot) p.isLose = false;"
+                                                  >
+                                                      <span class="text-lg filter" :class="p.isJackpot ? 'grayscale-0' : 'grayscale'">💎</span>
+                                                  </div>
+                                              </template>
+                                              Jackpot Prize
+                                          </NTooltip>
 
-                              <!-- Value (only for cash type) -->
-                              <div v-if="!p.prizeType || p.prizeType === 'cash'" class="w-90px flex-shrink-0">
-                                  <NInputGroup>
-                                    <NInputGroupLabel>$</NInputGroupLabel>
-                                    <NInputNumber v-model:value="p.value" :show-button="false" placeholder="0" />
-                                  </NInputGroup>
-                              </div>
-
-                              <!-- Description (for physical/egift) -->
-                              <div v-else class="w-150px flex-shrink-0">
-                                  <NInput 
-                                      v-model:value="p.description" 
-                                      :placeholder="p.prizeType === 'physical' ? 'e.g., iPhone 15 Pro' : 'e.g., $50 Amazon Card'"
-                                      size="small"
-                                  />
-                              </div>
-
-                              <!-- Probability Slider -->
-                              <div class="w-32 px-1 flex items-center gap-1 flex-shrink-0">
-                                  <NSlider v-model:value="p.weight" :step="1" :min="0" :max="100" class="flex-1" :tooltip="false">
-                                      <template #thumb>
-                                          <div class="w-3 h-3 rounded-full shadow-sm border border-white" :style="{ backgroundColor: p.color }"></div>
-                                      </template>
-                                  </NSlider>
-                                  <div class="w-11">
-                                      <NInputNumber v-model:value="p.weight" size="tiny" :show-button="false">
-                                          <template #suffix><span class="text-[10px]">%</span></template>
-                                      </NInputNumber>
+                                          <NTooltip trigger="hover">
+                                              <template #trigger>
+                                                  <div 
+                                                      class="w-8 h-8 rounded-md border flex items-center justify-center cursor-pointer transition-all"
+                                                      :class="p.isLose ? 'bg-gray-100 border-gray-300 text-gray-600 shadow-sm' : 'bg-gray-50 border-gray-100 text-gray-400 hover:bg-gray-100'"
+                                                      @click="p.isLose = !p.isLose; if(p.isLose) p.isJackpot = false;"
+                                                  >
+                                                      <span class="text-lg filter" :class="p.isLose ? 'grayscale-0' : 'grayscale'">😢</span>
+                                                  </div>
+                                              </template>
+                                              Lose (Try Again)
+                                          </NTooltip>
+                                      </div>
+                                      
+                                      <!-- On/Off Switch with Tooltip -->
+                                      <NTooltip trigger="hover">
+                                          <template #trigger>
+                                              <div class="flex items-center gap-2">
+                                                  <NSwitch v-model:value="p.isActive" size="small" :default-value="true">
+                                                     <template #checked>ON</template>
+                                                     <template #unchecked>OFF</template>
+                                                  </NSwitch>
+                                              </div>
+                                          </template>
+                                          Toggle Prize Active State
+                                      </NTooltip>
                                   </div>
                               </div>
-
-                              <!-- Prize Type Toggles -->
-                              <div class="flex items-center gap-1 flex-shrink-0">
-                                  <NTooltip>
-                                      <template #trigger>
-                                          <div class="flex items-center gap-1">
-                                              <span class="text-xs">💎</span>
-                                              <NSwitch v-model:value="p.isJackpot" size="small" @update:value="(val) => { if(val) p.isLose = false; }" />
-                                          </div>
-                                      </template>
-                                      Jackpot Prize
-                                  </NTooltip>
-                                  <NTooltip>
-                                      <template #trigger>
-                                          <div class="flex items-center gap-1">
-                                              <span class="text-xs">😢</span>
-                                              <NSwitch v-model:value="p.isLose" size="small" @update:value="(val) => { if(val) p.isJackpot = false; }" />
-                                          </div>
-                                      </template>
-                                      Lose / Try Again
-                                  </NTooltip>
-                              </div>
-
-                              <!-- Active Toggle -->
-                              <NTooltip>
-                                <template #trigger>
-                                  <NSwitch size="small" :default-value="true" />
-                                </template>
-                                Enable/Disable Prize
-                              </NTooltip>
-
-                              <!-- Actions -->
-                              <NButton quaternary circle type="error" @click="removePrizeItem(item.key, idx)">
-                                  ✕
-                              </NButton>
                         </div>
                      </div>
                      <!-- Render other items normally -->

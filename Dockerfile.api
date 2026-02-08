@@ -20,6 +20,9 @@ RUN pnpm install --frozen-lockfile
 # Copy API source
 COPY apps/api ./apps/api
 
+# Copy uploads directory with templates (including DESIGN_GUIDE.md)
+COPY apps/api/uploads ./apps/api/uploads
+
 # Build API from root
 RUN pnpm --filter api build
 

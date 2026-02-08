@@ -378,6 +378,10 @@ export class SeedService {
                         { name: 'Lose Title', size: '600 x 160 px', format: 'WebP/PNG', note: 'Custom "Try Again" image.', mappingKey: 'resultLoseTitleImage', category: 'images' },
                         { name: 'Win Button', size: '560 x 140 px', format: 'WebP/PNG', note: 'Custom "Collect" button image.', mappingKey: 'resultWinButtonImage', category: 'images' },
                         { name: 'Lose Button', size: '560 x 140 px', format: 'WebP/PNG', note: 'Custom "Try Again" button image.', mappingKey: 'resultLoseButtonImage', category: 'images' },
+                        { name: 'Jackpot Background', size: '760 x 1000 px', format: 'WebP/PNG', note: 'Background for jackpot prompt.', mappingKey: 'jackpotResultBackground', category: 'images' },
+                        { name: 'Jackpot Title', size: '600 x 160 px', format: 'WebP/PNG', note: 'Custom "JACKPOT" image.', mappingKey: 'jackpotResultTitleImage', category: 'images' },
+                        { name: 'Jackpot Button', size: '560 x 140 px', format: 'WebP/PNG', note: 'Custom jackpot button.', mappingKey: 'jackpotResultButtonImage', category: 'images' },
+                        { name: 'Slice Background', size: '256 x 256 px', format: 'WebP/PNG', note: 'Shared background for slices.', mappingKey: 'prizeList.0.icon', category: 'images' },
                         { name: 'Prize Icons', size: '256 x 256 px', format: 'SVG/PNG', note: 'Individual slice icons.', mappingKey: 'prizeList.0.icon', category: 'images' }
                     ],
                     performanceTips: [
@@ -940,11 +944,11 @@ export class SeedService {
 
                                     // Jackpot Outcome Group
                                     { key: 'jackpot_group_title', type: 'divider', label: 'page.manage.game.visuals.jackpotOutcome', span: 24 },
-                                    { key: 'resultJackpotBackground', type: 'image', label: 'page.manage.game.visuals.jackpotBackground', span: 12 },
-                                    { key: 'resultJackpotTitleImage', type: 'image', label: 'page.manage.game.visuals.jackpotTitle', span: 12 },
-                                    { key: 'jackpotTitle', type: 'text', label: 'page.manage.game.effects.jackpotTitle', default: '🎉 JACKPOT!!! 🎉', span: 12 },
-                                    { key: 'jackpotSubtitle', type: 'text', label: 'page.manage.game.effects.jackpotSubtitle', default: 'INCREDIBLE WIN!', span: 12 },
-                                    { key: 'resultJackpotButtonImage', type: 'image', label: 'page.manage.game.visuals.jackpotButton', span: 24 }
+                                    { key: 'jackpotResultBackground', type: 'image', label: 'page.manage.game.visuals.jackpotBackground', span: 12 },
+                                    { key: 'jackpotResultTitleImage', type: 'image', label: 'page.manage.game.visuals.jackpotTitleImage', span: 12 },
+                                    { key: 'jackpotResultTitle', type: 'text', label: 'page.manage.game.visuals.jackpotTitle', default: '🎉 JACKPOT!!! 🎉', span: 12 },
+                                    { key: 'jackpotResultSubtitle', type: 'text', label: 'page.manage.game.visuals.jackpotSubtitle', default: 'INCREDIBLE WIN!', span: 12 },
+                                    { key: 'jackpotResultButtonImage', type: 'image', label: 'page.manage.game.visuals.jackpotButtonImage', span: 24 }
                                 ]
                             }
                         ]

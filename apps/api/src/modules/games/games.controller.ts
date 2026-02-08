@@ -22,6 +22,11 @@ export class GamesController {
         return this.gamesService.findAll(all !== 'true');
     }
 
+    @Get(':idOrSlug/design-guide')
+    getDesignGuide(@Param('idOrSlug') idOrSlug: string) {
+        return this.gamesService.getDesignGuide(idOrSlug);
+    }
+
     @Get(':idOrSlug')
     findOne(@Param('idOrSlug') idOrSlug: string) {
         return this.gamesService.findOne(idOrSlug);

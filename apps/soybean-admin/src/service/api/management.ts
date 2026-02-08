@@ -376,3 +376,12 @@ export function fetchGetMemberAuditLogs(id: string) {
         method: 'get'
     });
 }
+
+/** Get design guide for a game (global, not theme-specific) */
+export function fetchDesignGuide(gameSlug: string) {
+    return request<{ content: string; themeName: string }>({
+        url: `/games/${gameSlug}/design-guide`,
+        method: 'get'
+    });
+}
+
