@@ -1,0 +1,86 @@
+<svg width="600" height="120" viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Dark Stone Background -->
+    <linearGradient id="dark-stone-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2a2a32;stop-opacity:0.95" />
+      <stop offset="50%" style="stop-color:#1a1a22;stop-opacity:0.95" />
+      <stop offset="100%" style="stop-color:#2a2a32;stop-opacity:0.95" />
+    </linearGradient>
+
+    <!-- Bronze Frame Gradient -->
+    <linearGradient id="bronze-frame" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4af37;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#b8860b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b6914;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Electric Blue Glow -->
+    <linearGradient id="blue-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0066cc;stop-opacity:0.3" />
+      <stop offset="50%" style="stop-color:#00d4ff;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#0066cc;stop-opacity:0.3" />
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="bar-glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- 3D Bevel -->
+    <filter id="bevel">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+      <feOffset dx="0" dy="2" result="offsetBlur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.6" result="offsetColor"/>
+      <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Main Background Panel -->
+  <rect x="5" y="5" width="590" height="110" rx="8" fill="url(#dark-stone-bg)" filter="url(#bevel)"/>
+
+  <!-- Bronze Frame Border -->
+  <rect x="5" y="5" width="590" height="110" rx="8" fill="none" stroke="url(#bronze-frame)" stroke-width="6" filter="url(#bevel)"/>
+  <rect x="12" y="12" width="576" height="96" rx="6" fill="none" stroke="#6b5416" stroke-width="2" opacity="0.6"/>
+
+  <!-- Electric Blue Inner Glow -->
+  <rect x="20" y="20" width="560" height="80" rx="4" fill="url(#blue-glow)" opacity="0.3" filter="url(#bar-glow)">
+    <animate attributeName="opacity" values="0.2;0.4;0.2" dur="3s" repeatCount="indefinite" />
+  </rect>
+
+  <!-- Greek Meander Pattern (Left Corner) -->
+  <g fill="none" stroke="#d4af37" stroke-width="2" opacity="0.5">
+    <path d="M30,30 h20 v-10 h-15 v8 h10 v-5 h-5" />
+    <path d="M30,90 h20 v10 h-15 v-8 h10 v5 h-5" />
+  </g>
+
+  <!-- Greek Meander Pattern (Right Corner) -->
+  <g fill="none" stroke="#d4af37" stroke-width="2" opacity="0.5">
+    <path d="M570,30 h-20 v-10 h15 v8 h-10 v-5 h5" />
+    <path d="M570,90 h-20 v10 h15 v-8 h-10 v5 h5" />
+  </g>
+
+  <!-- Decorative Lightning Bolts (Small accents) -->
+  <g fill="#00d4ff" opacity="0.6" filter="url(#bar-glow)">
+    <path d="M80,45 L85,55 L82,55 L87,65" transform="scale(0.6)"/>
+    <path d="M520,45 L525,55 L522,55 L527,65" transform="scale(0.6)"/>
+  </g>
+
+  <!-- Decorative Gems (Corner accents) -->
+  <g fill="#00d4ff" filter="url(#bar-glow)">
+    <circle cx="70" cy="60" r="3" opacity="0.7"/>
+    <circle cx="530" cy="60" r="3" opacity="0.7"/>
+  </g>
+
+  <!-- Center Divider Lines -->
+  <line x1="290" y1="25" x2="290" y2="95" stroke="#6b5416" stroke-width="1" opacity="0.4"/>
+  <line x1="310" y1="25" x2="310" y2="95" stroke="#6b5416" stroke-width="1" opacity="0.4"/>
+
+</svg>

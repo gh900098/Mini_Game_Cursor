@@ -1,0 +1,97 @@
+<svg width="600" height="160" viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Bronze Button Gradient -->
+    <linearGradient id="bronze-button" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4af37;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#b8860b;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#8b6914;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6b5416;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Dark Stone Base -->
+    <radialGradient id="stone-base" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#3a3a42;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a22;stop-opacity:1" />
+    </radialGradient>
+
+    <!-- Electric Glow -->
+    <radialGradient id="electric-glow-btn" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#0099ff;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#0066cc;stop-opacity:0" />
+    </radialGradient>
+
+    <!-- Intense Glow Filter -->
+    <filter id="button-glow">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- 3D Button Effect -->
+    <filter id="button-3d">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
+      <feOffset dx="0" dy="4" result="offsetBlur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.7" result="offsetColor"/>
+      <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="shadow"/>
+      <feSpecularLighting in="blur" surfaceScale="8" specularConstant="1" specularExponent="20" lighting-color="#ffffff" result="spec">
+        <fePointLight x="300" y="-100" z="200"/>
+      </feSpecularLighting>
+      <feComposite in="spec" in2="SourceAlpha" operator="in" result="specOut"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+        <feMergeNode in="specOut"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Electric Aura Background -->
+  <ellipse cx="300" cy="80" rx="280" ry="70" fill="url(#electric-glow-btn)" opacity="0.4" filter="url(#button-glow)">
+    <animate attributeName="opacity" values="0.3;0.6;0.3" dur="2s" repeatCount="indefinite" />
+  </ellipse>
+
+  <!-- Main Button Body -->
+  <rect x="20" y="20" width="560" height="120" rx="20" fill="url(#stone-base)" filter="url(#button-3d)"/>
+  <rect x="20" y="20" width="560" height="120" rx="20" fill="url(#bronze-button)" opacity="0.9" filter="url(#button-3d)"/>
+
+  <!-- Inner Border -->
+  <rect x="30" y="30" width="540" height="100" rx="15" fill="none" stroke="#d4af37" stroke-width="3" opacity="0.6"/>
+  <rect x="35" y="35" width="530" height="90" rx="12" fill="none" stroke="#6b5416" stroke-width="2" opacity="0.5"/>
+
+  <!-- Lightning Bolt Accents (Left) -->
+  <g fill="#FFFF00" filter="url(#button-glow)">
+    <path d="M80,60 L88,75 L83,75 L91,95" opacity="0.8"/>
+    <path d="M80,60 L88,75 L83,75 L91,95" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.6"/>
+  </g>
+
+  <!-- Lightning Bolt Accents (Right) -->
+  <g fill="#FFFF00" filter="url(#button-glow)">
+    <path d="M520,60 L512,75 L517,75 L509,95" opacity="0.8"/>
+    <path d="M520,60 L512,75 L517,75 L509,95" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.6"/>
+  </g>
+
+  <!-- Center Text Area Highlight -->
+  <rect x="150" y="50" width="300" height="60" rx="8" fill="#FFFFFF" opacity="0.05"/>
+
+  <!-- Greek Key Corners -->
+  <g fill="none" stroke="#d4af37" stroke-width="2.5" opacity="0.5">
+    <path d="M50,50 h20 v-10 h-15 v8 h10 v-5" />
+    <path d="M550,50 h-20 v-10 h15 v8 h-10 v-5" />
+    <path d="M50,110 h20 v10 h-15 v-8 h10 v5" />
+    <path d="M550,110 h-20 v10 h15 v-8 h-10 v5" />
+  </g>
+
+  <!-- Decorative Electric Gems -->
+  <g fill="#00d4ff" filter="url(#button-glow)">
+    <circle cx="120" cy="80" r="4" opacity="0.7">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="480" cy="80" r="4" opacity="0.7">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" begin="0.75s" repeatCount="indefinite" />
+    </circle>
+  </g>
+
+</svg>
