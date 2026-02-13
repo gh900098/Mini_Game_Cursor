@@ -1,6 +1,6 @@
 # Project Status & Current Context
 
-**Last Updated:** 2026-02-13
+**Last Updated:** 2026-02-13 21:32
 **Current Mission:** Ready for next task
 **Server Status:** 🟢 Running. (API:3100, Admin:3101, Web:3102).
 
@@ -39,6 +39,7 @@ Stabilization complete. Ready for next task.
 | FEAT-001 | 🟢 Feat | Dynamic Probabilities (Phase 4) | ⏳ Pending |
 
 ## ✅ Recently Completed
+- [x] **Member Detail UI Improvements** (Tab reordering + enhanced prize info - 2026-02-13)
 - [x] **Admin Menu Icons** (Added icons to Prize Ledger & Prize Types - 2026-02-13)
 - [x] **Enterprise Prize Architecture** (See CHANGELOG)
 - [x] **Prize Type Multi-tenancy** (See CHANGELOG)
