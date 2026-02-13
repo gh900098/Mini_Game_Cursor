@@ -47,4 +47,27 @@
 - [ ] i18n keys added to both languages.
 - [ ] `CHANGELOG.md` updated with technical details.
 - [ ] Relevant documentation updated (FEATURES, CODEMAP, etc.).
-- [ ] Manual verification performed on local/preview environment.
+
+### 5. Verification Standard (Mandatory)
+**"It works on my machine" is not enough.**
+- **Context:** We operate in a Dockerized environment.
+- **Verification Standard (Mandatory):**
+    - "It works on my machine" is BANNED.
+    - If backend change: `curl` command output proving it works.
+    - If frontend change: Description of the click path to verify.
+    - **Security Audit:** Did you validate inputs? Did you check `companyId`?
+
+## 7. Git Workflow (STRICT, NO EXCEPTIONS)
+- **NEVER** commit directly to `main`.
+- **Start:** Use `/start-feature` workflow (Branch: `feat/` or `fix/`).
+- **Finish:** Use `/finish-feature` workflow (Merge explicitly).
+- **Rule:** If you are editing code, you MUST be on a feature branch.
+- **Authority:** You have full authority to execute these git commands.
+
+### 6. Memory Maintenance
+**You are responsible for your own memory.**
+- **Start of Session:** Read `PROJECT_STATUS.md` and `CODING_STANDARDS.md`.
+- **End of Task:** Update `PROJECT_STATUS.md` and `docs/CHANGELOG.md`.
+- **New Patterns:** Update `MEMORY_BANK.md`.
+- **Write:** Update `PROJECT_STATUS.md` if you complete a mission or find a new bug.
+- **Map:** Update `PROJECT-MAP.md` if you add a new module.

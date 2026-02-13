@@ -66,12 +66,16 @@ export class GameRulesService {
     instanceId: string,
     success: boolean = true,
     ipAddress?: string,
+    outcome?: string,
+    resultData?: any,
   ): Promise<PlayAttempt> {
     const attempt = this.playAttemptsRepo.create({
       memberId,
       instanceId,
       success,
       ipAddress,
+      outcome,
+      resultData,
     });
 
     return this.playAttemptsRepo.save(attempt);
@@ -376,7 +380,7 @@ export class GameRulesService {
   /**
    * 获取玩家当前状态（用于前端显示）
    */
-  async getPlayerStatus(memberId: string, instance: GameInstance): Promise<any> {
+  async getPlayerStatus(memberId: string, instance: GameInstance, isImpersonated: boolean = false): Promise<any> {
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
 
@@ -532,6 +536,9 @@ export class GameRulesService {
       hasPlayedEver,
       timeLimitConfig: instance.config?.timeLimitConfig || null,
       isInActiveTime,
+      balance: member?.pointsBalance || 0,
+      costPerSpin: instance.config?.costPerSpin || 0,
+      isImpersonated,
     };
 
     if (!canPlay && blockReason) {

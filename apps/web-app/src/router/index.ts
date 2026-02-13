@@ -20,6 +20,11 @@ const router = createRouter({
         },
         {
             path: '/game/:id',
+            name: 'game-legacy',
+            component: () => import('@/views/game/index.vue'),
+        },
+        {
+            path: '/:companySlug/:gameSlug',
             name: 'game',
             component: () => import('@/views/game/index.vue'),
         },

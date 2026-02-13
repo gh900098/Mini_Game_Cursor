@@ -88,9 +88,12 @@ export class AuthController {
     @Get('profile')
     async getProfile(@Request() req: any) {
         const user = await this.usersService.findOne(req.user.userId);
+        const currentCompany = user.userCompanies?.find(uc => uc.companyId === req.user.currentCompanyId)?.company;
+
         return {
             ...user,
             currentCompanyId: req.user.currentCompanyId,
+            currentCompanySlug: currentCompany?.slug || null,
             currentRoleId: req.user.currentRoleId,
             currentRoleLevel: req.user.currentRoleLevel,
             isSuperAdmin: req.user.isSuperAdmin,

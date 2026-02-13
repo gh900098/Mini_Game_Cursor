@@ -1,14 +1,91 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { Member } from './entities/member.entity';
+import { LoginHistory } from './entities/login-history.entity';
 
 @Injectable()
 export class MembersService {
     constructor(
         @InjectRepository(Member)
         private readonly memberRepository: Repository<Member>,
+        @InjectRepository(LoginHistory)
+        private readonly loginHistoryRepo: Repository<LoginHistory>,
+        private readonly jwtService: JwtService,
     ) { }
+
+    async validateMember(username: string, pass: string): Promise<any> {
+        const member = await this.memberRepository.findOne({
+            where: { username },
+            select: ['id', 'username', 'password', 'companyId', 'isActive', 'isAnonymous']
+        });
+
+        if (!member) {
+            return null;
+        }
+
+        if (!member.password) {
+            // If no password set, can't login via password
+            return null;
+        }
+
+        const isMatch = await bcrypt.compare(pass, member.password);
+        if (isMatch) {
+            if (!member.isActive) {
+                // Should record failed login? For now just success
+                throw new UnauthorizedException('Account is disabled');
+            }
+            const { password, ...result } = member;
+            return result;
+        }
+        return null;
+    }
+
+    async login(member: any, ipAddress?: string, userAgent?: string) {
+        // Record login history
+        await this.loginHistoryRepo.save({
+            memberId: member.id,
+            ipAddress,
+            userAgent,
+            success: true,
+        });
+
+        // Update last login
+        await this.memberRepository.update(member.id, {
+            lastLoginAt: new Date()
+        });
+
+        const payload = {
+            username: member.username,
+            sub: member.id,
+            companyId: member.companyId,
+            role: 'member',
+            isMember: true,
+            isImpersonated: false
+        };
+        return {
+            token: this.jwtService.sign(payload),
+            user: member,
+        };
+    }
+
+    async getImpersonationToken(id: string) {
+        const member = await this.findById(id);
+        const payload = {
+            username: member.username,
+            sub: member.id,
+            companyId: member.companyId,
+            role: 'member',
+            isMember: true,
+            isImpersonated: true
+        };
+        return {
+            token: this.jwtService.sign(payload),
+            user: member,
+        };
+    }
 
     async findOrCreateExternalMember(companyId: string, externalId: string, username?: string): Promise<Member> {
         let member = await this.memberRepository.findOne({

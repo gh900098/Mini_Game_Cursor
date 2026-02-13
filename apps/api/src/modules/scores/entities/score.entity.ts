@@ -19,6 +19,12 @@ export class Score {
     @Column({ type: 'jsonb', nullable: true })
     metadata: Record<string, any>;
 
+    @Column({ type: 'decimal', precision: 5, scale: 2, default: 1 })
+    multiplier: number;
+
+    @Column({ type: 'integer', nullable: true })
+    finalPoints: number;
+
     @CreateDateColumn()
     createdAt: Date;
 

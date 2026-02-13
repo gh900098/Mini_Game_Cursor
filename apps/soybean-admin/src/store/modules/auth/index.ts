@@ -27,6 +27,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
     roles: [],
     buttons: [],
     currentCompanyId: null,
+    currentCompanySlug: null,
     currentRoleId: null,
     currentRoleLevel: 0,
     companies: [],
@@ -41,7 +42,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   const isStaticSuper = computed(() => {
     const { VITE_AUTH_ROUTE_MODE, VITE_STATIC_SUPER_ROLE } = import.meta.env;
 
-    return VITE_AUTH_ROUTE_MODE === 'static' && userInfo.roles.includes(VITE_STATIC_SUPER_ROLE);
+    return VITE_AUTH_ROUTE_MODE === 'static' && (userInfo.roles?.includes(VITE_STATIC_SUPER_ROLE) ?? false);
   });
 
   /** Is login */
@@ -186,6 +187,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
         roles,
         buttons: permissions,
         currentCompanyId: backendUser.currentCompanyId,
+        currentCompanySlug: backendUser.currentCompanySlug,
         currentRoleId: backendUser.currentRoleId,
         currentRoleLevel: backendUser.currentRoleLevel || 0,
         companies: backendUser.userCompanies?.map((uc: any) => ({

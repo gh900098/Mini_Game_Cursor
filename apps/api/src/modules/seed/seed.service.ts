@@ -8,6 +8,7 @@ import { User } from '../users/entities/user.entity';
 import { UserCompany } from '../user-companies/entities/user-company.entity';
 import { Game } from '../games/entities/game.entity';
 import { GameInstance } from '../game-instances/entities/game-instance.entity';
+import { PrizesService } from '../prizes/prizes.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -29,6 +30,7 @@ export class SeedService {
         private readonly gameRepository: Repository<Game>,
         @InjectRepository(GameInstance)
         private readonly instanceRepository: Repository<GameInstance>,
+        private readonly prizesService: PrizesService,
     ) { }
 
     async seedAll(): Promise<{ message: string }> {
@@ -37,6 +39,7 @@ export class SeedService {
         await this.seedPermissions();
         await this.seedRoles();
         await this.seedDemoCompany();
+        await this.prizesService.seedDefaults();
         await this.seedGames();
         await this.seedInstances();
 

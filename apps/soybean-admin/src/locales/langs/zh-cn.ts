@@ -251,20 +251,75 @@ const local: App.I18n.Schema = {
     'user-center': '个人中心',
     management_company: '公司管理',
     'management_email-settings': '邮件设置',
+    management_games: '游戏模板',
     management_permission: '权限管理',
 
     'management_audit-log': '审计日志',
-    management_member: '会员管理',
-    'management_game-instance': '游戏实例',
-    management_games: '游戏模板',
-    'management_play-attempts': '游戏记录',
-    management_scores: '分数记录',
-    'management_budget-tracking': '预算追踪',
     games: '游戏中心',
-    games_list: '游戏列表'
+    games_list: '游戏列表',
+    games_members: '会员列表',
+    'games_member-detail': '会员详情',
+    'games_game-instance': '游戏实例',
+    'games_play-attempts': '游戏记录',
+    games_scores: '分数记录',
+    'games_budget-tracking': '预算追踪',
+    games_prizes: '奖品台账'
   },
   page: {
     manage: {
+      prizes: {
+        title: '奖品台账',
+        time: '时间',
+        member: '会员信息',
+        gameInstance: '游戏实例',
+        prize: '奖品名称',
+        type: '奖品类型',
+        status: '发放状态',
+        actions: '操作',
+        details: '详情',
+        image: '奖品图片',
+        status_pending: '待处理',
+        status_claimed: '已领取',
+        status_fulfilled: '已发放',
+        status_shipped: '已发货',
+        status_rejected: '已拒绝',
+        type_physical: '实物奖品',
+        type_bonus_credit: '平台额度',
+        type_virtual: '虚拟奖品',
+        markDelivered: '标记已送达',
+        search: {
+          member: '搜索会员',
+          prizeName: '搜索奖品',
+          status: '过滤状态'
+        }
+      },
+      prizeTypes: {
+        title: '奖励类型管理',
+        name: '类型名称',
+        slug: '唯一标识',
+        strategy: '履行策略',
+        icon: '图标',
+        description: '描述',
+        config: '配置 JSON',
+        add: '添加奖励类型',
+        edit: '编辑奖励类型',
+        strategies: {
+          manual_fulfill: '手动履行',
+          balance_credit: '余额/积分充值',
+          external_hook: '外部激活 (Webhook)',
+          virtual_code: '虚拟卡密'
+        }
+      },
+      memberDetail: {
+        tabs: {
+          plays: '游戏记录',
+          scores: '分数记录',
+          logins: '登录记录',
+          prizes: '奖品记录',
+          credits: '额度记录',
+          audit: '审计日志'
+        }
+      },
       game: {
         common: {
           totalProbability: '总概率',

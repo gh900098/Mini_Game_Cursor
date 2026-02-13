@@ -40,6 +40,21 @@ export class Member {
     @Column({ type: 'jsonb', nullable: true })
     metadata: Record<string, any>;
 
+    @Column({ nullable: true })
+    realName: string;
+
+    @Column({ nullable: true })
+    phoneNumber: string;
+
+    @Column({ nullable: true })
+    email: string;
+
+    @Column({ nullable: true })
+    address: string;
+
+    @Column({ nullable: true, select: false }) // Don't return password by default
+    password: string;
+
     @CreateDateColumn()
     createdAt: Date;
 

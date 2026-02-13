@@ -250,25 +250,81 @@ const local: App.I18n.Schema = {
     'iframe-page': 'Iframe',
     home: 'Home',
     management: 'System Management',
-    management_member: 'Member Management',
-    'management_game-instance': 'Game Instances',
-    management_games: 'Game Templates',
-    'management_play-attempts': 'Play History',
-    management_scores: 'Score Records',
-    'management_budget-tracking': 'Budget Tracking',
     management_role: 'Role',
     management_user: 'User',
     'user-center': 'User Center',
     management_company: 'Company',
     'management_email-settings': 'Email Settings',
+    management_games: 'Game Templates',
     management_permission: 'Permission',
 
     'management_audit-log': 'Audit Log',
     games: 'Game Center',
-    games_list: 'Game List'
+    games_list: 'Game List',
+    games_members: 'Members',
+    'games_member-detail': 'Member Detail',
+    'games_game-instance': 'Game Instances',
+    'games_play-attempts': 'Play History',
+    games_scores: 'Score Records',
+    'games_budget-tracking': 'Budget Tracking',
+    games_prizes: 'Prize Ledger',
+    'games_prize-types': 'Prize Types'
   },
   page: {
     manage: {
+      prizes: {
+        title: 'Prize Ledger',
+        time: 'Time',
+        member: 'Member Info',
+        gameInstance: 'Game Instance',
+        prize: 'Prize Name',
+        type: 'Prize Type',
+        status: 'Fulfillment Status',
+        actions: 'Actions',
+        details: 'Details',
+        image: 'Image',
+        status_pending: 'Pending',
+        status_claimed: 'Claimed',
+        status_fulfilled: 'Fulfilled',
+        status_shipped: 'Shipped',
+        status_rejected: 'Rejected',
+        type_physical: 'Physical Item',
+        type_bonus_credit: 'Bonus Credit',
+        type_virtual: 'Virtual Item',
+        markDelivered: 'Mark Delivered',
+        search: {
+          member: 'Search Member',
+          prizeName: 'Search Prize',
+          status: 'Filter Status'
+        }
+      },
+      prizeTypes: {
+        title: 'Prize Type Management',
+        name: 'Type Name',
+        slug: 'Slug',
+        strategy: 'Fulfillment Strategy',
+        icon: 'Icon',
+        description: 'Description',
+        config: 'Configuration JSON',
+        add: 'Add Prize Type',
+        edit: 'Edit Prize Type',
+        strategies: {
+          manual_fulfill: 'Manual Fulfillment',
+          balance_credit: 'Balance/Credit Deposit',
+          external_hook: 'External Activation (Webhook)',
+          virtual_code: 'Virtual Code/Voucher'
+        }
+      },
+      memberDetail: {
+        tabs: {
+          plays: 'Play History',
+          scores: 'Scores',
+          logins: 'Login History',
+          prizes: 'Prizes',
+          credits: 'Credit History',
+          audit: 'Audit Logs'
+        }
+      },
       game: {
         common: {
           totalProbability: 'Total Probability',

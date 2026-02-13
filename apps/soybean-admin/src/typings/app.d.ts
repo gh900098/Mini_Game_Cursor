@@ -549,6 +549,59 @@ declare namespace App {
           };
         };
         manage: {
+          prizes: {
+            title: string;
+            time: string;
+            member: string;
+            gameInstance: string;
+            prize: string;
+            type: string;
+            status: string;
+            actions: string;
+            details: string;
+            image: string;
+            status_pending: string;
+            status_claimed: string;
+            status_fulfilled: string;
+            status_shipped: string;
+            status_rejected: string;
+            type_physical: string;
+            type_bonus_credit: string;
+            type_virtual: string;
+            markDelivered: string;
+            search: {
+              member: string;
+              prizeName: string;
+              status: string;
+            };
+          };
+          prizeTypes: {
+            title: string;
+            name: string;
+            slug: string;
+            strategy: string;
+            icon: string;
+            description: string;
+            config: string;
+            add: string;
+            edit: string;
+            strategies: {
+              manual_fulfill: string;
+              balance_credit: string;
+              external_hook: string;
+              virtual_code: string;
+            };
+          };
+          memberDetail: {
+            tabs: {
+              plays: string;
+              scores: string;
+              logins: string;
+              prizes: string;
+              credits: string;
+              audit: string;
+            };
+          };
           game: {
             common: {
               [key: string]: string;

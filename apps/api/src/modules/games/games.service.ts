@@ -23,11 +23,16 @@ export class GamesService {
         return this.gameRepository.save(game);
     }
 
-    async findAll(activeOnly = true): Promise<Game[]> {
+    async findAll(activeOnly = true): Promise<any[]> {
+        const query = this.gameRepository.createQueryBuilder('game')
+            .loadRelationCountAndMap('game.usageCount', 'game.instances')
+            .orderBy('game.createdAt', 'DESC');
+
         if (activeOnly) {
-            return this.gameRepository.find({ where: { isActive: true }, order: { createdAt: 'DESC' } });
+            query.where('game.isActive = :isActive', { isActive: true });
         }
-        return this.gameRepository.find({ order: { createdAt: 'DESC' } });
+
+        return query.getMany();
     }
 
     async findOne(idOrSlug: string): Promise<Game> {

@@ -30,7 +30,7 @@ export class AdminScoresController {
             .leftJoinAndSelect('score.member', 'member')
             .leftJoinAndSelect('score.instance', 'instance')
             .leftJoinAndSelect('instance.company', 'company')
-            .orderBy('score.achievedAt', 'DESC')
+            .orderBy('score.createdAt', 'DESC')
             .take(1000); // Limit for performance
 
         if (companyId) {

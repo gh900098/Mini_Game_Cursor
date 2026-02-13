@@ -17,9 +17,10 @@ export class AdminGamesController {
 
     @Get('all')
     async getAllGames() {
-        return this.gamesRepo.find({
-            order: { createdAt: 'DESC' },
-        });
+        return this.gamesRepo.createQueryBuilder('game')
+            .loadRelationCountAndMap('game.usageCount', 'game.instances', 'instances', (qb) => qb.where('instances.isActive = :isActive', { isActive: true }))
+            .orderBy('game.createdAt', 'DESC')
+            .getMany();
     }
 
     @Get('stats')

@@ -20,7 +20,7 @@ export function getAllTabs(tabs: App.Global.Tab[], homeTab?: App.Global.Tab) {
 
   const remainTabs = filterHomeTabs.filter(tab => !isFixedTab(tab));
 
-  const allTabs = [homeTab, ...fixedTabs, ...remainTabs].filter(tab => tab.routeKey !== 'login' && !tab.fullPath.includes('/login'));
+  const allTabs = [homeTab, ...fixedTabs, ...remainTabs].filter(tab => tab.routeKey !== 'login' && Boolean(tab.fullPath) && !tab.fullPath.includes('/login'));
 
   return updateTabsLabel(allTabs);
 }

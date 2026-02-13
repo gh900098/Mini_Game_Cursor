@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query, Header, UseInterceptors, UploadedFile, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query, Header, UseInterceptors, UploadedFile, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
+import { GameInstance } from './entities/game-instance.entity';
 import { GameInstancesService } from './game-instances.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionsGuard, RequirePermission } from '../../common/guards/permissions.guard';
@@ -22,6 +23,23 @@ export class GameInstancesController {
         @Query('v') version?: string
     ) {
         const instance = await this.instancesService.findBySlug(slug);
+        return this.handlePlay(instance, isPreview, version);
+    }
+
+    @Get('c/:companySlug/:gameSlug/play')
+    @Header('Content-Type', 'text/html')
+    async playByCompanySlug(
+        @Param('companySlug') companySlug: string,
+        @Param('gameSlug') gameSlug: string,
+        @Query('token') token: string,
+        @Query('isPreview') isPreview?: string,
+        @Query('v') version?: string
+    ) {
+        const instance = await this.instancesService.findByCompanyAndSlug(companySlug, gameSlug);
+        return this.handlePlay(instance, isPreview, version);
+    }
+
+    private async handlePlay(instance: GameInstance, isPreview?: string, version?: string) {
         if (!instance) throw new NotFoundException('Game instance not found');
 
         const config = await this.instancesService.getEffectiveConfig(instance);
@@ -974,6 +992,21 @@ export class GameInstancesController {
         };
     }
 
+    @Post('validate-slug')
+    @UseGuards(JwtAuthGuard)
+    async validateSlug(@Request() req: any, @Body() body: { slug: string; excludeId?: string }) {
+        const companyId = req.user.currentCompanyId || 'f6605a10-7b87-415f-bce9-2fa55e495c87';
+        return this.instancesService.validateSlug(body.slug, companyId, body.excludeId);
+    }
+
+    @Get('c/:companySlug/:gameSlug')
+    async findByCompanyAndGameSlug(
+        @Param('companySlug') companySlug: string,
+        @Param('gameSlug') gameSlug: string
+    ) {
+        return this.instancesService.findByCompanyAndSlug(companySlug, gameSlug);
+    }
+
     @Get(':slug')
     async findBySlug(@Param('slug') slug: string) {
         return this.instancesService.findBySlug(slug);
@@ -982,21 +1015,42 @@ export class GameInstancesController {
     @Patch(':id')
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @RequirePermission('games:manage')
-    update(@Param('id') id: string, @Body() body: any) {
+    async update(@Request() req: any, @Param('id') id: string, @Body() body: any) {
+        const instance = await this.instancesService.findAllByCompany(req.user.currentCompanyId);
+        const target = instance.find(i => i.id === id);
+
+        if (!req.user.isSuperAdmin && !target) {
+            throw new ForbiddenException('You do not have permission to modify this instance');
+        }
+
         return this.instancesService.update(id, body);
     }
 
     @Delete(':id')
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @RequirePermission('games:manage')
-    remove(@Param('id') id: string) {
+    async remove(@Request() req: any, @Param('id') id: string) {
+        const instance = await this.instancesService.findAllByCompany(req.user.currentCompanyId);
+        const target = instance.find(i => i.id === id);
+
+        if (!req.user.isSuperAdmin && !target) {
+            throw new ForbiddenException('You do not have permission to delete this instance');
+        }
+
         return this.instancesService.remove(id);
     }
 
     @Get(':id/usage-check')
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @RequirePermission('games:manage')
-    checkUsage(@Param('id') id: string) {
+    async checkUsage(@Request() req: any, @Param('id') id: string) {
+        const instance = await this.instancesService.findAllByCompany(req.user.currentCompanyId);
+        const target = instance.find(i => i.id === id);
+
+        if (!req.user.isSuperAdmin && !target) {
+            throw new ForbiddenException('You do not have permission to access this instance');
+        }
+
         return this.instancesService.checkUsage(id);
     }
 }

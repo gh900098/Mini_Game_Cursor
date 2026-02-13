@@ -51,6 +51,24 @@ export const generatedRoutes: GeneratedRoute[] = [
     },
     children: [
       {
+        name: 'games_budget-tracking',
+        path: '/games/budget-tracking',
+        component: 'view.games_budget-tracking',
+        meta: {
+          title: 'games_budget-tracking',
+          i18nKey: 'route.games_budget-tracking'
+        }
+      },
+      {
+        name: 'games_game-instance',
+        path: '/games/game-instance',
+        component: 'view.games_game-instance',
+        meta: {
+          title: 'games_game-instance',
+          i18nKey: 'route.games_game-instance'
+        }
+      },
+      {
         name: 'games_list',
         path: '/games/list',
         component: 'view.games_list',
@@ -60,6 +78,53 @@ export const generatedRoutes: GeneratedRoute[] = [
           roles: ['R_SUPER', 'R_ADMIN', 'R_USER'],
           icon: 'ion:game-controller-outline',
           order: 1
+        }
+      },
+      {
+        name: 'games_member-detail',
+        path: '/games/member-detail/:id',
+        component: 'view.games_member-detail',
+        meta: {
+          title: 'games_member-detail',
+          i18nKey: 'route.games_member-detail'
+        }
+      },
+      {
+        name: 'games_members',
+        path: '/games/members',
+        component: 'view.games_members',
+        meta: {
+          title: 'games_members',
+          i18nKey: 'route.games_members'
+        }
+      },
+      {
+        name: 'games_play-attempts',
+        path: '/games/play-attempts',
+        component: 'view.games_play-attempts',
+        meta: {
+          title: 'games_play-attempts',
+          i18nKey: 'route.games_play-attempts'
+        }
+      },
+      {
+        name: 'games_prizes',
+        path: '/games/prizes',
+        component: 'view.games_prizes',
+        meta: {
+          title: 'games_prizes',
+          i18nKey: 'route.games_prizes',
+          icon: 'streamline:gift-box-solid',
+          order: 3
+        }
+      },
+      {
+        name: 'games_scores',
+        path: '/games/scores',
+        component: 'view.games_scores',
+        meta: {
+          title: 'games_scores',
+          i18nKey: 'route.games_scores'
         }
       }
     ]
@@ -146,17 +211,6 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
-        name: 'management_game-instance',
-        path: '/management/game-instance',
-        component: 'view.management_game-instance',
-        meta: {
-          title: 'management_game-instance',
-          i18nKey: 'route.management_game-instance',
-          icon: 'carbon:game-console',
-          order: 5
-        }
-      },
-      {
         name: 'management_games',
         path: '/management/games',
         component: 'view.management_games',
@@ -165,59 +219,6 @@ export const generatedRoutes: GeneratedRoute[] = [
           i18nKey: 'route.management_games',
           icon: 'carbon:gamification',
           order: 6
-        }
-      },
-      {
-        name: 'management_member',
-        path: '/management/member',
-        component: 'view.management_member',
-        meta: {
-          title: 'management_member',
-          i18nKey: 'route.management_member',
-          icon: 'carbon:user-multiple',
-          order: 7
-        }
-      },
-      {
-        name: 'management_member_detail',
-        path: '/management/member/detail',
-        component: 'view.management_member_detail',
-        meta: {
-          title: 'Member Detail',
-          hideInMenu: true
-        }
-      },
-      {
-        name: 'management_play-attempts',
-        path: '/management/play-attempts',
-        component: 'view.management_play-attempts',
-        meta: {
-          title: 'management_play-attempts',
-          i18nKey: 'route.management_play-attempts',
-          icon: 'carbon:activity',
-          order: 8
-        }
-      },
-      {
-        name: 'management_scores',
-        path: '/management/scores',
-        component: 'view.management_scores',
-        meta: {
-          title: 'management_scores',
-          i18nKey: 'route.management_scores',
-          icon: 'carbon:trophy',
-          order: 9
-        }
-      },
-      {
-        name: 'management_budget-tracking',
-        path: '/management/budget-tracking',
-        component: 'view.management_budget-tracking',
-        meta: {
-          title: 'management_budget-tracking',
-          i18nKey: 'route.management_budget-tracking',
-          icon: 'carbon:money',
-          order: 10
         }
       },
       {

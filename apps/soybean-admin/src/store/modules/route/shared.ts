@@ -10,8 +10,8 @@ import { $t } from '@/locales';
  * @param roles Roles
  * @param permissions Permissions
  */
-export function filterAuthRoutesByRoles(routes: ElegantConstRoute[], roles: string[], permissions: string[]) {
-  return routes.flatMap(route => filterAuthRouteByRoles(route, roles, permissions));
+export function filterAuthRoutesByRoles(routes: ElegantConstRoute[], roles: string[] = [], permissions: string[] = []) {
+  return routes.flatMap(route => filterAuthRouteByRoles(route, roles || [], permissions || []));
 }
 
 /**

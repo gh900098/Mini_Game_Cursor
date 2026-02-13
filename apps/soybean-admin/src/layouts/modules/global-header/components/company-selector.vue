@@ -15,7 +15,7 @@ const { SvgIconVNode } = useSvgIcon();
 const allCompanies = ref<Api.Management.Company[]>([]);
 
 async function getAllCompanies() {
-  if (authStore.userInfo.roles.includes('R_SUPER') || authStore.isStaticSuper) {
+  if ((authStore.userInfo.roles?.includes('R_SUPER') ?? false) || authStore.isStaticSuper) {
     const { data, error } = await fetchGetCompanies();
     if (!error && data) {
       allCompanies.value = data;
@@ -27,7 +27,7 @@ const options = computed<DropdownOption[]>(() => {
   const opts: DropdownOption[] = [];
   
   // Add "All" option for Super Admins
-  if (authStore.userInfo.roles.includes('R_SUPER') || authStore.isStaticSuper) {
+  if ((authStore.userInfo.roles?.includes('R_SUPER') ?? false) || authStore.isStaticSuper) {
     opts.push({
       label: 'All',
       key: 'ALL',

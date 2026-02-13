@@ -608,6 +608,21 @@ f7c759f - feat: 游戏前端floating button红色warning indicator
 
 ---
 
+## [Unreleased]
+
+## [2026-02-13]
+### Added
+- **Enterprise Prize Architecture**: Dynamic prize type system allowing custom prize types with specific fulfillment strategies.
+- **Prize Strategy Service**: Backend service to handle different prize behaviors (e.g., `balance_credit`, `manual_fulfill`, `virtual_code`).
+
+### Fixed
+- **Critical Score Bug**: Fixed an issue where winning a prize would incorrectly add the game score to the member's balance in addition to the prize value.
+- **Prize Configuration Encoding**: Resolved character encoding issues (mojibake) in the `ConfigForm.vue` component.
+- **Member Detail Error**: Fixed `ReferenceError: $t is not defined` on the Member Detail page.
+- **Missing Credit History**: Fixed an issue where credit history passed to the frontend was empty.
+- **Prize Ledger Display**: Fixed missing icons and inconsistent casing in the Admin Prize Ledger.
+- **Cash Auto-Fulfillment**: "Cash" prizes now correctly default to `manual_fulfill` strategy instead of auto-crediting.
+
 ## [Earlier] 项目初始化
 
 ### i18n System Setup

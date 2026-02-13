@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { GameInstance } from '../../game-instances/entities/game-instance.entity';
 
 @Entity('games')
 export class Game {
@@ -46,4 +47,9 @@ export class Game {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @OneToMany(() => GameInstance, (instance) => instance.gameTemplate)
+    instances: GameInstance[];
+
+    usageCount?: number;
 }

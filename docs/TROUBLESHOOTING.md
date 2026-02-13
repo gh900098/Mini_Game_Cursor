@@ -1226,3 +1226,80 @@ const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 ---
 
+
+
+---
+
+## 🐛 Case 11: 赢奖品同时加分 (Double Counting) (2026-02-13)
+
+### 症状
+- 玩家玩转盘，转到了 "Cash $10"。
+- 预期：获得 $10 现金（待审核），积分余额不变（或只扣除成本）。
+- 实际：获得 $10 现金记录 **PLUS** 积分余额增加了 10 分。
+- 只有 "Points" 类型的奖品才应该加分。
+
+### 根本原因
+`ScoresService.submit()` 里的逻辑缺陷：
+```typescript
+// 旧逻辑
+const finalPoints = scoreValue * multiplier;
+await membersService.updatePoints(memberId, finalPoints - cost); // 无条件加分！
+```
+它把所有游戏结果都当成了"得分"，忽略了这次结果可能是一个"奖品"（Prize），而奖品的价值（value）不一定是积分。
+
+### 解决方案
+修改 `ScoresService`，区分 **纯得分** 和 **赢奖品**：
+
+```typescript
+// 新逻辑
+let netPointsChange = -costPerSpin; // 先扣成本
+
+// 只有当没有奖品索引（纯得分游戏）时，才把分数加到余额
+if (metadata?.prizeIndex === undefined) {
+    netPointsChange += finalPoints;
+}
+
+// 如果属于奖品（prizeIndex exists），则由 PrizeStrategyService 处理
+// PrizeStrategyService 会根据类型决定是否加分（例如 'points' 类型会加，'cash' 类型不加）
+```
+
+**Files Modified:** `apps/api/src/modules/scores/scores.service.ts`
+
+---
+
+## 🐛 Case 12: Member Detail Page Error "$t is not defined" (2026-02-13)
+
+### 症状
+- Admin 点击会员详情页。
+- 页面空白或报错。
+- Console 显示：`ReferenceError: $t is not defined`.
+
+### 根本原因
+- 在 `<script setup>` 或 render function 里直接使用了 `$t`，但没有 import。
+- Vue template 里可以直接用 `$t`，但在 script 里必须显式引入。
+
+### 解决方案
+```typescript
+import { $t } from '@/locales';
+```
+
+**Files Modified:** `apps/soybean-admin/src/views/games/member-detail/[id].vue`
+
+---
+
+## 🐛 Case 13: 奖品配置乱码 (Mojibake) (2026-02-13)
+
+### 症状
+- 奖品配置里的 Emoji 显示为乱码（如 `Ã°Å¸âEXT`）。
+- 导致前端显示崩坏。
+
+### 根本原因
+- 文件曾经被以错误的编码保存（UTF-8 被误读为 Windows-1252 或类似，然后再保存）。
+- 这里是源代码级别的损坏。
+
+### 解决方案
+- 使用脚本或手动修复源代码文件。
+- 确保编辑器使用 UTF-8 NO BOM 格式。
+- 修复了 `ConfigForm.vue` 和 `SeedService.ts` 里的所有硬编码乱码。
+
+---

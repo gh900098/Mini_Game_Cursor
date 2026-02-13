@@ -58,16 +58,36 @@ export function createStaticRoutes() {
           r.meta.permission = 'audit-logs:read';
           r.meta.icon = 'material-symbols:history-rounded';
           r.meta.order = 6;
-        } else if (r.name === 'management_member') {
+        } else if (r.name === 'games_members') {
           r.meta.roles = ['R_SUPER', 'R_ADMIN'];
           r.meta.permission = 'members:read';
           r.meta.icon = 'material-symbols:person-pin-rounded';
           r.meta.order = 7;
-        } else if (r.name === 'management_game-instance') {
+        } else if (r.name === 'games_member-detail') {
+          r.meta.roles = ['R_SUPER', 'R_ADMIN'];
+          r.meta.permission = 'members:read';
+          r.meta.hideInMenu = true;
+          r.meta.activeMenu = 'games_members';
+        } else if (r.name === 'games_game-instance') {
           r.meta.roles = ['R_SUPER', 'R_ADMIN'];
           r.meta.permission = 'game-instances:manage';
           r.meta.icon = 'material-symbols:qr-code-2-rounded';
           r.meta.order = 8;
+        } else if (r.name === 'games_play-attempts') {
+          r.meta.roles = ['R_SUPER', 'R_ADMIN'];
+          r.meta.permission = 'play-attempts:read'; // Assuming permission key, check if needed
+          r.meta.icon = 'carbon:activity';
+          r.meta.order = 8;
+        } else if (r.name === 'games_scores') {
+          r.meta.roles = ['R_SUPER', 'R_ADMIN'];
+          r.meta.permission = 'scores:read'; // Assuming permission key
+          r.meta.icon = 'carbon:trophy';
+          r.meta.order = 9;
+        } else if (r.name === 'games_budget-tracking') {
+          r.meta.roles = ['R_SUPER', 'R_ADMIN'];
+          r.meta.permission = 'budget-tracking:read'; // Assuming permission key
+          r.meta.icon = 'carbon:money';
+          r.meta.order = 10;
         }
       }
       if (r.children) {

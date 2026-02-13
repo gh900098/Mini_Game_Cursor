@@ -37,7 +37,7 @@
             <div class="w-full">
               <h3 class="text-xl font-bold text-white mb-2">{{ instance.name }}</h3>
               <p class="text-white/50 text-sm line-clamp-2 h-10 mb-4">{{ instance.gameTemplate?.description || 'No description available.' }}</p>
-              <n-button type="primary" block size="large" @click="$router.push('/game/' + instance.slug)">
+              <n-button type="primary" block size="large" @click="$router.push(`/${instance.company?.slug || 'demo-company'}/${instance.slug}`)">
                 Launch Game
               </n-button>
             </div>

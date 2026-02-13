@@ -37,7 +37,7 @@ export function createRouteGuard(router: Router) {
     const routeRoles = to.meta.roles || [];
     const routePermission = to.meta.permission;
 
-    const hasRole = authStore.userInfo.roles.some(role => routeRoles.includes(role));
+    const hasRole = authStore.userInfo.roles?.some(role => routeRoles.includes(role)) ?? false;
     const hasRoleAuth = authStore.isStaticSuper || !routeRoles.length || hasRole;
 
     // Granular permission check

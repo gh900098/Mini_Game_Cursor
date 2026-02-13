@@ -19,26 +19,45 @@
           Sign In
         </n-button>
       </n-form>
-      <div class="mt-6 text-center text-white/60">
-        Don't have an account? <a href="#" class="text-primary hover:underline">Register</a>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, reactive, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/store/auth';
 import service from '@/service/api';
 import type { FormInst } from 'naive-ui';
+import { useMessage } from 'naive-ui';
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const message = useMessage();
 
 const formRef = ref<FormInst | null>(null);
 const loading = ref(false);
+
+onMounted(async () => {
+  const token = route.query.token as string;
+  if (token) {
+    loading.value = true;
+    try {
+      authStore.setToken(token);
+      message.success('Auto-login successful');
+      
+      // Fetch user profile
+      await authStore.fetchProfile();
+      
+      router.push('/');
+    } catch (e) {
+      message.error('Invalid impersonation token');
+    } finally {
+      loading.value = false;
+    }
+  }
+});
 
 const loginModel = reactive({
   username: '',
@@ -54,7 +73,7 @@ async function handleLogin() {
   await formRef.value?.validate();
   loading.value = true;
   try {
-    const res: any = await service.post('/auth/login', loginModel);
+    const res: any = await service.post('/members/login', loginModel);
     authStore.setToken(res.token);
     authStore.setUserInfo(res.user);
     message.success('Login successful!');

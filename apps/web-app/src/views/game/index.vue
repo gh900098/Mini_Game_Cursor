@@ -187,9 +187,12 @@
         </div>
       </div>
       <!-- Preview Mode Simulation Banner -->
-      <div v-if="isPreview" class="absolute top-0 left-0 right-0 z-[60] pointer-events-none">
-        <div class="bg-amber-500/90 backdrop-blur-md text-white text-[10px] font-bold py-1 px-4 text-center tracking-widest shadow-lg border-b border-amber-400/30">
-          <span class="opacity-80">PROTOTYPE SIMULATION</span>
+      <div v-if="isPreview || gameStatus?.isImpersonated" class="absolute top-0 left-0 right-0 z-[60] pointer-events-none">
+        <div 
+          :class="isPreview ? 'bg-amber-500/90' : 'bg-red-500/90'"
+          class="backdrop-blur-md text-white text-[10px] font-bold py-1 px-4 text-center tracking-widest shadow-lg border-b border-amber-400/30"
+        >
+          <span class="opacity-80">{{ isPreview ? 'PROTOTYPE SIMULATION' : 'ADMIN TEST MODE' }}</span>
           <span class="mx-3 opacity-30">|</span>
           <span>NO TOKENS WILL BE DEDUCTED</span>
         </div>
@@ -227,7 +230,8 @@ const cooldownRemaining = ref(0);
 const statusCollapsed = ref(true);
 let cooldownInterval: any = null;
 
-const instanceSlug = computed(() => route.params.id);
+const instanceSlug = computed(() => (route.params.gameSlug || route.params.id) as string);
+const companySlug = computed(() => route.params.companySlug as string);
 const isPreview = computed(() => route.query.isPreview === 'true');
 const hideHeader = computed(() => route.query.hideHeader === 'true');
 
@@ -308,13 +312,17 @@ const remainingSlashColor = computed(() => {
 
 const gameUrl = computed(() => {
   if (!instance.value) return '';
-  const baseUrl = `/api/game-instances/${instanceSlug.value}/play`;
-  const params = new URLSearchParams();
   
+  // Use company-scoped play URL if possible
+  const basePath = companySlug.value 
+    ? `/api/game-instances/c/${companySlug.value}/${instanceSlug.value}/play`
+    : `/api/game-instances/${instanceSlug.value}/play`;
+
+  const params = new URLSearchParams();
   if (authStore.token) params.append('token', authStore.token);
   if (isPreview.value) params.append('isPreview', 'true');
   
-  return `${baseUrl}?${params.toString()}`;
+  return `${basePath}?${params.toString()}`;
 });
 
 const message = useMessage();
@@ -340,7 +348,11 @@ async function submitScore(score: number, metadata?: any) {
       score,
       metadata,
     });
-    message.success(`Score of ${score} submitted successfully!`);
+    if (gameStatus.value?.isImpersonated) {
+      message.info(`[Test Mode] Score of ${score} submitted, but NOT recorded.`);
+    } else {
+      message.success(`Score of ${score} submitted successfully!`);
+    }
     // Refresh game status after successful submission
     fetchGameStatus();
   } catch (err: any) {
@@ -419,7 +431,10 @@ async function fetchGameStatus() {
   
   loadingStatus.value = true;
   try {
-    const res: any = await service.get(`/scores/status/${instanceSlug.value}`);
+    const url = companySlug.value 
+      ? `/scores/status/c/${companySlug.value}/${instanceSlug.value}`
+      : `/scores/status/${instanceSlug.value}`;
+    const res: any = await service.get(url);
     gameStatus.value = res.data || res;
     
     // DEBUG: Log status for color debugging
@@ -453,6 +468,8 @@ function syncStatusToIframe() {
     blockReason: gameStatus.value.blockReason,
     blockDetails: gameStatus.value.blockDetails ? JSON.parse(JSON.stringify(gameStatus.value.blockDetails)) : null,
     cooldownRemaining: cooldownRemaining.value,
+    balance: authStore.userInfo?.pointsBalance || 0,
+    isImpersonated: gameStatus.value.isImpersonated || false,
   };
   
   console.log('[Sync] Sending status to iframe:', simpleStatus);
@@ -597,7 +614,10 @@ function formatTimeLimit(config: any): string {
 async function fetchInstance() {
   loading.value = true;
   try {
-    const res: any = await service.get(`/game-instances/${instanceSlug.value}`);
+    const url = companySlug.value 
+      ? `/game-instances/c/${companySlug.value}/${instanceSlug.value}`
+      : `/game-instances/${instanceSlug.value}`;
+    const res: any = await service.get(url);
     instance.value = res.data || res;
   } catch (error) {
     console.error('Failed to fetch game instance:', error);
@@ -675,6 +695,8 @@ watch(() => gameStatus.value, (status) => {
       canPlay: status.canPlay,
       blockReason: status.blockReason,
       blockDetails: status.blockDetails ? JSON.parse(JSON.stringify(status.blockDetails)) : null,
+      balance: authStore.userInfo?.pointsBalance || 0,
+      isImpersonated: status.isImpersonated || false,
     };
     
     iframeRef.value.contentWindow?.postMessage({

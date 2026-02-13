@@ -19,12 +19,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     async validate(payload: any) {
         // Handle Member tokens (Marketplace players)
-        if (payload.role === 'member') {
+        if (payload.role === 'member' || payload.isMember === true) {
             return {
                 memberId: payload.sub,
                 externalId: payload.externalId,
                 companyId: payload.companyId,
-                role: 'member'
+                role: 'member',
+                isImpersonated: !!payload.isImpersonated
             };
         }
 

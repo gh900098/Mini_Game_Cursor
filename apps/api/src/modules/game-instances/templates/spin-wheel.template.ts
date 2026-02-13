@@ -773,7 +773,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         
         <div class="hud-top">
             <div id="token-bar-el" class="token-bar">
-                <span id="token-value">TOKEN: ${cfg.costPerSpin}</span>
+                <span id="token-value">MY TOKEN: --</span>
             </div>
             <div id="branding-el" class="branding">
                 ${cfg.titleImage ? `<img src="${cfg.titleImage}" alt="Logo" />` : `<div class="default-title">SPIN & WIN</div>`}
@@ -1647,7 +1647,7 @@ if (config.enableConfetti !== false) {
     }
 }
 
-window.parent.postMessage({ type: 'score-submit', score: 10, metadata: { prize: won } }, '*');
+window.parent.postMessage({ type: 'score-submit', score: isLose ? 0 : 10, metadata: { prize: won, prizeIndex: winnerIdx, isLose } }, '*');
             }, duration + 200);
         }
 
@@ -2122,6 +2122,13 @@ function initSwipeToSpin() {
                             statusMsg.style.color = '';
                         }
                     }
+                }
+
+                // Update balance display
+                const tokenVal = document.getElementById('token-value');
+                if (tokenVal && status.balance !== undefined) {
+                    const prefix = status.isImpersonated ? '[TEST] ' : 'MY TOKEN: ';
+                    tokenVal.innerText = prefix + status.balance;
                 }
                 
                 console.log('[GameRules] Status updated:', { canPlay, blockReason, blockDetails, cooldownRemaining });

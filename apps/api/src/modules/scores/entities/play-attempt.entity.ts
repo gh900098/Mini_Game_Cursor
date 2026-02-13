@@ -24,6 +24,12 @@ export class PlayAttempt {
   @Column({ nullable: true, length: 45 })
   ipAddress: string;
 
+  @Column({ nullable: true })
+  outcome: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  resultData: Record<string, any>;
+
   @ManyToOne(() => Member, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'memberId' })
   member: Member;

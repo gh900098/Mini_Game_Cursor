@@ -143,6 +143,13 @@ export const request = createFlatRequest(
       // Handle friendly error message based on HTTP status code
       // If we already have a specific backend message, we don't always want to override it
       const friendlyMsg = handleFriendlyError(error.response?.status);
+
+      // if the status is 401, then logout
+      if (error.response?.status === 401) {
+        const authStore = useAuthStore();
+        authStore.resetStore();
+      }
+
       if (friendlyMsg && (!message || message === error.message)) {
         message = friendlyMsg;
       }

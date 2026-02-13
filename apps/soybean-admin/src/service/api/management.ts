@@ -228,6 +228,15 @@ export function fetchCheckGameInstanceUsage(id: string) {
     });
 }
 
+/** Validate game instance slug */
+export function fetchValidateGameInstanceSlug(data: { slug: string; excludeId?: string }) {
+    return request<{ isAvailable: boolean; suggestedSlug: string }>({
+        url: '/game-instances/validate-slug',
+        method: 'post',
+        data
+    });
+}
+
 /** Get play attempts */
 export function fetchGetPlayAttempts(params?: { companyId?: string }) {
     return request<Api.Management.PlayAttempt[]>({
@@ -280,6 +289,32 @@ export function fetchGetGamesStats() {
     });
 }
 
+/** Create game template */
+export function fetchCreateGame(data: Partial<Api.Management.Game>) {
+    return request<Api.Management.Game>({
+        url: '/games',
+        method: 'post',
+        data
+    });
+}
+
+/** Update game template */
+export function fetchUpdateGame(id: string, data: Partial<Api.Management.Game>) {
+    return request<Api.Management.Game>({
+        url: `/games/${id}`,
+        method: 'patch',
+        data
+    });
+}
+
+/** Delete game template */
+export function fetchDeleteGame(id: string) {
+    return request<void>({
+        url: `/games/${id}`,
+        method: 'delete'
+    });
+}
+
 /** Admin Members APIs */
 export function fetchGetAdminMembers(params?: { companyId?: string }) {
     return request<Api.Management.Member[]>({
@@ -316,6 +351,13 @@ export function fetchUpdateMember(id: string, data: Partial<Api.Management.Membe
         url: `/admin/members/${id}`,
         method: 'patch',
         data
+    });
+}
+
+export function fetchDeleteMember(id: string) {
+    return request<void>({
+        url: `/admin/members/${id}`,
+        method: 'delete'
     });
 }
 
@@ -370,6 +412,21 @@ export function fetchGetMemberLoginHistory(id: string) {
     });
 }
 
+export async function fetchGetPrizes(params?: { status?: string; memberId?: string; instanceId?: string }) {
+    return request<Api.Management.MemberPrize[]>({
+        url: '/admin/prizes',
+        method: 'get',
+        params
+    });
+}
+
+export function fetchGetMemberPrizes(id: string) {
+    return request<any[]>({
+        url: `/admin/members/${id}/prizes`,
+        method: 'get'
+    });
+}
+
 export function fetchGetMemberAuditLogs(id: string) {
     return request<any[]>({
         url: `/admin/members/${id}/audit-logs`,
@@ -382,6 +439,23 @@ export function fetchDesignGuide(gameSlug: string) {
     return request<{ content: string; themeName: string }>({
         url: `/games/${gameSlug}/design-guide`,
         method: 'get'
+    });
+}
+
+/** Impersonate member */
+export function fetchImpersonateMember(id: string) {
+    return request<{ token: string; user: Api.Management.Member; redirectUrl: string }>({
+        url: `/admin/members/${id}/impersonate`,
+        method: 'post'
+    });
+}
+
+/** Reset member password */
+export function fetchResetMemberPassword(id: string, data: { password: string }) {
+    return request<any>({
+        url: `/admin/members/${id}/reset-password`,
+        method: 'patch',
+        data
     });
 }
 

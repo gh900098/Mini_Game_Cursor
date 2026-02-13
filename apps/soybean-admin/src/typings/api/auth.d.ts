@@ -22,6 +22,7 @@ declare namespace Api {
       roles: string[];
       buttons: string[];
       currentCompanyId: string | null;
+      currentCompanySlug: string | null;
       currentRoleId: string | null;
       currentRoleLevel: number;
       companies: {

@@ -18,6 +18,7 @@ import { GamesModule } from './modules/games/games.module';
 import { ScoresModule } from './modules/scores/scores.module';
 import { MembersModule } from './modules/members/members.module';
 import { GameInstancesModule } from './modules/game-instances/game-instances.module';
+import { PrizesModule } from './modules/prizes/prizes.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { GameInstancesModule } from './modules/game-instances/game-instances.mod
     ScoresModule,
     MembersModule,
     GameInstancesModule,
+    PrizesModule,
   ],
   controllers: [AppController],
   providers: [
