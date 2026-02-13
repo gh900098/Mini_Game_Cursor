@@ -4,7 +4,56 @@
  
  ---
 
-## [2026-02-13 晚上] Admin Menu Icons - Prize Ledger & Prize Types
+## [2026-02-13 晚上] Member Detail UI Improvements
+
+### 🎨 UI Enhancement
+
+**实施时间:** 2026-02-13 21:05-21:30 (25分钟)
+
+**核心需求:**
+- 改进会员详情页面的可用性和信息展示
+- 重新排序tabs以提升用户体验
+- 丰富prize信息显示
+
+**改进内容:**
+
+1. **Tab重新排序**
+   - 移动 "Login History" 到最后位置
+   - 新的顺序: Credits → Plays → Scores → **Prizes** → Logins
+   - 逻辑: 奖品信息比登录历史更重要和常用
+
+2. **Prize表格信息增强**
+   - 新增 **Type** 列: 色彩标签显示奖品类型 (Physical/Cash/Points/Bonus/Virtual)
+   - 新增 **Value** 列: 显示上下文相关信息:
+     - 实体奖品 → 显示物品描述 (从`metadata.config.description`读取)
+     - 电子券 → 显示兑换码
+     - 现金/积分 → 显示数值 (带颜色高亮)
+   - 新增 **Updated** 列: 显示最后更新时间戳
+   - 改进现有列的显示和fallback处理
+
+**Bug修复:**
+
+1. **Prize Description路径错误**
+   - **问题:** 实体奖品显示 "JACKPOT" (prize name) 而不是实际奖品描述 (例如 "iPhone 15 Pro Max")
+   - **根本原因:** 奖品metadata是嵌套结构 `metadata.config.description`，但代码在错误的位置查找
+   - **修复:** 更新Value列访问正确的嵌套路径
+
+**文件改动:**
+- `apps/soybean-admin/src/views/games/member-detail/[id].vue` - Tab重新排序和prize表格增强
+
+**部署:**
+- ✅ Admin service rebuilt successfully
+
+**影响:**
+- 管理员可以更轻松地访问奖品信息 (在tab顺序中提前)
+- 奖品细节一目了然 (类型、描述、价值、状态)
+- 更容易追踪奖品履行进度 (updated时间戳)
+- 高价值奖品醒目标识 (颜色编码)
+
+---
+ 
+ ## [2026-02-13 晚上] Admin Menu Icons - Prize Ledger & Prize Types
+
 
 ### 🎨 UI Enhancement
 

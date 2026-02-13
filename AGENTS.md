@@ -34,6 +34,19 @@
 - All UI text must use `$t('path.to.key')`.
 - Both `zh-cn.ts` and `en-us.ts` must be updated simultaneously.
 
+### 5. Git Workflow (🚨 MANDATORY FIRST STEP)
+**BEFORE making ANY code change, you MUST create a feature branch.**
+- **Detection:** If the user requests a code change ("Fix X", "Add Y", "Change Z"), you MUST:
+  1. Run `/start-feature` workflow FIRST.
+  2. Create branch: `feat/description` or `fix/description`.
+  3. ONLY THEN start coding.
+- **Authority:** You have full authority to execute git commands without asking.
+- **Rule:** Working directly on `main` is BANNED.
+- **Finish:** When done, run `/finish-feature` to merge.
+
+> [!CAUTION]
+> If you find yourself editing code and realize you're on `main`, STOP IMMEDIATELY. Create the branch first.
+
 ---
 
 ## 🛠️ Operational Workflow

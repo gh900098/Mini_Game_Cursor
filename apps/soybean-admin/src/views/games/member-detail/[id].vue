@@ -289,43 +289,122 @@ const prizeColumns = [
   {
     title: 'Time',
     key: 'createdAt',
-    width: 200,
+    width: 180,
     render(row: any) {
-      return <span>{new Date(row.createdAt).toLocaleString()}</span>;
+      return <span class="text-sm">{new Date(row.createdAt).toLocaleString()}</span>;
     }
   },
   {
-    title: $t('page.manage.prizes.prize'),
+    title: 'Prize',
     key: 'prizeName',
+    minWidth: 150,
     render(row: any) {
-      const type = row.prizeType === 'physical' ? 'warning' : (row.prizeType === 'bonus_credit' ? 'success' : 'info');
-      return <NTag type={type}>{row.prizeName}</NTag>;
+      return <span class="font-medium">{row.prizeName}</span>;
     }
   },
   {
-    title: $t('page.manage.prizes.status'),
-    key: 'status',
+    title: 'Type',
+    key: 'prizeType',
+    width: 130,
     render(row: any) {
-      const statusMap: Record<string, 'default' | 'info' | 'success' | 'warning' | 'error'> = {
-        pending: 'warning',
-        claimed: 'info',
-        fulfilled: 'success',
-        shipped: 'success',
-        rejected: 'error'
+      const typeMap: Record<string, { type: 'default' | 'info' | 'success' | 'warning' | 'error', label: string }> = {
+        physical: { type: 'warning', label: 'Physical' },
+        bonus_credit: { type: 'success', label: 'Bonus Credit' },
+        points: { type: 'info', label: 'Points' },
+        cash: { type: 'error', label: 'Cash' },
+        virtual: { type: 'default', label: 'Virtual' }
       };
-      return <NTag type={statusMap[row.status] || 'default'}>{row.status.toUpperCase()}</NTag>;
+      const config = typeMap[row.prizeType] || { type: 'default', label: row.prizeType };
+      return <NTag type={config.type}>{config.label}</NTag>;
     }
   },
   {
-    title: $t('page.manage.prizes.gameInstance'),
+    title: 'Value',
+    key: 'prizeValue',
+    minWidth: 150,
+    render(row: any) {
+      const prizeType = row.prizeType?.toLowerCase();
+      const config = row.metadata?.config || {};
+      
+      // For cash and points, show numeric value
+      if (prizeType === 'cash' || prizeType === 'points' || prizeType === 'bonus_credit') {
+        if (!row.prizeValue || row.prizeValue === 0) return <span class="text-gray-400">-</span>;
+        const valueColor = row.prizeValue > 100 ? 'text-green-600' : 'text-primary';
+        return <span class={`font-bold ${valueColor}`}>{row.prizeValue}</span>;
+      }
+      
+      // For items/physical prizes, show description from config
+      if (prizeType === 'item' || prizeType === 'physical') {
+        const description = config.description || config.itemName || config.name;
+        if (description) {
+          return <span class="text-sm text-gray-700">{description}</span>;
+        }
+        // Fallback to prize name only if no description in config
+        return <span class="text-sm text-gray-500 italic">{row.prizeName}</span>;
+      }
+      
+      // For virtual/e-gift, show code or description from config
+      if (prizeType === 'virtual' || prizeType === 'e-gift' || prizeType === 'egift') {
+        const code = config.code || config.voucherCode || row.metadata?.code;
+        const description = config.description || config.name;
+        if (code) {
+          return (
+            <div>
+              <div class="font-mono text-xs text-primary">{code}</div>
+              {description && <div class="text-xs text-gray-500">{description}</div>}
+            </div>
+          );
+        }
+        if (description) {
+          return <span class="text-sm text-gray-700">{description}</span>;
+        }
+        return <span class="text-gray-400">-</span>;
+      }
+      
+      // Fallback: show config description or dash
+      const fallbackDesc = config.description || config.details || config.name;
+      if (fallbackDesc) {
+        return <span class="text-sm text-gray-700">{fallbackDesc}</span>;
+      }
+      
+      return <span class="text-gray-400">-</span>;
+    }
+  },
+  {
+    title: 'Status',
+    key: 'status',
+    width: 110,
+    render(row: any) {
+      const statusMap: Record<string, { type: 'default' | 'info' | 'success' | 'warning' | 'error', label: string }> = {
+        pending: { type: 'warning', label: 'Pending' },
+        claimed: { type: 'info', label: 'Claimed' },
+        fulfilled: { type: 'success', label: 'Fulfilled' },
+        shipped: { type: 'success', label: 'Shipped' },
+        rejected: { type: 'error', label: 'Rejected' }
+      };
+      const config = statusMap[row.status] || { type: 'default', label: row.status };
+      return <NTag type={config.type}>{config.label}</NTag>;
+    }
+  },
+  {
+    title: 'Game Instance',
     key: 'instance',
+    minWidth: 180,
     render(row: any) {
       return (
         <div>
-          <div class="font-medium">{row.instance?.name}</div>
-          <div class="text-xs text-gray-400">{row.instance?.company?.name}</div>
+          <div class="font-medium text-sm">{row.instance?.name || 'Unknown'}</div>
+          <div class="text-xs text-gray-500">{row.instance?.company?.name || '-'}</div>
         </div>
       );
+    }
+  },
+  {
+    title: 'Updated',
+    key: 'updatedAt',
+    width: 180,
+    render(row: any) {
+      return <span class="text-sm text-gray-600">{new Date(row.updatedAt).toLocaleString()}</span>;
     }
   }
 ];
@@ -554,12 +633,24 @@ onMounted(() => {
                 />
               </NTabPane>
 
-              <NTabPane name="logins" :tab="$t('page.manage.memberDetail.tabs.logins')">
-        <NDataTable :columns="loginColumns" :data="loginHistory" :loading="loading" :pagination="{ pageSize: 10 }" />
-      </NTabPane>
               <NTabPane name="prizes" :tab="$t('page.manage.memberDetail.tabs.prizes')">
-        <NDataTable :columns="prizeColumns" :data="prizes" :loading="loading" :pagination="{ pageSize: 10 }" />
-      </NTabPane>
+                <NDataTable
+                  :columns="prizeColumns"
+                  :data="prizes"
+                  :loading="loading"
+                  :pagination="{ pageSize: 10 }"
+                  :scroll-x="1200"
+                />
+              </NTabPane>
+
+              <NTabPane name="logins" :tab="$t('page.manage.memberDetail.tabs.logins')">
+                <NDataTable
+                  :columns="loginColumns"
+                  :data="loginHistory"
+                  :loading="loading"
+                  :pagination="{ pageSize: 10 }"
+                />
+              </NTabPane>
             </NTabs>
           </NCard>
         </div>
