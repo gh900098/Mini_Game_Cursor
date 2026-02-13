@@ -418,6 +418,61 @@ UPDATE members SET vip_tier = 'Gold' WHERE id = 'user-id';
 
 ---
 
+---
+
+## 🎁 奖品与元数据系统 (Prizes & Metadata)
+
+**实现日期：** 2026-02-14  
+**主要功能：** 柔性奖品类型、积分校准、自动化元数据增强、人性化标签展示
+
+### 📍 位置
+- **Backend Service:** `apps/api/src/modules/scores/scores.service.ts` (发放逻辑)
+- **Backend Entities:** 
+  - `apps/api/src/modules/prizes/entities/prize-type.entity.ts`
+  - `apps/api/src/modules/scores/entities/score.entity.ts`
+- **Game Templates:** 
+  - `apps/api/src/modules/game-instances/templates/spin-wheel.template.ts`
+  - `apps/api/src/modules/game-instances/game-instances.controller.ts` (V1 模板)
+- **Frontend Views:**
+  - `apps/soybean-admin/src/views/games/scores/index.vue`
+  - `apps/soybean-admin/src/views/games/member-detail/[id].vue`
+
+### 🎯 功能说明
+
+该系统不仅负责奖品的发放，还负责区分不同奖品的性质（积分型 vs 非积分型），并自动补全和美化获奖元数据，确保管理后台的数据一目了然。
+
+### ⚙️ 核心机制
+
+#### 1. 柔性奖品类型 (Flexible Prize Types)
+- **isPoints 属性**：`PrizeType` 实体新增 `isPoints` 字段。
+- **发放逻辑**：`ScoresService.submit()` 会检查奖品类型。
+  - `isPoints: true` (如 Points)：`finalPoints = winningScore`，计入会员余额和统计。
+  - `isPoints: false` (如 Item, Cash)：`finalPoints = 0`，记录获奖但不影响积分余额。
+- **解决问题**：防止物理奖品（如 iPhone）的价值被错误地累加到会员的 "Total Points" 中。
+
+#### 2. 自动化元数据增强 (Metadata Enrichment)
+- **问题**：客户端有时会发送空的 `metadata.prize`，导致后台显示不全。
+- **解决方案**：后端 `ScoresService` 实施多层降级逻辑：
+  ```typescript
+  metadata.prize = label || prizeName || type || prizeType || 'Win';
+  ```
+- **工作原理**：无论客户端是否发送名称，后端都会确保数据库中存入描述性的奖品名称。
+
+#### 3. 人性化标签展示 (Friendly Metadata Display)
+- **前端转换**：Admin UI 将原始 JSON 元数据转换为易读的彩色标签（Tag）。
+- **交互**：点击或悬停在标签上可查看完整 JSON 详情。
+- **显示内容**：自动识别并显示 "Winner", "Multiplier", "Deduction", "Item Name" 等关键信息。
+
+#### 4. 专业表格布局 (Professional Table Layout)
+- **防换行日期**：Time 列固定 **200px** 宽度并强制不换行 (`whitespace-nowrap`)。
+- **固定布局**：Time 列在左右滚动时始终固定在左侧，提升管理效率。
+
+### 🚨 修改影响范围
+- **统计逻辑**：修改 `isPoints` 会直接影响全局仪表盘和会员详情的分数计算。
+- **游戏模板**：修改模板中的 `labels` 生成逻辑会影响新产生的 Score 记录。
+
+---
+
 ## 👥 会员管理系统 (Member Management)
 
 **实现日期：** 2026-02-01  

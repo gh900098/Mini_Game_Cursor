@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { ref, reactive, onMounted } from 'vue';
-import { NCard, NDataTable, NButton, NInput, NForm, NFormItem, NSelect, NTag, NSpace, NPopconfirm, NModal } from 'naive-ui';
+import { NCard, NDataTable, NButton, NInput, NForm, NFormItem, NSelect, NTag, NSpace, NPopconfirm, NModal, NSwitch } from 'naive-ui';
 import { $t } from '@/locales';
 import { useMessage } from 'naive-ui';
 import { fetchGetPrizeTypes, fetchCreatePrizeType, fetchUpdatePrizeType, fetchDeletePrizeType } from '@/service/api/prizes';
@@ -30,6 +30,7 @@ const formModel = reactive({
   icon: '🎁',
   description: '',
   config: '{}',
+  isPoints: true,
 });
 
 const data = ref<any[]>([]);
@@ -57,6 +58,14 @@ const columns = [
     render: (row: any) => {
         const strategy = strategies.find(s => s.value === row.strategy);
         return <NTag type="info">{strategy?.label || row.strategy}</NTag>;
+    }
+  },
+  { 
+    title: 'Is Points', 
+    key: 'isPoints',
+    width: 100,
+    render: (row: any) => {
+        return <NTag type={row.isPoints ? 'success' : 'default'}>{row.isPoints ? 'Yes' : 'No'}</NTag>;
     }
   },
   { title: $t('page.manage.prizeTypes.description'), key: 'description' },
@@ -88,6 +97,7 @@ function handleAdd() {
     icon: '🎁',
     description: '',
     config: '{}',
+    isPoints: true,
   });
   showModal.value = true;
 }
@@ -96,7 +106,8 @@ function handleEdit(row: any) {
   editMode.value = true;
   Object.assign(formModel, {
       ...row,
-      config: typeof row.config === 'object' ? JSON.stringify(row.config, null, 2) : row.config
+      config: typeof row.config === 'object' ? JSON.stringify(row.config, null, 2) : row.config,
+      isPoints: row.isPoints ?? true
   });
   showModal.value = true;
 }
@@ -188,6 +199,9 @@ async function handleSave() {
         </NFormItem>
         <NFormItem :label="$t('page.manage.prizeTypes.config')" path="config">
           <NInput v-model:value="formModel.config" type="textarea" :autosize="{ minRows: 3, maxRows: 6 }" placeholder='{"webhookUrl": "..."}' />
+        </NFormItem>
+        <NFormItem label="Is Points" path="isPoints">
+          <NSwitch v-model:value="formModel.isPoints" />
         </NFormItem>
         <div class="flex justify-end gap-12px">
           <NButton @click="showModal = false">{{ $t('common.cancel') }}</NButton>

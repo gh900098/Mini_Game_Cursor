@@ -627,9 +627,9 @@ export class SeedService {
                         name: 'rules',
                         label: 'page.manage.game.tabs.rules', // page.manage.game.tabRules
                         items: [
-                            { key: 'dailyLimit', type: 'number', label: 'page.manage.game.rules.dailyLimit', default: 3, span: 8 },
-                            { key: 'cooldown', type: 'number', label: 'page.manage.game.rules.cooldown', default: 60, span: 8 },
-                            { key: 'minLevel', type: 'number', label: 'page.manage.game.rules.minLevel', default: 0, span: 8 },
+                            { key: 'dailyLimit', type: 'number', label: 'page.manage.game.rules.dailyLimit', default: 3, span: 12 },
+                            { key: 'cooldown', type: 'number', label: 'page.manage.game.rules.cooldown', default: 60, span: 12 },
+                            { key: 'minLevel', type: 'number', label: 'page.manage.game.rules.minLevel', default: 0, span: 6 },
                             {
                                 key: 'rules_bools',
                                 type: 'switch-group',

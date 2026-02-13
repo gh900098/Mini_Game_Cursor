@@ -666,6 +666,7 @@ declare namespace App {
               dailyLimit: string;
               cooldown: string;
               minLevel: string;
+              costPerSpin: string;
               accessControl: string;
               requireLogin: string;
               oneTimeOnly: string;

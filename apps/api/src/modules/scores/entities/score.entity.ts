@@ -25,6 +25,9 @@ export class Score {
     @Column({ type: 'integer', nullable: true })
     finalPoints: number;
 
+    @Column({ type: 'integer', default: 0 })
+    tokenCost: number;
+
     @CreateDateColumn()
     createdAt: Date;
 

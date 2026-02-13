@@ -29,20 +29,15 @@ export class ScoresService {
 
     /**
      * Determine the correct prize value based on prize type
-     * Physical items (item, physical, egift) should have 0 value unless explicitly set
-     * Monetary prizes (points, cash, bonus_credit) use explicit value or fallback to score
      */
-    private getPrizeValue(prizeType: string, configValue: number | undefined, scoreValue: number): number {
-        const typeSlug = String(prizeType).toLowerCase();
-
-        // Non-monetary prize types should have 0 value unless explicitly configured
-        const nonMonetaryTypes = ['item', 'physical', 'egift', 'e-gift', 'voucher'];
-        if (nonMonetaryTypes.includes(typeSlug)) {
-            return configValue ?? 0;
+    private getPrizeValue(prizeType: any, configValue: number | undefined, scoreValue: number): number {
+        // If it's a points-bearing prize, using the scoreValue is usually correct if configValue is missing
+        if (prizeType?.isPoints) {
+            return configValue ?? scoreValue;
         }
 
-        // Monetary types: use configured value, or fallback to score value
-        return configValue ?? scoreValue;
+        // For non-points prizes (Item, Cash, etc.), use explicit config value or 0
+        return configValue ?? 0;
     }
 
 
@@ -85,6 +80,36 @@ export class ScoresService {
             }
         }
 
+        // 7. Resolve Prize Type (if applicable) early to determine if this is a "Points" win
+        let prizeType: any = null;
+        let prizeConfig: any = null;
+        let isPointsPrize = true; // Default to true for pure score games
+
+        if (metadata?.prizeIndex !== undefined && instance.config?.prizeList && !metadata?.isLose) {
+            prizeConfig = instance.config.prizeList[metadata.prizeIndex];
+            if (prizeConfig) {
+                const configTypeSlug = String(prizeConfig.type || prizeConfig.prizeType || 'points').toLowerCase();
+                prizeType = await this.prizesService.findBySlug(configTypeSlug);
+                if (prizeType) {
+                    isPointsPrize = prizeType.isPoints;
+                } else {
+                    // Fallback for unknown types - check hardcoded list if prize object doesn't exist yet
+                    const nonMonetaryTypes = ['item', 'physical', 'egift', 'e-gift', 'voucher', 'cash'];
+                    isPointsPrize = !nonMonetaryTypes.includes(configTypeSlug);
+                }
+
+                // Phase 4: Enrich metadata if prize name is missing but it's a win
+                if (metadata && !metadata.isLose && !metadata.prize) {
+                    metadata.prize = prizeConfig.label || prizeConfig.prizeName || prizeConfig.type || prizeConfig.prizeType || 'Win';
+                }
+            }
+        }
+
+        // If it's a win but NOT a points prize, set finalPoints to 0 for statistics
+        if (metadata?.prizeIndex !== undefined && !isPointsPrize) {
+            finalPoints = 0;
+        }
+
         // Determine outcome
         const outcome = (metadata?.isLose || scoreValue === 0) ? 'lose' : 'win';
 
@@ -97,52 +122,58 @@ export class ScoresService {
             multiplier,
             finalPoints,
         });
+
+        // 7. Determine Token Cost (moved up so it can be recorded in the score entity)
+        // Flexible Token Consumption Hierarchy:
+        // 1. Instance Config Override (costPerSpin)
+        // 2. Company Default Setting (defaultTokenCost)
+        // 3. Global Fallback (10)
+        let costPerSpin = 10;
+        if (instance.config?.costPerSpin !== undefined) {
+            costPerSpin = Number(instance.config.costPerSpin);
+        } else if (instance.company?.settings?.defaultTokenCost !== undefined) {
+            costPerSpin = Number(instance.company.settings.defaultTokenCost);
+        }
+
+        score.tokenCost = costPerSpin;
         const savedScore = await this.scoreRepository.save(score);
 
         // 4. Record Play Attempt
         const attempt = await this.gameRulesService.recordAttempt(memberId, instance.id, true, ipAddress, outcome, metadata);
 
         // 8. Record Member Prize if applicable
-        if (metadata?.prizeIndex !== undefined && instance.config?.prizeList && !metadata?.isLose) {
-            const prizeConfig = instance.config.prizeList[metadata.prizeIndex];
-            if (prizeConfig) {
-                const configTypeSlug = String(prizeConfig.type || prizeConfig.prizeType || 'points').toLowerCase();
-                const prizeType = await this.prizesService.findBySlug(configTypeSlug);
+        if (prizeConfig && !metadata?.isLose) {
+            // Execute fulfillment strategy
+            let status = PrizeStatus.PENDING;
+            let fulfillmentNote = '';
 
-                // Execute fulfillment strategy
-                let status = PrizeStatus.PENDING;
-                let fulfillmentNote = '';
-
-                if (prizeType) {
-                    const result = await this.strategyService.executeStrategy(
-                        memberId,
-                        prizeType,
-                        prizeConfig.value || scoreValue,
-                        { config: prizeConfig, metadata }
-                    );
-                    status = result.status as PrizeStatus;
-                    fulfillmentNote = result.note || '';
-                }
-
-                const prize = this.memberPrizeRepo.create({
+            if (prizeType) {
+                const result = await this.strategyService.executeStrategy(
                     memberId,
-                    instanceId: instance.id,
-                    playAttemptId: attempt.id,
-                    prizeId: String(metadata.prizeIndex),
-                    prizeName: prizeConfig.name || prizeConfig.label || (prizeConfig.isJackpot ? 'JACKPOT' : 'Reward'),
-                    prizeType: configTypeSlug,
-                    // Only use scoreValue for monetary prizes (points, cash, bonus_credit)
-                    // For physical items, use explicit value or 0
-                    prizeValue: this.getPrizeValue(configTypeSlug, prizeConfig.value, scoreValue),
-                    status,
-                    metadata: {
-                        config: prizeConfig,
-                        metadata,
-                        note: fulfillmentNote
-                    }
-                });
-                await this.memberPrizeRepo.save(prize);
+                    prizeType,
+                    prizeConfig.value || scoreValue,
+                    { config: prizeConfig, metadata }
+                );
+                status = result.status as PrizeStatus;
+                fulfillmentNote = result.note || '';
             }
+
+            const prize = this.memberPrizeRepo.create({
+                memberId,
+                instanceId: instance.id,
+                playAttemptId: attempt.id,
+                prizeId: String(metadata.prizeIndex),
+                prizeName: prizeConfig.name || prizeConfig.label || (prizeConfig.isJackpot ? 'JACKPOT' : 'Reward'),
+                prizeType: prizeType?.slug || 'points',
+                prizeValue: this.getPrizeValue(prizeType, prizeConfig.value, scoreValue),
+                status,
+                metadata: {
+                    config: prizeConfig,
+                    metadata,
+                    note: fulfillmentNote
+                }
+            });
+            await this.memberPrizeRepo.save(prize);
         }
 
         // 5. Update Budget (if prize has cost)
@@ -153,11 +184,8 @@ export class ScoresService {
             }
         }
 
-        // 7. Update Member's points balance (Atomic increment/decrement)
-        const costPerSpin = instance.config?.costPerSpin || 0;
-
+        // 8. Update Member's points balance (Atomic increment/decrement)
         // Only credit points from SCORE if no prize logic was executed or if the prize logic didn't handle crediting.
-        // However, since we now possess a robust PrizeStrategyService, we should rely on it for winnings.
         // If a prize was involved (prizeIndex exists), we assume the strategy handled the winnings (if any).
         // Therefore, we only deduct the cost.
         let netPointsChange = -costPerSpin;
@@ -165,7 +193,7 @@ export class ScoresService {
         // Fallback: If this is a pure score-based game (no prizes involved), then the Score is the Winnings.
         // We detect this by checking if prizeIndex is missing.
         if (metadata?.prizeIndex === undefined) {
-            netPointsChange += finalPoints;
+            netPointsChange += Number(finalPoints);
         }
 
         if (netPointsChange !== 0) {

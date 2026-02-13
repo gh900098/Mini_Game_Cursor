@@ -344,14 +344,28 @@ async function submitScore(score: number, metadata?: any) {
     return;
   }
   try {
-    await service.post(`/scores/${instanceSlug.value}`, {
+    const res: any = await service.post(`/scores/${instanceSlug.value}`, {
       score,
       metadata,
     });
+    
+    const savedScore = res.data || res;
+    const finalPoints = savedScore.finalPoints ?? score;
+
     if (gameStatus.value?.isImpersonated) {
-      message.info(`[Test Mode] Score of ${score} submitted, but NOT recorded.`);
+      if (finalPoints > 0) {
+        message.info(`[Test Mode] ${finalPoints} points would have been awarded.`);
+      } else {
+        message.info(`[Test Mode] Result submitted, but NOT recorded.`);
+      }
     } else {
-      message.success(`Score of ${score} submitted successfully!`);
+      if (finalPoints > 0) {
+        message.success(`Awesome! You earned ${finalPoints} points!`);
+      } else if (!metadata?.isLose) {
+        message.success(`Congratulations! Your win has been recorded.`);
+      } else {
+        message.success(`Result submitted successfully.`);
+      }
     }
     // Refresh game status after successful submission
     fetchGameStatus();

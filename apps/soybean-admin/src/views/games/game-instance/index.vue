@@ -28,7 +28,8 @@ const formModel = reactive({
   name: '',
   slug: '',
   gameId: '',
-  isActive: true
+  isActive: true,
+  costPerSpin: 10
 });
 
 const configModel = ref<Record<string, any>>({});
@@ -84,7 +85,7 @@ async function getData() {
 
 function handleAdd() {
   isEdit.value = false;
-  Object.assign(formModel, { name: '', slug: '', gameId: '', isActive: true });
+  Object.assign(formModel, { name: '', slug: '', gameId: '', isActive: true, costPerSpin: 10 });
   openModal();
 }
 
@@ -95,7 +96,8 @@ function handleEdit(row: Api.Management.GameInstance) {
     name: row.name,
     slug: row.slug,
     gameId: row.gameId,
-    isActive: row.isActive
+    isActive: row.isActive,
+    costPerSpin: row.config?.costPerSpin ?? 10
   });
   openModal();
 }
@@ -164,9 +166,21 @@ async function handleSubmit() {
 
   // 2. Proceed with save
   startLoading();
+  const currentInstance = instances.value.find(i => i.id === editingId.value);
+  const payload = {
+    name: formModel.name,
+    slug: formModel.slug,
+    gameId: formModel.gameId,
+    isActive: formModel.isActive,
+    config: {
+      ...(currentInstance?.config || {}),
+      costPerSpin: formModel.costPerSpin
+    }
+  };
+
   const { error } = isEdit.value 
-    ? await fetchUpdateGameInstance(editingId.value, formModel)
-    : await fetchCreateGameInstance(formModel);
+    ? await fetchUpdateGameInstance(editingId.value, payload)
+    : await fetchCreateGameInstance(payload);
   endLoading();
 
   if (!error) {
@@ -345,6 +359,9 @@ getData();
             <NSwitch v-model:value="formModel.isActive" />
             <span class="text-gray-500 text-xs">{{ formModel.isActive ? 'Game is live' : 'Game is hidden' }}</span>
           </NSpace>
+        </NFormItem>
+        <NFormItem label="Cost Per Spin" path="costPerSpin">
+          <NInputNumber v-model:value="formModel.costPerSpin" :min="0" placeholder="Tokens per play" class="w-full" />
         </NFormItem>
       </NForm>
       <template #footer>

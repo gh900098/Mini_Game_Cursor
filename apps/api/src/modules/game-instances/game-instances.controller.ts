@@ -506,7 +506,7 @@ export class GameInstancesController {
                     let config = ${JSON.stringify(config)};
                     let prizeList = ${JSON.stringify(prizeList)};
                     let weights = prizeList.map(p => Number(p.weight) || 100);
-                    let labels = prizeList.map(p => p.label);
+                    let labels = prizeList.map(p => p.label || p.prizeName || p.type || p.prizeType || 'Win');
 
                     const wheelEl = document.getElementById('wheel');
                     const ledRing = document.getElementById('led-ring');
@@ -669,7 +669,7 @@ export class GameInstancesController {
                             if (config.prizeList) {
                                 prizeList = config.prizeList;
                                 weights = prizeList.map(p => Number(p.weight) || 100);
-                                labels = prizeList.map(p => p.label);
+                                labels = prizeList.map(p => p.label || p.prizeName || p.type || p.prizeType || 'Win');
                             }
                             updateVisuals();
                         }

@@ -29,7 +29,8 @@ const formModel = reactive({
   slug: '',
   isActive: true,
   inactiveAt: null as number | null,
-  apiSecret: ''
+  apiSecret: '',
+  defaultTokenCost: 10
 });
 
 const slugValidationStatus = ref<'success' | 'warning' | 'error' | undefined>(undefined);
@@ -152,7 +153,8 @@ function handleEdit(row: Api.Management.Company) {
     slug: row.slug,
     isActive: row.isActive,
     apiSecret: row.apiSecret || '',
-    inactiveAt: row.inactiveAt ? new Date(row.inactiveAt).getTime() : null
+    inactiveAt: row.inactiveAt ? new Date(row.inactiveAt).getTime() : null,
+    defaultTokenCost: row.settings?.defaultTokenCost ?? 10
   });
   openModal();
 }
@@ -176,7 +178,10 @@ async function handleSubmit() {
     slug: formModel.slug,
     isActive: formModel.isActive,
     apiSecret: formModel.apiSecret,
-    inactiveAt: formModel.inactiveAt ? new Date(formModel.inactiveAt).toISOString() : null
+    inactiveAt: formModel.inactiveAt ? new Date(formModel.inactiveAt).toISOString() : null,
+    settings: {
+      defaultTokenCost: formModel.defaultTokenCost
+    }
   };
 
   let error;
@@ -229,6 +234,9 @@ getCompanies();
         </NFormItem>
         <NFormItem label="API Secret" path="apiSecret">
           <NInput v-model:value="formModel.apiSecret" placeholder="Enter API secret for 3rd party integration" />
+        </NFormItem>
+        <NFormItem label="Default Token Cost" path="defaultTokenCost">
+          <NInputNumber v-model:value="formModel.defaultTokenCost" :min="0" placeholder="Default tokens per play" class="w-full" />
         </NFormItem>
         <NFormItem label="Active" path="isActive">
           <NSwitch v-model:value="formModel.isActive" />

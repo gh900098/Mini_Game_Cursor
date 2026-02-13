@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, type VNode } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   NCard,
@@ -16,8 +16,8 @@ import {
   NFormItem,
   NInputNumber,
   NInput,
-  NSelect,
-  NSpin
+  NSpin,
+  NTooltip
 } from 'naive-ui';
 import type { DataTableColumns } from 'naive-ui';
 import {
@@ -164,76 +164,149 @@ const playColumns: DataTableColumns<any> = [
   {
     title: 'Result',
     key: 'resultData',
+    minWidth: 160,
     render(row: any) {
       if (!row.resultData) return '-';
       
       const { resultData } = row;
+      const tags: VNode[] = [];
       
-      // If there's a prize name
-      if (resultData.prize) {
-        return <NTag type="success">{resultData.prize}</NTag>;
-      }
-      
-      // If it's a lose attempt
       if (resultData.isLose) {
-        return <span class="text-gray-400 italic">No Prize</span>;
-      }
-      
-      // Fallback to score or raw if simple
-      if (resultData.score !== undefined) {
-        return <span class="font-mono">{resultData.score} Points</span>;
+        tags.push(<NTag size="small" type="default" round bordered={false} class="opacity-60">Try Again</NTag>);
+      } else if (resultData.prize) {
+        const isBig = String(resultData.prize).toLowerCase().includes('big') || String(resultData.prize).toLowerCase().includes('jackpot');
+        tags.push(
+          <NTag size="small" type={isBig ? 'warning' : 'success'} round strong>
+            {isBig ? '🏆' : '🎁'} {resultData.prize}
+          </NTag>
+        );
+      } else if (resultData.score !== undefined) {
+        tags.push(<NTag size="small" type="info" round bordered={false}>{resultData.score} Points</NTag>);
       }
 
-      return <span class="text-xs font-mono">{JSON.stringify(resultData).substring(0, 50)}</span>;
+      const hasTags = tags.length > 0;
+
+      return (
+        <NTooltip trigger="hover" placement="left">
+          {{
+            trigger: () => (
+              <NSpace size={[4, 4]} wrap>
+                {hasTags ? tags : <span class="text-xs opacity-50 font-mono">Check Details</span>}
+              </NSpace>
+            ),
+            default: () => (
+              <pre class="text-[10px] m-0 p-4px leading-tight">
+                {JSON.stringify(resultData, null, 2)}
+              </pre>
+            )
+          }}
+        </NTooltip>
+      );
     }
   }
 ];
 
-// Scores columns
 const scoreColumns: DataTableColumns<any> = [
   {
     title: $t('page.manage.prizes.time'),
     key: 'createdAt',
-    width: 180,
+    width: 200,
+    fixed: 'left',
     render(row: any) {
-      return new Date(row.createdAt).toLocaleString();
+      return (
+        <span class="text-gray-500 whitespace-nowrap">
+          {new Date(row.createdAt).toLocaleString()}
+        </span>
+      );
     }
   },
   {
     title: 'Game',
     key: 'instance',
+    minWidth: 150,
+    ellipsis: { tooltip: true },
     render(row: any) {
       return (
-        <div>
-          <div class="font-medium">{row.instance?.name || 'Unknown'}</div>
-          <div class="text-xs text-gray-500">{row.instance?.slug}</div>
+        <div class="whitespace-nowrap overflow-hidden">
+          <div class="font-medium truncate">{row.instance?.name || 'Unknown'}</div>
+          <div class="text-xs text-gray-400 font-mono italic">{row.instance?.slug}</div>
         </div>
       );
     }
   },
   {
-    title: 'Points',
+    title: 'Raw Score',
     key: 'points',
-    width: 100,
+    width: 90,
+    align: 'center',
     render(row: any) {
-      return <span class="font-bold text-primary text-lg">{row.score}</span>;
+      return <span class="text-gray-400">{row.score}</span>;
     }
   },
   {
     title: 'Multiplier',
     key: 'multiplier',
-    width: 100,
+    width: 90,
+    align: 'center',
     render(row: any) {
-      if (row.multiplier === 1) return '-';
-      return <NTag type="warning">x{row.multiplier}</NTag>;
+      if (!row.multiplier || row.multiplier === 1) return <span class="text-gray-300">-</span>;
+      return <NTag type="warning" size="small" round bordered={false}>x{row.multiplier}</NTag>;
     }
   },
   {
-    title: 'Final',
+    title: 'Awarded Points',
     key: 'finalPoints',
-    width: 100,
+    width: 120,
+    align: 'center',
     render(row: any) {
-      return <span class="font-bold">{row.score * (row.multiplier || 1)}</span>;
+      return <span class="font-bold text-primary text-base">{row.finalPoints ?? (row.score * (row.multiplier || 1))}</span>;
+    }
+  },
+  {
+    title: 'Metadata',
+    key: 'metadata',
+    minWidth: 150,
+    render(row: any) {
+      if (!row.metadata) return <span class="text-gray-400">-</span>;
+      
+      const meta = row.metadata;
+      const tags: VNode[] = [];
+      
+      if (meta.isLose === true) {
+        tags.push(<NTag size="small" type="default" round bordered={false} class="opacity-60">Try Again</NTag>);
+      }
+      
+      if (meta.prize) {
+        const isBig = String(meta.prize).toLowerCase().includes('big') || String(meta.prize).toLowerCase().includes('jackpot');
+        tags.push(
+          <NTag size="small" type={isBig ? 'warning' : 'success'} round strong>
+            {isBig ? '🏆' : '🎁'} {meta.prize}
+          </NTag>
+        );
+      }
+      
+      if (row.multiplier && row.multiplier > 1) {
+        tags.push(<NTag size="small" type="info" round bordered={false}>x{row.multiplier}</NTag>);
+      }
+
+      const hasTags = tags.length > 0;
+      
+      return (
+        <NTooltip trigger="hover" placement="left">
+          {{
+            trigger: () => (
+              <NSpace size={[4, 4]} wrap>
+                {hasTags ? tags : <span class="text-xs opacity-50 font-mono">View Raw</span>}
+              </NSpace>
+            ),
+            default: () => (
+              <pre class="text-[10px] m-0 p-4px leading-tight">
+                {JSON.stringify(meta, null, 2)}
+              </pre>
+            )
+          }}
+        </NTooltip>
+      );
     }
   }
 ];

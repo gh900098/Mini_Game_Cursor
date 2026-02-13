@@ -1,6 +1,6 @@
 <script setup lang="tsx">
-import { ref } from 'vue';
-import { NCard, NDataTable, NSpace, NStatistic, NGrid, NGi } from 'naive-ui';
+import { ref, type VNode } from 'vue';
+import { NCard, NDataTable, NSpace, NStatistic, NGrid, NGi, NTag, NTooltip } from 'naive-ui';
 import type { DataTableColumns } from 'naive-ui';
 import { fetchGetScores, fetchGetScoresStats } from '@/service/api/management';
 import { useLoading } from '@sa/hooks';
@@ -14,41 +14,98 @@ const stats = ref<any>(null);
 const columns: DataTableColumns<Api.Management.Score> = [
   {
     title: 'Time',
-    key: 'achievedAt',
-    width: 180,
+    key: 'createdAt',
+    width: 200,
+    fixed: 'left',
     render(row) {
-      return <span>{new Date(row.achievedAt).toLocaleString()}</span>;
+      return (
+        <span class="text-gray-500 whitespace-nowrap">
+          {row.createdAt ? new Date(row.createdAt).toLocaleString() : '-'}
+        </span>
+      );
     }
   },
   {
     title: 'Player',
     key: 'member',
+    minWidth: 120,
     render(row: any) {
-      return <span>{row.member?.username || row.member?.externalId || 'Guest'}</span>;
+      return <span class="font-medium whitespace-nowrap">{row.member?.username || row.member?.externalId || 'Guest'}</span>;
     }
   },
   {
     title: 'Game Instance',
     key: 'instance',
+    minWidth: 150,
+    ellipsis: { tooltip: true },
     render(row: any) {
-      return <span>{row.instance?.name || '-'}</span>;
+      return <span class="text-gray-600">{row.instance?.name || '-'}</span>;
     }
   },
   {
-    title: 'Score',
-    key: 'score',
-    width: 120,
+    title: 'Points',
+    key: 'finalPoints',
+    width: 80,
+    align: 'center',
     render(row) {
-      return <span class="font-bold text-primary text-lg">{row.score}</span>;
+      return <span class="font-bold text-primary text-base">{row.finalPoints ?? 0}</span>;
+    }
+  },
+  {
+    title: 'Deduction',
+    key: 'tokenCost',
+    width: 90,
+    align: 'center',
+    render(row) {
+      return <span class="text-error font-medium">-{row.tokenCost}</span>;
     }
   },
   {
     title: 'Metadata',
     key: 'metadata',
-    width: 200,
+    minWidth: 300,
     render(row) {
       if (!row.metadata) return <span class="text-gray-400">-</span>;
-      return <span class="font-mono text-xs">{JSON.stringify(row.metadata)}</span>;
+      
+      const meta = row.metadata;
+      const tags: VNode[] = [];
+      
+      if (meta.isLose === true) {
+        tags.push(<NTag size="small" type="default" round bordered={false} class="opacity-60">Try Again</NTag>);
+      }
+      
+      if (meta.prize) {
+        const isBig = String(meta.prize).toLowerCase().includes('big') || String(meta.prize).toLowerCase().includes('jackpot');
+        tags.push(
+          <NTag size="small" type={isBig ? 'warning' : 'success'} round strong>
+            {isBig ? '🏆' : '🎁'} {meta.prize}
+          </NTag>
+        );
+      }
+      
+      if (row.multiplier && row.multiplier > 1) {
+        tags.push(<NTag size="small" type="info" round bordered={false}>x{row.multiplier}</NTag>);
+      }
+
+      // If no specific tags were matched, or to show extra info
+      const hasTags = tags.length > 0;
+      
+      return (
+        <NTooltip trigger="hover" placement="left">
+          {{
+            trigger: () => (
+              <NSpace size={[4, 4]} wrap>
+                {hasTags ? tags : <span class="text-xs opacity-50 font-mono">Check Details</span>}
+              </NSpace>
+            ),
+            default: () => (
+              <pre class="text-[10px] m-0 p-4px leading-tight">
+                {JSON.stringify(meta, null, 2)}
+              </pre>
+            )
+          }}
+        </NTooltip>
+      );
     }
   }
 ];
@@ -76,9 +133,16 @@ getScores();
 <template>
   <div class="h-full flex-col gap-16px">
     <NCard v-if="stats" title="Statistics" :bordered="false" class="rounded-16px shadow-sm">
-      <NGrid cols="4" x-gap="16" responsive="screen">
+      <NGrid cols="5" x-gap="16" responsive="screen">
         <NGi>
-          <NStatistic label="Total Scores" :value="stats.totalScores" />
+          <NStatistic label="Total Wins" :value="stats.totalScores" />
+        </NGi>
+        <NGi>
+          <NStatistic label="Total Awarded Points" :value="stats.totalAwardedPoints">
+             <template #suffix>
+               <span class="text-sm font-normal text-gray-400">Pts</span>
+             </template>
+          </NStatistic>
         </NGi>
         <NGi>
           <NStatistic label="Total Attempts" :value="stats.totalAttempts" />

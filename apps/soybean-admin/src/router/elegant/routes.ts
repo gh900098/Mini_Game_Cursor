@@ -108,17 +108,6 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
-        name: 'games_prizes',
-        path: '/games/prizes',
-        component: 'view.games_prizes',
-        meta: {
-          title: 'games_prizes',
-          i18nKey: 'route.games_prizes',
-          icon: 'mdi:clipboard-text-outline',
-          order: 3
-        }
-      },
-      {
         name: 'games_prize-types',
         path: '/games/prize-types',
         component: 'view.games_prize-types',
@@ -127,6 +116,17 @@ export const generatedRoutes: GeneratedRoute[] = [
           i18nKey: 'route.games_prize-types',
           icon: 'mdi:gift',
           order: 2
+        }
+      },
+      {
+        name: 'games_prizes',
+        path: '/games/prizes',
+        component: 'view.games_prizes',
+        meta: {
+          title: 'games_prizes',
+          i18nKey: 'route.games_prizes',
+          icon: 'mdi:clipboard-text-outline',
+          order: 3
         }
       },
       {

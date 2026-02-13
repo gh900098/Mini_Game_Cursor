@@ -52,7 +52,7 @@ describe('GameInstancesService', () => {
             };
             repo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
-            const result = await (service as any).ensureUniqueSlug('test-slug');
+            const result = await (service as any).ensureUniqueSlug('test-slug', 'company-uuid');
             expect(result).toBe('test-slug');
         });
 
@@ -66,7 +66,7 @@ describe('GameInstancesService', () => {
             };
             repo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
-            const result = await (service as any).ensureUniqueSlug('test-slug');
+            const result = await (service as any).ensureUniqueSlug('test-slug', 'company-uuid');
             expect(result).toMatch(/^test-slug-[a-z0-9]{4}$/);
         });
     });
@@ -80,7 +80,7 @@ describe('GameInstancesService', () => {
             };
             repo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
-            const result = await service.validateSlug('unique-slug');
+            const result = await service.validateSlug('unique-slug', 'company-uuid');
             expect(result.isAvailable).toBe(true);
             expect(result.suggestedSlug).toBe('unique-slug');
         });
@@ -96,7 +96,7 @@ describe('GameInstancesService', () => {
             };
             repo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
-            const result = await service.validateSlug('taken-slug');
+            const result = await service.validateSlug('taken-slug', 'company-uuid');
             expect(result.isAvailable).toBe(false);
             expect(result.suggestedSlug).toMatch(/^taken-slug-[a-z0-9]{4}$/);
         });

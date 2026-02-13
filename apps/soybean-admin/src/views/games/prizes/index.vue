@@ -161,6 +161,7 @@
 <script setup lang="tsx">
 import { ref, onMounted, reactive } from 'vue';
 import { NTag, NButton, NSpace, NSelect, NModal, NForm, NFormItem, NInput, NCard, NDataTable, NImage, NUpload } from 'naive-ui';
+import type { DataTableColumns } from 'naive-ui';
 import { useLoading } from '@sa/hooks';
 import { request } from '@/service/request';
 import { $t } from '@/locales';
@@ -216,23 +217,24 @@ const pagination = reactive({
   }
 });
 
-const columns = [
+const columns: DataTableColumns<any> = [
   {
     title: $t('page.manage.prizes.time'),
     key: 'createdAt',
     width: 170,
     render(row: any) {
-      return <span>{new Date(row.createdAt).toLocaleString()}</span>;
+      return <span class="text-gray-500">{new Date(row.createdAt).toLocaleString()}</span>;
     }
   },
   {
     title: $t('page.manage.prizes.member'),
     key: 'member',
+    minWidth: 130,
     render(row: any) {
       return (
         <div>
           <div class="font-medium">{row.member?.username}</div>
-          <div class="text-xs text-gray-400">{row.member?.id?.split('-')[0]}...</div>
+          <div class="text-xs text-gray-400 font-mono">{row.member?.id?.split('-')[0]}...</div>
         </div>
       );
     }
@@ -240,7 +242,8 @@ const columns = [
   {
     title: $t('page.manage.prizes.image'),
     key: 'image',
-    width: 80,
+    width: 70,
+    align: 'center',
     render(row: any) {
       const icon = row.metadata?.config?.icon;
       if (icon && (icon.startsWith('http') || icon.startsWith('/api/uploads'))) {
@@ -249,7 +252,7 @@ const columns = [
             width="40"
             src={icon}
             preview-disabled={false}
-            class="rounded shadow-sm cursor-pointer"
+            class="rounded shadow-sm cursor-pointer mx-auto"
           />
         );
       }
@@ -259,29 +262,27 @@ const columns = [
   {
     title: $t('page.manage.prizes.prize'),
     key: 'prizeName',
-    width: 200,
+    minWidth: 180,
+    ellipsis: { tooltip: true },
     render(row: any) {
       let name = row.prizeName;
       if (typeof name === 'string' && (name.startsWith('http') || name.includes('/api/uploads'))) {
         name = row.metadata?.config?.label || 'Image Prize';
       }
-      return (
-        <div>
-          <div class="font-medium text-15px">{name}</div>
-        </div>
-      );
+      return <span class="font-medium text-14px">{name}</span>;
     }
   },
   {
     title: $t('page.manage.prizes.type'),
     key: 'prizeType',
-    width: 120,
+    width: 100,
+    align: 'center',
     render(row: any) {
       const typeSlug = String(row.prizeType || '').toLowerCase(); // Normalize to lowercase
       const typeInfo = prizeTypesMap.value[typeSlug];
 
       if (typeInfo) {
-         return <NTag size="small" vertical-align="middle">{typeInfo.icon} {typeInfo.name}</NTag>;
+         return <NTag size="small" vertical-align="middle" round>{typeInfo.icon} {typeInfo.name}</NTag>;
       }
 
       // Fallback for legacy static types if not found in DB
@@ -293,12 +294,14 @@ const columns = [
       };
       
       const config = typeMap[typeSlug] || { tag: 'default', label: typeSlug };
-      return <NTag type={config.tag} size="small" vertical-align="middle">{config.label}</NTag>;
+      return <NTag type={config.tag} size="small" vertical-align="middle" round>{config.label}</NTag>;
     }
   },
   {
     title: $t('page.manage.prizes.details'),
     key: 'details',
+    minWidth: 200,
+    ellipsis: { tooltip: true },
     render(row: any) {
       const description = row.metadata?.config?.description;
       const note = row.metadata?.note;
@@ -306,15 +309,17 @@ const columns = [
       const showValue = row.prizeType !== 'physical' && row.prizeType !== 'points' && value > 0;
 
       return (
-        <div class="max-w-220px">
-          {description && <div class="text-sm leading-tight mb-4px">{description}</div>}
-          {showValue && (
-            <div class="inline-block px-4px py-1px bg-gray-100 text-gray-600 rounded text-11px font-bold">
-              Value: {value.toFixed(2)}
-            </div>
-          )}
-          {note && <div class="text-xs text-primary italic mt-1">Note: {note}</div>}
-          {!description && !showValue && !note && <div class="text-xs text-gray-400">--</div>}
+        <div class="flex flex-col gap-2px">
+          {description && <div class="text-xs leading-tight opacity-80">{description}</div>}
+          <div class="flex items-center gap-4px">
+            {showValue && (
+              <span class="px-6px py-1px bg-gray-100 text-gray-500 rounded text-10px font-bold">
+                Value: {value.toFixed(2)}
+              </span>
+            )}
+            {note && <div class="text-xs text-primary italic font-medium">Note: {note}</div>}
+          </div>
+          {!description && !showValue && !note && <div class="text-xs text-gray-300">--</div>}
         </div>
       );
     }
@@ -322,10 +327,12 @@ const columns = [
   {
     title: $t('page.manage.prizes.gameInstance'),
     key: 'instance',
+    minWidth: 150,
+    ellipsis: { tooltip: true },
     render(row: any) {
       return (
         <div>
-          <div class="text-sm">{row.instance?.name}</div>
+          <div class="text-sm font-medium">{row.instance?.name}</div>
           <div class="text-xs text-gray-400">{row.instance?.company?.name}</div>
         </div>
       );
@@ -334,6 +341,8 @@ const columns = [
   {
     title: $t('page.manage.prizes.status'),
     key: 'status',
+    width: 100,
+    align: 'center',
     render(row: any) {
       const statusMap: any = {
         pending: 'warning',
@@ -342,13 +351,14 @@ const columns = [
         shipped: 'success',
         rejected: 'error'
       };
-      return <NTag type={statusMap[row.status] || 'default'}>{row.status.toUpperCase()}</NTag>;
+      return <NTag type={statusMap[row.status] || 'default'} size="small" strong>{row.status.toUpperCase()}</NTag>;
     }
   },
   {
     title: $t('page.manage.prizes.actions'),
     key: 'actions',
-    width: 100,
+    width: 80,
+    align: 'center',
     render(row: any) {
       return (
         <NButton size="tiny" type="primary" ghost onClick={() => openUpdate(row)}>

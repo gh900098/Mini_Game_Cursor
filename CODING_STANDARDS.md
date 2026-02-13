@@ -26,8 +26,7 @@ Before writing ANY code, you MUST read these files to understand the current sta
 - **Never rewrite** a working module from scratch just to change one line.
 - **Always extend**, rarely replace.
     - Use `...existingCode` patterns.
-    - If you see a comment `// strict/vital logic`, DO NOT TOUCH IT without explicit user permission.
-
+    - **Side-Effect Audit:** Before pushing, you MUST review the `git diff` to ensure you didn't accidentally touch unrelated lines.
     - If you see a comment `// strict/vital logic`, DO NOT TOUCH IT without explicit user permission.
 
 ## 4. Security First (🛡️ NO EXCEPTIONS)
@@ -74,4 +73,5 @@ Before writing ANY code, you MUST read these files to understand the current sta
 - **Backend:** `curl` it.
 - **Frontend:** Click it.
 - **Database:** Query it.
+- **Diff:** Run `git diff` and explain EVERY change to yourself. If any line is unrelated to the task, REVERT IT before completing.
 *("I think it works" is not an acceptable status.)*

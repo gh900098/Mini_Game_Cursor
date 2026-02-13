@@ -266,7 +266,7 @@ export class AdminMembersController {
             this.scoresRepo
                 .createQueryBuilder('score')
                 .where('score.memberId = :memberId', { memberId: id })
-                .select('SUM(score.score)', 'sum')
+                .select('SUM(score.finalPoints)', 'sum')
                 .getRawOne(),
             this.playAttemptsRepo
                 .createQueryBuilder('attempt')

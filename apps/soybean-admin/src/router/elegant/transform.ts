@@ -173,6 +173,8 @@ const routeMap: RouteMap = {
   "games_member-detail": "/games/member-detail/:id",
   "games_members": "/games/members",
   "games_play-attempts": "/games/play-attempts",
+  "games_prize-types": "/games/prize-types",
+  "games_prizes": "/games/prizes",
   "games_scores": "/games/scores",
   "home": "/home",
   "iframe-page": "/iframe-page/:url",

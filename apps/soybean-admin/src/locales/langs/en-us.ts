@@ -422,6 +422,7 @@ const local: App.I18n.Schema = {
           dailyLimit: 'Daily Limit',
           cooldown: 'Cooldown (Minutes)',
           minLevel: 'Min Level Requirement',
+          costPerSpin: 'Tokens per play',
           accessControl: 'Access Control',
           requireLogin: 'Require Login',
           oneTimeOnly: 'One Time Only',

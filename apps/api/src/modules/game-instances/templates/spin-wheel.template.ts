@@ -830,7 +830,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         let config = ${JSON.stringify(cfg.rawConfig)};
         let prizeList = ${JSON.stringify(cfg.prizeList)};
         let weights = prizeList.map(p => Number(p.weight) || 100);
-        let labels = prizeList.map(p => p.label);
+        let labels = prizeList.map(p => p.label || p.prizeName || p.type || p.prizeType || 'Win');
         let icons = prizeList.map(p => p.icon || '🎁');
         
         const wheelEl = document.getElementById('wheel');
@@ -1647,7 +1647,8 @@ if (config.enableConfetti !== false) {
     }
 }
 
-window.parent.postMessage({ type: 'score-submit', score: isLose ? 0 : 10, metadata: { prize: won, prizeIndex: winnerIdx, isLose } }, '*');
+                const scoreToSend = isLose ? 0 : (Number(prize.value) || 0);
+                window.parent.postMessage({ type: 'score-submit', score: scoreToSend, metadata: { prize: won, prizeIndex: winnerIdx, isLose } }, '*');
             }, duration + 200);
         }
 

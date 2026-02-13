@@ -47,6 +47,9 @@ export class PrizeType {
     showValue: boolean;
 
     @Column({ default: true })
+    isPoints: boolean;
+
+    @Column({ default: true })
     isActive: boolean;
 
     @CreateDateColumn()

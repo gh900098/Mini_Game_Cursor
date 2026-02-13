@@ -263,7 +263,8 @@ const local: App.I18n.Schema = {
     'games_play-attempts': '游戏记录',
     games_scores: '分数记录',
     'games_budget-tracking': '预算追踪',
-    games_prizes: '奖品台账'
+    games_prizes: '奖品台账',
+    'games_prize-types': '奖励类型'
   },
   page: {
     manage: {
@@ -418,6 +419,7 @@ const local: App.I18n.Schema = {
           dailyLimit: '每日游戏次数上限',
           cooldown: '冷却时间 (分钟)',
           minLevel: '最低等级要求',
+          costPerSpin: '每次游戏消耗',
           accessControl: '访问控制',
           requireLogin: '需要登录',
           oneTimeOnly: '仅限一次',

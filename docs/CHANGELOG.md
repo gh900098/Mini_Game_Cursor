@@ -4,7 +4,57 @@
  
  ---
 
-## [2026-02-13 晚上] Prize Ledger Enhancements - Receipt Upload & Details Display
+## [2026-02-14 早上] Flexible Prize Type Configuration & UI Refinement
+
+### ✨ 新功能
+
+**核心需求:**
+- 区分 "积分" (Points) 和其他奖品类型 (Cash, Items, E-Gifts)
+- 解决 Admin UI 表格中日期换行和列布局不平衡的问题
+- 解决 Item 奖品元数据（metadata.prize）为空的问题
+
+### 📝 实现功能
+
+#### 1. Flexible Prize Type Logic (柔性奖品类型逻辑)
+- **PrizeType 实体增强**: 新增 `isPoints` (boolean) 字段。
+- **Seed 数据更新**: 默认的 Item, Cash, E-Gift 类型设置为 `isPoints: false`。
+- **ScoresService 重构**:
+    - `submit()` 方法现在根据 `isPoints` 决定是否发放 `finalPoints`。
+    - 如果是 Points 类型，发放实际分数；否则发放 0 积分。
+- **统计校准**: 全局和会员统计现在基于 `finalPoints` 而非原始 score，防止非货币奖品虚增积分总额。
+
+#### 2. Admin UI Professional Layout (Admin UI 专业布局)
+- **Time 列固定与防换行**: 宽度增加至 **200px**，并添加 `whitespace-nowrap` 和 `fixed: "left"`。
+- **列布局重组**: 
+    - 紧凑化 Points 和 Deduction 列。
+    - 灵活化 Player 和 Game Instance 列，使用工具提示处理超长文本。
+- **跨页面移植**: 改进应用于全局 "Score Records" 和会员详情 "Scores" 选项卡。
+
+#### 3. Prize Metadata Enrichment (奖品元数据增强)
+- **多层降级机制**: 即使客户端未发送奖品名称，后端也会根据 `label` -> `prizeName` -> `type` -> `prizeType` -> "Win" 自动生成。
+- **模板修复**: 更新了 Spin Wheel **Premium V2** 和 **Legacy V1** 模板，使其在获奖时始终发送描述性名称。
+
+#### 4. Human-Readable Metadata Display (人性化元数据展示)
+- **Tag 式展示**: 将原始 JSON 转换为可见的彩色标签（如 "Winner", "Multiplier", "Item"）。
+- **Hover 详情**: 鼠标悬停在标签上可查看完整 JSON 详情。
+
+### 📊 技术细节
+
+**文件位置:**
+- Backend: `apps/api/src/modules/scores/scores.service.ts` (核心逻辑)
+- Backend: `apps/api/src/modules/game-instances/templates/spin-wheel.template.ts` (V2 模板)
+- Backend: `apps/api/src/modules/game-instances/game-instances.controller.ts` (V1 模板)
+- Frontend: `apps/soybean-admin/src/views/games/scores/index.vue` (布局/Tags)
+- Frontend: `apps/soybean-admin/src/views/games/member-detail/[id].vue` (布局/Tags)
+
+### ✅ 部署
+- ✅ API service rebuilt & redeployed
+- ✅ Admin service rebuilt & redeployed
+- ✅ Web App service rebuilt & redeployed
+- ✅ 验证完毕: Item 奖品不再虚增积分，元数据正常显示
+
+---
+
 
 ### ✨ 新功能
 

@@ -89,10 +89,10 @@ export class PrizesService {
     // Seed default types
     async seedDefaults() {
         const defaultTypes = [
-            { name: 'Item', slug: 'item', strategy: PrizeStrategy.MANUAL_FULFILL, showValue: false, icon: '🎁', description: 'Physical items requiring manual fulfillment', companyId: null },
-            { name: 'E-Gift', slug: 'egift', strategy: PrizeStrategy.VIRTUAL_CODE, showValue: true, icon: '📧', description: 'Digital codes/coupons', companyId: null },
-            { name: 'Cash', slug: 'cash', strategy: PrizeStrategy.MANUAL_FULFILL, showValue: true, icon: '💰', description: 'Cash payout (requires approval)', companyId: null },
-            { name: 'Points', slug: 'points', strategy: PrizeStrategy.BALANCE_CREDIT, showValue: true, icon: '⚪', description: 'Loyalty points credit', companyId: null },
+            { name: 'Item', slug: 'item', strategy: PrizeStrategy.MANUAL_FULFILL, showValue: false, icon: '🎁', description: 'Physical items requiring manual fulfillment', companyId: null, isPoints: false },
+            { name: 'E-Gift', slug: 'egift', strategy: PrizeStrategy.VIRTUAL_CODE, showValue: true, icon: '📧', description: 'Digital codes/coupons', companyId: null, isPoints: false },
+            { name: 'Cash', slug: 'cash', strategy: PrizeStrategy.MANUAL_FULFILL, showValue: true, icon: '💰', description: 'Cash payout (requires approval)', companyId: null, isPoints: false },
+            { name: 'Points', slug: 'points', strategy: PrizeStrategy.BALANCE_CREDIT, showValue: true, icon: '⚪', description: 'Loyalty points credit', companyId: null, isPoints: true },
         ];
 
         for (const typeData of defaultTypes) {

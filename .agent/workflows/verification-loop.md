@@ -31,10 +31,19 @@ Run this workflow whenever you think you are "Done" with a task.
 - [ ] **Migration Check:** Did you generate a migration?
 - [ ] **Seed Check:** Did you update `seed.service.ts` if you added new config?
 
-## 5. Artifact Update
+## 5. Side-Effect Audit (🚨 CRITICAL)
+- [ ] **Review Git Diff:** Run `git diff` and review EVERY single line changed.
+- [ ] **Unintended Deletions?** Did you accidentally delete an unrelated function or import?
+- [ ] **Unintended Logic Changes?** Did you accidentally modify code outside the feature scope?
+- [ ] **Revert Cleanup:** If ANY unrelated code was changed, revert those specific lines before committing.
+
+## 6. Artifact Update
 - [ ] Have you updated `PROJECT_STATUS.md` with the outcome?
 - [ ] Have you updated `task.md`?
 
-// turbo
-## 6. Cleanup
-- Remove any temporary test scripts unless they are useful for the long term (in which case move them to `tests/`).
+## 7. Cleanup & Retention (The "Educational" Step)
+- [ ] **Disposable Scripts:** Remove one-off `curl` commands or temp `.txt` files.
+- [ ] **Meaningful Reproductions:** Did you write a script to prove the bug? 
+    - **Action:** Move it to `tools/repro/` (e.g., `tools/repro/fix-BUG-002-isolation.js`).
+    - **Why?** So we can "read back" how we solved it in the future.
+- [ ] **Useful Tools:** If it's a permanent diagnostic tool, move it to `tools/`.

@@ -1,6 +1,5 @@
 
 import os
-import re
 
 files_to_fix = [
     r'd:\Google_Antigravity_project\Mini_Game\Mini_Game\apps\soybean-admin\src\views\games\game-instance\components\ConfigForm.vue',
@@ -18,7 +17,6 @@ replacements = {
     'Ã°Å¸â€œÂ§': '📧',
     'Ã°Å¸Å½Â¯': '🎯',
     'Ã°Å¸Å½Â¨': '🎨',
-    'Ã°Å¸â€˜Â ': '👍',
     'Ã°Å¸â€˜Â ': '👍',
     'Ã°Å¸’°': '💰',
     'Ã°Å¸’¡': '💡',
@@ -63,7 +61,7 @@ replacements = {
     'Ã°Å¸’¸': '💸',
     'Ã°Å¸Å½Â²': '🎲',
     'Ã°Å¸Å½Â±': '🎱',
-    'Ã°Å¸Å½Â³': '🎳',
+    'Ã°Å¸Å½Â³': 'Bowling',
     'Ã°Å¸Å½Â¼': '🎶',
     'Ã°Å¸â€œÅ ': '📊',
     'Ã°Å¸Â¤Â¡': '🤡',
@@ -78,24 +76,25 @@ replacements = {
 }
 
 for file_path in files_to_fix:
-    if not os.path.exists(file_path): continue
+    if not os.path.exists(file_path):
+        continue
     try:
-        with open(file_path, 'rb') as f:
-            content = f.read()
+        # Read with latin-1 to catch mangled characters
+        with open(file_path, 'r', encoding='latin-1') as f:
+            text = f.read()
         
-        # Try both common manglings
-        text = content.decode('latin-1')
-        
-        # Iterative replacement to handle nested/partial mangling
-        for i in range(2): 
+        if not text:
+            continue
+            
+        # Perform replacements
+        updated_text = text
+        for _ in range(2):
             for bad, good in replacements.items():
-                text = text.replace(bad, good)
+                updated_text = updated_text.replace(bad, good)
         
-        # Also handle generic Ã°Å¸ patterns if possible, but be careful
-        # Let's just stick to the 100% known ones.
-        
+        # Write back as utf-8
         with open(file_path, 'w', encoding='utf-8', newline='') as f:
-            f.write(text)
-        print(f"v2 FIXED: {file_path}")
+            f.write(updated_text)
+        print(f"FIXED: {file_path}")
     except Exception as e:
-        print(f"v2 FAILED {file_path}: {str(e)}")
+        print(f"FAILED {file_path}: {str(e)}")

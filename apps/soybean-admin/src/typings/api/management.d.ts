@@ -65,6 +65,7 @@ declare namespace Api {
             apiSecret?: string;
             isActive: boolean;
             inactiveAt?: string | null;
+            settings?: Record<string, any>;
             createdAt?: string;
             updatedAt?: string;
         }
@@ -128,8 +129,10 @@ declare namespace Api {
             updatedAt: string;
             gameTemplate?: Api.Game.Game;
             company?: Company;
-            /** member prize */
-    interface MemberPrize {
+        }
+
+        /** member prize */
+        interface MemberPrize {
             id: string;
             memberId: string;
             instanceId: string;
@@ -145,54 +148,56 @@ declare namespace Api {
             member?: Member;
             instance?: any;
         }
-    }
 
-    interface PlayAttempt {
-        id: string;
-        memberId: string;
-        instanceId: string;
-        attemptedAt: string;
-        success: boolean;
-        ipAddress?: string;
-        member?: Member;
-        instance?: GameInstance;
-    }
+        interface PlayAttempt {
+            id: string;
+            memberId: string;
+            instanceId: string;
+            attemptedAt: string;
+            success: boolean;
+            ipAddress?: string;
+            member?: Member;
+            instance?: GameInstance;
+        }
 
-    interface Score {
-        id: string;
-        memberId: string;
-        instanceId: string;
-        score: number;
-        metadata?: any;
-        achievedAt: string;
-        member?: Member;
-        instance?: GameInstance;
-    }
+        interface Score {
+            id: string;
+            memberId: string;
+            instanceId: string;
+            score: number;
+            finalPoints: number;
+            multiplier: number;
+            tokenCost: number;
+            metadata?: any;
+            createdAt: string;
+            member?: Member;
+            instance?: GameInstance;
+        }
 
-    interface BudgetTracking {
-        id: string;
-        instanceId: string;
-        trackingDate: string;
-        totalCost: number;
-        playCount: number;
-        instance?: GameInstance;
-    }
+        interface BudgetTracking {
+            id: string;
+            instanceId: string;
+            trackingDate: string;
+            totalCost: number;
+            playCount: number;
+            instance?: GameInstance;
+        }
 
-    interface Game {
-        id: string;
-        name: string;
-        slug: string;
-        description?: string;
-        type: string;
-        thumbnailUrl?: string;
-        baseWidth?: number;
-        baseHeight?: number;
-        isPortrait?: boolean;
-        isActive: boolean;
-        config?: any;
-        configSchema?: any;
-        createdAt: string;
-        updatedAt: string;
+        interface Game {
+            id: string;
+            name: string;
+            slug: string;
+            description?: string;
+            type: string;
+            thumbnailUrl?: string;
+            baseWidth?: number;
+            baseHeight?: number;
+            isPortrait?: boolean;
+            isActive: boolean;
+            config?: any;
+            configSchema?: any;
+            createdAt: string;
+            updatedAt: string;
+        }
     }
-}
 }

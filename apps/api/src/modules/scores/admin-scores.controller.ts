@@ -92,14 +92,18 @@ export class AdminScoresController {
         }
 
         const totalScores = await scoresQuery.getCount();
+        const totalAwardedPointsRaw = await scoresQuery.select('SUM(score.finalPoints)', 'sum').getRawOne();
+        const totalAwardedPoints = Number(totalAwardedPointsRaw?.sum || 0);
+
         const totalAttempts = await attemptsQuery.getCount();
         const successfulAttempts = await attemptsQuery.where('attempt.success = true').getCount();
 
         return {
             totalScores,
+            totalAwardedPoints,
             totalAttempts,
             successfulAttempts,
-            successRate: totalAttempts > 0 ? (successfulAttempts / totalAttempts * 100).toFixed(2) : 0,
+            successRate: totalAttempts > 0 ? Number((successfulAttempts / totalAttempts * 100).toFixed(2)) : 0,
         };
     }
 }
