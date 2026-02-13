@@ -4,6 +4,195 @@
  
  ---
 
+## [2026-02-13 晚上] Prize Ledger Enhancements - Receipt Upload & Details Display
+
+### ✨ 新功能
+
+**实施时间:** 2026-02-13 22:57-23:13 (16分钟)
+
+**核心需求:**
+- Admin需要在更新奖品状态前看到完整的奖品信息确认
+- Admin需要上传证明文档（收据、发货单）作为履行证据
+- 物理奖品不应该显示错误的数值价格
+
+### 📝 实现功能
+
+#### 1. Prize Details Display (奖品详情展示)
+
+**新UI设计:**
+- 现代化渐变背景 (蓝色到紫色)
+- 大尺寸奖品图标框 (80x80px) 带阴影
+- 结构化grid布局展示所有信息
+- 色彩编码状态徽章
+
+**显示内容:**
+- ✅ 奖品图标/图片 (支持预览)
+- ✅ 奖品名称 (大标题，xl字体)
+- ✅ 奖品类型徽章 (带图标的彩色标签)
+- ✅ 奖品描述 (完整文本)
+- ✅ 奖品价值 (仅对货币类奖品显示，带💰图标)
+- ✅ 会员用户名 (移除UUID显示)
+- ✅ 游戏实例名称
+- ✅ 当前状态 (色彩编码徽章)
+- ✅ 获奖时间 (日期+时间)
+
+**文件位置:**
+- `apps/soybean-admin/src/views/games/prizes/index.vue` (Lines 28-98)
+
+#### 2. Receipt Upload (收据上传)
+
+**功能特性:**
+- 条件显示: 仅在状态为 "fulfilled" 或 "shipped" 时显示
+- 文件类型: JPG, PNG, PDF
+- 文件大小限制: 5MB
+- 上传前验证 (类型 + 大小)
+- 上传成功/失败反馈
+- 查看/移除已上传的收据
+- 显示已存在的收据 (重新打开modal时)
+
+**新API Endpoint:**
+```typescript
+POST /admin/prizes/:id/receipt
+- 使用 multer FileInterceptor
+- 存储路径: ./uploads/{companyId}/receipts/{prizeId}/
+- 文件名格式: receipt_{timestamp}_{random}.ext
+- 返回: { url: string }
+```
+
+**元数据存储:**
+- 存储在 `MemberPrize.metadata.receipt` 字段
+- 无需schema变更 (使用现有JSONB字段)
+- 自动保留现有收据 (如果没有上传新的)
+
+**文件位置:**
+- Backend: `apps/api/src/modules/scores/admin-prizes.controller.ts` (Lines 18-67)
+- Frontend: `apps/soybean-admin/src/views/games/prizes/index.vue` (Lines 69-107, 451-505)
+
+#### 3. Prize Value Fix (奖品价值修复)
+
+**问题:**
+物理奖品 (item, physical, egift) 显示错误的价值 (如 "Value: 10.00")
+
+**根本原因:**
+```typescript
+// 旧代码 - 错误
+prizeValue: prizeConfig.value || scoreValue  
+// 对于没有value的物理奖品，fallback到scoreValue (游戏分数)
+```
+
+**解决方案:**
+新增 `getPrizeValue()` helper方法:
+```typescript
+private getPrizeValue(prizeType: string, configValue: number | undefined, scoreValue: number): number {
+    const typeSlug = String(prizeType).toLowerCase();
+    
+    // 非货币奖品默认为0
+    const nonMonetaryTypes = ['item', 'physical', 'egift', 'e-gift', 'voucher'];
+    if (nonMonetaryTypes.includes(typeSlug)) {
+        return configValue ?? 0;  // 不使用scoreValue
+    }
+    
+    // 货币类奖品使用scoreValue作为fallback
+    return configValue ?? scoreValue;
+}
+```
+
+**影响:**
+- ✅ 新的物理奖品: Value = 0
+- ✅ Frontend自动隐藏 value=0 的徽章 (`shouldShowValue()` 函数)
+- ⚠️  现有数据库中的奖品: 保持原值 (可选SQL清理)
+
+**文件位置:**
+- `apps/api/src/modules/scores/scores.service.ts` (Lines 30-46, 115)
+
+### 📊 技术细节
+
+**Backend Changes:**
+1. **Receipt Upload Endpoint**
+   - File validation (type + size)
+   - Multi-tenant storage (company-specific directories)
+   - Timestamped unique filenames
+   - 返回URL供frontend存储
+
+2. **Prize Value Logic**
+   - Type-based value calculation
+   - 区分货币/非货币奖品类型
+   - 防止score value污染物理奖品
+
+**Frontend Changes:**
+1. **Modal Width**: 600px → 650px (容纳更多内容)
+2. **Prize Details Section**: 渐变背景 + grid布局
+3. **Helper Functions**:
+   - `getPrizeIcon()` - 图标/图片判断
+   - `getPrizeName()` - 处理图片奖品
+   - `renderPrizeType()` - 类型徽章
+   - `shouldShowValue()` - 价值显示逻辑
+   - `renderStatusBadge()` - 状态徽章
+   - `formatDate()` - 日期格式化
+4. **Receipt Handlers**:
+   - `beforeReceiptUpload()` - 上传前验证
+   - `handleReceiptUpload()` - 实际上传
+   - `viewReceipt()` / `removeReceipt()` - 管理操作
+   - `viewExistingReceipt()` - 查看已存在收据
+
+### 🗄️ File Storage Structure
+
+```
+./uploads/
+  └── {companyId}/
+      └── receipts/
+          └── {prizeId}/
+              ├── receipt_1707844123456_a3f2e1d8....jpg
+              ├── receipt_1707844234567_b4c3f2e9....png
+              └── receipt_1707844345678_c5d4a3b1....pdf
+```
+
+**优势:**
+- 公司隔离 (multi-tenancy)
+- 奖品特定组织 (易于清理)
+- 唯一文件名 (防冲突)
+
+### 🔄 Commits
+
+```
+241d314 - feat: add prize ledger enhancements with receipt upload
+b440b2a - refactor: enhance prize details modal UI design
+4627b00 - fix: set prize value to 0 for physical items without explicit value
+```
+
+### 📝 文件改动
+
+**Backend:**
+- `apps/api/src/modules/scores/admin-prizes.controller.ts` - 添加receipt upload endpoint
+- `apps/api/src/modules/scores/scores.service.ts` - 添加getPrizeValue方法
+
+**Frontend:**
+- `apps/soybean-admin/src/views/games/prizes/index.vue` - 完全重新设计modal
+
+### ✅ 部署
+
+- ✅ API service deployed successfully
+- ✅ Admin service deployed successfully
+- ✅ Changes committed to branch `feat/prize-ledger-receipt-upload`
+
+### 📖 使用说明
+
+**Admin工作流程:**
+1. 打开 Prize Ledger (Games → Prize Ledger)
+2. 点击任意奖品的 "Operate" 按钮
+3. 查看详细的奖品信息 (确认)
+4. 选择新状态 (Fulfilled / Shipped)
+5. (可选) 上传收据/证明
+6. 添加备注 (可选)
+7. 保存
+
+**查看收据:**
+- 已上传: 绿色勾 + "View" 和 "Remove" 按钮
+- 已存在: "Existing receipt on file" + "View" 按钮
+
+---
+
+
 ## [2026-02-13 晚上] UI/UX Pro Max Skill Installation
 
 ### 🎨 Infrastructure Enhancement
