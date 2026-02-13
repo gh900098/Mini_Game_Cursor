@@ -3,8 +3,31 @@
  记录所有重要的功能更新、bug修复和架构改动。
  
  ---
+
+## [2026-02-13 晚上] Admin Menu Icons - Prize Ledger & Prize Types
+
+### 🎨 UI Enhancement
+
+**实施时间:** 2026-02-13 21:05-21:10 (5分钟)
+
+**核心需求:**
+- Prize Ledger和Prize Types菜单项缺少图标
+
+**修复内容:**
+1. **Prize Ledger** → 添加 `mdi:clipboard-text-outline` 图标 📋
+2. **Prize Types** → 添加 `mdi:gift` 图标 🎁
+
+**文件改动:**
+- `apps/soybean-admin/src/router/elegant/routes.ts` - 更新路由定义，添加图标
+- `apps/soybean-admin/src/router/elegant/imports.ts` - 添加缺失的view imports
+- `apps/soybean-admin/src/typings/elegant-router.d.ts` - 更新TypeScript类型定义
+
+**部署:**
+- ✅ Admin service rebuilt successfully
+
+---
  
-## [2026-02-01 晚上] 会员管理修复：UUID 显示优化、状态切换功能修复
+ ## [2026-02-01 晚上] 会员管理修复：UUID 显示优化、状态切换功能修复
 
 ### 🎯 修复会员管理模块的 UI 和 功能
 

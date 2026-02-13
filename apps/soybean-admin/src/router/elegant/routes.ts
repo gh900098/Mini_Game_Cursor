@@ -114,8 +114,19 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'games_prizes',
           i18nKey: 'route.games_prizes',
-          icon: 'streamline:gift-box-solid',
+          icon: 'mdi:clipboard-text-outline',
           order: 3
+        }
+      },
+      {
+        name: 'games_prize-types',
+        path: '/games/prize-types',
+        component: 'view.games_prize-types',
+        meta: {
+          title: 'games_prize-types',
+          i18nKey: 'route.games_prize-types',
+          icon: 'mdi:gift',
+          order: 2
         }
       },
       {

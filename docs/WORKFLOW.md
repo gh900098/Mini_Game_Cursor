@@ -135,7 +135,16 @@ If the conversation gets too long (e.g., > 30 tasks), I might start "forgetting"
 
 ---
 
-## 9. Summary of Commands
+## 9. 🗣️ Scenario: Just Talking (Natural Language)
+**You don't HAVE to type commands.**
+-   **You say:** "Fix the login page."
+-   **I do:** I will *automatically* run `/start-feature`, create `fix/login-page`, and start coding.
+
+**The Slash Commands (`/start-feature`) are just shortcuts if you want to be precise.**
+
+---
+
+## 10. Summary of Commands
 | Action | Command | Context |
 | :--- | :--- | :--- |
 | **Start** | `/init-session` | Always use first. |
