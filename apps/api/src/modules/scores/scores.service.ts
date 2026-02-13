@@ -27,6 +27,25 @@ export class ScoresService {
         private readonly strategyService: PrizeStrategyService,
     ) { }
 
+    /**
+     * Determine the correct prize value based on prize type
+     * Physical items (item, physical, egift) should have 0 value unless explicitly set
+     * Monetary prizes (points, cash, bonus_credit) use explicit value or fallback to score
+     */
+    private getPrizeValue(prizeType: string, configValue: number | undefined, scoreValue: number): number {
+        const typeSlug = String(prizeType).toLowerCase();
+
+        // Non-monetary prize types should have 0 value unless explicitly configured
+        const nonMonetaryTypes = ['item', 'physical', 'egift', 'e-gift', 'voucher'];
+        if (nonMonetaryTypes.includes(typeSlug)) {
+            return configValue ?? 0;
+        }
+
+        // Monetary types: use configured value, or fallback to score value
+        return configValue ?? scoreValue;
+    }
+
+
     async submit(memberId: string, instanceSlug: string, scoreValue: number, metadata?: any, ipAddress?: string, isImpersonated: boolean = false, companyId?: string): Promise<Score> {
         // 1. Find Game Instance
         let instance;
@@ -112,7 +131,9 @@ export class ScoresService {
                     prizeId: String(metadata.prizeIndex),
                     prizeName: prizeConfig.name || prizeConfig.label || (prizeConfig.isJackpot ? 'JACKPOT' : 'Reward'),
                     prizeType: configTypeSlug,
-                    prizeValue: prizeConfig.value || scoreValue,
+                    // Only use scoreValue for monetary prizes (points, cash, bonus_credit)
+                    // For physical items, use explicit value or 0
+                    prizeValue: this.getPrizeValue(configTypeSlug, prizeConfig.value, scoreValue),
                     status,
                     metadata: {
                         config: prizeConfig,
