@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query, Request, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MemberPrize, PrizeStatus } from './entities/member-prize.entity';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionsGuard, RequirePermission } from '../../common/guards/permissions.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('admin/prizes')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -51,6 +54,50 @@ export class AdminPrizesController {
             prize.metadata = { ...prize.metadata, ...body.metadata };
         }
         return this.memberPrizeRepo.save(prize);
+    }
+
+    @Post(':id/receipt')
+    @RequirePermission('manage_games')
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: (req: any, file, cb) => {
+                const companyId = req.user?.currentCompanyId || 'default';
+                const prizeId = req.params.id;
+                const uploadPath = `./uploads/${companyId}/receipts/${prizeId}`;
+
+                const fs = require('fs');
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+                cb(null, uploadPath);
+            },
+            filename: (req: any, file, cb) => {
+                const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('');
+                return cb(null, `receipt_${Date.now()}_${randomName}${extname(file.originalname)}`);
+            }
+        }),
+        fileFilter: (req: any, file, cb) => {
+            // Accept images and PDFs
+            if (!file.originalname.match(/\.(jpg|jpeg|png|pdf)$/i)) {
+                return cb(new BadRequestException('Only image files (jpg, jpeg, png) and PDF are allowed for receipts!'), false);
+            }
+            cb(null, true);
+        },
+        limits: {
+            fileSize: 5 * 1024 * 1024 // Max 5MB
+        }
+    }))
+    async uploadReceipt(
+        @Param('id') id: string,
+        @UploadedFile() file: any,
+        @Request() req: any
+    ) {
+        const companyId = req.user?.currentCompanyId || 'default';
+        const prizeId = id;
+
+        return {
+            url: `/api/uploads/${companyId}/receipts/${prizeId}/${file.filename}`
+        };
     }
 
     @Get('stats')

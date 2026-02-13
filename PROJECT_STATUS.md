@@ -5,9 +5,9 @@
 **Server Status:** 🟢 Running. (API:3100, Admin:3101, Web:3102).
 
 ## 🎯 Current Focus (AI Memory)
-- **Active Mission:** Awaiting User Instruction.
-- **Current Branch:** `main` (No active feature).
-- **Status:** 🟢 Idling.
+- **Active Mission:** Implementing prize ledger enhancements (receipt upload + details display).
+- **Current Branch:** `feat/prize-ledger-receipt-upload`.
+- **Status:** 🟡 In Progress.
 
 ### Context
 Stabilization complete. Ready for next task.
