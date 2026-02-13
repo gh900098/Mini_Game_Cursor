@@ -25,41 +25,81 @@
       />
     </NCard>
 
-    <NModal v-model:show="showUpdateModal" title="Update Prize Status" preset="card" style="width: 600px">
-      <!-- Prize Details Section -->
-      <div v-if="currentPrize" class="mb-20px p-16px bg-gray-50 rounded-8px border border-gray-200">
-        <div class="text-sm font-bold text-gray-600 mb-12px">Prize Details</div>
-        <div class="flex gap-16px">
-          <!-- Prize Image/Icon -->
+    <NModal v-model:show="showUpdateModal" title="Update Prize Status" preset="card" style="width: 650px">
+      <!-- Enhanced Prize Details Section -->
+      <div v-if="currentPrize" class="mb-24px">
+        <div class="flex items-start gap-20px p-20px bg-gradient-to-br from-blue-50 to-purple-50 rounded-12px border-2 border-blue-100 shadow-sm">
+          <!-- Prize Icon/Image -->
           <div class="flex-shrink-0">
-            <NImage
-              v-if="getPrizeIcon(currentPrize)?.isImage"
-              :src="getPrizeIcon(currentPrize).value"
-              width="60"
-              height="60"
-              class="rounded shadow-sm"
-              :preview-disabled="false"
-            />
-            <div v-else class="text-4xl">{{ getPrizeIcon(currentPrize)?.value || '🎁' }}</div>
+            <div class="w-80px h-80px flex items-center justify-center bg-white rounded-12px shadow-md border-2 border-blue-200">
+              <NImage
+                v-if="getPrizeIcon(currentPrize)?.isImage"
+                :src="getPrizeIcon(currentPrize).value"
+                width="70"
+                height="70"
+                class="rounded-8px"
+                :preview-disabled="false"
+              />
+              <div v-else class="text-5xl">{{ getPrizeIcon(currentPrize)?.value || '🎁' }}</div>
+            </div>
           </div>
           
-          <!-- Prize Info -->
-          <div class="flex-1">
-            <div class="font-bold text-lg mb-4px">{{ getPrizeName(currentPrize) }}</div>
-            <div class="mb-8px">
+          <!-- Prize Information -->
+          <div class="flex-1 min-w-0">
+            <!-- Prize Name & Type -->
+            <div class="mb-12px">
+              <h3 class="text-xl font-bold text-gray-800 mb-6px">{{ getPrizeName(currentPrize) }}</h3>
               <component :is="renderPrizeType(currentPrize)" />
             </div>
-            <div v-if="currentPrize.metadata?.config?.description" class="text-sm text-gray-600 mb-4px">
-              {{ currentPrize.metadata.config.description }}
-            </div>
-            <div class="text-xs text-gray-500">
-              <div><strong>Member:</strong> {{ currentPrize.member?.username }} ({{ currentPrize.member?.id?.split('-')[0] }}...)</div>
-              <div><strong>Game:</strong> {{ currentPrize.instance?.name }}</div>
-              <div><strong>Current Status:</strong> {{ currentPrize.status.toUpperCase() }}</div>
+            
+            <!-- Prize Details Grid -->
+            <div class="grid grid-cols-2 gap-x-16px gap-y-8px text-sm">
+              <!-- Prize Value/Description -->
+              <div v-if="currentPrize.metadata?.config?.description || Number(currentPrize.prizeValue) > 0" class="col-span-2">
+                <div class="flex items-start gap-8px">
+                  <span class="text-gray-500 font-medium min-w-fit">Details:</span>
+                  <div class="flex-1">
+                    <div v-if="currentPrize.metadata?.config?.description" class="text-gray-700 mb-4px">
+                      {{ currentPrize.metadata.config.description }}
+                    </div>
+                    <div v-if="shouldShowValue(currentPrize)" class="inline-flex items-center gap-6px px-10px py-4px bg-green-100 text-green-700 rounded-6px font-bold text-xs">
+                      <span>💰</span>
+                      <span>Value: {{ Number(currentPrize.prizeValue).toFixed(2) }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Member -->
+              <div>
+                <span class="text-gray-500 font-medium">Member:</span>
+                <span class="ml-6px text-gray-800 font-semibold">{{ currentPrize.member?.username }}</span>
+              </div>
+              
+              <!-- Game Instance -->
+              <div>
+                <span class="text-gray-500 font-medium">Game:</span>
+                <span class="ml-6px text-gray-800 font-semibold truncate">{{ currentPrize.instance?.name }}</span>
+              </div>
+              
+              <!-- Current Status -->
+              <div>
+                <span class="text-gray-500 font-medium">Status:</span>
+                <span class="ml-6px">
+                  <component :is="renderStatusBadge(currentPrize.status)" />
+                </span>
+              </div>
+              
+              <!-- Award Date -->
+              <div>
+                <span class="text-gray-500 font-medium">Awarded:</span>
+                <span class="ml-6px text-gray-700 text-xs">{{ formatDate(currentPrize.createdAt) }}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
 
       <NForm :model="updateForm" label-placement="left" label-width="80">
         <NFormItem label="Status" path="status">
@@ -379,6 +419,34 @@ function renderPrizeType(prize: any) {
   const config = typeMap[typeSlug] || { tag: 'default', label: typeSlug };
   return <NTag type={config.tag} size="small">{config.label}</NTag>;
 }
+
+// Check if value should be displayed
+function shouldShowValue(prize: any) {
+  const value = Number(prize.prizeValue);
+  // Show value for non-physical prizes and non-points prizes
+  return prize.prizeType !== 'physical' && prize.prizeType !== 'points' && value > 0;
+}
+
+// Render status badge with colors
+function renderStatusBadge(status: string) {
+  const statusMap: any = {
+    pending: { type: 'warning', label: 'PENDING' },
+    claimed: { type: 'info', label: 'CLAIMED' },
+    fulfilled: { type: 'success', label: 'FULFILLED' },
+    shipped: { type: 'success', label: 'SHIPPED' },
+    rejected: { type: 'error', label: 'REJECTED' }
+  };
+  
+  const config = statusMap[status] || { type: 'default', label: status.toUpperCase() };
+  return <NTag type={config.type} size="small" strong>{config.label}</NTag>;
+}
+
+// Format date for display
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
 
 // Receipt upload handlers
 function beforeReceiptUpload(data: { file: any }) {
