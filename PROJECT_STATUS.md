@@ -39,6 +39,7 @@ Stabilization complete. Ready for next task.
 | FEAT-001 | 🟢 Feat | Dynamic Probabilities (Phase 4) | ⏳ Pending |
 
 ## ✅ Recently Completed
+- [x] **Admin Menu Icons** (Added icons to Prize Ledger & Prize Types - 2026-02-13)
 - [x] **Enterprise Prize Architecture** (See CHANGELOG)
 - [x] **Prize Type Multi-tenancy** (See CHANGELOG)
 - [x] **Game Rules System** (See CHANGELOG)
