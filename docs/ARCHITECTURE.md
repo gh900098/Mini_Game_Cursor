@@ -1,50 +1,50 @@
-# MiniGame 系统架构
+# MiniGame System Architecture
 
-**最后更新：** 2026-01-31
+**Last Updated:** 2026-01-31
 
-本文档描述MiniGame项目的整体架构、技术栈和设计决策。
+This document describes the overall architecture, tech stack, and design decisions of the MiniGame project.
 
 ---
 
-## 🏗️ 系统架构图
+## 🏗️ System Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                        Internet                              │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-                      │ HTTPS
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   Nginx (Reverse Proxy)                      │
-│                    Port 80/443                               │
-└────┬────────────────┬────────────────┬──────────────────────┘
-     │                │                │
-     │                │                │
-┌────▼─────────┐ ┌───▼──────────┐ ┌──▼─────────────┐
-│   Web App    │ │ Admin Panel  │ │   API Server   │
-│   (Vue 3)    │ │   (Vue 3)    │ │   (NestJS)     │
-│ Port 3102    │ │  Port 3101   │ │  Port 3100     │
-│              │ │              │ │                │
-│ Static Files │ │ Static Files │ │  REST API      │
-└──────────────┘ └──────────────┘ └───┬────────────┘
-                                      │
-                              ┌───────┴────────┐
-                              │                │
-                         ┌────▼─────┐    ┌────▼─────┐
-                         │PostgreSQL│    │  Redis   │
-                         │  Port    │    │  Port    │
-                         │  5432    │    │  6379    │
-                         └──────────┘    └──────────┘
+│└─────────────────────┬───────────────────────────────────────┘
+│                      │
+│                      │ HTTPS
+│                      ▼
+│┌─────────────────────────────────────────────────────────────┐
+││                   Nginx (Reverse Proxy)                      │
+││                    Port 80/443                               │
+│└────┬────────────────┬────────────────┬──────────────────────┘
+│     │                │                │
+│     │                │                │
+│┌────▼─────────┐ ┌───▼──────────┐ ┌──▼─────────────┐
+││   Web App    │ │ Admin Panel  │ │   API Server   │
+││   (Vue 3)    │ │   (Vue 3)    │ │   (NestJS)     │
+││ Port 3102    │ │  Port 3101   │ │  Port 3100     │
+││              │ │              │ │                │
+││ Static Files │ │ Static Files │ │  REST API      │
+│└──────────────┘ └──────────────┘ └───┬────────────┘
+│                                       │
+│                               ┌───────┴────────┐
+│                               │                │
+│                          ┌────▼─────┐    ┌────▼─────┐
+│                          │PostgreSQL│    │  Redis   │
+│                          │  Port    │    │  Port    │
+│                          │  5432    │    │  6379    │
+│                          └──────────┘    └──────────┘
 ```
 
 ---
 
-## 📦 技术栈
+## 📦 Tech Stack
 
 ### Frontend
 
-**Web App (游戏前端)**
+**Web App (Game Frontend)**
 - **Framework:** Vue 3 + Composition API
 - **Language:** TypeScript
 - **Build:** Vite
@@ -53,7 +53,7 @@
 - **Router:** Vue Router
 - **HTTP Client:** Axios
 
-**Admin Panel (管理后台)**
+**Admin Panel (Management Backend)**
 - **Framework:** Vue 3 + Composition API
 - **Language:** TypeScript
 - **Build:** Vite
@@ -89,9 +89,9 @@
 
 ---
 
-## 🔄 数据流
+## 🔄 Data Flows
 
-### 用户玩游戏流程
+### Player Gameplay Flow
 
 ```
 1. User visits https://game.xseo.me/spin-wheel-premium
@@ -116,7 +116,7 @@
 10. (Optional) Call API to record result
 ```
 
-### Admin配置游戏流程
+### Admin Game Configuration Flow
 
 ```
 1. Admin visits https://admin.xseo.me
@@ -144,7 +144,7 @@
 10. Game updated! Next time user plays, uses new config
 ```
 
-### 文件上传流程
+### File Upload Flow
 
 ```
 1. Admin clicks "Upload" in ConfigForm
@@ -169,42 +169,42 @@
 
 ---
 
-## 🗄️ 数据库设计
+## 🗄️ Database Design
 
-### 核心表
+### Core Tables
 
 **game_templates**
-- 游戏模板定义
-- 包含schema (配置项定义)
-- 由seed.service.ts初始化
+- Game template definitions
+- Contains schema (config item definitions)
+- Initialized by `seed.service.ts`
 
 **game_instances**
-- 具体的游戏实例
-- 包含config (JSON，存储所有配置)
-- 关联到game_template
+- Specific game instances
+- Contains config (JSON, stores all settings)
+- Associated with `game_template`
 
 **users**
-- 管理员用户
-- 用于登录Admin Panel
+- Admin users
+- Used for Admin Panel login
 
 **members**
-- 游戏玩家/会员
-- 包含token余额
+- Game players/members
+- Contains token balance
 
 **companies**
-- 多租户支持
-- 每个公司有独立的游戏和会员
+- Multi-tenancy support
+- Each company has independent games and members
 
 **roles & permissions**
-- RBAC权限控制
+- RBAC permission control
 
 **audit_logs**
-- 操作审计日志
+- Operation audit logs
 
 **scores / game_history**
-- 游戏历史记录
+- Game historical records
 
-### 关系图
+### Relationship Diagram
 
 ```
 companies (1) ──┬── (N) game_instances
@@ -223,102 +223,102 @@ game_instances (1) ── (N) game_history
 
 ---
 
-## 🔐 安全机制
+## 🔐 Security Mechanisms
 
-### 认证 (Authentication)
+### Authentication
 - JWT token based
-- Token存储在localStorage
-- 每次请求带上 `Authorization: Bearer <token>`
-- Token过期时间：24小时（可配置）
+- Token stored in localStorage
+- Every request carries `Authorization: Bearer <token>`
+- Token expiration: 24 hours (configurable)
 
-### 授权 (Authorization)
-- 基于角色的访问控制 (RBAC)
+### Authorization
+- Role-Based Access Control (RBAC)
 - Roles: admin, editor, viewer
 - Permissions: game:create, member:edit, etc.
-- Guards在controller层验证权限
+- Guards verify permissions at the controller level
 
-### 数据隔离 (Multi-tenancy)
-- 每个请求自动过滤 companyId
-- 用户只能看到自己公司的数据
-- Database层强制隔离
+### Data Isolation (Multi-tenancy)
+- Every request automatically filters by `companyId`
+- Users can only see data from their own company
+- Mandatory isolation at the database layer
 
-### 输入验证
-- class-validator在DTO层验证
-- SQL injection防护（TypeORM）
-- XSS防护（Vue自动转义）
+### Input Validation
+- `class-validator` validates at the DTO layer
+- SQL injection protection (TypeORM)
+- XSS protection (Vue automatic escaping)
 
 ### CORS
-- 配置允许的origin
-- 生产环境只允许特定domain
+- Configured allowed origins
+- Production environment only allows specific domains
 
 ---
 
-## 🎯 设计决策
+## 🎯 Design Decisions
 
-### 为什么用NestJS？
-- ✅ TypeScript原生支持
-- ✅ 模块化架构
-- ✅ 内置依赖注入
-- ✅ 与TypeORM集成好
-- ✅ 企业级框架
+### Why use NestJS?
+- ✅ Native TypeScript support
+- ✅ Modular architecture
+- ✅ Built-in dependency injection
+- ✅ Good integration with TypeORM
+- ✅ Enterprise-grade framework
 
-### 为什么游戏引擎是server-side生成HTML？
-- ✅ 配置集中管理（不需要rebuild前端）
-- ✅ 可以动态生成不同游戏
-- ✅ 安全（逻辑在服务器）
-- ✅ 简化部署（只需更新API）
+### Why is the game engine server-side generated HTML?
+- ✅ Centralized configuration management (no need to rebuild frontend)
+- ✅ Can dynamically generate different games
+- ✅ Security (logic stays on the server)
+- ✅ Simplified deployment (only need to update API)
 
-### 为什么用iframe加载游戏？
-- ✅ 隔离游戏和主应用
-- ✅ 防止样式冲突
-- ✅ 可以独立加载/卸载
-- ✅ 安全沙箱
+### Why use iframes to load games?
+- ✅ Isolation between the game and the main application
+- ✅ Prevents style conflicts
+- ✅ Can be independently loaded/unloaded
+- ✅ Security sandbox
 
-### 为什么ConfigForm是动态渲染？
-- ✅ Schema驱动，易于扩展
-- ✅ 添加新配置项不需要改UI
-- ✅ 不同游戏类型可以有不同配置
-- ✅ DRY原则
+### Why is ConfigForm dynamically rendered?
+- ✅ Schema-driven, easy to extend
+- ✅ Adding new configuration items doesn't require UI changes
+- ✅ Different game types can have different configurations
+- ✅ DRY (Don't Repeat Yourself) principle
 
-### 为什么用PostgreSQL？
-- ✅ 强大的JSON支持（存储config）
-- ✅ ACID事务
-- ✅ 成熟稳定
-- ✅ 适合复杂查询
+### Why use PostgreSQL?
+- ✅ Powerful JSON support (stores config)
+- ✅ ACID transactions
+- ✅ Mature and stable
+- ✅ Suitable for complex queries
 
-### 为什么用Redis？
-- ✅ 缓存game config（减少DB查询）
-- ✅ Session存储
+### Why use Redis?
+- ✅ Caches game config (reduces DB queries)
+- ✅ Session storage
 - ✅ Rate limiting
-- ✅ 高性能
+- ✅ High performance
 
 ---
 
-## 📈 性能优化
+## 📈 Performance Optimization
 
 ### Frontend
-- ✅ Vite快速build
+- ✅ Vite fast build
 - ✅ Code splitting
 - ✅ Lazy loading routes
-- ✅ 图片懒加载
-- ✅ Asset CDN（可选）
+- ✅ Image lazy loading
+- ✅ Asset CDN (optional)
 
 ### Backend
-- ✅ Redis缓存
+- ✅ Redis caching
 - ✅ Database indexing
 - ✅ Connection pooling
 - ✅ Query optimization
 - ✅ Gzip compression
 
 ### Database
-- ✅ 索引：userId, companyId, slug
-- ✅ JSON字段索引（GIN）
+- ✅ Indexes: `userId`, `companyId`, `slug`
+- ✅ JSON field indexing (GIN)
 - ✅ Query optimization
 - ✅ Connection pooling
 
 ---
 
-## 🔄 部署架构
+## 🔄 Deployment Architecture
 
 ### Development
 ```
@@ -351,9 +351,9 @@ VPS (154.26.136.139)
 
 ---
 
-## 🧩 模块依赖关系
+## 🧩 Module Dependencies
 
-### Frontend依赖
+### Frontend Dependencies
 ```
 web-app
 ├── router → views
@@ -369,7 +369,7 @@ admin
 └── locales → i18n
 ```
 
-### Backend依赖
+### Backend Dependencies
 ```
 app.module
 ├── auth.module
@@ -387,54 +387,54 @@ app.module
 
 ---
 
-## 🚀 扩展性考虑
+## 🚀 Scalability Considerations
 
-### 添加新游戏类型
-1. 在 `games/` 创建新template (如 `scratch-card.template.ts`)
-2. 在 `seed.service.ts` 定义schema
-3. ConfigForm自动适配（schema驱动）
-4. 无需修改其他代码
+### Adding New Game Types
+1. Create a new template in `games/` (e.g., `scratch-card.template.ts`)
+2. Define the schema in `seed.service.ts`
+3. ConfigForm adapts automatically (schema-driven)
+4. No other code changes needed
 
-### 支持更多语言
-1. 在 `locales/langs/` 添加新语言文件
-2. 在 `locale.ts` 注册
-3. 更新 `LangType` 类型定义
-4. 所有i18n自动支持
+### Supporting More Languages
+1. Add a new language file in `locales/langs/`
+2. Register in `locale.ts`
+3. Update `LangType` type definition
+4. All i18n is automatically supported
 
-### 横向扩展 (Scale Out)
-- ✅ API可以多实例部署（stateless）
-- ✅ Redis做session共享
-- ✅ Database做读写分离
-- ✅ Static assets放CDN
-
----
-
-## 📝 技术债务
-
-**已知问题：**
-1. 游戏结果记录是可选的（应该强制记录）
-2. 缺少完整的error tracking（如Sentry）
-3. 缺少automated testing
-4. 缺少API rate limiting
-5. 缺少完整的logging system
-
-**未来改进：**
-- [ ] 添加单元测试和E2E测试
-- [ ] 集成Sentry error tracking
-- [ ] 实现完整的audit logging
-- [ ] 添加API rate limiting
-- [ ] 实现game result强制记录
-- [ ] 添加监控和告警（如Prometheus + Grafana）
+### Horizontal Scaling (Scale Out)
+- ✅ API can be deployed in multiple instances (stateless)
+- ✅ Redis handles session sharing
+- ✅ Database supports read-write splitting
+- ✅ Static assets on CDN
 
 ---
 
-## 🔗 相关文档
+## 📝 Technical Debt
 
-- **功能详细文档：** [FEATURES.md](./FEATURES.md)
-- **代码位置映射：** [CODEMAP.md](./CODEMAP.md)
-- **故障排查：** [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
-- **部署流程：** [DEPLOYMENT.md](./DEPLOYMENT.md)
+**Known Issues:**
+1. Game result recording is optional (should be mandatory)
+2. Lacks comprehensive error tracking (e.g., Sentry)
+3. Lacks automated testing
+4. Lacks API rate limiting
+5. Lacks a complete logging system
+
+**Future Improvements:**
+- [ ] Add unit and E2E testing
+- [ ] Integrate Sentry error tracking
+- [ ] Implement full audit logging
+- [ ] Add API rate limiting
+- [ ] Implement mandatory game result recording
+- [ ] Add monitoring and alerting (e.g., Prometheus + Grafana)
 
 ---
 
-**这个文档帮助你理解MiniGame的整体架构和设计！**
+## 🔗 Related Documents
+
+- **Feature Details:** [FEATURES.md](./FEATURES.md)
+- **Code Map:** [CODEMAP.md](./CODEMAP.md)
+- **Troubleshooting:** [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+- **Deployment Process:** [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+---
+
+**This document helps you understand the overall architecture and design of MiniGame!**

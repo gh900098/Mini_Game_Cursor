@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>🎰 ULTRA Premium Wheel - Cyber Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
@@ -17,25 +21,37 @@
             --card-dark: #12121f;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        html, body {
-            width: 100%; height: 100%; overflow: hidden;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
             background: var(--dark-bg);
             font-family: 'Rajdhani', sans-serif;
         }
 
         /* ========== START SCREEN (for audio unlock) ========== */
         .start-screen {
-            position: fixed; inset: 0;
+            position: fixed;
+            inset: 0;
             background: rgba(0, 0, 0, 0.95);
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             z-index: 2000;
             cursor: pointer;
         }
 
-        .start-screen.hidden { display: none; }
+        .start-screen.hidden {
+            display: none;
+        }
 
         .start-title {
             font-family: 'Orbitron', sans-serif;
@@ -49,8 +65,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         .start-button {
@@ -74,20 +97,29 @@
         }
 
         @keyframes glowPulse {
-            0%, 100% { box-shadow: 0 0 20px var(--neon-cyan); }
-            50% { box-shadow: 0 0 40px var(--neon-cyan), 0 0 60px var(--neon-pink); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px var(--neon-cyan);
+            }
+
+            50% {
+                box-shadow: 0 0 40px var(--neon-cyan), 0 0 60px var(--neon-pink);
+            }
         }
 
         .start-hint {
             margin-top: 20px;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
             font-size: 0.9rem;
         }
 
         /* ========== CYBERPUNK BACKGROUND ========== */
         .cyber-bg {
-            position: fixed; inset: 0; z-index: 0;
-            background: 
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
                 radial-gradient(ellipse at 50% 0%, rgba(157, 0, 255, 0.15) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 80%, rgba(0, 245, 255, 0.1) 0%, transparent 40%),
                 radial-gradient(ellipse at 20% 80%, rgba(255, 0, 255, 0.1) 0%, transparent 40%),
@@ -96,9 +128,11 @@
 
         .grid-floor {
             position: absolute;
-            bottom: 0; left: -50%; right: -50%;
+            bottom: 0;
+            left: -50%;
+            right: -50%;
             height: 60%;
-            background: 
+            background:
                 linear-gradient(transparent 0%, rgba(0, 245, 255, 0.03) 100%),
                 repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(0, 245, 255, 0.1) 50px),
                 repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(0, 245, 255, 0.05) 50px);
@@ -109,13 +143,22 @@
         }
 
         @keyframes gridScroll {
-            0% { background-position: 0 0, 0 0, 0 0; }
-            100% { background-position: 0 0, 0 50px, 50px 0; }
+            0% {
+                background-position: 0 0, 0 0, 0 0;
+            }
+
+            100% {
+                background-position: 0 0, 0 50px, 50px 0;
+            }
         }
 
         .hex-container {
-            position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
         }
+
         .hex {
             position: absolute;
             border: 1px solid rgba(0, 245, 255, 0.2);
@@ -124,15 +167,27 @@
         }
 
         @keyframes hexFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
-            50% { transform: translateY(-30px) rotate(180deg); opacity: 0.6; }
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: translateY(-30px) rotate(180deg);
+                opacity: 0.6;
+            }
         }
 
         /* ========== MAIN CONTAINER ========== */
         .game-container {
-            position: fixed; inset: 0;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: space-between;
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
             padding: 20px;
             z-index: 10;
         }
@@ -140,13 +195,22 @@
         /* ========== HEADER ========== */
         .header {
             width: 100%;
-            display: flex; flex-direction: column; align-items: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             animation: slideDown 0.8s ease-out;
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .token-display {
@@ -155,15 +219,18 @@
             border: 2px solid var(--neon-gold);
             border-radius: 50px;
             padding: 12px 35px;
-            display: flex; align-items: center; gap: 10px;
-            box-shadow: 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow:
                 0 0 20px rgba(255, 215, 0, 0.3),
                 inset 0 0 20px rgba(255, 215, 0, 0.1);
         }
 
         .token-display::before {
             content: '';
-            position: absolute; inset: -3px;
+            position: absolute;
+            inset: -3px;
             border-radius: 50px;
             background: linear-gradient(135deg, var(--neon-gold), var(--neon-cyan), var(--neon-pink));
             z-index: -1;
@@ -177,8 +244,13 @@
         }
 
         @keyframes coinSpin {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
+            0% {
+                transform: rotateY(0deg);
+            }
+
+            100% {
+                transform: rotateY(360deg);
+            }
         }
 
         .token-value {
@@ -189,7 +261,10 @@
             text-shadow: 0 0 10px var(--neon-gold);
         }
 
-        .title-container { margin-top: 15px; text-align: center; }
+        .title-container {
+            margin-top: 15px;
+            text-align: center;
+        }
 
         .main-title {
             font-family: 'Orbitron', sans-serif;
@@ -204,8 +279,13 @@
         }
 
         @keyframes titleGlow {
-            0% { filter: drop-shadow(0 0 20px rgba(0, 245, 255, 0.5)); }
-            100% { filter: drop-shadow(0 0 40px rgba(157, 0, 255, 0.8)); }
+            0% {
+                filter: drop-shadow(0 0 20px rgba(0, 245, 255, 0.5));
+            }
+
+            100% {
+                filter: drop-shadow(0 0 40px rgba(157, 0, 255, 0.8));
+            }
         }
 
         .subtitle {
@@ -221,16 +301,20 @@
         /* ========== SOUND TOGGLE ========== */
         .sound-toggle {
             position: fixed;
-            top: 15px; right: 15px;
-            width: 45px; height: 45px;
+            top: 15px;
+            right: 15px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             border: 2px solid var(--neon-cyan);
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             color: var(--neon-cyan);
             font-size: 20px;
             cursor: pointer;
             z-index: 100;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.3s;
         }
 
@@ -249,13 +333,22 @@
             position: relative;
             width: min(90vw, 400px);
             height: min(90vw, 400px);
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             animation: scaleIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
         }
 
         @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.5); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .outer-glow {
@@ -269,8 +362,13 @@
         }
 
         @keyframes rotateGlow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .outer-glow.spinning {
@@ -284,14 +382,15 @@
             border-radius: 50%;
             background: linear-gradient(180deg, #1a1a2e 0%, #0a0a12 100%);
             border: 3px solid #2a2a4a;
-            box-shadow: 
+            box-shadow:
                 0 0 30px rgba(0, 0, 0, 0.8),
                 inset 0 0 30px rgba(0, 0, 0, 0.5);
         }
 
         .led {
             position: absolute;
-            width: 12px; height: 12px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, #fff, var(--neon-cyan));
             box-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
@@ -318,10 +417,10 @@
             inset: 0;
             border-radius: 50%;
             border: 8px solid transparent;
-            background: 
+            background:
                 linear-gradient(var(--card-dark), var(--card-dark)) padding-box,
                 linear-gradient(180deg, #666, #222, #444, #111) border-box;
-            box-shadow: 
+            box-shadow:
                 0 10px 40px rgba(0, 0, 0, 0.8),
                 inset 0 2px 0 rgba(255, 255, 255, 0.1);
         }
@@ -335,7 +434,8 @@
         }
 
         #wheel {
-            width: 100%; height: 100%;
+            width: 100%;
+            height: 100%;
             transform-origin: center center;
             will-change: transform;
         }
@@ -347,7 +447,11 @@
             filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.8));
         }
 
-        .pointer { width: 60px; height: 80px; position: relative; }
+        .pointer {
+            width: 60px;
+            height: 80px;
+            position: relative;
+        }
 
         .pointer-body {
             position: absolute;
@@ -359,9 +463,11 @@
 
         .pointer-shine {
             position: absolute;
-            top: 5px; left: 15px;
-            width: 15px; height: 40px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.6), transparent);
+            top: 5px;
+            left: 15px;
+            width: 15px;
+            height: 40px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), transparent);
             clip-path: polygon(0 0, 100% 0, 50% 100%);
         }
 
@@ -376,31 +482,54 @@
         }
 
         @keyframes pointerPulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.7; }
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
         }
 
-        .pointer.bounce { animation: pointerBounce 0.5s ease-out; }
+        .pointer.bounce {
+            animation: pointerBounce 0.5s ease-out;
+        }
 
         @keyframes pointerBounce {
-            0%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-20px); }
-            60% { transform: translateY(-5px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-20px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
         }
 
         .center-hub {
             position: absolute;
-            top: 50%; left: 50%;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
-            width: 80px; height: 80px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, #fff, #888 40%, #333 70%, #111);
             border: 4px solid #222;
-            box-shadow: 
+            box-shadow:
                 0 10px 30px rgba(0, 0, 0, 0.8),
                 inset 0 -5px 15px rgba(0, 0, 0, 0.5),
                 inset 0 5px 15px rgba(255, 255, 255, 0.2);
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             z-index: 50;
         }
 
@@ -419,20 +548,38 @@
         }
 
         @keyframes hubPulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 1; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
         }
 
         /* ========== SPIN BUTTON ========== */
         .button-section {
             width: 100%;
-            display: flex; flex-direction: column; align-items: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             animation: slideUp 0.8s ease-out 0.4s both;
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .spin-button {
@@ -445,7 +592,7 @@
             background: linear-gradient(180deg, var(--neon-pink) 0%, #b30077 100%);
             overflow: hidden;
             transition: all 0.2s;
-            box-shadow: 
+            box-shadow:
                 0 8px 30px rgba(255, 0, 255, 0.4),
                 0 4px 0 #800050,
                 inset 0 2px 0 rgba(255, 255, 255, 0.3);
@@ -453,28 +600,37 @@
 
         .spin-button::before {
             content: '';
-            position: absolute; inset: 0;
-            background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
             border-radius: 20px;
         }
 
         .spin-button::after {
             content: '';
             position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
             animation: buttonShine 3s infinite;
         }
 
         @keyframes buttonShine {
-            0% { left: -100%; }
-            50%, 100% { left: 100%; }
+            0% {
+                left: -100%;
+            }
+
+            50%,
+            100% {
+                left: 100%;
+            }
         }
 
         .spin-button:hover {
             transform: translateY(-2px);
-            box-shadow: 
+            box-shadow:
                 0 12px 40px rgba(255, 0, 255, 0.5),
                 0 6px 0 #800050,
                 inset 0 2px 0 rgba(255, 255, 255, 0.3);
@@ -485,12 +641,18 @@
             box-shadow: 0 2px 10px rgba(255, 0, 255, 0.3), 0 1px 0 #800050;
         }
 
-        .spin-button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .spin-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
 
         .button-text {
-            position: relative; z-index: 10;
+            position: relative;
+            z-index: 10;
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem; font-weight: 900;
+            font-size: 1.8rem;
+            font-weight: 900;
             color: #fff;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
             letter-spacing: 3px;
@@ -516,45 +678,50 @@
 
         /* ========== WIN OVERLAY ========== */
         .win-overlay {
-            position: fixed; inset: 0;
+            position: fixed;
+            inset: 0;
             background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(20px);
             display: none;
-            align-items: center; justify-content: center;
+            align-items: center;
+            justify-content: center;
             z-index: 1000;
             padding: 20px;
         }
 
         .win-rays {
             position: absolute;
-            top: 50%; left: 50%;
-            width: 200vmax; height: 200vmax;
-            background: conic-gradient(
-                from 0deg,
-                transparent, rgba(255, 215, 0, 0.1),
-                transparent, rgba(0, 245, 255, 0.1),
-                transparent, rgba(255, 0, 255, 0.1),
-                transparent, rgba(255, 215, 0, 0.1),
-                transparent
-            );
+            top: 50%;
+            left: 50%;
+            width: 200vmax;
+            height: 200vmax;
+            background: conic-gradient(from 0deg,
+                    transparent, rgba(255, 215, 0, 0.1),
+                    transparent, rgba(0, 245, 255, 0.1),
+                    transparent, rgba(255, 0, 255, 0.1),
+                    transparent, rgba(255, 215, 0, 0.1),
+                    transparent);
             animation: raysRotate 10s linear infinite;
         }
 
         .win-overlay.jackpot .win-rays {
-            background: conic-gradient(
-                from 0deg,
-                transparent, rgba(255, 215, 0, 0.3),
-                transparent, rgba(255, 215, 0, 0.3),
-                transparent, rgba(255, 215, 0, 0.3),
-                transparent, rgba(255, 215, 0, 0.3),
-                transparent
-            );
+            background: conic-gradient(from 0deg,
+                    transparent, rgba(255, 215, 0, 0.3),
+                    transparent, rgba(255, 215, 0, 0.3),
+                    transparent, rgba(255, 215, 0, 0.3),
+                    transparent, rgba(255, 215, 0, 0.3),
+                    transparent);
             animation: raysRotate 3s linear infinite;
         }
 
         @keyframes raysRotate {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
 
         .win-card {
@@ -566,7 +733,7 @@
             border-radius: 30px;
             padding: 50px 30px 40px;
             text-align: center;
-            box-shadow: 
+            box-shadow:
                 0 0 60px rgba(255, 215, 0, 0.3),
                 0 0 120px rgba(255, 215, 0, 0.1),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -575,7 +742,7 @@
 
         .win-overlay.jackpot .win-card {
             border-width: 5px;
-            box-shadow: 
+            box-shadow:
                 0 0 100px rgba(255, 215, 0, 0.6),
                 0 0 200px rgba(255, 215, 0, 0.3),
                 inset 0 0 50px rgba(255, 215, 0, 0.1);
@@ -583,18 +750,31 @@
         }
 
         @keyframes jackpotGlow {
-            from { box-shadow: 0 0 100px rgba(255, 215, 0, 0.6), 0 0 200px rgba(255, 215, 0, 0.3); }
-            to { box-shadow: 0 0 150px rgba(255, 215, 0, 0.8), 0 0 300px rgba(255, 215, 0, 0.5); }
+            from {
+                box-shadow: 0 0 100px rgba(255, 215, 0, 0.6), 0 0 200px rgba(255, 215, 0, 0.3);
+            }
+
+            to {
+                box-shadow: 0 0 150px rgba(255, 215, 0, 0.8), 0 0 300px rgba(255, 215, 0, 0.5);
+            }
         }
 
         @keyframes cardPop {
-            from { transform: scale(0.5) translateY(50px); opacity: 0; }
-            to { transform: scale(1) translateY(0); opacity: 1; }
+            from {
+                transform: scale(0.5) translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
         }
 
         .win-badge {
             position: absolute;
-            top: -20px; left: 50%;
+            top: -20px;
+            left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(135deg, var(--neon-gold), #b8860b);
             padding: 10px 30px;
@@ -615,8 +795,13 @@
         }
 
         @keyframes badgePulse {
-            from { transform: translateX(-50%) scale(1); }
-            to { transform: translateX(-50%) scale(1.1); }
+            from {
+                transform: translateX(-50%) scale(1);
+            }
+
+            to {
+                transform: translateX(-50%) scale(1.1);
+            }
         }
 
         .win-icon {
@@ -631,13 +816,27 @@
         }
 
         @keyframes jackpotIcon {
-            0%, 100% { transform: scale(1) rotate(-5deg); }
-            50% { transform: scale(1.2) rotate(5deg); }
+
+            0%,
+            100% {
+                transform: scale(1) rotate(-5deg);
+            }
+
+            50% {
+                transform: scale(1.2) rotate(5deg);
+            }
         }
 
         @keyframes iconBounce {
-            0%, 100% { transform: scale(1) translateY(0); }
-            50% { transform: scale(1.1) translateY(-10px); }
+
+            0%,
+            100% {
+                transform: scale(1) translateY(0);
+            }
+
+            50% {
+                transform: scale(1.1) translateY(-10px);
+            }
         }
 
         .win-prize {
@@ -657,8 +856,13 @@
         }
 
         @keyframes prizeGlow {
-            from { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5)); }
-            to { filter: drop-shadow(0 0 40px rgba(255, 215, 0, 1)); }
+            from {
+                filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+            }
+
+            to {
+                filter: drop-shadow(0 0 40px rgba(255, 215, 0, 1));
+            }
         }
 
         .win-message {
@@ -691,18 +895,16 @@
 
         /* ========== LOSE STATE ========== */
         .win-overlay.lose .win-rays {
-            background: conic-gradient(
-                from 0deg,
-                transparent, rgba(100, 100, 100, 0.05),
-                transparent, rgba(100, 100, 100, 0.05),
-                transparent
-            );
+            background: conic-gradient(from 0deg,
+                    transparent, rgba(100, 100, 100, 0.05),
+                    transparent, rgba(100, 100, 100, 0.05),
+                    transparent);
             animation: raysRotate 20s linear infinite;
         }
 
         .win-overlay.lose .win-card {
             border-color: #666;
-            box-shadow: 
+            box-shadow:
                 0 0 40px rgba(100, 100, 100, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
@@ -716,9 +918,19 @@
         }
 
         @keyframes sadShake {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-10deg); }
-            75% { transform: rotate(10deg); }
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(-10deg);
+            }
+
+            75% {
+                transform: rotate(10deg);
+            }
         }
 
         .win-overlay.lose .win-prize {
@@ -740,6 +952,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Start Screen (audio unlock) -->
     <div class="start-screen" id="startScreen" onclick="startGame()">
@@ -812,7 +1025,7 @@
     </div>
 
     <script>
-// ========== PRIZES ==========
+        // ========== PRIZES ==========
         // Read from injected config or use defaults
         const defaultPrizes = [
             { icon: '💰', label: '500 PTS', color: '#3b82f6', textColor: '#fff', weight: 25, isJackpot: false },
@@ -822,12 +1035,12 @@
             { icon: '🎟️', label: 'FREE SPIN', color: '#10b981', textColor: '#fff', weight: 12, isJackpot: false },
             { icon: '⭐', label: '100 PTS', color: '#f43f5e', textColor: '#fff', weight: 20, isJackpot: false }
         ];
-        
+
         const configPrizes = window.GAME_CONFIG?.prizeList || [];
         const prizes = configPrizes.length > 0 ? configPrizes.map((p, i) => ({
             icon: p.icon || '🎁',
-            label: p.label || `Prize ${i+1}`,
-            color: p.color || ['#3b82f6','#8b5cf6','#10b981','#f43f5e','#f97316','#06b6d4'][i % 6],
+            label: p.label || `Prize ${i + 1}`,
+            color: p.color || ['#3b82f6', '#8b5cf6', '#10b981', '#f43f5e', '#f97316', '#06b6d4'][i % 6],
             textColor: p.textColor || '#fff',
             weight: p.weight || 10,
             isJackpot: p.isJackpot || false,
@@ -854,22 +1067,22 @@
 
         // ========== BACKGROUND MUSIC (Real Audio File) ==========
         let bgmAudio = null;
-        
+
         function startBGM() {
             if (bgmPlaying) return;
             bgmPlaying = true;
-            
+
             // Epic cinematic game music - Bensound (royalty free with attribution)
             // Using local file for reliable playback
             bgmAudio = new Audio('/api/uploads/bgm.mp3');
             bgmAudio.loop = true;
             bgmAudio.volume = 0.4;
-            
+
             bgmAudio.play().catch(e => {
                 console.log('BGM autoplay blocked, will play on interaction');
             });
         }
-        
+
         function stopBGM() {
             if (bgmAudio) {
                 bgmAudio.pause();
@@ -896,37 +1109,37 @@
         // ========== WIN SOUND (much better) ==========
         function playWinSound(isJackpot) {
             if (!audioCtx || !soundEnabled) return;
-            
-            const notes = isJackpot 
+
+            const notes = isJackpot
                 ? [523, 659, 784, 880, 1047, 1319, 1568, 2093] // Big fanfare for jackpot
                 : [523, 659, 784, 1047]; // Normal win
-            
+
             notes.forEach((freq, i) => {
                 setTimeout(() => {
                     const osc = audioCtx.createOscillator();
                     const osc2 = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
-                    
+
                     osc.connect(gain);
                     osc2.connect(gain);
                     gain.connect(audioCtx.destination);
-                    
+
                     osc.frequency.value = freq;
                     osc2.frequency.value = freq * 1.5; // Harmony
                     osc.type = 'sine';
                     osc2.type = 'triangle';
-                    
+
                     const volume = isJackpot ? 0.15 : 0.1;
                     gain.gain.setValueAtTime(volume, audioCtx.currentTime);
                     gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + (isJackpot ? 0.5 : 0.3));
-                    
+
                     osc.start();
                     osc2.start();
                     osc.stop(audioCtx.currentTime + (isJackpot ? 0.5 : 0.3));
                     osc2.stop(audioCtx.currentTime + (isJackpot ? 0.5 : 0.3));
                 }, i * (isJackpot ? 80 : 100));
             });
-            
+
             // Extra shimmer for jackpot
             if (isJackpot) {
                 setTimeout(() => {
@@ -951,7 +1164,7 @@
         // ========== LOSE SOUND (womp womp) ==========
         function playLoseSound() {
             if (!audioCtx || !soundEnabled) return;
-            
+
             // Descending "womp womp" sound
             const notes = [300, 250, 200, 150];
             notes.forEach((freq, i) => {
@@ -983,7 +1196,7 @@
             const btn = document.getElementById('soundToggle');
             btn.textContent = soundEnabled ? '🔊' : '🔇';
             btn.classList.toggle('muted', !soundEnabled);
-            
+
             // Control BGM audio
             if (bgmAudio) {
                 bgmAudio.volume = soundEnabled ? 0.4 : 0;
@@ -1051,7 +1264,7 @@
             const divTop = cfg.dividerTop || 0;
             const divColor = cfg.dividerColor || 'rgba(255,255,255,0.3)';
             const divStroke = cfg.dividerStroke || 2;
-            
+
             // Slices
             prizes.forEach((p, i) => {
                 const start = i * angle;
@@ -1062,7 +1275,7 @@
                 const y2 = 200 + 200 * Math.sin((end - 90) * Math.PI / 180);
                 svg += `<path d="M200,200 L${x1},${y1} A200,200 0 0,1 ${x2},${y2} Z" fill="url(#g${i})"/>`;
             });
-            
+
             // Dividers (separate loop to render on top of slices)
             prizes.forEach((p, i) => {
                 const start = i * angle;
@@ -1172,7 +1385,7 @@
                 setTimeout(() => pointer.classList.remove('bounce'), 500);
 
                 const prize = prizes[winner];
-                
+
                 if (prize.isLose) {
                     // LOSE - no confetti, sad sound
                     status.textContent = 'TRY AGAIN!';
@@ -1187,7 +1400,7 @@
                     navigator.vibrate?.(prize.isJackpot ? [200, 100, 200, 100, 400] : [100, 50, 100, 50, 200]);
                     setTimeout(() => showWin(prize), prize.isJackpot ? 800 : 400);
                 }
-                
+
             }, duration + 200);
         }
 
@@ -1197,9 +1410,9 @@
                 // MEGA confetti for jackpot
                 const duration = 3000;
                 const end = Date.now() + duration;
-                
+
                 const colors = ['#ffd700', '#ffed4a', '#fff', '#fbbf24'];
-                
+
                 (function frame() {
                     confetti({
                         particleCount: 10,
@@ -1215,12 +1428,12 @@
                         origin: { x: 1 },
                         colors: colors
                     });
-                    
+
                     if (Date.now() < end) {
                         requestAnimationFrame(frame);
                     }
                 }());
-                
+
                 // Extra bursts
                 setTimeout(() => {
                     confetti({
@@ -1230,7 +1443,7 @@
                         colors: colors
                     });
                 }, 300);
-                
+
             } else {
                 // Normal win confetti
                 confetti({
@@ -1249,10 +1462,10 @@
         // ========== SHOW WIN ==========
         function showWin(prize) {
             const overlay = document.getElementById('winOverlay');
-            
+
             // Clear all state classes first
             overlay.classList.remove('jackpot', 'lose');
-            
+
             if (prize.isJackpot) {
                 // JACKPOT!
                 overlay.classList.add('jackpot');
@@ -1268,14 +1481,14 @@
                 document.getElementById('winBadge').textContent = '🎉 WINNER 🎉';
                 document.getElementById('winMessage').textContent = `Awesome! You've won ${prize.label}!`;
             }
-            
+
             document.getElementById('winIcon').textContent = prize.icon;
             document.getElementById('winPrize').textContent = prize.label;
-            
+
             // Update collect button text
             const collectBtn = overlay.querySelector('.collect-button');
             collectBtn.textContent = prize.isLose ? 'SPIN AGAIN' : 'COLLECT';
-            
+
             overlay.style.display = 'flex';
         }
 
@@ -1294,7 +1507,7 @@
             const cfg = window.GAME_CONFIG || {};
             console.log("Applying full config:", cfg);
             const root = document.documentElement;
-            
+
             // ===== BACKGROUND =====
             if (cfg.bgType === 'gradient' && cfg.bgGradStart && cfg.bgGradEnd) {
                 const dir = cfg.bgGradDir || "to bottom";
@@ -1304,18 +1517,18 @@
             } else if (cfg.bgType === 'image' && cfg.bgImage) {
                 document.body.style.background = `url(${cfg.bgImage}) center/cover`;
             }
-            
+
             // ===== TITLE/LOGO IMAGE =====
             if (cfg.titleImage) {
                 const titleContainer = document.querySelector('.title-container');
                 if (titleContainer) {
                     const shadow = cfg.logoDropShadow ? 'filter:drop-shadow(0 4px 8px rgba(0,0,0,0.5));' : '';
-                    const opacity = cfg.logoOpacity ? `opacity:${cfg.logoOpacity/100};` : '';
+                    const opacity = cfg.logoOpacity ? `opacity:${cfg.logoOpacity / 100};` : '';
                     const width = cfg.logoWidth ? `max-width:${cfg.logoWidth}%;` : 'max-width:200px;';
                     titleContainer.innerHTML = `<img src="${cfg.titleImage}" style="${width}height:auto;${shadow}${opacity}">`;
                 }
             }
-            
+
             // ===== CENTER HUB =====
             const centerHub = document.querySelector('.center-hub');
             if (centerHub) {
@@ -1329,7 +1542,7 @@
                     if (icon) icon.textContent = cfg.centerEmoji;
                 }
             }
-            
+
             // ===== POINTER =====
             const pointer = document.getElementById('pointer');
             if (pointer) {
@@ -1344,14 +1557,14 @@
                     pointer.parentElement.style.top = cfg.pointerTop + 'px';
                 }
             }
-            
+
             // ===== DIVIDERS =====
             const dividers = document.querySelectorAll('.wheel line, .divider-line');
             dividers.forEach(div => {
                 if (cfg.dividerColor) div.setAttribute('stroke', cfg.dividerColor);
                 if (cfg.dividerStroke) div.setAttribute('stroke-width', cfg.dividerStroke);
             });
-            
+
             // ===== SPIN BUTTON =====
             const spinBtn = document.getElementById('spinBtn');
             if (spinBtn) {
@@ -1371,7 +1584,7 @@
                 if (cfg.spinBtnHeight) spinBtn.style.height = cfg.spinBtnHeight + 'px';
                 if (cfg.spinBtnShadow === false) spinBtn.style.boxShadow = 'none';
             }
-            
+
             // ===== TOKEN BAR =====
             const tokenBar = document.querySelector('.token-display');
             if (tokenBar) {
@@ -1381,21 +1594,21 @@
                 if (cfg.tokenBarTextColor) tokenBar.style.color = cfg.tokenBarTextColor;
                 if (cfg.tokenBarShadow === false) tokenBar.style.boxShadow = 'none';
             }
-            
+
             // ===== WHEEL BORDER =====
             const wheelBorder = document.querySelector('.wheel-border-plate, .led-ring');
             if (wheelBorder && cfg.wheelBorderImage) {
                 wheelBorder.style.backgroundImage = `url(${cfg.wheelBorderImage})`;
                 wheelBorder.style.backgroundSize = 'contain';
             }
-            
+
             // ===== INSTANCE NAME =====
             if (window.INSTANCE_NAME && !cfg.titleImage) {
                 const mainTitle = document.querySelector('.main-title');
                 if (mainTitle) mainTitle.textContent = window.INSTANCE_NAME;
             }
         }
-        
+
         function adjustColor(hex, amount) {
             if (!hex || !hex.startsWith('#')) return hex;
             const num = parseInt(hex.slice(1), 16);
@@ -1404,9 +1617,49 @@
             const b = Math.min(255, Math.max(0, (num & 0xFF) + amount));
             return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
         }
-        
+
+        // ========== SOCIAL MODE MASKING ==========
+        function maskPrizes() {
+            const status = window.LAST_STATUS || {};
+            if (status.budgetExhausted && status.exhaustionMode === 'soft') {
+                console.log('[Social Mode] Refining prizes for display...');
+                prizes.forEach((p, i) => {
+                    if (p.isLose) return;
+
+                    // Client-side 'isPoints' check (from metadata or heuristic)
+                    const isPointType = (typeof p.isPoints === 'boolean') ? p.isPoints : (p.prizeType === 'points');
+
+                    if (!isPointType) {
+                        const budgetVal = Number(p.cost) || 0;
+                        const pts = budgetVal > 0 ? budgetVal : (p.value || p.scoreValue || 500);
+                        const ptsLabel = `${pts} PTS`;
+
+                        p.label = p.isJackpot ? `💎 ${ptsLabel}` : `⭐ ${ptsLabel}`;
+                        p.icon = p.isJackpot ? '💎' : '⭐';
+                        if (p.image) p.image = '';
+                    }
+                });
+                createWheel();
+            }
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data?.type === 'game-status-update') {
+                window.LAST_STATUS = event.data.status;
+                maskPrizes();
+            } else if (event.data?.type === 'sync-config') {
+                config = event.data.config;
+                if (config.prizeList) {
+                    prizes = JSON.parse(JSON.stringify(config.prizeList));
+                    maskPrizes(); // Re-apply mask to new config
+                }
+                updateVisuals();
+            }
+        });
+
         document.addEventListener("DOMContentLoaded", applyConfig);
 
     </script>
 </body>
+
 </html>

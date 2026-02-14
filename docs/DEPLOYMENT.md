@@ -1,224 +1,224 @@
 # MiniGame Deployment Guide
 
-完整的部署流程和常用命令 🚀
+Complete deployment flows and common commands 🚀
 
 ---
 
-## 🏗️ 架构说明（必读！永远不要忘记！）
+## 🏗️ Architecture Overview (Must Read! Never Forget!)
 
-**正确的服务器架构：**
+**Correct Server Architecture:**
 ```
-外部流量 → OpenResty (1Panel, port 80/443) → Docker 容器 (内部端口)
+External traffic → OpenResty (1Panel, port 80/443) → Docker containers (Internal ports)
 ```
 
-**关键原则：**
-1. ✅ **1Panel 的 OpenResty 是唯一的反向代理** (port 80/443)
-2. ✅ **Docker 容器只暴露内部端口** (127.0.0.1:3100, 3101, 3102)
-3. ❌ **docker-compose.prod.yml 不应该有 nginx 服务** — 会冲突 port 80！
-4. ✅ **所有域名反向代理在 1Panel Web UI 配置**
+**Key Principles:**
+1. ✅ **1Panel's OpenResty is the ONLY reverse proxy** (port 80/443)
+2. ✅ **Docker containers ONLY expose internal ports** (127.0.0.1:3100, 3101, 3102)
+3. ❌ **docker-compose.prod.yml should NOT have an nginx service** — it will conflict on port 80!
+4. ✅ **All domain reverse proxies are configured in the 1Panel Web UI**
 
-**容器端口映射：**
+**Container Port Mapping:**
 - minigame-api: 127.0.0.1:3100:3000
 - minigame-admin: 127.0.0.1:3101:80
 - minigame-webapp: 127.0.0.1:3102:80
 
-**OpenResty 反向代理：**
+**OpenResty Reverse Proxy:**
 - admin.xseo.me → http://127.0.0.1:3101 + /api → http://127.0.0.1:3100
 - game.xseo.me → http://127.0.0.1:3102 + /api → http://127.0.0.1:3100
 
-**详细架构:** 参考 [SERVER.md](./SERVER.md)
+**Detailed Architecture:** Refer to [SERVER.md](./SERVER.md)
 
 ---
 
-## 🚀 完整部署流程（重要！）
+## 🚀 Complete Deployment Flow (Important!)
 
-### Step 1: 本地开发和修改
+### Step 1: Local Development and Modification
 ```bash
 cd ~/Documents/MiniGame
-# ... 编辑代码 ...
+# ... Edit code ...
 ```
 
-### Step 2: Commit 并 Push 到 GitHub
+### Step 2: Commit and Push to GitHub
 ```bash
 cd ~/Documents/MiniGame && \
 git add -A && \
-git commit -m "描述改了什么" && \
+git commit -m "Description of changes" && \
 git push origin main
 ```
 
-### Step 3: 部署到服务器
+### Step 3: Deploy to Server
 
-**普通更新（代码改动）：**
+**Standard Update (Code changes):**
 ```bash
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 \
   "cd /opt/minigame && git pull origin main && \
    docker compose -f docker-compose.prod.yml up -d --force-recreate"
 ```
 
-**使用 deploy 脚本（简单 pull）：**
+**Using the deploy script (Simple pull):**
 ```bash
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "/opt/minigame/deploy.sh"
 ```
 
-**⚠️ 需要重新 build（改了 Dockerfile 或 dependencies）：**
+**⚠️ Rebuild required (Modified Dockerfile or dependencies):**
 ```bash
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 \
   "cd /opt/minigame && git pull origin main && \
    docker compose -f docker-compose.prod.yml build --no-cache <service> && \
    docker compose -f docker-compose.prod.yml up -d"
 ```
-替换 `<service>` 为: `api`, `admin`, 或 `web-app`
+Replace `<service>` with: `api`, `admin`, or `web-app`
 
 ---
 
-## 📋 常用命令
+## 📋 Common Commands
 
-### 检查状态
+### Check Status
 ```bash
-# 检查所有 MiniGame 容器
+# Check all MiniGame containers
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker ps | grep minigame"
 
-# 检查特定服务状态
+# Check specific service status
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker ps -f name=minigame-api"
 ```
 
-### 查看日志
+### View Logs
 ```bash
-# API 日志（最后 50 行）
+# API logs (last 50 lines)
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker logs minigame-api --tail 50"
 
-# Admin 日志
+# Admin logs
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker logs minigame-admin --tail 50"
 
-# Web App 日志
+# Web App logs
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker logs minigame-webapp --tail 50"
 
-# 实时跟踪日志
+# Real-time log tracking
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker logs minigame-api -f"
 ```
 
-### 重启服务
+### Restart Services
 ```bash
-# 重启 API
+# Restart API
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker restart minigame-api"
 
-# 重启 Admin Panel
+# Restart Admin Panel
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker restart minigame-admin"
 
-# 重启 Web App
+# Restart Web App
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker restart minigame-webapp"
 
-# 重启所有 MiniGame 服务
+# Restart all MiniGame services
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 \
   "cd /opt/minigame && docker compose -f docker-compose.prod.yml restart"
 ```
 
-### 进入容器
+### Enter Containers
 ```bash
-# 进入 API 容器
+# Enter API container
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker exec -it minigame-api sh"
 
-# 进入 PostgreSQL 容器
+# Enter PostgreSQL container
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker exec -it minigame-postgres psql -U minigame_user -d minigame_db"
 
-# 进入 Redis 容器
+# Enter Redis container
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker exec -it minigame-redis redis-cli"
 ```
 
-### 测试接口
+### Test Interfaces
 ```bash
-# 测试 API 健康检查
+# Test API health check
 curl -s http://api.xseo.me/api | head -c 100
 
-# 测试登录接口
+# Test login interface
 curl -s -X POST http://admin.xseo.me/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"super@admin.com","password":"Demo@12345"}' | head -c 200
 
-# 测试 Admin Panel 可访问性
+# Test Admin Panel accessibility
 curl -I https://admin.xseo.me
 
-# 测试 Game Web App 可访问性
+# Test Game Web App accessibility
 curl -I https://game.xseo.me
 ```
 
 ---
 
-## 🔧 维护命令
+## 🔧 Maintenance Commands
 
-### 清理和优化
+### Cleanup and Optimization
 ```bash
-# 清理未使用的 Docker 镜像
+# Clean up unused Docker images
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker image prune -f"
 
-# 清理未使用的容器
+# Clean up unused containers
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker container prune -f"
 
-# 查看 Docker 磁盘使用
+# View Docker disk usage
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker system df"
 ```
 
-### 数据库操作
+### Database Operations
 ```bash
-# 备份数据库
+# Backup database
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 \
   "docker exec minigame-postgres pg_dump -U minigame_user minigame_db > /opt/minigame_backup/db_$(date +%Y%m%d_%H%M%S).sql"
 
-# 查看数据库连接
+# Check database connections
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 \
   "docker exec minigame-postgres psql -U minigame_user -d minigame_db -c 'SELECT count(*) FROM pg_stat_activity;'"
 ```
 
-### 网络检查
+### Network Checks
 ```bash
-# 检查 Docker 网络
+# Inspect Docker network
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker network inspect minigame_default"
 
-# 测试容器间连接（从 API 容器 ping postgres）
+# Test inter-container connection (ping postgres from API container)
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 \
   "docker exec minigame-api ping -c 3 minigame-postgres"
 ```
 
 ---
 
-## 🆘 故障排查步骤
+## 🆘 Troubleshooting Steps
 
-按顺序检查：
+Check in order:
 
-1. **Docker 服务都在跑吗？**
+1. **Are Docker services running?**
    ```bash
    sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker ps | grep minigame"
    ```
 
-2. **端口映射对吗？**
+2. **Is port mapping correct?**
    ```bash
    sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker port minigame-api"
    ```
 
-3. **日志有报错吗？**
+3. **Are there errors in the logs?**
    ```bash
    sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker logs minigame-api --tail 100"
    ```
 
-4. **数据库连接正常吗？**
+4. **Is the database connection normal?**
    ```bash
    sshpass -p 'Abcd01923' ssh root@154.26.136.139 \
      "docker exec minigame-api cat .env.production | grep DATABASE_URL"
    ```
 
-5. **OpenResty 配置正确吗？**
+5. **Is OpenResty configuration correct?**
    ```bash
    sshpass -p 'Abcd01923' ssh root@154.26.136.139 \
      "cat /opt/1panel/apps/openresty/openresty/conf/conf.d/api.xseo.me.conf"
    ```
 
-6. **Cloudflare DNS 指向正确吗？**
+6. **Does Cloudflare DNS point to the correct IP?**
    ```bash
    nslookup api.xseo.me
-   # 应该显示 154.26.136.139
+   # Should display 154.26.136.139
    ```
 
-7. **SSL 证书有效吗？**
+7. **Is the SSL certificate valid?**
    ```bash
    curl -vI https://api.xseo.me 2>&1 | grep -i "ssl\|certificate"
    ```
@@ -227,40 +227,40 @@ sshpass -p 'Abcd01923' ssh root@154.26.136.139 \
 
 ## 📝 Notes
 
-- **备份路径:** `/opt/minigame_backup/`
-- **上传归档:** `/opt/minigame_new.tar.gz`
-- **生产配置:** `.env.production` (在项目根目录)
+- **Backup Path:** `/opt/minigame_backup/`
+- **Upload Archive:** `/opt/minigame_new.tar.gz`
+- **Production Config:** `.env.production` (at the project root)
 - **Docker Compose:** `docker-compose.prod.yml`
 
-需要服务器配置细节？看 [SERVER.md](./SERVER.md)
+Need server configuration details? See [SERVER.md](./SERVER.md)
 
 ---
 
-## 🔄 重建单个 Service (Rebuild)
+## 🔄 Rebuild a Single Service
 
-**用途：** 当更新代码（如翻译文件）后，需要重新 build image
+**Purpose:** Use when updating code (like translation files) and the image needs to be rebuilt.
 
-**命令：**
+**Commands:**
 ```bash
-# SSH 到服务器
+# SSH to server
 sshpass -p '<password>' ssh root@154.26.136.139
 
-# 进入项目目录
+# Go to project directory
 cd /opt/minigame
 
-# 重建 admin（或其他 service）
+# Rebuild admin (or another service)
 docker compose -f docker-compose.prod.yml down admin
 docker compose -f docker-compose.prod.yml build --no-cache admin
 docker compose -f docker-compose.prod.yml up -d admin
 ```
 
-**重要：**
-- ⚠️ 只 `restart` container 不会包含代码更新！
-- ✅ 必须 `build --no-cache` 才会重新编译
-- 📝 Service 名字：`admin`, `api`, `web-app` (不是 container 名字)
-- 📂 正确的 compose 文件：`docker-compose.prod.yml`
+**Important:**
+- ⚠️ Simply `restart` a container will NOT include code updates!
+- ✅ You must `build --no-cache` for recompilation to occur.
+- 📝 Service names: `admin`, `api`, `web-app` (NOT the container names).
+- 📂 Correct compose file: `docker-compose.prod.yml`
 
-**一键 rebuild script:**
+**One-click rebuild script:**
 ```bash
 ./scripts/rebuild-service.sh admin
 ```

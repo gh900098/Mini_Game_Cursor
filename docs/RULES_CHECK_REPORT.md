@@ -1,242 +1,242 @@
-# 🎮 转盘游戏规则配置检查报告
+# 🎮 Spin Wheel Game Rules Configuration Audit Report
 
-**检查时间：** 2026-02-01 07:53  
-**检查范围：** 所有规则相关的config配置
-
----
-
-## 📊 总体状态
-
-| 规则类型 | 前端配置 | Backend实现 | 状态 |
-|---------|---------|------------|------|
-| **基础规则** | ✅ | ❌ | 🔴 未实现 |
-| **时间控制** | ✅ | ❌ | 🔴 未实现 |
-| **预算控制** | ✅ | ❌ | 🔴 未实现 |
-| **动态概率** | ✅ | ❌ | 🔴 未实现 |
-| **VIP等级** | ✅ | ❌ | 🔴 未实现 |
-
-**结论：所有规则配置都只有前端UI，backend完全没有实现检查逻辑！** 🔴
+**Audit Time:** 2026-02-01 07:53  
+**Audit Scope:** All game rule-related configurations.
 
 ---
 
-## 🔴 未实现的规则配置（详细）
+## 📊 Overall Status
 
-### 1. 基础规则（5个）
+| Rule Type | Frontend Config | Backend Implementation | Status |
+|-----------|-----------------|------------------------|--------|
+| **Base Rules** | ✅ | ❌ | 🔴 Not Implemented |
+| **Time Control** | ✅ | ❌ | 🔴 Not Implemented |
+| **Budget Control** | ✅ | ❌ | 🔴 Not Implemented |
+| **Dynamic Prob.** | ✅ | ❌ | 🔴 Not Implemented |
+| **VIP Tiers** | ✅ | ❌ | 🔴 Not Implemented |
 
-#### ❌ dailyLimit（每日游戏次数限制）
-**前端配置：**
+**Conclusion: All rule configurations are only present in the frontend UI; the backend completely lacks implementation of the check logic!** 🔴
+
+---
+
+## 🔴 Unimplemented Rule Configurations (Detailed)
+
+### 1. Base Rules (5 items)
+
+#### ❌ dailyLimit (Daily Play Limit)
+**Frontend Config:**
 ```typescript
 { 
   key: 'dailyLimit', 
   type: 'number', 
-  label: '每日游戏限制', 
+  label: 'Daily Play Limit', 
   default: 3 
 }
 ```
 
-**Backend实现：** ❌ 无
-- scores.service.ts 的 `submit()` 没有检查
-- 用户可以无限次玩
+**Backend Implementation:** ❌ None
+- `submit()` in `scores.service.ts` does not check this limit.
+- Users can play an unlimited number of times.
 
-**应该实现：**
+**Required Implementation:**
 ```typescript
-// 检查今天该用户玩了几次
+// Check how many times the user has played today
 const todayCount = await getTodayPlayCount(memberId, instanceId);
 if (todayCount >= instance.config.dailyLimit) {
-  throw new BadRequestException('已达到每日游戏次数限制');
+  throw new BadRequestException('Daily play limit reached');
 }
 ```
 
 ---
 
-#### ❌ cooldown（游戏冷却时间）
-**前端配置：**
+#### ❌ cooldown (Game Cooldown)
+**Frontend Config:**
 ```typescript
 { 
   key: 'cooldown', 
   type: 'number', 
-  label: '冷却时间(秒)', 
+  label: 'Cooldown (Seconds)', 
   default: 60 
 }
 ```
 
-**Backend实现：** ❌ 无
-- 用户可以连续快速玩
+**Backend Implementation:** ❌ None
+- Users can play repeatedly in quick succession.
 
-**应该实现：**
+**Required Implementation:**
 ```typescript
-// 检查上次玩的时间
+// Check last play time
 const lastPlay = await getLastPlayTime(memberId, instanceId);
 const elapsed = Date.now() - lastPlay;
 if (elapsed < instance.config.cooldown * 1000) {
-  throw new BadRequestException('请等待冷却时间');
+  throw new BadRequestException('Please wait for the cooldown to expire');
 }
 ```
 
 ---
 
-#### ❌ minLevel（最低等级要求）
-**前端配置：**
+#### ❌ minLevel (Minimum Level Requirement)
+**Frontend Config:**
 ```typescript
 { 
   key: 'minLevel', 
   type: 'number', 
-  label: '最低等级', 
+  label: 'Minimum Level', 
   default: 0 
 }
 ```
 
-**Backend实现：** ❌ 无
-- 任何等级都能玩
+**Backend Implementation:** ❌ None
+- Any level can play.
 
-**应该实现：**
+**Required Implementation:**
 ```typescript
 const member = await getMember(memberId);
 if (member.level < instance.config.minLevel) {
-  throw new ForbiddenException('等级不足');
+  throw new ForbiddenException('Insufficient level');
 }
 ```
 
 ---
 
-#### ❌ requireLogin（需要登录）
-**前端配置：**
+#### ❌ requireLogin (Require Login)
+**Frontend Config:**
 ```typescript
 { 
   key: 'requireLogin', 
-  label: '需要登录' 
+  label: 'Require Login' 
 }
 ```
 
-**Backend实现：** ⚠️ 部分
-- 有 `@UseGuards(JwtAuthGuard)` - 强制登录
-- 但没有检查 `config.requireLogin` 的值
-- 即使config设为false，还是需要登录
+**Backend Implementation:** ⚠️ Partial
+- `@UseGuards(JwtAuthGuard)` is present—forces login.
+- However, the value of `config.requireLogin` is not checked.
+- Login is required even if the config is set to false.
 
-**应该实现：**
+**Required Implementation:**
 ```typescript
 if (instance.config.requireLogin && !req.user) {
-  throw new UnauthorizedException('需要登录');
+  throw new UnauthorizedException('Login required');
 }
 ```
 
 ---
 
-#### ❌ oneTimeOnly（每人只能玩一次）
-**前端配置：**
+#### ❌ oneTimeOnly (One Game per Person Only)
+**Frontend Config:**
 ```typescript
 { 
   key: 'oneTimeOnly', 
-  label: '每人只能玩一次' 
+  label: 'One Game per Person Only' 
 }
 ```
 
-**Backend实现：** ❌ 无
-- 用户可以重复玩
+**Backend Implementation:** ❌ None
+- Users can play multiple times.
 
-**应该实现：**
+**Required Implementation:**
 ```typescript
 if (instance.config.oneTimeOnly) {
   const hasPlayed = await hasUserPlayed(memberId, instanceId);
   if (hasPlayed) {
-    throw new BadRequestException('您已经玩过此游戏');
+    throw new BadRequestException('You have already played this game');
   }
 }
 ```
 
 ---
 
-### 2. 时间控制（1个）
+### 2. Time Control (1 item)
 
-#### ❌ timeLimitConfig（时间限制配置）
-**前端配置：**
+#### ❌ timeLimitConfig (Time Limit Configuration)
+**Frontend Config:**
 ```typescript
 { 
   key: 'timeLimitConfig', 
   type: 'time-limit',
-  // 包含：enable, startTime, endTime, activeDays
+  // Includes: enable, startTime, endTime, activeDays
 }
 ```
 
-**Backend实现：** ❌ 无
-- 任何时间都能玩
+**Backend Implementation:** ❌ None
+- The game can be played at any time.
 
-**应该实现：**
+**Required Implementation:**
 ```typescript
 if (instance.config.timeLimitConfig?.enable) {
   const now = new Date();
   const config = instance.config.timeLimitConfig;
   
-  // 检查日期范围
+  // Check date range
   if (now < config.startTime || now > config.endTime) {
-    throw new BadRequestException('游戏未在开放时间内');
+    throw new BadRequestException('Game is not open at this time');
   }
   
-  // 检查星期
+  // Check active days
   const today = now.getDay();
   if (!config.activeDays.includes(today)) {
-    throw new BadRequestException('今天不开放');
+    throw new BadRequestException('Game is not open today');
   }
 }
 ```
 
 ---
 
-### 3. 预算控制（1个）
+### 3. Budget Control (1 item)
 
-#### ❌ budgetConfig（预算控制）
-**前端配置：**
+#### ❌ budgetConfig (Budget Control)
+**Frontend Config:**
 ```typescript
 { 
   key: 'budgetConfig', 
   type: 'budget-control',
-  // 包含：enable, dailyBudget, monthlyBudget
+  // Includes: enable, dailyBudget, monthlyBudget
 }
 ```
 
-**Backend实现：** ❌ 无
-- 没有预算限制
+**Backend Implementation:** ❌ None
+- No budget restrictions exist.
 
-**应该实现：**
+**Required Implementation:**
 ```typescript
 if (instance.config.budgetConfig?.enable) {
   const dailySpent = await getDailySpent(instanceId);
   const monthlySpent = await getMonthlySpent(instanceId);
   
   if (dailySpent >= instance.config.budgetConfig.dailyBudget) {
-    throw new BadRequestException('今日预算已用完');
+    throw new BadRequestException("Today's budget has been exhausted");
   }
   
   if (monthlySpent >= instance.config.budgetConfig.monthlyBudget) {
-    throw new BadRequestException('本月预算已用完');
+    throw new BadRequestException("This month's budget has been exhausted");
   }
 }
 ```
 
 ---
 
-### 4. 动态概率（1个）
+### 4. Dynamic Probability (1 item)
 
-#### ❌ dynamicProbConfig（动态概率配置）
-**前端配置：**
+#### ❌ dynamicProbConfig (Dynamic Probability Configuration)
+**Frontend Config:**
 ```typescript
 { 
   key: 'dynamicProbConfig', 
   type: 'dynamic-prob',
-  // 包含：enable, lossStreakLimit, lossStreakBonus
+  // Includes: enable, lossStreakLimit, lossStreakBonus
 }
 ```
 
-**Backend实现：** ❌ 无
-- 概率固定不变
+**Backend Implementation:** ❌ None
+- Win probability remains fixed.
 
-**应该实现：**
+**Required Implementation:**
 ```typescript
 if (instance.config.dynamicProbConfig?.enable) {
   const lossStreak = await getUserLossStreak(memberId, instanceId);
   
   if (lossStreak >= instance.config.dynamicProbConfig.lossStreakLimit) {
-    // 增加赢的概率
+    // Increase win probability
     adjustPrizeWeights(instance.config.dynamicProbConfig.lossStreakBonus);
   }
 }
@@ -244,47 +244,47 @@ if (instance.config.dynamicProbConfig?.enable) {
 
 ---
 
-### 5. VIP等级（1个）
+### 5. VIP Tiers (1 item)
 
-#### ❌ vipTiers（VIP等级配置）
-**前端配置：**
+#### ❌ vipTiers (VIP Tier Configuration)
+**Frontend Config:**
 ```typescript
 { 
   key: 'vipTiers', 
   type: 'vip-grid',
-  // 包含：[{ name, extraSpins, multiplier }]
+  // Includes: [{ name, extraSpins, multiplier }]
 }
 ```
 
-**Backend实现：** ❌ 无
-- 没有VIP特权
+**Backend Implementation:** ❌ None
+- No VIP privileges exist.
 
-**应该实现：**
+**Required Implementation:**
 ```typescript
 const member = await getMember(memberId);
 const vipTier = instance.config.vipTiers?.find(t => t.name === member.vipLevel);
 
 if (vipTier) {
-  // 额外次数
+  // Extra attempts
   dailyLimit += vipTier.extraSpins;
   
-  // 奖励倍数
+  // Reward multiplier
   finalScore *= vipTier.multiplier;
 }
 ```
 
 ---
 
-## 📋 当前Backend代码（scores.service.ts）
+## 📋 Current Backend Code (scores.service.ts)
 
-**完全没有规则检查：**
+**Lacks any rule checks:**
 
 ```typescript
 async submit(memberId: string, instanceSlug: string, scoreValue: number, metadata?: any) {
     // 1. Find Game Instance
     const instance = await this.instanceService.findBySlug(instanceSlug);
 
-    // 2. Log Score (没有任何检查！)
+    // 2. Log Score (NO CHECKS!)
     const score = this.scoreRepository.create({
         memberId,
         instanceId: instance.id,
@@ -292,70 +292,70 @@ async submit(memberId: string, instanceSlug: string, scoreValue: number, metadat
         metadata,
     });
     
-    // 3. Save (直接保存)
+    // 3. Save (Direct save)
     const savedScore = await this.scoreRepository.save(score);
 
-    // 4. Update Points (直接更新积分)
+    // 4. Update Points (Direct update)
     await this.membersService.updatePoints(memberId, scoreValue);
 
     return savedScore;
 }
 ```
 
-**缺少的检查：**
-1. ❌ 没有检查 dailyLimit
-2. ❌ 没有检查 cooldown
-3. ❌ 没有检查 minLevel
-4. ❌ 没有检查 oneTimeOnly
-5. ❌ 没有检查 timeLimitConfig
-6. ❌ 没有检查 budgetConfig
-7. ❌ 没有检查 dynamicProbConfig
-8. ❌ 没有检查 vipTiers
+**Missing Checks:**
+1. ❌ `dailyLimit`
+2. ❌ `cooldown`
+3. ❌ `minLevel`
+4. ❌ `oneTimeOnly`
+5. ❌ `timeLimitConfig`
+6. ❌ `budgetConfig`
+7. ❌ `dynamicProbConfig`
+8. ❌ `vipTiers`
 
 ---
 
-## 🎯 实现优先级建议
+## 🎯 Proposed Implementation Priority
 
-### 高优先级（必须实现）
-1. **dailyLimit** - 防止滥用
-2. **cooldown** - 防止刷分
-3. **oneTimeOnly** - 限时活动必需
-4. **timeLimitConfig** - 活动时间控制
+### High Priority (Critical)
+1. **dailyLimit** - Prevents abuse.
+2. **cooldown** - Prevents rapid farming.
+3. **oneTimeOnly** - Required for unique events.
+4. **timeLimitConfig** - Event schedule control.
 
-### 中优先级（建议实现）
-5. **minLevel** - 游戏门槛
-6. **requireLogin** - 访客vs会员
-7. **budgetConfig** - 成本控制
+### Medium Priority (Recommended)
+5. **minLevel** - Entry barrier.
+6. **requireLogin** - Guest vs. member differentiation.
+7. **budgetConfig** - Cost control.
 
-### 低优先级（可选）
-8. **dynamicProbConfig** - 游戏平衡
-9. **vipTiers** - VIP特权
+### Low Priority (Optional)
+8. **dynamicProbConfig** - Gameplay balance.
+9. **vipTiers** - VIP privileges.
 
 ---
 
-## 🔧 实现方案
+## 🔧 Implementation Architecture
 
-### 方案1：在 scores.service.ts 的 submit() 添加检查
+### Option 1: Add checks directly to submit() in scores.service.ts
 
-**优点：**
-- 集中在一个地方
-- 所有游戏都适用
+**Pros:**
+- Centralized logic.
+- Applies to all game types.
 
-**缺点：**
-- submit() 会变得很长
-- 每次提交都要检查
+**Cons:**
+- `submit()` becomes overly long.
+- Every submission triggers the checks.
 
-### 方案2：创建独立的 GameRulesService
+### Option 2: Create a dedicated GameRulesService
 
-**优点：**
-- 逻辑分离，易维护
-- 可复用
-- 易测试
+**Pros:**
+- Decoupled logic, easy maintenance.
+- Reusable across different modules.
+- Easier to test.
 
-**缺点：**
-- 多一个service
+**Cons:**
+- Introduces an additional service.
 
-**建议：使用方案2** ✅
+**Recommendation: Use Option 2** ✅
 
 ```typescript
 // game-rules.service.ts
@@ -376,40 +376,40 @@ export class GameRulesService {
 async submit(...) {
   const instance = await this.instanceService.findBySlug(instanceSlug);
   
-  // 检查规则
+  // Validate rules
   await this.gameRulesService.validatePlay(memberId, instance);
   
-  // 继续原有逻辑...
+  // Proceed with score logging...
 }
 ```
 
 ---
 
-## 📝 需要的新数据表
+## 📝 Required Database Schemas
 
-### 1. play_records（游戏记录表）
+### 1. play_records (Play History Tracking)
 ```sql
 CREATE TABLE play_records (
   id UUID PRIMARY KEY,
   memberId UUID,
   instanceId UUID,
   playedAt TIMESTAMP,
-  -- 用于检查 dailyLimit, cooldown, oneTimeOnly
+  -- Used to check dailyLimit, cooldown, oneTimeOnly
 );
 ```
 
-### 2. budget_tracking（预算跟踪表）
+### 2. budget_tracking (Budget Consumption Tracking)
 ```sql
 CREATE TABLE budget_tracking (
   id UUID PRIMARY KEY,
   instanceId UUID,
   date DATE,
   spent DECIMAL,
-  -- 用于检查 budgetConfig
+  -- Used to check budgetConfig
 );
 ```
 
-### 3. 或者在 members 表添加字段
+### 3. Member Enhancements
 ```sql
 ALTER TABLE members ADD COLUMN level INT DEFAULT 1;
 ALTER TABLE members ADD COLUMN vipLevel VARCHAR;
@@ -417,17 +417,17 @@ ALTER TABLE members ADD COLUMN vipLevel VARCHAR;
 
 ---
 
-## 🚨 安全风险
+## 🚨 Security & Business Risks
 
-**当前状态：**
-- ⚠️ 用户可以无限次玩（没有dailyLimit检查）
-- ⚠️ 用户可以快速刷分（没有cooldown检查）
-- ⚠️ 预算无法控制（没有budgetConfig检查）
-- ⚠️ 活动时间无法限制（没有timeLimitConfig检查）
+**Current Vulnerabilities:**
+- ⚠️ Users can play an infinite number of times (No `dailyLimit`).
+- ⚠️ Users can spam entries to farm rewards (No `cooldown`).
+- ⚠️ Costs are uncontrollable (No `budgetConfig`).
+- ❌ Events cannot be timed properly (No `timeLimitConfig`).
 
-**建议：尽快实现基础规则检查（dailyLimit, cooldown, oneTimeOnly）！**
+**Recommendation: Implement base rule checks (dailyLimit, cooldown, oneTimeOnly) as soon as possible!**
 
 ---
 
-**报告完成时间：** 2026-02-01 07:53  
-**下一步：** 等待决定优先实现哪些规则
+**Audit Report Completion:** 2026-02-01 07:53  
+**Next Steps:** Awaiting direction on rule implementation priorities.

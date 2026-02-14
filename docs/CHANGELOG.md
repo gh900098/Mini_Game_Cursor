@@ -250,7 +250,7 @@ b440b2a - refactor: enhance prize details modal UI design
 - `apps/api/src/modules/scores/scores.service.ts` - Added `getPrizeValue` method.
 
 **Frontend:**
-- `apps/soybean-admin/src/views/games/prizes/index.vue` - 完全重新设计modal
+- `apps/soybean-admin/src/views/games/prizes/index.vue` - Completely redesigned modal
 
 ### ✅ Deployment
 
@@ -276,7 +276,7 @@ b440b2a - refactor: enhance prize details modal UI design
 ---
 
 
-## [2026-02-13 晚上] UI/UX Pro Max Skill Installation
+## [2026-02-13 Evening] UI/UX Pro Max Skill Installation
 
 ### 🎨 Infrastructure Enhancement
 
@@ -527,7 +527,7 @@ python .agent/skills/ui-ux-pro-max/scripts/search.py "responsive layout" --stack
 
 **Day names English-ization:**
 ```javascript
-// Old: ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+// Old: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 // New: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 ```
 
@@ -576,9 +576,9 @@ async function fetchGameStatus() {
 'COOLDOWN_ACTIVE': 'Cooldown: 1m 30s'
 
 // Status display
-'⚠️ 仅限一次 (已使用)' → '⚠️ One Time Only (Used)'
-'📅 周一、周二、周三' → '📅 Mon, Tue, Wed'
-'冷却中... 1m 30s' → 'Cooldown: 1m 30s'
+'⚠️ One Time Only (Used)' → '⚠️ One Time Only (Used)'
+'📅 Mon, Tue, Wed' → '📅 Mon, Tue, Wed'
+'Cooldown: 1m 30s' → 'Cooldown: 1m 30s'
 ```
 
 **Modified Location:**
@@ -801,27 +801,27 @@ const remainingColor = computed(() => {
 
 **Commits:**
 ```
-ec34d25 - feat: floating button黄色warning状态
-b70b6b3 - fix: 改用computed property + inline style设置次数颜色
-65716d2 - fix: 使用CSS classes with !important强制覆盖颜色
-39b826e - feat: 改进次数和cooldown显示规则
-2006a7e - feat: cooldown时禁用spin按钮
-f7c759f - feat: 游戏前端floating button红色warning indicator
+ec34d25 - feat: floating button yellow warning state
+b70b6b3 - fix: use computed property + inline style to set attempt color
+65716d2 - fix: use CSS classes with !important to force color override
+39b826e - feat: improved attempt and cooldown display rules
+2006a7e - feat: disable spin button during cooldown
+f7c759f - feat: game frontend floating button red warning indicator
 ```
 
 **Important Lessons (Recorded in AGENTS.md RULE #5):**
 1. ✅ Inline style > CSS classes when dealing with dynamic colors
 2. ✅ Computed properties ensure Vue reactivity
-3. ✅ Think holistically - 考虑ALL相关UI元素
-4. ✅ Debug with Console - 验证logic和rendering
-5. ✅ Document immediately - 不要等"later"
+3. ✅ Think holistically - Consider ALL related UI elements
+4. ✅ Debug with Console - Verify logic and rendering
+5. ✅ Document immediately - Don't wait until "later"
 
 **DJ's Advice:**
 > "Why haven't you recorded these? You keep forgetting these rules. You must commit them to memory, otherwise you'll keep making the same mistakes later."
 
 ---
 
-## [2026-02-01 上午] Admin Panel: Tab Validation Visual Indicator
+## [2026-02-01 Morning] Admin Panel: Tab Validation Visual Indicator
 
 ### ✨ New Feature: Tab Validation Status Display
 
@@ -837,8 +837,8 @@ f7c759f - feat: 游戏前端floating button红色warning indicator
 
 **Files Modified:**
 - apps/soybean-admin/src/views/management/game-instance/components/ConfigForm.vue
-  - 添加 `isTabValid()` function (line ~685)
-  - 修改 tab header template (line ~1033)
+  - Added `isTabValid()` function (line ~685)
+  - Modified tab header template (line ~1033)
 
 **Extensibility:**
 - More validation rules can be added for other tabs.
@@ -850,7 +850,7 @@ f7c759f - feat: 游戏前端floating button红色warning indicator
 
 **Commit:**
 ```
-00a8d5f - feat: 显示tab validation状态 - 有error的tab显示红色
+00a8d5f - feat: display tab validation status - show red for tabs with errors
 ```
 
 ---
@@ -891,7 +891,7 @@ f7c759f - feat: 游戏前端floating button红色warning indicator
 - `apps/api/src/modules/scores/scores.controller.ts` (Added status endpoint)
 - `apps/api/src/modules/scores/scores.module.ts` (Registered entities and service)
 
-**文档更新：**
+**Documentation Updates:**
 - ✅ `FEATURES.md` - Added comprehensive documentation for the game rules system.
 
 **Phase 3+4: Completed All Rules**
@@ -1084,7 +1084,7 @@ f7c759f - feat: 游戏前端floating button红色warning indicator
 - Multi-tenant Support.
 - Permission System.
 
-*(详细记录见FEATURES.md)*
+*(Detailed records in FEATURES.md)*
 
 ---
 
@@ -1118,60 +1118,60 @@ f7c759f - feat: 游戏前端floating button红色warning indicator
   - UI updates instantly upon Radio toggle.
   - No need to close and reopen the collapse section.
 
-### 🐛 Bug修复
-1. **Preview按钮重叠播放**
-   - 问题：多次点击音效重叠，terrible UX
-   - 修复：State tracking + stop previous audio
+### 🐛 Bug Fixes
+1. **Overlap playback of Preview button**
+   - Issue: Audio overlaps when clicking multiple times, terrible UX.
+   - Fix: State tracking + stop previous audio.
    
-2. **Radio切换UI不更新**
-   - 问题：需要关闭再打开才显示
-   - 修复：getAudioMode()直接从formModel derive，不cache
+2. **Radio switch UI not updating**
+   - Issue: Requires closing and reopening to display.
+   - Fix: `getAudioMode()` derives directly from `formModel`, no caching.
 
-3. **File picker显示错误类型**
-   - 问题：上传音效却显示"Image Files"
-   - 修复：用`nextTick()`等待DOM更新后才click
-   - Root cause：Vue reactivity是异步的
+3. **File picker showing wrong type**
+   - Issue: Uploading audio but showing "Image Files".
+   - Fix: Used `nextTick()` to wait for DOM updates before calling `click()`.
+   - Root cause: Vue reactivity is asynchronous.
 
-4. **Internal value暴露给用户**
-   - 问题：显示`__CUSTOM_PENDING__`
-   - 修复：用computed :value，显示空字符串 + placeholder
+4. **Internal value exposed to users**
+   - Issue: Displayed `__CUSTOM_PENDING__`.
+   - Fix: Used computed `:value`, displaying empty string + placeholder.
 
-5. **条件选项没生效**
-   - 问题：Seed schema已添加condition，但existing instances没更新
-   - 修复：运行data seeder refresh
+5. **Conditional options not taking effect**
+   - Issue: Seed schema added conditions, but existing instances were not updated.
+   - Fix: Run data seeder refresh.
 
-### 📝 文件改动
+### 📝 File Changes
 **Frontend (Admin Panel):**
-- `ConfigForm.vue` - 音效三模式UI + preview logic + file upload timing fix
+- `ConfigForm.vue` - Audio three-mode UI + preview logic + file upload timing fix.
 
 **Backend (API):**
-- `spin-wheel.template.ts` - resolveAudioUrl()处理四种情况
-- `seed.service.ts` - Schema条件显示
+- `spin-wheel.template.ts` - `resolveAudioUrl()` handles four scenarios.
+- `seed.service.ts` - Schema conditional display.
 
-**Project文档：**
-- `FEATURES.md` - 完整的音效系统文档
-- `TROUBLESHOOTING.md` - 5个新case（音效相关bugs）
-- `CHANGELOG.md` - 本条目
+**Project Documentation:**
+- `FEATURES.md` - Complete audio system documentation.
+- `TROUBLESHOOTING.md` - 5 new cases (audio-related bugs).
+- `CHANGELOG.md` - This entry.
 
-### 🎯 完整的User-Centric Implementation
-这次完全按照"Complete Solution"和"User-Centric Thinking"原则：
-- ✅ 完整理解需求
-- ✅ 分析所有相关代码（frontend + backend）
-- ✅ 一次性修改所有需要的地方
-- ✅ 从用户角度验证体验
-- ✅ 立即更新project文档
+### 🎯 Complete User-Centric Implementation
+This was implemented following the "Complete Solution" and "User-Centric Thinking" principles:
+- ✅ Fully understood requirements.
+- ✅ Analyzed all relevant code (frontend + backend).
+- ✅ Modified all necessary parts at once.
+- ✅ Verified experience from a user's perspective.
+- ✅ Updated project documentation immediately.
 
-**DJ的教导：**
-- "当你做任何solution的时候，我需要你真的是完整的做全部solution"
-- "要时刻想象用户的实用性，不要一味的用技术的看法"
-- "这样才是真的user-centric thinking的behavior"
+**DJ's Teachings:**
+- "When you build any solution, I need you to truly build the complete solution."
+- "Always imagine the user's practicality, don't just use a technical perspective."
+- "This is true user-centric thinking behavior."
 
 ### 📊 Impact
-- Admin Panel配置体验大幅改进
-- 用户不会被confusing的UI困惑
-- Preview功能完整可用（不annoying）
-- File upload正确识别类型
-- 文档完整up-to-date
+- Admin Panel configuration experience significantly improved.
+- Users no longer confused by misleading UI.
+- Preview functionality fully usable (not annoying).
+- File upload correctly recognizes types.
+- Documentation fully up-to-date.
 
 
 ## 2026-01-31 (Evening) - Confetti Color Picker + Emoji Support
@@ -1200,39 +1200,39 @@ f7c759f - feat: 游戏前端floating button红色warning indicator
    - Auto-loads `canvas-confetti` library.
 
 ### 🎨 UX Improvements
-**从"手写代码"到"点击选择"：**
-- ❌ 之前：用户要手写`#ff0000,#00ff00,#0000ff,#ffff00`
-- ✅ 现在：点击色块 → color picker弹出
-- ❌ 之前：不知道hex codes是什么
-- ✅ 现在：直观的颜色选择器
-- ❌ 之前：没有emoji选项
-- ✅ 现在：20个预设emoji + 可选择
+**From "Hard-coded" to "Point-and-Click":**
+- ❌ Before: Users had to manually type `#ff0000,#00ff00,#0000ff,#ffff00`.
+- ✅ Now: Click color block → color picker opens.
+- ❌ Before: Unknown hex code values.
+- ✅ Now: Intuitive visual color picker.
+- ❌ Before: No emoji options.
+- ✅ Now: 20 preset emojis available for selection.
 
-### 📝 文件改动
+### 📝 File Changes
 **Frontend (Admin Panel):**
-- `ConfigForm.vue` - 新types + helper functions
-  - color-list type rendering
-  - emoji-list type rendering
-  - Preview function with canvas-confetti
-  - 两个render sections都实现
+- `ConfigForm.vue` - New types + helper functions.
+  - `color-list` type rendering.
+  - `emoji-list` type rendering.
+  - Preview function with `canvas-confetti`.
+  - Implemented in both render sections.
 
 **Backend (API):**
-- `seed.service.ts` - Schema定义
-  - confettiColors改为'color-list'
-  - 新fields: confettiShapeType, confettiEmojis
-- `spin-wheel.template.ts` - Emoji shapes支持
-  - 使用confetti.shapeFromText()
-  - 传递shapes到所有bursts
+- `seed.service.ts` - Schema definition.
+  - `confettiColors` changed to `color-list`.
+  - New fields: `confettiShapeType`, `confettiEmojis`.
+- `spin-wheel.template.ts` - Emoji shapes support.
+  - Using `confetti.shapeFromText()`.
+  - Passing shapes to all bursts.
 
 **i18n:**
-- `zh-cn.ts` + `en-us.ts` - 9个新labels
+- `zh-cn.ts` + `en-us.ts` - 9 new labels.
 
-**Project文档:**
-- `FEATURES.md` - 彩纸系统完整文档
-- `CHANGELOG.md` - 本条目
+**Project Documentation:**
+- `FEATURES.md` - Complete confetti system documentation.
+- `CHANGELOG.md` - This entry.
 
 ### 🔧 Technical Details
-**新Schema Types:**
+**New Schema Types:**
 - `color-list` - Array of colors (comma-separated string)
 - `emoji-list` - Array of emojis (comma-separated string)
 
@@ -1242,31 +1242,69 @@ f7c759f - feat: 游戏前端floating button红色warning indicator
 - Preview: previewConfetti/triggerConfettiPreview
 
 **Game Engine:**
-- 检测confettiShapeType
-- 如果='emoji' → 用confetti.shapeFromText()创建shapes
-- Scalar: 2 让emoji更大更visible
+- Detects `confettiShapeType`.
+- If set to `emoji` → Uses `confetti.shapeFromText()` to create shapes.
+- Scalar: 2 (Makes emojis larger and more visible).
 
-**Data Format (保持兼容):**
+**Data Format (Maintains Compatibility):**
 - Colors: '#ff0000,#00ff00,#0000ff'
 - Emojis: '🎉,⭐,❤️'
 
 ### 📊 Impact
-- ✅ 大幅改善UX - 用户不需要懂hex codes
-- ✅ 更多自定义选项 - Emoji shapes
-- ✅ 实时预览 - 所见即所得
-- ✅ 清晰的限制和提示
-- ✅ Backward compatible - 数据格式不变
+- ✅ Significantly improved UX - Users no longer need to know hex codes.
+- ✅ More customization options - Emoji shapes.
+- ✅ Real-time preview - WYSIWYG (What You See Is What You Get).
+- ✅ Clear restrictions and prompts.
+- ✅ Backward compatible - Data format remains unchanged.
 
 ### 🎯 User-Centric Principles Applied
-1. 不要让用户手写代码
-2. 直观的交互（点击选择）
-3. 实时反馈（预览+提示）
-4. 合理的限制（8个颜色/10个emoji）
-5. 降低学习成本（预设选项）
+1. Don't let users manually write code.
+2. Intuitive interaction (point-and-click selection).
+3. Real-time feedback (previews + prompts).
+4. Reasonable constraints (e.g., limit to 8 colors/10 emojis).
+5. Reduce learning costs (preset options).
 
 **Complete Solution:**
-- Frontend + Backend + i18n一次完成
-- 两个render sections都支持
-- 完整测试checklist
-- 文档同步更新
+- Frontend + Backend + i18n completed simultaneously.
+- Supported in both render sections.
+- Comprehensive testing checklist included.
+- Documentation updated in sync.
+
+
+---
+
+## [2026-02-14 Late Afternoon] Budget Tracking & Social Mode (Phase 3)
+
+### 💰 Budget Protection System
+
+**Core Requirements:**
+- Prevent marketing budget overruns.
+- Enable automatic "Soft Landing" when budget is exhausted to maintain user engagement without financial loss.
+
+### 📝 Features Implemented
+
+#### 1. Multi-Level Budget Tracking
+- **Double-Entry Ledger:** Tracks every monetary prize issuance in `budget_tracking` table.
+- **Real-time Checks:** Verifies Daily and Monthly budgets before every spin.
+- **Cost vs Value:** Distinguishes between what a prize costs the company vs. its face value.
+
+#### 2. Social Mode (Soft Landing)
+- **Automatic Transition:** When budget is exhausted, the game seamlessly switches modes.
+- **Visual Masking:**
+  - Non-point prizes (Amazon Cards, iPhones) are visually transformed into "Score Rewards".
+  - **Dynamic Labeling:** Uses the prize's budget cost (e.g., $50) as the point value (e.g., "500 PTS").
+  - **Icon Replacement:** Gift boxes become Stars/Diamonds.
+- **Behavior Change:**
+  - Token deduction continues (Sinking tokens).
+  - No real prizes are awarded.
+  - Players compete for Leaderboard ranking.
+
+### 📊 Technical Details
+- **Backend:** `ScoresService` budget checks logic; `GameInstancesController` config masking.
+- **Frontend:** `spin-wheel-premium-neon.html` template enhanced with `isPoints`-aware masking logic.
+- **Database:** New `budget_tracking` table and `BudgetLedger` entity.
+
+### ✅ Deployment
+- ✅ API and WebApp services rebuilt.
+- ✅ Verified: E-Gift prizes correctly mask to Points when budget is set to 0.
 

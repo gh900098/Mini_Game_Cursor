@@ -1,150 +1,150 @@
 # Security Phase 2 - Pending Implementation
 
-**Status:** ⏸️ DEFERRED (待DJ批准后执行)  
+**Status:** ⏸️ DEFERRED (Awaiting DJ's approval)  
 **Created:** 2026-02-01  
-**Priority:** Medium (Phase 1已完成，服务器已安全)
+**Priority:** Medium (Phase 1 complete, server is now secure)
 
 ---
 
 ## 📋 Overview
 
-Phase 1已完成，服务器从🔴 HIGH RISK降到🟢 LOW RISK。
+Phase 1 is complete, and the server risk has decreased from 🔴 HIGH RISK to 🟢 LOW RISK.
 
-Phase 2是**可选的进阶安全措施**，会进一步提升安全性和便利性。
+Phase 2 consists of **optional advanced security measures** that will further enhance security and convenience.
 
-**DJ的决定：** 暂时不做，以后需要时再说。
+**DJ's Decision:** Deferred for now; will revisit when needed.
 
 ---
 
-## 🎯 Phase 2待办事项（按优先级）
+## 🎯 Phase 2 Todo List (By Priority)
 
-### 1. SSH密钥认证 ⭐⭐⭐ (推荐)
+### 1. SSH Key Authentication ⭐⭐⭐ (Recommended)
 
-**为什么推荐：**
-- ✅ 更安全（无法暴力破解）
-- ✅ 更方便（不用每次输密码）
-- ✅ 设置简单（5-10分钟）
-- ✅ 无downside
+**Why it's recommended:**
+- ✅ More secure (immune to brute-force attacks).
+- ✅ More convenient (no need to enter password every time).
+- ✅ Simple setup (5-10 minutes).
+- ✅ No downsides.
 
-**什么是SSH密钥：**
-- 你的电脑有一把"钥匙"（私钥文件）
-- 服务器有一把"锁"（公钥）
-- 钥匙开锁 = 登录成功
-- 密钥不会传输，无法被偷听或破解
+**What are SSH Keys:**
+- Your computer has a "key" (private key file).
+- The server has a "lock" (public key).
+- Key opens lock = Successful login.
+- The key is never transmitted, so it cannot be intercepted or cracked.
 
-**现在的登录方式：**
+**Current login method:**
 ```bash
 ssh root@154.26.136.139
-# 输入密码：Abcd01923
+# Enter password: Abcd...
 ```
 
-**设置后的登录方式：**
+**New login method (after setup):**
 ```bash
 ssh root@154.26.136.139
-# 直接进入！不需要密码
+# Instant access! No password required.
 ```
 
-**设置步骤：**
+**Setup Steps:**
 
-#### Step 1: 在DJ的Mac上生成密钥（1分钟）
+#### Step 1: Generate keys on DJ's Mac (1 minute)
 ```bash
-# 在Mac终端运行：
+# Run in Mac Terminal:
 ssh-keygen -t ed25519 -C "dj@minigame"
 
-# 会问3个问题：
-# 1. 文件保存位置 → 按回车（默认）
-# 2. 密码 → 按回车（不设密码）或输入密码（推荐）
-# 3. 再次输入密码 → 同上
+# You will be asked 3 questions:
+# 1. File location -> Press Enter (default)
+# 2. Passphrase -> Press Enter (none) or enter a password (recommended)
+# 3. Confirm passphrase -> Same as above
 
-# 完成后会生成两个文件：
-# ~/.ssh/id_ed25519       (私钥 - 保密！)
-# ~/.ssh/id_ed25519.pub   (公钥 - 可以公开)
+# Two files will be generated:
+# ~/.ssh/id_ed25519       (Private key - KEEP SECRET!)
+# ~/.ssh/id_ed25519.pub   (Public key - can be shared)
 ```
 
-#### Step 2: 把公钥复制到服务器（1分钟）
+#### Step 2: Copy public key to the server (1 minute)
 ```bash
-# 方法A：自动工具（推荐）
+# Method A: Automatic tools (Recommended)
 ssh-copy-id root@154.26.136.139
-# 输入密码最后一次
+# Enter your password for the last time
 
-# 方法B：手动（如果方法A不work）
+# Method B: Manual (if Method A doesn't work)
 cat ~/.ssh/id_ed25519.pub | ssh root@154.26.136.139 "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"
 ```
 
-#### Step 3: 测试（30秒）
+#### Step 3: Test (30 seconds)
 ```bash
-# 测试新的密钥登录
+# Test new key login
 ssh root@154.26.136.139
-# 应该直接进入，不需要密码！
+# You should enter directly without a password!
 
-# 如果work → 继续Step 4
-# 如果不work → 找Jarvis排查
+# If it works -> Proceed to Step 4
+# If it doesn't work -> Contact Jarvis for troubleshooting
 ```
 
-#### Step 4: （可选）禁用密码登录（2分钟）
+#### Step 4: (Optional) Disable Password Login (2 minutes)
 ```bash
-# 在服务器上运行：
+# Run on the server:
 sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
 sudo sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
 sudo systemctl restart sshd
 
-# 这样之后ONLY能用密钥登录，密码完全失效
+# After this, ONLY key-based login is allowed; passwords will no longer work.
 ```
 
-**风险控制：**
-- ⚠️ 在禁用密码登录前，确保密钥登录work
-- ⚠️ 保持一个SSH session开着，防止锁死
-- ⚠️ 备份私钥文件（~/.ssh/id_ed25519）到安全地方
+**Risk Control:**
+- ⚠️ Ensure key-based login works before disabling password auth.
+- ⚠️ Keep one SSH session open during the transition to prevent lockouts.
+- ⚠️ Back up your private key file (`~/.ssh/id_ed25519`) in a safe place.
 
-**时间估计：** 10分钟  
-**难度：** ⭐☆☆☆☆ (很简单)  
-**Rollback：** 容易（重新启用PasswordAuthentication yes）
+**Estimated Time:** 10 minutes  
+**Difficulty:** ⭐☆☆☆☆ (Very easy)  
+**Rollback:** Easy (Re-enable `PasswordAuthentication yes`)
 
 ---
 
-### 2. 禁用Root SSH登录 ⭐⭐ (可选)
+### 2. Disable Root SSH Login ⭐⭐ (Optional)
 
-**为什么做：**
-- ✅ 黑客不知道用户名（root是标准用户名，容易被攻击）
-- ✅ Audit log更清晰（知道谁用sudo）
-- ⚠️ 多一步操作（需要sudo su切换到root）
+**Why do this:**
+- ✅ Hackers don't know the username (`root` is a standard target).
+- ✅ Audit logs are clearer (knowing who used `sudo`).
+- ⚠️ Adds one extra step (need to use `sudo su` to switch to root).
 
-**现在的登录方式：**
+**Current login method:**
 ```bash
 ssh root@154.26.136.139
-# 直接是root权限
+# Directly logged in as root
 ```
 
-**改变后的登录方式：**
+**New login method (after setup):**
 ```bash
 ssh djadmin@154.26.136.139
-# 登录为普通用户
+# Login as a regular user
 
-# 需要root时：
+# When root access is needed:
 sudo su
-# 或
+# or
 sudo <command>
 ```
 
-**设置步骤：**
+**Setup Steps:**
 
-#### Step 1: 创建新的管理员用户（3分钟）
+#### Step 1: Create a new admin user (3 minutes)
 ```bash
-# 在服务器上（作为root）：
+# On the server (as root):
 adduser djadmin
-# 输入密码（两次）
-# 其他信息按回车跳过
+# Enter password (twice)
+# Press Enter for other information
 
-# 添加到sudo组（可以用sudo）
+# Add to sudo group (to allow sudo usage)
 usermod -aG sudo djadmin
 
-# 添加到docker组（可以用docker命令）
+# Add to docker group (to allow docker usage)
 usermod -aG docker djadmin
 ```
 
-#### Step 2: 复制SSH authorized_keys（1分钟）
+#### Step 2: Copy SSH authorized_keys (1 minute)
 ```bash
-# 如果已经设置了SSH密钥：
+# If SSH keys have already been set up:
 mkdir -p /home/djadmin/.ssh
 cp /root/.ssh/authorized_keys /home/djadmin/.ssh/
 chown -R djadmin:djadmin /home/djadmin/.ssh
@@ -152,96 +152,98 @@ chmod 700 /home/djadmin/.ssh
 chmod 600 /home/djadmin/.ssh/authorized_keys
 ```
 
-#### Step 3: 测试新用户（2分钟）
+#### Step 3: Test the new user (2 minutes)
 ```bash
-# 在Mac上，新开一个终端窗口：
+# On your Mac, open a new terminal window:
 ssh djadmin@154.26.136.139
 
-# 测试sudo：
+# Test sudo:
 sudo ls /root
-# 输入djadmin的密码
-# 应该能看到/root的内容
+# Enter djadmin's password
+# You should see the contents of /root
 
-# 测试docker：
+# Test docker:
 docker ps
-# 应该能看到容器列表
+# You should see the container list
 
-# 如果都work → 继续Step 4
-# 如果不work → 不要关闭root session，排查问题
+# If everything works -> Proceed to Step 4
+# If it doesn't work -> Do NOT close the root session; troubleshoot the issue.
 ```
 
-#### Step 4: 禁用root SSH登录（2分钟）
+#### Step 4: Disable root SSH login (2 minutes)
 ```bash
-# ⚠️ 确保djadmin能登录并sudo后再执行！
+# ⚠️ Ensure djadmin can log in and use sudo before doing this!
 
-# 在服务器上（作为root）：
+# On the server (as root):
 sed -i 's/^PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
 sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
 
-# 重启SSH
+# Restart SSH
 systemctl restart sshd
 
-# 从此root无法SSH登录
-# 只能用djadmin登录，然后sudo su
+# From now on, root cannot log in via SSH.
+# You must log in as djadmin and then use sudo su.
 ```
 
-**DJ的日常使用：**
+**DJ's Daily Use:**
 ```bash
-# 登录服务器
+# Login to the server
 ssh djadmin@154.26.136.139
 
-# 需要root权限时：
+# When root privileges are needed:
 sudo su
-# 输入djadmin的密码
-# 现在是root了
+# Enter djadmin's password
+# You are now root
 
-# 或者单个命令用sudo：
+# Or run a single command with sudo:
 sudo docker ps
 sudo systemctl restart nginx
 ```
 
-**优点：**
-- ✅ 黑客暴力破解更难（不知道用户名）
-- ✅ 有audit trail（/var/log/auth.log记录谁用了sudo）
+**Pros:**
+- ✅ Harder for hackers to brute-force (unknown username).
+- ✅ Audit trail provided ( `/var/log/auth.log` records who used `sudo`).
 
-**缺点：**
-- ⚠️ 多一步操作（每次要sudo）
-- ⚠️ 需要记住djadmin用户名和密码
+**Cons:**
+- ⚠️ Extra step required (using `sudo`).
+- ⚠️ Need to remember the `djadmin` username and password.
 
-**时间估计：** 15-20分钟  
-**难度：** ⭐⭐☆☆☆ (中等)  
-**Rollback：** 容易（重新设置PermitRootLogin yes）
+**Estimated Time:** 15-20 minutes  
+**Difficulty:** ⭐⭐☆☆☆ (Medium)  
+**Rollback:** Easy (Reset `PermitRootLogin yes`)
 
 ---
 
-### 3. Docker User Namespace ⭐ (高级)
+---
 
-**为什么做：**
-- ✅ 多一层安全（容器逃逸后也是普通用户，不是root）
-- ⚠️ 需要重启Docker和所有容器
-- ⚠️ 某些容器可能不兼容
+### 3. Docker User Namespace ⭐ (Advanced)
 
-**什么是User Namespace：**
+**Why do this:**
+- ✅ Adds another layer of security (if a container escape occurs, the attacker is a regular user, not root).
+- ⚠️ Requires restarting Docker and all containers.
+- ⚠️ Some containers may not be compatible.
 
-**现在：**
+**What is User Namespace:**
+
+**Current State:**
 ```
-容器内的root (UID=0) = 服务器上的root (UID=0)
+Root inside container (UID=0) = Root on server (UID=0)
 ↓
-黑客从容器逃出 = 服务器root权限 = 危险！
+Attacker escapes container = Root privileges on server = DANGEROUS!
 ```
 
-**启用后：**
+**After Enabling:**
 ```
-容器内的root (UID=0) = 服务器上的user100000 (UID=100000)
+Root inside container (UID=0) = User100000 on server (UID=100000)
 ↓
-黑客从容器逃出 = 服务器普通用户 = 权限很少
+Attacker escapes container = Regular user on server = Minimal privileges
 ```
 
-**设置步骤：**
+**Setup Steps:**
 
-#### Step 1: 配置Docker（2分钟）
+#### Step 1: Configure Docker (2 minutes)
 ```bash
-# 编辑/etc/docker/daemon.json
+# Edit /etc/docker/daemon.json
 cat >> /etc/docker/daemon.json <<EOF
 {
   "userns-remap": "default",
@@ -254,14 +256,14 @@ cat >> /etc/docker/daemon.json <<EOF
 EOF
 ```
 
-#### Step 2: 重启Docker（5分钟）
+#### Step 2: Restart Docker (5 minutes)
 ```bash
 systemctl restart docker
 
-# ⚠️ 这会停止所有容器！
+# ⚠️ This will stop all running containers!
 ```
 
-#### Step 3: 重建所有容器（10-30分钟）
+#### Step 3: Rebuild all containers (10-30 minutes)
 ```bash
 # MiniGame
 cd /opt/minigame
@@ -273,155 +275,157 @@ cd /opt/n8n
 docker compose down
 docker compose up -d
 
-# ERPNext (可能需要更长时间)
+# ERPNext (may take longer)
 cd /opt/erpnext-lending
 docker compose down
 docker compose up -d
 
-# 其他容器...
+# Other containers...
 ```
 
-#### Step 4: 验证（5分钟）
+#### Step 4: Validate (5 minutes)
 ```bash
-# 检查所有容器是否正常运行
+# Check if all containers are running correctly
 docker ps
 
-# 测试MiniGame
+# Test MiniGame
 curl https://admin.xseo.me
 curl https://game.xseo.me
 
-# 测试n8n
+# Test n8n
 curl https://n8n.pxpxxp.com
 
-# 如果有问题 → 排查或rollback
+# If there are issues -> Troubleshoot or rollback.
 ```
 
-**风险：**
-- ⚠️ 可能导致volume权限问题
-- ⚠️ 某些容器可能需要privileged mode（不兼容user namespace）
-- ⚠️ 需要downtime（重启所有容器）
+**Risks:**
+- ⚠️ May cause volume permission issues.
+- ⚠️ Some containers may require `privileged` mode (not compatible with user namespace).
+- ⚠️ Requires downtime (restarting all containers).
 
-**建议：**
-- 🟡 不是urgent
-- 🟡 现在你的容器都bind到localhost，风险较低
-- 🟡 如果要做，选一个maintenance window
+**Recommendations:**
+- 🟡 Not urgent.
+- 🟡 Currently, your containers are bound to `localhost`, which lowers risk.
+- 🟡 If you proceed, choose a maintenance window.
 
-**时间估计：** 30-60分钟（包括troubleshooting）  
-**难度：** ⭐⭐⭐⭐☆ (较难)  
-**Rollback：** 中等（删除daemon.json配置，重启Docker）
+**Estimated Time:** 30-60 minutes (including troubleshooting)  
+**Difficulty:** ⭐⭐⭐⭐☆ (Hard)  
+**Rollback:** Medium (Delete `daemon.json` configuration and restart Docker)
 
 ---
 
-## 📅 推荐的实施顺序（当DJ准备好时）
+---
 
-### 优先级1：SSH密钥（强烈推荐）
-- ✅ 最有用
-- ✅ 最简单
-- ✅ 最安全
-- ✅ 最方便
+## 📅 Recommended Implementation Order (When DJ is ready)
 
-**建议时机：** 任何时候都可以
+### Priority 1: SSH Keys (Strongly Recommended)
+- ✅ Most useful.
+- ✅ Simplest setup.
+- ✅ Most secure.
+- ✅ Most convenient.
+
+**Suggested timing:** Any time.
 
 ---
 
-### 优先级2：禁用Root SSH（看需求）
-- 🟡 有用但不urgent
-- 🟡 需要适应新的登录方式
+### Priority 2: Disable Root SSH (As needed)
+- 🟡 Useful but not urgent.
+- 🟡 Requires adjusting to the new login method.
 
-**建议时机：** 
-- 已经习惯用SSH密钥后
-- 或者发现有频繁的root暴力破解尝试时
-
----
-
-### 优先级3：Docker User Namespace（进阶）
-- 🔵 Nice to have
-- 🔵 较复杂
-- 🔵 需要downtime
-
-**建议时机：**
-- 有计划的maintenance window
-- 服务器负载较低时
-- 或者运行不信任的第三方Docker镜像时
+**Suggested timing:** 
+- Once you are comfortable using SSH keys.
+- Or if frequent root brute-force attempts are detected.
 
 ---
 
-## 🔧 快速启动指令（给Jarvis）
+### Priority 3: Docker User Namespace (Advanced)
+- 🔵 Nice to have.
+- 🔵 More complex.
+- 🔵 Requires downtime.
 
-**当DJ说"设置SSH密钥"时：**
+**Suggested timing:**
+- During a planned maintenance window.
+- When server load is low.
+- Or if running untrusted third-party Docker images.
+
+---
+
+## 🔧 Quick Start Guide (For Jarvis)
+
+**When DJ says "Set up SSH keys":**
 ```
-执行：SECURITY-PHASE2-PENDING.md → Section 1 → 步骤
+Execute: SECURITY-PHASE2-PENDING.md → Section 1 → Steps
 ```
 
-**当DJ说"禁用root登录"时：**
+**When DJ says "Disable root login":**
 ```
-执行：SECURITY-PHASE2-PENDING.md → Section 2 → 步骤
+Execute: SECURITY-PHASE2-PENDING.md → Section 2 → Steps
 ```
 
-**当DJ说"启用Docker User Namespace"时：**
+**When DJ says "Enable Docker User Namespace":**
 ```
-执行：SECURITY-PHASE2-PENDING.md → Section 3 → 步骤
+Execute: SECURITY-PHASE2-PENDING.md → Section 3 → Steps
 ```
 
 ---
 
-## 📊 Phase 1 vs Phase 2 对比
+## 📊 Phase 1 vs. Phase 2 Comparison
 
-### Phase 1（已完成）✅
+### Phase 1 (Complete) ✅
 
-**目标：** 堵住明显的安全漏洞
+**Goal:** Close obvious security vulnerabilities.
 
-**完成内容：**
-- ✅ fail2ban（防暴力破解）
-- ✅ n8n/ERPNext限制到localhost
-- ✅ Security headers
-- ✅ 自动安全更新
+**Accomplished:**
+- ✅ `fail2ban` (prevents brute-force).
+- ✅ Restricted `n8n`/`ERPNext` access to `localhost`.
+- ✅ Security headers implemented.
+- ✅ Automatic security updates configured.
 
-**结果：** 🔴 HIGH RISK → 🟢 LOW RISK
+**Result:** 🔴 HIGH RISK → 🟢 LOW RISK
 
 ---
 
-### Phase 2（待定）⏸️
+### Phase 2 (Pending) ⏸️
 
-**目标：** 进阶安全hardening和便利性提升
+**Goal:** Advanced security hardening and convenience improvements.
 
-**内容：**
-- ⏸️ SSH密钥认证（更安全+更方便）
-- ⏸️ 禁用root SSH（更安全但多一步操作）
-- ⏸️ Docker User Namespace（深度防御）
+**Content:**
+- ⏸️ SSH Key Authentication (more secure + more convenient).
+- ⏸️ Disable Root SSH (more secure but adds one more step).
+- ⏸️ Docker User Namespace (defense in depth).
 
-**预期结果：** 🟢 LOW RISK → 🔵 MINIMAL RISK
+**Expected Result:** 🟢 LOW RISK → 🔵 MINIMAL RISK
 
 ---
 
 ## 💰 Time & Cost Estimate
 
-| 任务 | 时间 | 难度 | Downtime | 推荐度 |
+| Task | Time | Difficulty | Downtime | Recommended |
 |------|------|------|----------|--------|
-| SSH密钥 | 10分钟 | ⭐☆☆☆☆ | 0 | ⭐⭐⭐⭐⭐ |
-| 禁用Root SSH | 20分钟 | ⭐⭐☆☆☆ | 0 | ⭐⭐⭐☆☆ |
-| Docker User NS | 60分钟 | ⭐⭐⭐⭐☆ | 5-10分钟 | ⭐⭐☆☆☆ |
+| SSH Keys | 10 mins | ⭐☆☆☆☆ | 0 | ⭐⭐⭐⭐⭐ |
+| Disable Root SSH | 20 mins | ⭐⭐☆☆☆ | 0 | ⭐⭐⭐☆☆ |
+| Docker User NS | 60 mins | ⭐⭐⭐⭐☆ | 5-10 mins | ⭐⭐☆☆☆ |
 
-**Total:** 90分钟（如果全做）  
-**Recommended:** 只做SSH密钥（10分钟）
+**Total:** 90 minutes (if all are completed)  
+**Recommended:** Only SSH Keys (10 minutes)
 
 ---
 
-## 🚨 重要提醒
+## 🚨 Important Reminders
 
-**执行任何Phase 2操作前：**
+**Before performing any Phase 2 operations:**
 
-1. ✅ 确认Phase 1正常运行
-2. ✅ 做好备份
-3. ✅ 保持一个SSH session开着
-4. ✅ 在测试环境先试（如果可能）
-5. ✅ 选择低峰时段
-6. ✅ 通知DJ开始操作
+1. ✅ Confirm Phase 1 is running normally.
+2. ✅ Back up your data.
+3. ✅ Keep one SSH session open.
+4. ✅ Test in a staging environment first (if possible).
+5. ✅ Choose off-peak hours.
+6. ✅ Notify DJ before starting.
 
-**如果出问题：**
-- 所有操作都有rollback步骤
-- Jarvis会保持冷静并排查
-- 最坏情况：通过1Panel恢复（port 8443还是开着的）
+**If issues occur:**
+- Every operation has rollback steps.
+- Jarvis will remain calm and troubleshoot.
+- Worst-case scenario: Restore via 1Panel (port 8443 remains open).
 
 ---
 
@@ -432,15 +436,15 @@ curl https://n8n.pxpxxp.com
 **Next Review:** When DJ requests  
 **Owner:** Jarvis (Security Officer)
 
-**DJ's Decision:** 暂时不做，记录下来以后需要时再说。
+**DJ's Decision:** Deferred for now; documented for future reference.
 
 ---
 
-**这个文档会保存在GitHub，随时可以执行。**
+**This document will be kept on GitHub and can be executed at any time.**
 
-**当DJ准备好时，只需要说：**
-- "Jarvis，设置SSH密钥"
-- "Jarvis，继续Phase 2"
-- "Jarvis，禁用root SSH"
+**When DJ is ready, simply say:**
+- "Jarvis, set up SSH keys."
+- "Jarvis, continue with Phase 2."
+- "Jarvis, disable root SSH."
 
-**我会知道要做什么！** ✅
+**I'll know exactly what to do!** ✅

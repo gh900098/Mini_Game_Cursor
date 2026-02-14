@@ -1,8 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, MoreThanOrEqual } from 'typeorm';
 import { GameInstance } from './entities/game-instance.entity';
 import { Score } from '../scores/entities/score.entity';
+import { BudgetTracking } from '../scores/entities/budget-tracking.entity';
+
+import { PrizeType } from '../prizes/entities/prize-type.entity';
 
 @Injectable()
 export class GameInstancesService {
@@ -11,7 +14,79 @@ export class GameInstancesService {
         private readonly instanceRepository: Repository<GameInstance>,
         @InjectRepository(Score)
         private readonly scoreRepository: Repository<Score>,
+        @InjectRepository(BudgetTracking)
+        private readonly budgetRepo: Repository<BudgetTracking>,
+        @InjectRepository(PrizeType)
+        private readonly prizeTypeRepo: Repository<PrizeType>,
     ) { }
+
+    /**
+     * Enrich the config with prize metadata (isPoints) for smarter masking
+     */
+    async enrichConfigWithPrizeMeta(instance: GameInstance, config: any): Promise<any> {
+        if (!config.prizeList || !Array.isArray(config.prizeList)) return config;
+
+        // Fetch all prize types for this company to look up "isPoints"
+        const prizeTypes = await this.prizeTypeRepo.find({
+            where: { companyId: instance.companyId } // Assuming tenant isolation
+        });
+
+        // Create a lookup map: prizeType slug -> isPoints
+        const typeMap = new Map<string, boolean>();
+        prizeTypes.forEach(pt => typeMap.set(pt.slug, pt.isPoints));
+
+        // Enrich the prize list
+        config.prizeList = config.prizeList.map((p: any) => {
+            // Default to false if not found (safe assumption for "things")
+            // If p.prizeType is missing, assume 'item' (false)
+            // If p.prizeType is 'points' (hardcoded string), it's true
+            const isPoints = typeMap.get(p.prizeType) || p.prizeType === 'points';
+            return { ...p, isPoints };
+        });
+
+        return config;
+    }
+
+    /**
+     * Lightweight check for budget exhaustion (for UI masking)
+     */
+    async isBudgetExhausted(instance: GameInstance): Promise<boolean> {
+        const config = instance.config?.budgetConfig;
+        if (!config?.enable) return false;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // 1. Daily Budget
+        if (config.dailyBudget) {
+            const todayTracking = await this.budgetRepo.findOne({
+                where: { instanceId: instance.id, trackingDate: today },
+            });
+            if (Number(todayTracking?.totalCost || 0) >= config.dailyBudget) return true;
+        }
+
+        // 2. Monthly Budget
+        if (config.monthlyBudget) {
+            const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            const monthTracking = await this.budgetRepo.createQueryBuilder('bt')
+                .where('bt.instanceId = :instanceId', { instanceId: instance.id })
+                .andWhere('bt.trackingDate >= :startOfMonth', { startOfMonth })
+                .select('SUM(bt.totalCost)', 'total')
+                .getRawOne();
+            if (Number(monthTracking?.total || 0) >= config.monthlyBudget) return true;
+        }
+
+        // 3. Total/Activity Budget
+        if (config.totalBudget) {
+            const totalTracking = await this.budgetRepo.createQueryBuilder('bt')
+                .where('bt.instanceId = :instanceId', { instanceId: instance.id })
+                .select('SUM(bt.totalCost)', 'total')
+                .getRawOne();
+            if (Number(totalTracking?.total || 0) >= config.totalBudget) return true;
+        }
+
+        return false;
+    }
 
     async create(data: Partial<GameInstance>): Promise<GameInstance> {
         if (data.slug && data.companyId) {
@@ -125,7 +200,9 @@ export class GameInstancesService {
     async getEffectiveConfig(instance: GameInstance): Promise<Record<string, any>> {
         const templateConfig = instance.gameTemplate?.config || {};
         const instanceConfig = instance.config || {};
-        return { ...templateConfig, ...instanceConfig };
+        const config = { ...templateConfig, ...instanceConfig };
+
+        return this.enrichConfigWithPrizeMeta(instance, config);
     }
 
     /**

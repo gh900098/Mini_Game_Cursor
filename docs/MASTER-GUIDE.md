@@ -173,7 +173,7 @@ ssh root@154.26.136.139 "cd /opt/minigame && \
 **One of the most complex features!** Must read before modifying:
 
 **Documentation:**
-- [FEATURES.md#游戏规则系统](./FEATURES.md#游戏规则系统-game-rules)
+- [FEATURES.md#Game-Rules-System](./FEATURES.md#Game-Rules-System)
 - [RULES_IMPLEMENTATION_PLAN.md](./RULES_IMPLEMENTATION_PLAN.md)
 
 **Key Rules:**

@@ -87,6 +87,27 @@ export class ScoresService {
 
         if (metadata?.prizeIndex !== undefined && instance.config?.prizeList && !metadata?.isLose) {
             prizeConfig = instance.config.prizeList[metadata.prizeIndex];
+
+            // 7.1 Enterprise: Soft-Landing Prize Filtering (Budget-Aware)
+            // If budget is hit AND mode is 'soft', strictly block any prize with cost > 0
+            if (prizeConfig && instance.config?.budgetConfig?.enable) {
+                const isSoftMode = instance.config.budgetConfig.exhaustionMode === 'soft';
+                if (isSoftMode) {
+                    const isExhausted = await this.gameRulesService.isBudgetExhausted(instance);
+                    if (isExhausted) {
+                        const attemptedPrizeCost = Number(prizeConfig.cost || 0);
+                        if (attemptedPrizeCost > 0) {
+                            console.warn(`[SoftLanding] Blocking high-cost prize (${prizeConfig.label}) due to budget exhaustion. Converting to points.`);
+
+                            // Forcibly neutralize the prize for safety
+                            prizeConfig = { ...prizeConfig, cost: 0, prizeType: 'points', isPoints: true, label: `${prizeConfig.label || 'Reward'} (Social Mode)` };
+                            metadata.prize = prizeConfig.label;
+                            metadata.convertedToPoints = true;
+                        }
+                    }
+                }
+            }
+
             if (prizeConfig) {
                 const configTypeSlug = String(prizeConfig.type || prizeConfig.prizeType || 'points').toLowerCase();
                 prizeType = await this.prizesService.findBySlug(configTypeSlug);
@@ -141,8 +162,10 @@ export class ScoresService {
         // 4. Record Play Attempt
         const attempt = await this.gameRulesService.recordAttempt(memberId, instance.id, true, ipAddress, outcome, metadata);
 
+        const isSocialMode = !!metadata?.convertedToPoints;
+
         // 8. Record Member Prize if applicable
-        if (prizeConfig && !metadata?.isLose) {
+        if (prizeConfig && !metadata?.isLose && !isSocialMode) {
             // Execute fulfillment strategy
             let status = PrizeStatus.PENDING;
             let fulfillmentNote = '';
@@ -176,20 +199,28 @@ export class ScoresService {
             await this.memberPrizeRepo.save(prize);
         }
 
-        // 5. Update Budget (if prize has cost)
-        if (metadata?.prizeIndex !== undefined && instance.config?.prizeList) {
-            const prize = instance.config.prizeList[metadata.prizeIndex];
-            if (prize?.cost) {
-                await this.gameRulesService.updateBudget(instance.id, prize.cost, {
-                    type: 'SCORE',
-                    id: savedScore.id,
-                    metadata: {
-                        prizeIndex: metadata.prizeIndex,
-                        prizeName: prize.name || prize.label
-                    }
-                });
+        // 5. Update Budget (Track play count and cost)
+        // Enterprise Logic: If 'cost' is missing for Cash prizes, fallback to 'value'
+        let budgetCost = 0;
+        if (prizeConfig && !metadata?.isLose) {
+            if (prizeConfig.cost !== undefined) {
+                budgetCost = Number(prizeConfig.cost);
+            } else if (prizeType?.slug === 'cash' || String(prizeConfig.type || '').toLowerCase() === 'cash') {
+                budgetCost = Number(prizeConfig.value || 0);
+            } else {
+                budgetCost = 0; // Items/E-gifts require explicit cost or they are treated as $0 for budget
             }
         }
+
+        await this.gameRulesService.updateBudget(instance.id, budgetCost, {
+            type: 'SCORE',
+            id: savedScore.id,
+            metadata: {
+                prizeIndex: metadata?.prizeIndex,
+                prizeName: prizeConfig?.name || prizeConfig?.label || (metadata?.isLose ? 'Lose' : 'Win'),
+                isLose: metadata?.isLose
+            }
+        });
 
         // 8. Update Member's points balance (Atomic increment/decrement)
         // Only credit points from SCORE if no prize logic was executed or if the prize logic didn't handle crediting.
@@ -199,7 +230,8 @@ export class ScoresService {
 
         // Fallback: If this is a pure score-based game (no prizes involved), then the Score is the Winnings.
         // We detect this by checking if prizeIndex is missing.
-        if (metadata?.prizeIndex === undefined) {
+        // Safety: If in Social Mode, NEVER credit points back from the score.
+        if (metadata?.prizeIndex === undefined && !isSocialMode) {
             netPointsChange += Number(finalPoints);
         }
 

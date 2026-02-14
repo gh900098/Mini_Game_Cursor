@@ -149,7 +149,9 @@ const prizeTypeOptions = computed(() => {
 const shouldShowValue = (slug: string) => {
     if (!slug) return true; // Default
     const type = prizeTypes.value.find(t => t.slug === slug);
-    return type?.showValue ?? (slug === 'cash'); // Fallback for cash if type not found
+    // Explicitly show for cash, physical items, and e-gifts
+    const showBySlug = ['cash', 'physical', 'egift', 'e-gift', 'voucher'].includes(slug.toLowerCase());
+    return type?.showValue ?? showBySlug;
 };
 
 // Design Guide Modal
@@ -1002,7 +1004,18 @@ function moveItem(key: string, index: number | string, direction: 'up' | 'down')
 
 function addPrizeItem(key: string) {
   if (!Array.isArray(formModel.value[key])) formModel.value[key] = [];
-  formModel.value[key].push({ icon: '🎁', label: 'New Prize', weight: 10, color: '#3b82f6', value: 0, isJackpot: false, isLose: false, prizeType: 'cash', description: '' });
+  formModel.value[key].push({ 
+    icon: '🎁', 
+    label: 'New Prize', 
+    weight: 10, 
+    color: '#3b82f6', 
+    value: 0, 
+    cost: 0, 
+    isJackpot: false, 
+    isLose: false, 
+    prizeType: 'cash', 
+    description: '' 
+  });
 }
 
 function removePrizeItem(key: string, index: number | string) {
@@ -1453,42 +1466,85 @@ function editIconText(p: any) {
                                        </div>
                                   </div>
 
-                                  <!-- Inputs (Right) -->
-                                  <div class="flex flex-col gap-2 w-full min-w-0">
-                                      <!-- Name -->
-                                      <div class="flex flex-col gap-1 w-full">
-                                          <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Prize Name</label>
-                                          <NInput v-model:value="p.label" :placeholder="t('page.manage.game.common.prizeName')" round size="small" class="w-full" />
-                                      </div>
+                                      <!-- Right Side Inputs -->
+                                      <div class="flex flex-col gap-3 w-full min-w-0">
+                                          <!-- Name & Type Row -->
+                                          <div class="flex flex-col gap-2">
+                                              <div class="flex flex-col gap-1 w-full">
+                                                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.1em]">Prize Name</label>
+                                                  <NInput v-model:value="p.label" :placeholder="t('page.manage.game.common.prizeName')" round size="small" class="w-full" />
+                                              </div>
 
-                                      <!-- Grid for Type & Value -->
-                                      <div class="grid grid-cols-2 gap-2 w-full">
-                                          <!-- Type -->
-                                          <div class="flex flex-col gap-1 overflow-hidden">
-                                               <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Type</label>
-                                               <NSelect 
-                                                  v-model:value="p.prizeType" 
-                                                  :options="prizeTypeOptions"
-                                                  size="small"
-                                                  class="w-full"
-                                                  :fallback-option="false"
-                                                  :show-checkmark="false"
-                                                  @update:value="() => { if (!p.prizeType) p.prizeType = 'cash'; }"
-                                              />
+                                              <div class="flex flex-col gap-1">
+                                                   <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.1em]">Prize Type</label>
+                                                   <NSelect 
+                                                      v-model:value="p.prizeType" 
+                                                      :options="prizeTypeOptions"
+                                                      size="small"
+                                                      round
+                                                      class="w-full"
+                                                      :fallback-option="false"
+                                                      @update:value="() => { if (!p.prizeType) p.prizeType = 'cash'; }"
+                                                  />
+                                              </div>
                                           </div>
-                                           <!-- Value/Description -->
-                                           <div class="flex flex-col gap-1 min-w-0">
-                                               <label v-if="shouldShowValue(p.prizeType)" class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Amount</label>
-                                               <label v-else class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Description</label>
-                                               
-                                               <NInputGroup v-if="shouldShowValue(p.prizeType)" class="w-full">
-                                                   <NInputGroupLabel v-if="p.prizeType === 'cash'" class="px-2 text-xs flex items-center justify-center min-w-[24px]">$</NInputGroupLabel>
-                                                   <NInputNumber v-model:value="p.value" :show-button="false" placeholder="0" class="flex-1 w-full" />
-                                               </NInputGroup>
-                                               <NInput v-else v-model:value="p.description" :placeholder="p.prizeType === 'physical' ? 'Item Name' : 'Card Value'" round size="small" class="w-full" />
-                                           </div>
+
+                                          <!-- Rewards & Budget Section -->
+                                          <div class="bg-gray-100/40 rounded-xl p-3 flex flex-col gap-3.5 border border-gray-100 shadow-sm">
+                                               <!-- Value Field -->
+                                               <div class="flex flex-col gap-1.5">
+                                                   <label v-if="shouldShowValue(p.prizeType)" class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-0.5">Value / Amount</label>
+                                                   <label v-else class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-0.5">Description</label>
+                                                   
+                                                   <div class="flex items-center h-8 bg-white rounded-lg border border-gray-200 focus-within:border-primary transition-all overflow-hidden shadow-xs">
+                                                       <div v-if="p.prizeType === 'cash'" class="flex items-center justify-center w-8 h-full bg-gray-50 border-r border-gray-100 text-blue-600 font-black text-xs">
+                                                           $
+                                                       </div>
+                                                       <NInputNumber 
+                                                           v-if="shouldShowValue(p.prizeType)"
+                                                           v-model:value="p.value" 
+                                                           :show-button="false" 
+                                                           placeholder="0" 
+                                                           size="small" 
+                                                           :bordered="false"
+                                                           class="flex-1 !bg-transparent font-bold !text-slate-700" 
+                                                       />
+                                                       <NInput 
+                                                            v-else 
+                                                            v-model:value="p.description" 
+                                                            :placeholder="p.prizeType === 'physical' ? 'Item Name' : 'Extra Info'" 
+                                                            size="small" 
+                                                            :bordered="false"
+                                                            class="flex-1 !bg-transparent" 
+                                                       />
+                                                   </div>
+                                               </div>
+
+                                               <!-- Budget Cost Field -->
+                                               <div class="flex flex-col gap-1.5">
+                                                   <div class="flex items-center justify-between px-0.5">
+                                                       <label class="text-[10px] font-black text-red-500/60 uppercase tracking-widest">Budget Deduction</label>
+                                                       <NTooltip trigger="hover">
+                                                            <template #trigger><span class="cursor-help text-[8px] bg-red-100 text-red-600 rounded-full w-3.5 h-3.5 flex items-center justify-center font-bold shadow-sm">i</span></template>
+                                                            The actual money deducted from your company budget when this prize is won.
+                                                       </NTooltip>
+                                                   </div>
+                                                   <div class="flex items-center h-8 bg-white rounded-lg border border-red-100 focus-within:border-red-300 transition-all overflow-hidden shadow-xs">
+                                                       <div class="flex items-center justify-center w-8 h-full bg-red-50/30 border-r border-red-50 text-red-500 font-black text-xs">
+                                                           $
+                                                       </div>
+                                                       <NInputNumber 
+                                                           v-model:value="p.cost" 
+                                                           :show-button="false" 
+                                                           placeholder="0" 
+                                                           size="small" 
+                                                           :bordered="false"
+                                                           class="flex-1 !bg-transparent font-black !text-red-600" 
+                                                       />
+                                                   </div>
+                                               </div>
+                                          </div>
                                       </div>
-                                  </div>
                               </div>
 
                               <!-- Footer: Sliders & Toggles -->
@@ -1667,24 +1723,54 @@ function editIconText(p: any) {
                          ? 'bg-red-50 border-red-200' 
                          : 'bg-gray-50 border-gray-100'
                      ]">
-                    <div class="flex items-center justify-between mb-4">
-                         <div class="text-sm font-bold text-gray-500 uppercase tracking-wide">{{ getItemLabel(item) }}</div>
+                    <div class="flex items-center justify-between mb-2">
+                         <div class="flex items-center gap-2">
+                             <div class="text-sm font-bold text-gray-500 uppercase tracking-wide">{{ getItemLabel(item) }}</div>
+                             <NTag :bordered="false" type="info" size="small" round>Optional</NTag>
+                         </div>
                          <NSwitch v-model:value="formModel[item.key].enable" size="medium" />
                     </div>
+
+                    <div v-if="formModel[item.key]?.enable" class="mb-4">
+                        <NAlert :show-icon="true" type="info" class="text-xs">
+                            <template #header>Budget Mode Information</template>
+                            Budget control helps you prevent overspending. Use "Soft Landing" if you want users to continue playing for leaderboard rank even after the financial pool is empty.
+                        </NAlert>
+                    </div>
                     
-                    <div v-if="formModel[item.key]?.enable" class="grid grid-cols-2 gap-4 animate-fade-in">
-                         <div>
-                             <div class="mb-2 text-gray-700 font-medium">{{ getSubItemLabel({ key: 'dailyBudget', label: 'Daily Budget' }) }}</div>
-                             <NInputNumber v-model:value="formModel[item.key].dailyBudget" :show-button="false">
-                                 <template #suffix>$</template>
-                             </NInputNumber>
-                         </div>
-                         <div>
-                              <div class="mb-2 text-gray-700 font-medium">{{ getSubItemLabel({ key: 'monthlyBudget', label: 'Monthly Budget' }) }}</div>
-                              <NInputNumber v-model:value="formModel[item.key].monthlyBudget" :show-button="false">
-                                  <template #suffix>$</template>
-                              </NInputNumber>
-                         </div>
+                    <div v-if="formModel[item.key]?.enable" class="space-y-4 animate-fade-in">
+                        <div class="grid grid-cols-2 gap-4">
+                             <div>
+                                 <div class="mb-2 text-gray-700 font-medium">{{ getSubItemLabel({ key: 'dailyBudget', label: 'Daily Budget' }) }}</div>
+                                 <NInputNumber v-model:value="formModel[item.key].dailyBudget" :show-button="false">
+                                     <template #suffix>$</template>
+                                 </NInputNumber>
+                             </div>
+                             <div>
+                                  <div class="mb-2 text-gray-700 font-medium">{{ getSubItemLabel({ key: 'monthlyBudget', label: 'Monthly Budget' }) }}</div>
+                                  <NInputNumber v-model:value="formModel[item.key].monthlyBudget" :show-button="false">
+                                      <template #suffix>$</template>
+                                  </NInputNumber>
+                             </div>
+                        </div>
+
+                        <div>
+                            <div class="mb-2 text-gray-700 font-medium">{{ getSubItemLabel({ key: 'exhaustionMode', label: 'Exhaustion Response' }) }}</div>
+                            <NSelect
+                                v-model:value="formModel[item.key].exhaustionMode"
+                                :options="[
+                                    { label: 'Hard Stop (Block Play)', value: 'hard' },
+                                    { label: 'Soft Landing (Leaderboard-Only Mode)', value: 'soft' }
+                                ]"
+                                placeholder="Choose behavior..."
+                            />
+                            <div class="mt-1.5 text-[11px] text-gray-400 italic">
+                                {{ formModel[item.key].exhaustionMode === 'soft' 
+                                    ? 'Budget Exhausted: Monetary prizes are blocked. Play cost applies. Scores count for Leaderboard only.' 
+                                    : 'Budget Exhausted: All play is immediately blocked for this instance.' 
+                                }}
+                            </div>
+                        </div>
                     </div>
                 </div>
 

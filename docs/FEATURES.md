@@ -146,7 +146,7 @@ The Game Rules System is used to control players' game behavior, including attem
   ```
 - **Error Codes:** `NOT_STARTED`, `ENDED`, `INVALID_DAY`
 
-**示例：只在周末开放**
+**Example: Weekends Only**
 ```json
 {
   "timeLimitConfig": {
@@ -328,25 +328,25 @@ UPDATE members SET vip_tier = 'Gold' WHERE id = 'xxx';
 ```
 
 
-#### ✅ 安全修改（不影响其他功能）
-- 调整规则的阈值（dailyLimit, cooldown的具体数值）
-- 添加新的VIP等级
-- 修改错误消息文本
+#### ✅ Safe Modifications (No impact on other features)
+- Adjust rule thresholds (e.g., dailyLimit, cooldown values).
+- Add new VIP tiers.
+- Modify error message text.
 
-#### ⚠️ 需要测试
-- 修改 GameRulesService 的验证逻辑
-- 添加新的规则方法
-- 修改 play_attempts 表结构
+#### ⚠️ Requires Testing
+- Modify GameRulesService validation logic.
+- Add new rule methods.
+- Modify play_attempts table structure.
 
-#### 🔥 高风险修改
-- 修改 ScoresService.submit() 的调用顺序
-- 删除 recordAttempt() 调用（会导致规则失效）
-- 修改 play_attempts 表的主键或索引
+#### 🔥 High Risk Modifications
+- Modify ScoresService.submit() calling sequence.
+- Delete recordAttempt() call (will invalidate rules).
+- Modify play_attempts table primary keys or indexes.
 
-### 📝 相关文档
-- **实现计划：** `minigame/RULES_IMPLEMENTATION_PLAN.md`
-- **API错误码：** `minigame/API.md`（待创建）
-- **故障排查：** `minigame/TROUBLESHOOTING.md`
+### 📝 Related Documentation
+- **Implementation Plan:** `minigame/RULES_IMPLEMENTATION_PLAN.md`
+- **API Error Codes:** `minigame/API.md` (To be created)
+- **Troubleshooting:** `minigame/TROUBLESHOOTING.md`
 
 ### ⚙️ Medium Priority Rules (Phase 3)
 
@@ -393,7 +393,7 @@ UPDATE members SET vip_tier = 'Gold' WHERE id = 'xxx';
     "cost": 100  // This prize costs 100
   }
   ```
-- Backend会自动跟踪总成本
+- Backend will automatically track the total cost
 
 ### 🎮 Low Priority Rules (Phase 4)
 
@@ -480,7 +480,7 @@ UPDATE members SET vip_tier = 'Gold' WHERE id = 'user-id';
 
 ### 🎯 Feature Description
 
-This system handles prize issuance, distinguishes between different prize natures (points-based vs. non-points-based), and automatically enriches获奖 metadata to ensure admin panel data is clear and professional.
+This system handles prize issuance, distinguishes between different prize natures (points-based vs. non-points-based), and automatically enriches winning metadata to ensure admin panel data is clear and professional.
 
 ### ⚙️ Core Mechanisms
 
@@ -546,7 +546,7 @@ Manages all registered members and guests. Supports viewing member details, poin
 
 ---
 
-## 🎮 游戏前端 (web-app)
+## 🎮 Game Frontend (web-app)
 
 ### 1. Game Iframe Container
 
@@ -1835,12 +1835,12 @@ Full JWT authentication system, supporting:
 
 ## 📝 Checkpoint 2 Summary
 
-**已新增功能 (3个):**
-- 游戏实例CRUD API
-- 文件上传系统
-- 用户认证系统
+**New Features Added (3):**
+- Game Instance CRUD API
+- File Upload System
+- User Authentication System
 
-**总进度：** 9/17 (53%)
+**Total Progress:** 9/17 (53%)
 
 
 ### 10. Spin Wheel Game Engine (Spin Wheel Template)
@@ -2051,94 +2051,94 @@ Records and displays game data:
 - Aggregate statistics (Total game count, total rewards, etc.).
 - Data analytics.
 
-#### ⚙️ 数据记录
-每次游戏后记录：
-- 玩家ID
-- 游戏ID
-- 中奖奖品
-- 时间戳
-- Token消耗
-- 奖励金额
+#### ⚙️ Data Recording
+Records after every game:
+- Player ID
+- Game ID
+- Winning Prize
+- Timestamp
+- Token Consumption
+- Reward Amount
 
-#### 🔗 依赖关系
-**依赖于：**
+#### 🔗 Dependencies
+**Depends on:**
 - Game instances
 - Members
 - Prizes
 
-**被依赖于：**
-- 统计报表
-- 会员游戏历史
+**Referenced by:**
+- Statistical Reports
+- Member Game History
 
-#### 🔧 工作原理
-1. 游戏结束后
-2. （可选）调用API记录结果
-3. 保存到database
-4. 可在Admin Panel查看
+#### 🔧 Working Principle
+1. After game ends
+2. (Optional) Call API to record result
+3. Save to database
+4. View in Admin Panel
 
-#### 🐛 常见问题
-1. **问题：** 游戏记录没有保存
-   **原因：** API调用失败或没有配置记录功能
-   **解决：** 检查network tab，验证API endpoint
+#### 🐛 FAQs
+1. **Problem:** Game record not saved
+   **Reason:** API call failed or recording feature not configured
+   **Solution:** Check network tab, verify API endpoint
 
-#### 🚨 修改影响范围
-**需要rebuild：**
+#### 🚨 Modification Impact Scope
+**Requires rebuild:**
 - `api` backend
 
 ---
 
 ## 📝 Checkpoint 3 Summary
 
-**已新增功能 (3个):**
-- 转盘游戏引擎 (Spin Wheel Template) - 最核心
-- Admin Panel - 会员管理
-- 游戏历史/统计系统
+**New Features Added (3):**
+- Spin Wheel Game Engine (Spin Wheel Template) - Core
+- Admin Panel - Member Management
+- Game History/Statistics System
 
-**总进度：** 12/17 (71%)
+**Total Progress:** 12/17 (71%)
 
 
-### 13. Token/余额管理系统
+### 13. Token/Balance Management System
 
-#### 📍 位置
-- **Frontend Store：** `apps/web-app/src/store/auth.ts`
-- **Backend：** Member entity中的balance字段
-- **API：** Members module
+#### 📍 Location
+- **Frontend Store:** `apps/web-app/src/store/auth.ts`
+- **Backend:** `balance` field in Member entity
+- **API:** Members module
 
-#### 🎯 功能说明
-管理用户的游戏Token余额：
-- 显示当前余额
-- 充值Token（通过Admin或API）
-- 扣除Token（玩游戏时）
-- 余额不足时禁止游戏
-- 交易历史记录
+#### 🎯 Feature Description
+Manages user game token balance:
+- Display current balance
+- Recharge tokens (via Admin or API)
+- Deduct tokens (when playing games)
+- Block games when balance is insufficient
+- Transaction history
 
-#### ⚙️ 工作流程
+#### ⚙️ Workflow
 
-**玩游戏消耗Token：**
-1. 用户点击SPIN按钮
-2. 检查余额是否足够（costPerSpin）
-3. 如果足够 → 扣除Token → 允许游戏
-4. 如果不足 → 显示"余额不足"提示
-5. 记录交易
+**Spending Tokens to Play:**
+1. User clicks SPIN button
+2. Check if balance is sufficient (`costPerSpin`)
+3. If sufficient → Deduct Token → Allow game
+4. If insufficient → Show "Insufficient Balance" prompt
+5. Record transaction
 
-**充值Token：**
-1. Admin进入会员管理
-2. 选择会员 → 编辑余额
-3. 输入充值金额
-4. 保存 → 更新database
-5. 用户刷新后看到新余额
+**Recharging Tokens:**
+1. Admin enters member management
+2. Select member → Edit balance
+3. Enter recharge amount
+4. Save → Update database
+5. User sees new balance after refresh
 
-#### 🔗 依赖关系
-**依赖于：**
-- Member entity - 存储balance
-- Auth system - 验证用户身份
-- Transaction records - 记录交易
+#### 🔗 Dependencies
+**Depends on:**
+- Member entity - Stores balance
+- Auth system - Verifies user identity
+- Transaction records - Records transactions
 
-**被依赖于：**
-- 游戏系统 - 验证余额
-- 统计系统 - 分析消费
+**Referenced by:**
+- Game system - Verifies balance
+- Statistics system - Analyzes consumption
 
-#### 📊 数据流
+#### 📊 Data Flow
 ```
 User starts game
   → Check balance
@@ -2509,23 +2509,23 @@ IP: 192.168.1.100
 
 **Token Usage:** ~127k/200k (73k remaining).
 
-## 🏆 今天成就解锁
+## 🏆 Accomplishments Today
 
-✅ **94%完成** - 超越目标！  
-✅ **5个solid checkpoints** - 工作安全！  
-✅ **16个详细功能文档** - 质量高！  
-✅ **最核心功能全覆盖** - 游戏引擎、ConfigForm、Seed、i18n  
-✅ **明天轻松finishing** - 只剩6%！
+✅ **94% Complete** - Exceeded target!
+✅ **5 solid checkpoints** - Work is safe!
+✅ **16 detailed feature documents** - High quality!
+✅ **Core features fully covered** - Game Engine, ConfigForm, Seed, i18n
+✅ **Easy finishing tomorrow** - Only 6% left!
 
-**这是一个productive day！** 💪🔥
+**It was a productive day!** 💪🔥
 
 
-### 17. 系统设置管理
+### 17. System Settings Management
 
-#### 📍 位置
-- **Module：** `apps/api/src/modules/system-settings/`
-- **Entity：** SystemSettings entity
-- **Frontend：** Admin Panel settings page
+#### 📍 Location
+- **Module:** `apps/api/src/modules/system-settings/`
+- **Entity:** `SystemSettings` entity
+- **Frontend:** Admin Panel settings page
 
 #### 🎯 Feature Description
 Global system configuration management, supporting:
@@ -2890,3 +2890,72 @@ Canvas-confetti renders
 - Full stack coverage: Frontend + Backend + i18n.
 - Supporting both render sections.
 - Complete UX experience.
+
+---
+
+## 💰 Budget Tracking System
+
+**Implementation Date:** 2026-02-14  
+**Primary Features:** Real-time budget tracking, multi-level budget checks (Daily/Monthly), and "Soft Landing" for budget exhaustion.
+
+### 📍 Location
+- **Backend Service:** `apps/api/src/modules/scores/scores.service.ts`
+- **Backend Entity:** `apps/api/src/modules/scores/entities/budget-ledger.entity.ts`
+- **Frontend Dashboard:** `apps/soybean-admin/src/views/games/budget-tracking/index.vue`
+
+### 🎯 Feature Description
+The Budget Tracking System safeguards marketing budgets by tracking the monetary value of issued prizes in real-time. It supports both Daily and Monthly budget limits per game instance.
+
+### ⚙️ Core Mechanisms
+
+#### 1. Real-Time Tracking (Double-Entry Ledger)
+- Every monetary prize (Cash, E-Gift, Physical Item) creates a `BudgetLedger` entry.
+- **Cost vs. Value:** The system tracks the `cost` (budget impact) separate from the `value` (face value).
+- **Points Exclusion:** Points-based prizes do NOT deduct from the budget.
+
+#### 2. Multi-Level Budget Checks
+Before every spin, the system performs a cascading check:
+1. **Daily Limit:** Is `today_spent + prize_cost > daily_budget`?
+2. **Monthly Limit:** Is `month_spent + prize_cost > monthly_budget`?
+3. **Global Safety:** Is the prize cost realistic?
+
+#### 3. Soft Landing (Social Mode)
+- **Constraint:** We cannot simply "stop" the game when budget runs out (bad UX).
+- **Solution:** When budget is exhausted, the game switches to **Social Mode**.
+- **Behavior in Social Mode:**
+  - Token deduction continues (Game acts as a "sink").
+  - **NO monetary prizes** are awarded.
+  - **Visual Masking:** All monetary prizes are visually transformed into "Score Rewards" or "XP Points".
+  - **Leaderboard Only:** Players compete for ranking, not value.
+
+---
+
+## 🎭 Social Mode (Visual Prize Masking)
+
+**Implementation Date:** 2026-02-14  
+**Primary Features:** Dynamic frontend transformation of prizes when in "Social Mode" or "Budget Exhausted" state.
+
+### 📍 Location
+- **Backend Logic:** `apps/api/src/modules/game-instances/game-instances.controller.ts` (`maskPrizesForSocialMode`)
+- **Frontend Template:** `apps/api/uploads/games/spin-wheel-premium-neon.html` (`maskPrizes`)
+
+### 🎯 Feature Description
+Prevents user frustration and confusion when the budget is exhausted. Instead of showing "Out of Stock" or "Error", the game seamlessly transforms into a "Play for Fun/Rank" mode.
+
+### ⚙️ Core Mechanisms
+
+#### 1. Universal Prize Masking
+- **Trigger:** Budget Exhausted AND `exhaustionMode: 'soft'`.
+- **Transformation Logic:**
+  - **Target:** Any prize where `isPoints` is `false`.
+  - **Label Change:** "Amazon $50" → "500 PTS" (Uses `cost` or `value` as points).
+  - **Icon Change:** "🎁" → "⭐" (Score Icon).
+  - **Type Change:** Effectively treated as a score-only reward.
+
+#### 2. Backend + Frontend Synchronization
+- **Backend:** Enriches config with `isPoints` flags and performs masking on the configuration object before sending to client.
+- **Frontend:** Monitors game status real-time. If it detects "Social Mode", it applies a CSS/DOM overlay to mask prizes on the wheel/grid.
+
+#### 3. "Leaderboard Only" UI Hints
+- Displays "PLAY FOR RANKING" instead of "PLAY TO WIN".
+- Hides monetary value indicators.

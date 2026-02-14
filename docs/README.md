@@ -1,28 +1,28 @@
 # MiniGame Project
 
-DJ 的游戏平台项目 🎮
+DJ's Game Platform Project 🎮
 
 ## Quick Links
 
-- **项目概览:** 你现在就在这里
-- **部署指南:** [DEPLOYMENT.md](./DEPLOYMENT.md) — 如何部署到服务器
-- **服务器配置:** [SERVER.md](./SERVER.md) — 1Panel 和 Docker 配置细节
-- **故障排查:** [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) — 常见问题和 SOP（重要！）
-- **UI 标准:** [UI-STANDARDS.md](./UI-STANDARDS.md) — 组件规范和设计标准（必读！）
-- **JK 集成:** [JK-INTEGRATION.md](./JK-INTEGRATION.md) — 第三方平台集成完整方案（未实施）
+- **Project Overview:** You are here.
+- **Deployment Guide:** [DEPLOYMENT.md](./DEPLOYMENT.md) — How to deploy to the server.
+- **Server Configuration:** [SERVER.md](./SERVER.md) — 1Panel and Docker configuration details.
+- **Troubleshooting:** [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) — Common issues and SOPs (Important!).
+- **UI Standards:** [UI-STANDARDS.md](./UI-STANDARDS.md) — Component specifications and design standards (Required reading!).
+- **JK Integration:** [JK-INTEGRATION.md](./JK-INTEGRATION.md) — Complete proposal for third-party platform integration (Pending implementation).
 
 ---
 
 ## Project Structure
 
 ### Local Development
-- **路径:** `~/Documents/MiniGame/`
+- **Path:** `~/Documents/MiniGame/`
 - **Repository:** `gh900098/Mini_Game` (GitHub private)
 
 ### Production Server
-- **服务器:** 154.26.136.139 (1Panel Ubuntu)
-- **路径:** `/opt/minigame/`
-- **域名:**
+- **Server:** 154.26.136.139 (1Panel Ubuntu)
+- **Path:** `/opt/minigame/`
+- **Domains:**
   - https://admin.xseo.me — Admin Panel
   - https://api.xseo.me — API Backend
   - https://game.xseo.me — Player Web App
@@ -62,7 +62,7 @@ curl -s http://api.xseo.me/api | head -c 100
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker logs minigame-api --tail 50"
 ```
 
-更多命令见 [DEPLOYMENT.md](./DEPLOYMENT.md)
+For more commands, see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 ---
 
@@ -70,7 +70,7 @@ sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker logs minigame-api --tail 
 
 - **Account:** gh900098
 - **Repo:** `gh900098/Mini_Game` (private)
-- **PAT:** 见 `memory/credentials.enc`
+- **PAT:** See `memory/credentials.enc`
 
 Git setup:
 - Local: `~/Documents/MiniGame/` → origin = Mini_Game repo
@@ -89,6 +89,6 @@ Git setup:
 
 ---
 
-需要更多细节？看：
-- 📦 **部署流程** → [DEPLOYMENT.md](./DEPLOYMENT.md)
-- 🖥️ **服务器配置** → [SERVER.md](./SERVER.md)
+Need more details? Refer to:
+- 📦 **Deployment Workflow** → [DEPLOYMENT.md](./DEPLOYMENT.md)
+- 🖥️ **Server Configuration** → [SERVER.md](./SERVER.md)

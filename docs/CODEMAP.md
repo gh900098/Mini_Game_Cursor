@@ -1,289 +1,289 @@
-# MiniGame 代码位置映射
+# MiniGame Code Map
 
-**最后更新：** 2026-02-01
+**Last Updated:** 2026-02-01
 
-快速查找代码位置的参考指南。
+A reference guide for quickly finding code locations.
 
 ---
 
-## 🎯 快速导航
+## 🎯 Quick Navigation
 
-### 想要修改游戏玩法？
+### Want to modify gameplay?
 → `apps/api/src/modules/game-instances/templates/spin-wheel.template.ts`
 
-### 想要修改配置界面？
+### Want to modify the configuration interface?
 → `apps/soybean-admin/src/views/management/game-instance/components/ConfigForm.vue`
 
-### 想要添加新配置项？
-→ `apps/api/src/modules/seed/seed.service.ts` (schema定义)
+### Want to add new configuration items?
+→ `apps/api/src/modules/seed/seed.service.ts` (Schema definition)
 
-### 想要修改翻译？
-→ `apps/soybean-admin/src/locales/langs/zh-cn.ts` (中文)  
-→ `apps/soybean-admin/src/locales/langs/en-us.ts` (英文)
+### Want to modify translations?
+→ `apps/soybean-admin/src/locales/langs/zh-cn.ts` (Chinese)  
+→ `apps/soybean-admin/src/locales/langs/en-us.ts` (English)
 
 ---
 
-## 📂 按功能查找
+## 📂 Find by Function
 
-### 🎮 游戏前端 (web-app)
+### 🎮 Game Frontend (web-app)
 
-**游戏容器和加载**
-- 主容器：`apps/web-app/src/views/game/index.vue`
-- 音效store：`apps/web-app/src/store/settings.ts`
-- 认证store：`apps/web-app/src/store/auth.ts`
+**Game Container and Loading**
+- Main Container: `apps/web-app/src/views/game/index.vue`
+- Audio Store: `apps/web-app/src/store/settings.ts`
+- Auth Store: `apps/web-app/src/store/auth.ts`
 
-**路由**
-- 路由配置：`apps/web-app/src/router/index.ts`
-- 主要路由：
-  - `/` - 首页/大厅
-  - `/game/:slug` - 游戏页面
-  - `/login` - 登录
-  - `/profile` - 用户资料
+**Routing**
+- Route Configuration: `apps/web-app/src/router/index.ts`
+- Primary Routes:
+  - `/` - Home/Lobby
+  - `/game/:slug` - Game Page
+  - `/login` - Login
+  - `/profile` - User Profile
 
-**API服务**
-- API封装：`apps/web-app/src/service/api.ts`
+**API Service**
+- API Wrapper: `apps/web-app/src/service/api.ts`
 
 ---
 
 ### 🎛️ Admin Panel (soybean-admin)
 
-**游戏管理**
-- 游戏列表：`apps/soybean-admin/src/views/management/game-instance/index.vue`
-- 配置表单：`apps/soybean-admin/src/views/management/game-instance/components/ConfigForm.vue`
+**Game Management**
+- Game List: `apps/soybean-admin/src/views/management/game-instance/index.vue`
+- Config Form: `apps/soybean-admin/src/views/management/game-instance/components/ConfigForm.vue`
 
-**会员管理**
-- 会员列表：`apps/soybean-admin/src/views/management/member/index.vue`
-- 会员详情：`apps/soybean-admin/src/views/management/member/detail.vue`
-- API 服务：`apps/soybean-admin/src/service/api/management.ts`
+**Member Management**
+- Member List: `apps/soybean-admin/src/views/management/member/index.vue`
+- Member Details: `apps/soybean-admin/src/views/management/member/detail.vue`
+- API Service: `apps/soybean-admin/src/service/api/management.ts`
 
-**用户管理**
-- 用户列表：`apps/soybean-admin/src/views/management/user/`
+**User Management**
+- User List: `apps/soybean-admin/src/views/management/user/`
 
-**公司管理**
-- 公司列表：`apps/soybean-admin/src/views/management/company/`
+**Company Management**
+- Company List: `apps/soybean-admin/src/views/management/company/`
 
-**翻译系统**
-- i18n配置：`apps/soybean-admin/src/locales/index.ts`
-- 中文翻译：`apps/soybean-admin/src/locales/langs/zh-cn.ts`
-- 英文翻译：`apps/soybean-admin/src/locales/langs/en-us.ts`
-- locale定义：`apps/soybean-admin/src/locales/locale.ts`
+**Translation System**
+- i18n Configuration: `apps/soybean-admin/src/locales/index.ts`
+- Chinese Translation: `apps/soybean-admin/src/locales/langs/zh-cn.ts`
+- English Translation: `apps/soybean-admin/src/locales/langs/en-us.ts`
+- Locale Definition: `apps/soybean-admin/src/locales/locale.ts`
 
-**布局和组件**
-- Admin布局：`apps/soybean-admin/packages/materials/src/libs/admin-layout/`
-- Tab组件：`apps/soybean-admin/packages/materials/src/libs/page-tab/`
-
----
-
-### ⚙️ 后端API (api)
-
-**核心模块**
-- 入口：`apps/api/src/main.ts`
-- App模块：`apps/api/src/app.module.ts`
-
-**游戏相关**
-- 游戏实例模块：`apps/api/src/modules/game-instances/`
-  - Controller：`game-instances.controller.ts`
-  - Service：`game-instances.service.ts`
-  - Entity：`entities/game-instance.entity.ts`
-  - **转盘模板：** `templates/spin-wheel.template.ts` (最重要！)
-
-**游戏模板**
-- Seed系统：`apps/api/src/modules/seed/seed.service.ts`
-- 游戏列表：`apps/api/src/modules/games/`
-
-**认证系统**
-- Auth模块：`apps/api/src/modules/auth/`
-  - Controller：`auth.controller.ts`
-  - Service：`auth.service.ts`
-  - JWT策略：`jwt.strategy.ts`
-  - Guards：`jwt-auth.guard.ts`
-
-**用户管理**
-- Users模块：`apps/api/src/modules/users/`
-  - Entity：`entities/user.entity.ts`
-
-**会员管理**
-- Members模块：`apps/api/src/modules/members/`
-  - Controller：`admin-members.controller.ts` (管理端专用)
-  - Service：`members.service.ts`
-  - Entity：`entities/member.entity.ts`
-  - Entity：`entities/credit-transaction.entity.ts`
-
-**权限系统**
-- Roles模块：`apps/api/src/modules/roles/`
-- Permissions模块：`apps/api/src/modules/permissions/`
-
-**公司/多租户**
-- Companies模块：`apps/api/src/modules/companies/`
-  - Entity：`entities/company.entity.ts`
-
-**审计日志**
-- Audit Log模块：`apps/api/src/modules/audit-log/`
-
-**系统设置**
-- System Settings模块：`apps/api/src/modules/system-settings/`
-
-**邮件服务**
-- Email模块：`apps/api/src/modules/email/`
-
-**游戏历史/统计**
-- Scores模块：`apps/api/src/modules/scores/`
+**Layout and Components**
+- Admin Layout: `apps/soybean-admin/packages/materials/src/libs/admin-layout/`
+- Tab Component: `apps/soybean-admin/packages/materials/src/libs/page-tab/`
 
 ---
 
-## 📝 按文件类型查找
+### ⚙️ Backend API (api)
+
+**Core Modules**
+- Entry Point: `apps/api/src/main.ts`
+- App Module: `apps/api/src/app.module.ts`
+
+**Game Related**
+- Game Instance Module: `apps/api/src/modules/game-instances/`
+  - Controller: `game-instances.controller.ts`
+  - Service: `game-instances.service.ts`
+  - Entity: `entities/game-instance.entity.ts`
+  - **Spin Wheel Template:** `templates/spin-wheel.template.ts` (Most important!)
+
+**Game Templates**
+- Seed System: `apps/api/src/modules/seed/seed.service.ts`
+- Game List: `apps/api/src/modules/games/`
+
+**Authentication System**
+- Auth Module: `apps/api/src/modules/auth/`
+  - Controller: `auth.controller.ts`
+  - Service: `auth.service.ts`
+  - JWT Strategy: `jwt.strategy.ts`
+  - Guards: `jwt-auth.guard.ts`
+
+**User Management**
+- Users Module: `apps/api/src/modules/users/`
+  - Entity: `entities/user.entity.ts`
+
+**Member Management**
+- Members Module: `apps/api/src/modules/members/`
+  - Controller: `admin-members.controller.ts` (Admin only)
+  - Service: `members.service.ts`
+  - Entity: `entities/member.entity.ts`
+  - Entity: `entities/credit-transaction.entity.ts`
+
+**Permissions System**
+- Roles Module: `apps/api/src/modules/roles/`
+- Permissions Module: `apps/api/src/modules/permissions/`
+
+**Company/Multi-tenancy**
+- Companies Module: `apps/api/src/modules/companies/`
+  - Entity: `entities/company.entity.ts`
+
+**Audit Logs**
+- Audit Log Module: `apps/api/src/modules/audit-log/`
+
+**System Settings**
+- System Settings Module: `apps/api/src/modules/system-settings/`
+
+**Email Service**
+- Email Module: `apps/api/src/modules/email/`
+
+**Game History/Statistics**
+- Scores Module: `apps/api/src/modules/scores/`
+
+---
+
+## 📝 Find by File Type
 
 ### Configuration Files
 
-**环境变量**
-- `.env.development` - 开发环境
-- `.env.production` - 生产环境
+**Environment Variables**
+- `.env.development` - Development environment
+- `.env.production` - Production environment
 
 **Docker**
-- `docker-compose.yml` - 本地开发
-- `docker-compose.prod.yml` - 生产环境
-- `Dockerfile.api` - API镜像
-- `Dockerfile.admin` - Admin镜像
-- `Dockerfile.web-app` - Web App镜像
+- `docker-compose.yml` - Local development
+- `docker-compose.prod.yml` - Production environment
+- `Dockerfile.api` - API image
+- `Dockerfile.admin` - Admin image
+- `Dockerfile.web-app` - Web App image
 
-**TypeScript配置**
-- `tsconfig.json` - 根配置
-- `apps/*/tsconfig.json` - 各app配置
+**TypeScript Configuration**
+- `tsconfig.json` - Root configuration
+- `apps/*/tsconfig.json` - App-specific configuration
 
-**Build配置**
+**Build Configuration**
 - `apps/web-app/vite.config.ts` - Web App build
 - `apps/soybean-admin/vite.config.ts` - Admin build
 - `apps/api/tsconfig.build.json` - API build
 
 ---
 
-## 🔍 常见修改场景
+## 🔍 Common Modification Scenarios
 
-### Scenario 1: 添加新的游戏配置选项
+### Scenario 1: Adding a new game configuration option
 
-**步骤：**
-1. 修改 `apps/api/src/modules/seed/seed.service.ts`
-   - 在schema中添加新字段定义
-2. 添加翻译：
+**Steps:**
+1. Modify `apps/api/src/modules/seed/seed.service.ts`
+   - Add new field definition in the schema.
+2. Add translations:
    - `apps/soybean-admin/src/locales/langs/zh-cn.ts`
    - `apps/soybean-admin/src/locales/langs/en-us.ts`
-3. (可选) 修改 `ConfigForm.vue` 如果需要特殊UI
-4. 重新run seed：`POST /api/seed/run`
-5. Rebuild：`api` + `admin`
+3. (Optional) Modify `ConfigForm.vue` if a custom UI is needed.
+4. Rerun seed: `POST /api/seed/run`
+5. Rebuild: `api` + `admin`
 
-**涉及文件：**
+**Relevant Files:**
 - `seed.service.ts`
 - `zh-cn.ts`
 - `en-us.ts`
-- (可选) `ConfigForm.vue`
+- (Optional) `ConfigForm.vue`
 
 ---
 
-### Scenario 2: 修改游戏玩法/UI
+### Scenario 2: Modifying gameplay/UI
 
-**步骤：**
-1. 修改 `apps/api/src/modules/game-instances/templates/spin-wheel.template.ts`
-   - 这是游戏引擎的核心
-2. Rebuild：`api`
-3. 测试：访问游戏URL验证改动
+**Steps:**
+1. Modify `apps/api/src/modules/game-instances/templates/spin-wheel.template.ts`
+   - This is the core of the game engine.
+2. Rebuild: `api`
+3. Test: Visit the game URL to verify changes.
 
-**涉及文件：**
+**Relevant Files:**
 - `spin-wheel.template.ts`
 
 ---
 
-### Scenario 3: 修改Admin Panel UI
+### Scenario 3: Modifying Admin Panel UI
 
-**步骤：**
-1. 找到对应的Vue文件：
-   - 游戏管理：`apps/soybean-admin/src/views/management/game-instance/`
-   - 会员管理：`apps/soybean-admin/src/views/management/member/`
-2. 修改Vue组件
-3. Rebuild：`admin`
+**Steps:**
+1. Find the corresponding Vue file:
+   - Game Management: `apps/soybean-admin/src/views/management/game-instance/`
+   - Member Management: `apps/soybean-admin/src/views/management/member/`
+2. Modify Vue components.
+3. Rebuild: `admin`
 
-**涉及文件：**
+**Relevant Files:**
 - `apps/soybean-admin/src/views/management/*/`
 
 ---
 
-### Scenario 4: 添加新API endpoint
+### Scenario 4: Adding a new API endpoint
 
-**步骤：**
-1. 找到对应的controller：
+**Steps:**
+1. Find the corresponding controller:
    - `apps/api/src/modules/[module]/[module].controller.ts`
-2. 添加新的 `@Get()` / `@Post()` / `@Patch()` / `@Delete()`
-3. 在service中实现逻辑
-4. Rebuild：`api`
+2. Add new `@Get()` / `@Post()` / `@Patch()` / `@Delete()` methods.
+3. Implement logic in the service.
+4. Rebuild: `api`
 
-**涉及文件：**
+**Relevant Files:**
 - `[module].controller.ts`
 - `[module].service.ts`
 
 ---
 
-### Scenario 5: 修改数据库schema
+### Scenario 5: Modifying Database Schema
 
-**步骤：**
-1. 修改entity：
+**Steps:**
+1. Modify entity:
    - `apps/api/src/modules/[module]/entities/[entity].entity.ts`
-2. 生成migration（如果使用TypeORM migrations）
-3. 运行migration
-4. Rebuild：`api`
+2. Generate migration (if using TypeORM migrations).
+3. Run migration.
+4. Rebuild: `api`
 
-**涉及文件：**
+**Relevant Files:**
 - `entities/*.entity.ts`
 
 ---
 
-### Scenario 6: 修改翻译文本
+### Scenario 6: Modifying Translation Text
 
-**步骤：**
-1. 找到i18n key对应的文件：
-   - 中文：`apps/soybean-admin/src/locales/langs/zh-cn.ts`
-   - 英文：`apps/soybean-admin/src/locales/langs/en-us.ts`
-2. 修改翻译文本
-3. **⚠️ 检查没有重复的object key！**
-4. Rebuild：`admin`
+**Steps:**
+1. Find the file corresponding to the i18n key:
+   - Chinese: `apps/soybean-admin/src/locales/langs/zh-cn.ts`
+   - English: `apps/soybean-admin/src/locales/langs/en-us.ts`
+2. Modify translation text.
+3. **⚠️ Check for duplicate object keys!**
+4. Rebuild: `admin`
 
-**涉及文件：**
+**Relevant Files:**
 - `zh-cn.ts`
 - `en-us.ts`
 
-**⚠️ 重要提醒（2026-01-31 lesson）：**
-- 永远检查是否已有同名key
-- 不要在同一个object里定义两个同名key
-- 同时更新zh-cn和en-us
+**⚠️ Important Reminder (2026-01-31 lesson):**
+- Always check if a key with the same name already exists.
+- Do not define two keys with the same name in the same object.
+- Update both `zh-cn` and `en-us` simultaneously.
 
 ---
 
-## 📊 文件统计
+## 📊 File Statistics
 
-### 代码量估算
+### Code Volume Estimate
 - **web-app:** ~5k lines
 - **soybean-admin:** ~20k lines
 - **api:** ~15k lines
 - **Total:** ~40k lines
 
-### 主要技术栈
+### Main Tech Stack
 - **Frontend:** Vue 3 + TypeScript + Vite + Naive UI
 - **Backend:** NestJS + TypeScript + TypeORM
 - **Database:** PostgreSQL + Redis
-- **Deploy:** Docker + Nginx
+- **Deployment:** Docker + Nginx
 
 ---
 
-## 🔗 相关文档
+## 🔗 Related Documents
 
-- **功能详细文档：** [FEATURES.md](./FEATURES.md)
-- **系统架构：** [ARCHITECTURE.md](./ARCHITECTURE.md)
-- **故障排查：** [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
-- **部署流程：** [DEPLOYMENT.md](./DEPLOYMENT.md)
+- **Feature Details:** [FEATURES.md](./FEATURES.md)
+- **System Architecture:** [ARCHITECTURE.md](./ARCHITECTURE.md)
+- **Troubleshooting:** [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+- **Deployment Process:** [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 ---
 
-**这个文档帮助你快速找到要修改的代码位置！**
+**This document helps you quickly locate the code you need to modify!**
 
-使用方法：
-1. 知道要改什么功能 → 查"按功能查找"
-2. 知道要改什么场景 → 查"常见修改场景"
-3. 找到文件后 → 查FEATURES.md了解详细工作原理
+Usage:
+1. Know which function to modify → Check "Find by Function"
+2. Know which scenario to modify → Check "Common Modification Scenarios"
+3. Once the file is found → Refer to `FEATURES.md` for detailed working principles.

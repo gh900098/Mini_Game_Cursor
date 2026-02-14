@@ -1,27 +1,27 @@
-# JK Backend Integration - 完整设计方案
+# JK Backend Integration - Full Design Specification
 
-> **状态：** 未实施（Future Feature）  
-> **优先级：** Medium  
-> **预计工时：** 2-3 weeks  
-> **文档版本：** v1.0.0  
-> **最后更新：** 2026-02-01
+> **Status:** Not implemented (Future Feature)  
+> **Priority:** Medium  
+> **Estimated Effort:** 2-3 weeks  
+> **Document Version:** v1.0.0  
+> **Last Updated:** 2026-02-01
 
 ---
 
-## 📋 概述
+## 📋 Overview
 
-### 目标
-让MiniGame平台能够与JK Backend（第三方wallet系统）无缝集成，支持：
-- 用户从JK平台通过iframe seamless登入MiniGame
-- 自动同步JK用户到MiniGame（webhook + nightly full sync）
-- 支持实体奖品/e-gift发放（需要收集shipping信息）
-- 1 player per company（跨company可重名）
+### Objective
+Enable the MiniGame platform to seamlessly integrate with JK Backend (a third-party wallet system), supporting:
+- Seamless login from the JK platform to MiniGame via iframe.
+- Automatic synchronization of JK users to MiniGame (webhook + nightly full sync).
+- Physical prize/e-gift distribution (requires collecting shipping info).
+- 1 player per company (allows duplicate usernames across different companies).
 
-### 核心原则
-1. **MiniGame是source of truth** — 所有游戏数据、奖品配置由MiniGame管理
-2. **JK只提供用户身份** — sync进来的用户数据只用于确认身份
-3. **双重sync机制** — Webhook（实时）+ Full Sync（每晚，确保一致性）
-4. **Shipping info按需收集** — 只在需要时才要求用户填写地址
+### Core Principles
+1. **MiniGame is the Source of Truth** — All game data and prize configurations are managed by MiniGame.
+2. **JK Provides Identity Only** — Synchronized user data is only used for authentication.
+3. **Dual Sync Mechanism** — Webhook (real-time) + Full Sync (nightly, ensuring consistency).
+4. **On-demand Shipping Info Collection** — Users are only asked for addresses when necessary.
 
 ---
 
@@ -67,8 +67,8 @@ Distribute Prize
 ```sql
 -- External platform integration
 ALTER TABLE players ADD COLUMN external_platform VARCHAR(50);  -- 'jk' | 'native'
-ALTER TABLE players ADD COLUMN external_user_id VARCHAR(255);  -- JK的user ID
-ALTER TABLE players ADD COLUMN external_username VARCHAR(255); -- JK的username
+ALTER TABLE players ADD COLUMN external_user_id VARCHAR(255);  -- User ID from JK
+ALTER TABLE players ADD COLUMN external_username VARCHAR(255); -- Username from JK
 ALTER TABLE players ADD COLUMN sync_source VARCHAR(50) DEFAULT 'native'; 
 -- Values: 'native' | 'webhook' | 'full_sync' | 'iframe'
 ALTER TABLE players ADD COLUMN last_synced_at TIMESTAMP;
@@ -723,7 +723,7 @@ src/
     </el-select>
   </el-form-item>
 
-  <!-- Shipping Requirements (只有physical时显示) -->
+  <!-- Shipping Requirements (Only shown when physical) -->
   <template v-if="config.prizeType === 'physical'">
     <el-form-item :label="$t('page.manage.game.section.requiresShipping')">
       <el-switch v-model="config.requiresShipping" />
@@ -1025,43 +1025,43 @@ export default {
       game: {
         section: {
           prizeType: {
-            bonus: '奖金',
-            physical: '实体物品',
-            egift: '电子礼品卡',
-            voucher: '优惠券'
+            bonus: 'Bonus',
+            physical: 'Physical Item',
+            egift: 'E-Gift Card',
+            voucher: 'Voucher'
           },
-          requiresShipping: '需要收集配送地址',
-          shippingFields: '需要收集的地址字段'
+          requiresShipping: 'Requires Shipping Address',
+          shippingFields: 'Shipping Fields to Collect'
         }
       }
     }
   },
   shipping: {
-    name: '收件人姓名',
-    phone: '联系电话',
-    address: '详细地址',
-    city: '城市',
-    state: '州/省',
-    postcode: '邮编',
-    fillInfo: '填写配送信息',
-    required: '需要配送信息',
-    requiredDesc: '您获得的奖品需要配送，请填写您的收件信息',
-    namePlaceholder: '请输入收件人姓名',
-    phonePlaceholder: '例如：+60123456789',
-    addressPlaceholder: '请输入详细地址（街道、门牌号等）',
-    postcodePlaceholder: '例如：41150',
-    nameRequired: '请输入收件人姓名',
-    phoneRequired: '请输入联系电话',
-    addressRequired: '请输入详细地址',
-    cityRequired: '请输入城市',
-    stateRequired: '请选择州/省',
-    postcodeRequired: '请输入邮编'
+    name: 'Recipient Name',
+    phone: 'Contact Phone',
+    address: 'Detailed Address',
+    city: 'City',
+    state: 'State/Province',
+    postcode: 'Postal Code',
+    fillInfo: 'Fill Shipping Information',
+    required: 'Shipping Information Required',
+    requiredDesc: 'Your prize requires shipping. Please fill in your delivery information.',
+    namePlaceholder: 'Enter recipient name',
+    phonePlaceholder: 'e.g., +60123456789',
+    addressPlaceholder: 'Enter detailed address (street, unit number, etc.)',
+    postcodePlaceholder: 'e.g., 41150',
+    nameRequired: 'Recipient name is required',
+    phoneRequired: 'Contact phone is required',
+    addressRequired: 'Address is required',
+    cityRequired: 'City is required',
+    stateRequired: 'State/Province is required',
+    postcodeRequired: 'Postal code is required'
   },
   player: {
-    source: '数据来源',
-    sourceNative: '本地注册',
-    lastSync: '最后同步时间',
-    syncSource: '同步方式'
+    source: 'Data Source',
+    sourceNative: 'Native Registration',
+    lastSync: 'Last Synced',
+    syncSource: 'Sync Method'
   }
 };
 ```
@@ -1304,6 +1304,7 @@ WHERE pc.requires_shipping = true
 
 ---
 
-**最后更新：** 2026-02-01  
-**状态：** 设计完成，等待实施  
-**预计实施时间：** TBD
+**Last Updated:** 2026-02-01  
+**Status:** Design Completed, Pending Implementation  
+**Estimated Implementation Time:** TBD
+```

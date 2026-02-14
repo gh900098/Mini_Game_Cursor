@@ -14,6 +14,47 @@ import { generateSpinWheelHtml, SpinWheelConfig } from './templates/spin-wheel.t
 export class GameInstancesController {
     constructor(private readonly instancesService: GameInstancesService) { }
 
+    /**
+     * Helper to mask prizes visually when in Social Mode
+     */
+    private maskPrizesForSocialMode(config: any): any {
+        if (!config.prizeList || !Array.isArray(config.prizeList)) return config;
+
+        const maskedConfig = { ...config };
+        maskedConfig.prizeList = config.prizeList.map((p: any) => {
+            if (p.isLose) return p;
+
+            // Use the authoritative 'isPoints' flag from the backend enrichment
+            // If missing (e.g. old code), fallback to simplistic check
+            const isPointType = (typeof p.isPoints === 'boolean') ? p.isPoints : (p.prizeType === 'points');
+
+            if (isPointType) {
+                return p;
+            }
+
+            // If it is NOT points (Item, Cash, E-Gift, etc.), we MUST mask it.
+            // STRATEGY: Use the 'cost' (Budget Deduction) as the Point Value.
+            const budgetVal = Number(p.cost) || 0;
+            const pts = budgetVal > 0 ? budgetVal : (p.value || p.scoreValue || 500);
+            const ptsLabel = `${pts} PTS`;
+
+            return {
+                ...p,
+                label: p.isJackpot ? `💎 ${ptsLabel}` : `⭐ ${ptsLabel}`,
+                prizeName: p.isJackpot ? 'Jackpot Score' : 'Score Reward',
+                icon: p.isJackpot ? '💎' : '⭐',
+                image: '', // Strictly clear any specific prize image
+            };
+        });
+
+        // Also mask spin button subtext if it mentions tokens/win
+        if (maskedConfig.spinBtnSubtext) {
+            maskedConfig.spinBtnSubtext = 'PLAY FOR RANKING';
+        }
+
+        return maskedConfig;
+    }
+
     @Get(':slug/play')
     @Header('Content-Type', 'text/html')
     async play(
@@ -42,8 +83,17 @@ export class GameInstancesController {
     private async handlePlay(instance: GameInstance, isPreview?: string, version?: string) {
         if (!instance) throw new NotFoundException('Game instance not found');
 
-        const config = await this.instancesService.getEffectiveConfig(instance);
+        let config = await this.instancesService.getEffectiveConfig(instance);
         const gameSlug = instance.gameTemplate?.slug;
+
+        // Universal Social Mode Masking: If budget is exhausted and mode is soft, mask prizes visually
+        const budgetConfig = instance.config?.budgetConfig;
+        if (budgetConfig?.enable && budgetConfig?.exhaustionMode === 'soft') {
+            const isExhausted = await this.instancesService.isBudgetExhausted(instance);
+            if (isExhausted) {
+                config = this.maskPrizesForSocialMode(config);
+            }
+        }
 
         // Check if user selected a visual template (other than 'default')
         const visualTemplate = config.visualTemplate || 'default';

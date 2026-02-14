@@ -1,42 +1,42 @@
-# 🎮 转盘游戏规则实现方案（详细版）
+# 🎮 Spin Wheel Game Rules Implementation Plan (Detailed version)
 
-**规划时间：** 2026-02-01 08:08  
-**目标：** 实现所有规则配置的backend逻辑
+**Planning Time:** 2026-02-01 08:08  
+**Objective:** Implement backend logic for all rule configurations.
 
 ---
 
-## 📋 总体架构设计
+## 📋 Overall Architecture Design
 
-### 方案选择：独立的 GameRulesService ✅
+### Solution Choice: Independent GameRulesService ✅
 
-**为什么这样设计：**
-- ✅ 逻辑分离，易维护
-- ✅ 可以复用到其他游戏类型
-- ✅ 易于测试
-- ✅ 不污染scores.service.ts
+**Why this design:**
+- ✅ Separated logic, easy to maintain.
+- ✅ Reusable for other game types.
+- ✅ Easy to test.
+- ✅ Does not clutter `scores.service.ts`.
 
-**调用流程：**
+**Call Flow:**
 ```
-用户点击玩游戏
+User clicks to play game
   ↓
-Frontend调用 POST /scores/:instanceSlug
+Frontend calls POST /scores/:instanceSlug
   ↓
 ScoresController.submit()
   ↓
-GameRulesService.validatePlay() ← 检查所有规则
-  ↓ (通过)
-ScoresService.submit() ← 记录分数
+GameRulesService.validatePlay() ← Checks all rules
+  ↓ (Success)
+ScoresService.submit() ← Records score
   ↓
-返回结果
+Returns result
 ```
 
 ---
 
-## 🗄️ 需要的数据库改动
+## 🗄️ Required Database Changes
 
-### 1. 新建表：play_attempts（游戏尝试记录）
+### 1. New Table: play_attempts (Game Attempt Records)
 
-**用途：** 记录每次玩游戏的尝试，用于检查 dailyLimit, cooldown, oneTimeOnly
+**Purpose:** Tracks every game play attempt to check `dailyLimit`, `cooldown`, and `oneTimeOnly`.
 
 ```sql
 CREATE TABLE play_attempts (
@@ -47,20 +47,20 @@ CREATE TABLE play_attempts (
   success BOOLEAN DEFAULT TRUE,
   ip_address VARCHAR(45),
   
-  -- 索引优化查询
+  -- Index optimization
   INDEX idx_member_instance (member_id, instance_id),
   INDEX idx_attempted_at (attempted_at)
 );
 ```
 
-**为什么设计成这样：**
-- `success` 字段：记录是否成功玩（未来可能有前置检查失败的情况）
-- `ip_address`：防作弊，可以限制同一IP
-- 索引：加速查询今日次数、上次玩的时间
+**Design rationale:**
+- `success` field: Records if the play was successful (for future cases where pre-checks might fail).
+- `ip_address`: Anti-cheating measure, can limit instances per IP.
+- Indexes: Speed up queries for daily counts and last play time.
 
 ---
 
-### 2. 修改 members 表（添加等级系统）
+### 2. Modify members Table (Add Level System)
 
 ```sql
 ALTER TABLE members ADD COLUMN level INT DEFAULT 1;
@@ -68,16 +68,16 @@ ALTER TABLE members ADD COLUMN vip_tier VARCHAR(20) DEFAULT NULL;
 ALTER TABLE members ADD COLUMN experience INT DEFAULT 0;
 ```
 
-**为什么需要这些：**
-- `level`：用于 minLevel 规则
-- `vip_tier`：用于 VIP 等级特权（Bronze/Silver/Gold/Platinum）
-- `experience`：积累经验升级（可选，未来功能）
+**Why these are needed:**
+- `level`: For `minLevel` rule.
+- `vip_tier`: For VIP privileges (Bronze/Silver/Gold/Platinum).
+- `experience`: Accumulate experience to level up (optional/future feature).
 
 ---
 
-### 3. 新建表：budget_tracking（预算跟踪）
+### 3. New Table: budget_tracking (Budget Tracking)
 
-**用途：** 跟踪每日/每月发放的奖品价值，控制成本
+**Purpose:** Tracks the value of prizes issued daily/monthly to control costs.
 
 ```sql
 CREATE TABLE budget_tracking (
@@ -92,37 +92,37 @@ CREATE TABLE budget_tracking (
 );
 ```
 
-**为什么这样设计：**
-- `tracking_date`：按天跟踪
-- `total_cost`：当天总成本（奖品总价值）
-- `play_count`：当天玩的次数
-- UNIQUE约束：确保每天只有一条记录
+**Design rationale:**
+- `tracking_date`: Daily tracking.
+- `total_cost`: Total daily cost (prizes value).
+- `play_count`: Number of daily plays.
+- UNIQUE constraint: Ensures only one record per day per instance.
 
 ---
 
-## 🔧 详细实现方案（逐个规则）
+## 🔧 Detailed Implementation (Rule by Rule)
 
 ---
 
-## 1️⃣ dailyLimit（每日游戏次数限制）
+## 1️⃣ dailyLimit (Daily Play Limit)
 
-### 📝 功能说明
-**用途：** 限制每个用户每天最多玩X次  
-**适用场景：** 
-- 防止刷分滥用
-- 控制成本（限制发奖次数）
-- 营造稀缺性（每天3次机会，更珍惜）
+### 📝 Description
+**Purpose:** Restricts the number of times a user can play per day.  
+**Use Cases:**
+- Prevents score abuse.
+- Controls costs (limits prize distributions).
+- Creates scarcity (players value their 3 daily chances).
 
-### ⚙️ 实现逻辑
+### ⚙️ Implementation Logic
 
 ```typescript
 async checkDailyLimit(memberId: string, instance: GameInstance): Promise<void> {
   const dailyLimit = instance.config.dailyLimit || 0;
   
-  // 0 = 无限制
+  // 0 = No limit
   if (dailyLimit === 0) return;
   
-  // 查询今天玩了几次
+  // Count plays for today
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
   
@@ -138,32 +138,32 @@ async checkDailyLimit(memberId: string, instance: GameInstance): Promise<void> {
   if (count >= dailyLimit) {
     throw new BadRequestException({
       code: 'DAILY_LIMIT_REACHED',
-      message: `您今天的游戏次数已用完（${dailyLimit}次/天）`,
-      resetAt: new Date(startOfDay.getTime() + 24*60*60*1000) // 明天0点
+      message: `You have used up your daily game attempts (${dailyLimit} times/day)`,
+      resetAt: new Date(startOfDay.getTime() + 24*60*60*1000) // Midnight tomorrow
     });
   }
 }
 ```
 
-### 📊 返回给前端的数据
+### 📊 Backend Response
 
-**成功时：** 无，继续玩
-**失败时：**
+**On Success:** Proceed with gameplay.
+**On Failure:**
 ```json
 {
   "statusCode": 400,
   "error": "Bad Request",
   "code": "DAILY_LIMIT_REACHED",
-  "message": "您今天的游戏次数已用完（3次/天）",
+  "message": "Daily play limit reached (3 times/day)",
   "resetAt": "2026-02-02T00:00:00Z",
   "remaining": 0,
   "limit": 3
 }
 ```
 
-### 💡 额外功能（建议）
+### 💡 Additional Features (Recommended)
 
-**在游戏页面显示剩余次数：**
+**Display remaining attempts on game page:**
 ```typescript
 // GET /game-instances/:slug/status
 {
@@ -177,25 +177,25 @@ async checkDailyLimit(memberId: string, instance: GameInstance): Promise<void> {
 
 ---
 
-## 2️⃣ cooldown（游戏冷却时间）
+## 2️⃣ cooldown (Game Cooldown)
 
-### 📝 功能说明
-**用途：** 玩一次后，必须等待X秒才能再玩  
-**适用场景：**
-- 防止快速刷分
-- 给用户"冷静"时间（不要沉迷）
-- 减轻服务器压力
+### 📝 Description
+**Purpose:** Requires users to wait X seconds between attempts.  
+**Use Cases:**
+- Prevents rapid spamming.
+- Provides a "cool-down" period for users.
+- Reduces server load.
 
-### ⚙️ 实现逻辑
+### ⚙️ Implementation Logic
 
 ```typescript
 async checkCooldown(memberId: string, instance: GameInstance): Promise<void> {
-  const cooldown = instance.config.cooldown || 0; // 秒
+  const cooldown = instance.config.cooldown || 0; // Seconds
   
-  // 0 = 无冷却
+  // 0 = No cooldown
   if (cooldown === 0) return;
   
-  // 查询上次玩的时间
+  // Find last play attempt
   const lastAttempt = await this.playAttemptsRepo.findOne({
     where: {
       memberId,
@@ -205,7 +205,7 @@ async checkCooldown(memberId: string, instance: GameInstance): Promise<void> {
     order: { attemptedAt: 'DESC' }
   });
   
-  if (!lastAttempt) return; // 第一次玩，无需冷却
+  if (!lastAttempt) return; // First attempt, no cooldown
   
   const elapsed = Date.now() - lastAttempt.attemptedAt.getTime();
   const remaining = (cooldown * 1000) - elapsed;
@@ -213,7 +213,7 @@ async checkCooldown(memberId: string, instance: GameInstance): Promise<void> {
   if (remaining > 0) {
     throw new BadRequestException({
       code: 'COOLDOWN_ACTIVE',
-      message: `请等待${Math.ceil(remaining/1000)}秒后再玩`,
+      message: `Please wait ${Math.ceil(remaining/1000)} seconds before playing again`,
       cooldownSeconds: cooldown,
       remainingSeconds: Math.ceil(remaining/1000),
       canPlayAt: new Date(Date.now() + remaining)
@@ -222,45 +222,45 @@ async checkCooldown(memberId: string, instance: GameInstance): Promise<void> {
 }
 ```
 
-### 📊 返回给前端的数据
+### 📊 Backend Response
 
-**失败时：**
+**On Failure:**
 ```json
 {
   "statusCode": 400,
   "code": "COOLDOWN_ACTIVE",
-  "message": "请等待45秒后再玩",
+  "message": "Please wait 45 seconds before playing again",
   "cooldownSeconds": 60,
   "remainingSeconds": 45,
   "canPlayAt": "2026-02-01T08:10:00Z"
 }
 ```
 
-### 💡 前端显示建议
+### 💡 Frontend Display Suggestions
 
-**在游戏页面显示倒计时：**
+**Display countdown on game page:**
 ```javascript
 // Frontend
 if (error.code === 'COOLDOWN_ACTIVE') {
   startCountdown(error.remainingSeconds);
-  // "请等待 45 秒后再玩"
-  // "请等待 44 秒后再玩"
+  // "Please wait 45 seconds before playing again"
+  // "Please wait 44 seconds before playing again"
   // ...
 }
 ```
 
 ---
 
-## 3️⃣ oneTimeOnly（每人只能玩一次）
+## 3️⃣ oneTimeOnly (Lifetime One-Time Limit)
 
-### 📝 功能说明
-**用途：** 每个用户终身只能玩一次  
-**适用场景：**
-- 新人首单礼（欢迎奖励）
-- 限时活动（每人只能参与一次）
-- 稀缺奖品（防止重复领取）
+### 📝 Description
+**Purpose:** Each user can only play once in total.  
+**Use Cases:**
+- New user welcome gift.
+- Time-limited events (one entry per person).
+- High-value prizes (prevents duplicate wins).
 
-### ⚙️ 实现逻辑
+### ⚙️ Implementation Logic
 
 ```typescript
 async checkOneTimeOnly(memberId: string, instance: GameInstance): Promise<void> {
@@ -268,7 +268,7 @@ async checkOneTimeOnly(memberId: string, instance: GameInstance): Promise<void> 
   
   if (!oneTimeOnly) return;
   
-  // 检查是否玩过
+  // Check if ever played
   const hasPlayed = await this.playAttemptsRepo.exists({
     where: {
       memberId,
@@ -280,35 +280,35 @@ async checkOneTimeOnly(memberId: string, instance: GameInstance): Promise<void> 
   if (hasPlayed) {
     throw new BadRequestException({
       code: 'ALREADY_PLAYED',
-      message: '您已经玩过此游戏，每人仅限一次机会'
+      message: 'You have already played this game. Limited to one entry per person.'
     });
   }
 }
 ```
 
-### 📊 返回给前端的数据
+### 📊 Backend Response
 
-**失败时：**
+**On Failure:**
 ```json
 {
   "statusCode": 400,
   "code": "ALREADY_PLAYED",
-  "message": "您已经玩过此游戏，每人仅限一次机会"
+  "message": "One entry per person only. You have already played."
 }
 ```
 
-### 💡 额外功能（建议）
+### 💡 Additional Features (Recommended)
 
-**在游戏列表显示状态：**
+**Display status in game list:**
 ```typescript
 // GET /game-instances/public/:companySlug
 {
   "instances": [
     {
       "slug": "welcome-spin",
-      "name": "新人转盘",
+      "name": "Welcome Spin",
       "oneTimeOnly": true,
-      "hasPlayed": true, // ← 用户已玩过
+      "hasPlayed": true, // ← User has played
       "canPlay": false
     }
   ]
@@ -317,27 +317,27 @@ async checkOneTimeOnly(memberId: string, instance: GameInstance): Promise<void> 
 
 ---
 
-## 4️⃣ timeLimitConfig（时间限制配置）
+## 4️⃣ timeLimitConfig (Time Limits)
 
-### 📝 功能说明
-**用途：** 限制游戏在特定时间段内开放  
-**适用场景：**
-- 限时活动（2月1日-2月14日情人节活动）
-- 每周特定日期开放（仅周末可玩）
-- 营业时间限制（仅9:00-18:00可玩）
+### 📝 Description
+**Purpose:** Limits game availability to specific dates or days.  
+**Use Cases:**
+- Flash events (e.g., Feb 1st - Feb 14th Valentine's event).
+- Weekend-only events.
+- Business hour restrictions (e.g., 9:00 - 18:00 only).
 
-### ⚙️ Config结构
+### ⚙️ Config Structure
 
 ```typescript
 interface TimeLimitConfig {
   enable: boolean;
-  startTime: Date | null;  // 活动开始时间
-  endTime: Date | null;    // 活动结束时间
-  activeDays: number[];    // 0=周日, 1=周一, ..., 6=周六
+  startTime: Date | null;  // Start time
+  endTime: Date | null;    // End time
+  activeDays: number[];    // 0=Sun, 1=Mon, ..., 6=Sat
 }
 ```
 
-### ⚙️ 实现逻辑
+### ⚙️ Implementation Logic
 
 ```typescript
 async checkTimeLimit(instance: GameInstance): Promise<void> {
@@ -347,11 +347,11 @@ async checkTimeLimit(instance: GameInstance): Promise<void> {
   
   const now = new Date();
   
-  // 检查日期范围
+  // Date range check
   if (config.startTime && now < new Date(config.startTime)) {
     throw new BadRequestException({
       code: 'NOT_STARTED',
-      message: '活动尚未开始',
+      message: 'Event has not started yet',
       startTime: config.startTime
     });
   }
@@ -359,22 +359,22 @@ async checkTimeLimit(instance: GameInstance): Promise<void> {
   if (config.endTime && now > new Date(config.endTime)) {
     throw new BadRequestException({
       code: 'ENDED',
-      message: '活动已结束',
+      message: 'Event has ended',
       endTime: config.endTime
     });
   }
   
-  // 检查星期几
+  // Day of week check
   if (config.activeDays && config.activeDays.length > 0) {
     const today = now.getDay(); // 0-6
     
     if (!config.activeDays.includes(today)) {
-      const dayNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       const activeDayNames = config.activeDays.map(d => dayNames[d]);
       
       throw new BadRequestException({
         code: 'INVALID_DAY',
-        message: `此游戏仅在${activeDayNames.join('、')}开放`,
+        message: `This game is only open on ${activeDayNames.join(', ')}`,
         activeDays: config.activeDays
       });
     }
@@ -382,63 +382,63 @@ async checkTimeLimit(instance: GameInstance): Promise<void> {
 }
 ```
 
-### 📊 返回给前端的数据
+### 📊 Backend Responses
 
-**活动未开始：**
+**Event Not Started:**
 ```json
 {
   "statusCode": 400,
   "code": "NOT_STARTED",
-  "message": "活动尚未开始",
+  "message": "Activity has not started yet",
   "startTime": "2026-02-14T00:00:00Z"
 }
 ```
 
-**活动已结束：**
+**Event Ended:**
 ```json
 {
   "statusCode": 400,
   "code": "ENDED",
-  "message": "活动已结束",
+  "message": "Activity has ended",
   "endTime": "2026-02-28T23:59:59Z"
 }
 ```
 
-**今天不开放：**
+**Closed Today:**
 ```json
 {
   "statusCode": 400,
   "code": "INVALID_DAY",
-  "message": "此游戏仅在周五、周六、周日开放",
+  "message": "This game is only open on Friday, Saturday, Sunday",
   "activeDays": [5, 6, 0]
 }
 ```
 
-### 💡 前端显示建议
+### 💡 Frontend Display Suggestions
 
-**游戏列表显示倒计时：**
-- "活动将于 2月14日 开始"
-- "活动还有 3天23小时 结束"
-- "仅周末开放（下次开放：周五 18:00）"
+**Display countdowns/status in game list:**
+- "Starts on Feb 14th"
+- "Ends in 3 days 23 hours"
+- "Weekends only (Next opening: Fri 18:00)"
 
 ---
 
-## 5️⃣ minLevel（最低等级要求）
+## 5️⃣ minLevel (Minimum Level Requirement)
 
-### 📝 功能说明
-**用途：** 只有达到X级的用户才能玩  
-**适用场景：**
-- 游戏门槛（防止新号刷分）
-- 会员等级特权（高级游戏需要高等级）
-- 引导用户升级
+### 📝 Description
+**Purpose:** Restricts access to users who haven't reached a specific level.  
+**Use Cases:**
+- Entry barriers (prevents bots/new accounts from spamming).
+- Tiered rewards (premium games for high-level members).
+- Encourages user progression.
 
-### ⚙️ 实现逻辑
+### ⚙️ Implementation Logic
 
 ```typescript
 async checkMinLevel(memberId: string, instance: GameInstance): Promise<void> {
   const minLevel = instance.config.minLevel || 0;
   
-  if (minLevel === 0) return; // 无等级要求
+  if (minLevel === 0) return; // No requirement
   
   const member = await this.membersRepo.findOne({
     where: { id: memberId },
@@ -448,7 +448,7 @@ async checkMinLevel(memberId: string, instance: GameInstance): Promise<void> {
   if (!member || member.level < minLevel) {
     throw new ForbiddenException({
       code: 'LEVEL_TOO_LOW',
-      message: `此游戏需要达到等级${minLevel}`,
+      message: `This game requires level ${minLevel}`,
       required: minLevel,
       current: member?.level || 1,
       missing: minLevel - (member?.level || 1)
@@ -457,57 +457,56 @@ async checkMinLevel(memberId: string, instance: GameInstance): Promise<void> {
 }
 ```
 
-### 📊 返回给前端的数据
+### 📊 Backend Response
 
-**等级不足：**
+**Level Too Low:**
 ```json
 {
   "statusCode": 403,
   "code": "LEVEL_TOO_LOW",
-  "message": "此游戏需要达到等级5",
+  "message": "This game requires level 5",
   "required": 5,
   "current": 2,
   "missing": 3
 }
 ```
 
-### 💡 等级系统设计（建议）
+### 💡 Level System Design (Suggestions)
 
-**如何获得经验值：**
-- 每玩一次游戏 +10 XP
-- 达成连胜 +50 XP
-- 每日登录 +5 XP
+**How XP is earned:**
+- +10 XP per game play.
+- +50 XP for win streaks.
+- +5 XP for daily login.
 
-**等级计算：**
+**Level calculation:**
 ```typescript
-// 升级所需经验 = level * 100
+// XP required = level * 100
 // Lv1 → Lv2: 100 XP
 // Lv2 → Lv3: 200 XP
-// Lv3 → Lv4: 300 XP
 ```
 
 ---
 
-## 6️⃣ budgetConfig（预算控制）
+## 6️⃣ budgetConfig (Budget Control)
 
-### 📝 功能说明
-**用途：** 控制每日/每月发放的奖品总价值  
-**适用场景：**
-- 成本控制（今日预算1000元，用完就关闭）
-- 防止营销成本失控
-- 财务管理需求
+### 📝 Description
+**Purpose:** Controls the total value of prizes issued daily/monthly.  
+**Use Cases:**
+- Cost control (stop issuing prizes after today's budget of $1000 is reached).
+- Prevents campaign costs from exceeding estimates.
+- Financial management oversight.
 
-### ⚙️ Config结构
+### ⚙️ Config Structure
 
 ```typescript
 interface BudgetConfig {
   enable: boolean;
-  dailyBudget: number;   // 每日预算（元）
-  monthlyBudget: number; // 每月预算（元）
+  dailyBudget: number;   // Daily budget ($)
+  monthlyBudget: number; // Monthly budget ($)
 }
 ```
 
-### ⚙️ 实现逻辑
+### ⚙️ Implementation Logic
 
 ```typescript
 async checkBudget(instance: GameInstance): Promise<void> {
@@ -518,7 +517,7 @@ async checkBudget(instance: GameInstance): Promise<void> {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
-  // 查询今日消耗
+  // Fetch current consumption
   const todayTracking = await this.budgetRepo.findOne({
     where: {
       instanceId: instance.id,
@@ -528,18 +527,18 @@ async checkBudget(instance: GameInstance): Promise<void> {
   
   const dailySpent = todayTracking?.totalCost || 0;
   
-  // 检查每日预算
+  // Check daily budget
   if (config.dailyBudget && dailySpent >= config.dailyBudget) {
     throw new BadRequestException({
       code: 'DAILY_BUDGET_EXCEEDED',
-      message: '今日预算已用完，明天再来吧',
+      message: "Today's budget has been exhausted. Please come back tomorrow.",
       dailyBudget: config.dailyBudget,
       spent: dailySpent,
       resetAt: new Date(today.getTime() + 24*60*60*1000)
     });
   }
   
-  // 检查月度预算（类似逻辑）
+  // Check monthly budget
   if (config.monthlyBudget) {
     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
     const monthlySpent = await this.budgetRepo
@@ -552,7 +551,7 @@ async checkBudget(instance: GameInstance): Promise<void> {
     if (monthlySpent.total >= config.monthlyBudget) {
       throw new BadRequestException({
         code: 'MONTHLY_BUDGET_EXCEEDED',
-        message: '本月预算已用完',
+        message: 'Monthly budget has been exhausted',
         monthlyBudget: config.monthlyBudget,
         spent: monthlySpent.total
       });
@@ -561,11 +560,11 @@ async checkBudget(instance: GameInstance): Promise<void> {
 }
 ```
 
-### 💡 预算更新逻辑
+### 💡 Budget Update Logic
 
-**在用户赢奖后更新：**
+**Update after a player wins:**
 ```typescript
-// 在 ScoresService.submit() 后执行
+// Call after ScoresService.submit()
 async updateBudget(instanceId: string, prizeCost: number) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -588,39 +587,39 @@ async updateBudget(instanceId: string, prizeCost: number) {
 }
 ```
 
-**如何计算奖品成本：**
+**How prize cost is measured:**
 ```typescript
-// 在 prizeList 配置里添加 cost 字段
+// Add a `cost` field to each prize in `prizeList`
 {
   icon: '10%',
   label: '10% OFF',
   weight: 30,
-  cost: 10  // ← 这个奖品价值10元
+  cost: 10  // ← Prize is worth $10
 }
 ```
 
 ---
 
-## 7️⃣ dynamicProbConfig（动态概率调整）
+## 7️⃣ dynamicProbConfig (Dynamic Probability Adjustment)
 
-### 📝 功能说明
-**用途：** 连输X次后，提高赢的概率（保底机制）  
-**适用场景：**
-- 游戏平衡（防止运气太差，玩家流失）
-- 提升玩家体验（不会一直输）
-- 类似"怜悯机制"
+### 📝 Description
+**Purpose:** Increases winning probability after X consecutive losses (Pity system).  
+**Use Cases:**
+- Balance gameplay (prevents churn due to bad luck).
+- Enhances player experience.
+- "Mercy" mechanism.
 
-### ⚙️ Config结构
+### ⚙️ Config Structure
 
 ```typescript
 interface DynamicProbConfig {
   enable: boolean;
-  lossStreakLimit: number;  // 连输几次触发
-  lossStreakBonus: number;  // 增加概率百分比
+  lossStreakLimit: number;  // Trigger point
+  lossStreakBonus: number;  // Probability bonus (%)
 }
 ```
 
-### ⚙️ 实现逻辑
+### ⚙️ Implementation Logic
 
 ```typescript
 async getDynamicWeights(memberId: string, instance: GameInstance, baseWeights: number[]): Promise<number[]> {
@@ -628,7 +627,7 @@ async getDynamicWeights(memberId: string, instance: GameInstance, baseWeights: n
   
   if (!config?.enable) return baseWeights;
   
-  // 查询连输次数
+  // Query loss streak
   const recentAttempts = await this.scoreRepo.find({
     where: {
       memberId,
@@ -643,22 +642,22 @@ async getDynamicWeights(memberId: string, instance: GameInstance, baseWeights: n
     if (score.metadata?.isLose) {
       lossStreak++;
     } else {
-      break; // 赢了一次，连输中断
+      break; // Streak broken by a win
     }
   }
   
-  // 未达到连输阈值
+  // Streak threshold not met
   if (lossStreak < config.lossStreakLimit) {
     return baseWeights;
   }
   
-  // 调整权重：提高非输奖品的概率
+  // Adjust weights: decrease loss probability, increase win probability
   const adjustedWeights = baseWeights.map((weight, idx) => {
     const prize = instance.prizeList[idx];
     if (prize.isLose) {
-      return weight * 0.5; // 输奖品概率减半
+      return weight * 0.5; // Cut loss probability in half
     } else {
-      return weight * (1 + config.lossStreakBonus / 100); // 赢奖品概率增加
+      return weight * (1 + config.lossStreakBonus / 100); // Increase win probability
     }
   });
   
@@ -668,61 +667,59 @@ async getDynamicWeights(memberId: string, instance: GameInstance, baseWeights: n
 }
 ```
 
-### 💡 如何使用
+### 💡 Usage
 
-**在转盘结算前调用：**
+**Call before calculating spin result:**
 ```typescript
-// 原本的权重
+// Original weights
 const baseWeights = prizeList.map(p => p.weight);
 
-// 动态调整后的权重
+// Dynamic adjustment
 const finalWeights = await this.gameRulesService.getDynamicWeights(
   memberId, 
   instance, 
   baseWeights
 );
 
-// 用调整后的权重来决定结果
+// Deciding winner based on final weights
 const winnerIdx = weightedRandom(finalWeights);
 ```
 
 ---
 
-## 8️⃣ vipTiers（VIP等级特权）
+## 8️⃣ vipTiers (VIP Privileges)
 
-### 📝 功能说明
-**用途：** VIP会员享受额外次数和奖励倍数  
-**适用场景：**
-- 会员差异化（普通会员3次/天，VIP 5次/天）
-- 奖励倍数（VIP中奖积分x2）
-- 增加付费动力
+### 📝 Description
+**Purpose:** VIP members enjoy extra attempts and reward multipliers.  
+**Use Cases:**
+- Member differentiation (Free: 3x/day, VIP: 5x/day).
+- Reward boost (VIP wins 2x points).
+- Incentivizes premium memberships.
 
-### ⚙️ Config结构
+### ⚙️ Config Structure
 
 ```typescript
 interface VipTier {
   name: string;       // "Bronze" | "Silver" | "Gold" | "Platinum"
-  extraSpins: number; // 额外次数
-  multiplier: number; // 积分倍数
+  extraSpins: number; // Extra attempts
+  multiplier: number; // Score multiplier
 }
 
 // Example:
 [
   { name: "Bronze", extraSpins: 0, multiplier: 1 },
-  { name: "Silver", extraSpins: 1, multiplier: 1.2 },
-  { name: "Gold", extraSpins: 2, multiplier: 1.5 },
   { name: "Platinum", extraSpins: 5, multiplier: 2 }
 ]
 ```
 
-### ⚙️ 实现逻辑
+### ⚙️ Implementation Logic
 
-**1. 增加每日次数：**
+**1. Extra daily attempts:**
 ```typescript
 async checkDailyLimit(memberId: string, instance: GameInstance): Promise<void> {
   let dailyLimit = instance.config.dailyLimit || 0;
   
-  // 应用VIP加成
+  // Apply VIP bonus
   const member = await this.membersRepo.findOne({ where: { id: memberId } });
   if (member?.vipTier && instance.config.vipTiers) {
     const vipConfig = instance.config.vipTiers.find(t => t.name === member.vipTier);
@@ -731,17 +728,17 @@ async checkDailyLimit(memberId: string, instance: GameInstance): Promise<void> {
     }
   }
   
-  // 检查次数...
+  // Check limit...
 }
 ```
 
-**2. 奖励倍数：**
+**2. Reward Multiplier:**
 ```typescript
 async submit(...) {
   // ...
   let finalScore = scoreValue;
   
-  // 应用VIP倍数
+  // Apply VIP multiplier
   const member = await this.membersRepo.findOne({ where: { id: memberId } });
   if (member?.vipTier && instance.config.vipTiers) {
     const vipConfig = instance.config.vipTiers.find(t => t.name === member.vipTier);
@@ -750,99 +747,99 @@ async submit(...) {
     }
   }
   
-  // 更新积分
+  // Update points balance
   await this.membersService.updatePoints(memberId, finalScore);
 }
 ```
 
 ---
 
-## 📊 数据记录与文档
+## 📊 Documentation Requirements
 
-### 完成后必须更新的文档
+### Docs that must be updated upon completion:
 
 #### 1. FEATURES.md
 ```markdown
-## 🎮 游戏规则系统 (2026-02-01新增)
+## 🎮 Game Rules System (Added 2026-02-01)
 
-### 实现的规则
-- ✅ dailyLimit - 每日次数限制
-- ✅ cooldown - 冷却时间
-- ✅ oneTimeOnly - 只能玩一次
-- ✅ timeLimitConfig - 时间限制
-- ✅ minLevel - 等级要求
-- ✅ budgetConfig - 预算控制
-- ✅ dynamicProbConfig - 动态概率
-- ✅ vipTiers - VIP特权
+### Implemented Rules
+- ✅ dailyLimit - Daily play limit
+- ✅ cooldown - Cooldown period
+- ✅ oneTimeOnly - Lifetime one-time play
+- ✅ timeLimitConfig - Time windows
+- ✅ minLevel - Level requirement
+- ✅ budgetConfig - Budget control
+- ✅ dynamicProbConfig - Pity system
+- ✅ vipTiers - VIP privileges
 
-### 数据表
-- play_attempts - 游戏尝试记录
-- budget_tracking - 预算跟踪
-- members.level - 等级字段
+### Database Tables
+- play_attempts - Tracking plays
+- budget_tracking - Controlling costs
+- members.level - Added level field
 ```
 
-#### 2. API.md（新建）
-记录所有API的错误码：
+#### 2. API.md (New)
+Record all API error codes:
 ```markdown
 ## POST /scores/:instanceSlug
 
-### 错误响应
-
-- `DAILY_LIMIT_REACHED` - 每日次数用完
-- `COOLDOWN_ACTIVE` - 冷却中
-- `ALREADY_PLAYED` - 已玩过（oneTimeOnly）
-- `NOT_STARTED` / `ENDED` / `INVALID_DAY` - 时间限制
-- `LEVEL_TOO_LOW` - 等级不足
-- `DAILY_BUDGET_EXCEEDED` - 预算用完
+### Error Responses
+- `DAILY_LIMIT_REACHED` - Used up daily attempts
+- `COOLDOWN_ACTIVE` - Cooling down
+- `ALREADY_PLAYED` - Already played (oneTimeOnly)
+- `NOT_STARTED` / `ENDED` / `INVALID_DAY` - Time window issues
+- `LEVEL_TOO_LOW` - Insufficient level
+- `DAILY_BUDGET_EXCEEDED` - Budget exhausted
 ```
 
-#### 3. DATABASE.md（新建）
-记录所有数据库schema和迁移脚本
+#### 3. DATABASE.md (New)
+Record all schema and migration scripts.
 
 ---
 
-## ✅ 实现步骤（推荐顺序）
+## ✅ Implementation Steps (Recommended Order)
 
-### Phase 1: 基础设施 (30分钟)
-1. 创建 play_attempts 表
-2. 修改 members 表（添加 level, vip_tier）
-3. 创建 GameRulesService
 
-### Phase 2: 高优先级规则 (1小时)
-4. 实现 dailyLimit
-5. 实现 cooldown
-6. 实现 oneTimeOnly
-7. 实现 timeLimitConfig
+### Phase 1: Infrastructure (30 mins)
+1. Create `play_attempts` table.
+2. Modify `members` table (add `level`, `vip_tier`).
+3. Create `GameRulesService`.
 
-### Phase 3: 中优先级规则 (1小时)
-8. 实现 minLevel
-9. 创建 budget_tracking 表
-10. 实现 budgetConfig
+### Phase 2: High-Priority Rules (1 hour)
+4. Implement `dailyLimit`.
+5. Implement `cooldown`.
+6. Implement `oneTimeOnly`.
+7. Implement `timeLimitConfig`.
 
-### Phase 4: 低优先级功能 (1小时)
-11. 实现 dynamicProbConfig
-12. 实现 vipTiers
+### Phase 3: Medium-Priority Rules (1 hour)
+8. Implement `minLevel`.
+9. Create `budget_tracking` table.
+10. Implement `budgetConfig`.
 
-### Phase 5: 前端展示 (30分钟)
-13. 添加 GET /game-instances/:slug/status API
-14. 返回剩余次数、冷却时间等
+### Phase 4: Low-Priority Features (1 hour)
+11. Implement `dynamicProbConfig`.
+12. Implement `vipTiers`.
 
-### Phase 6: 文档与测试 (30分钟)
-15. 更新所有文档
-16. 测试每个规则
-17. 添加到 TROUBLESHOOTING.md
+### Phase 5: Frontend Display (30 mins)
+13. Add `GET /game-instances/:slug/status` API.
+14. Return remaining attempts, cooldown time, etc.
 
-**总计：约4-5小时完成全部规则**
+### Phase 6: Documentation & Testing (30 mins)
+15. Update all documentation.
+16. Test each rule.
+17. Add to `TROUBLESHOOTING.md`.
 
----
-
-## 🎯 你想怎么开始？
-
-1. ✅ **认可这个方案** → 我开始实现
-2. 🤔 **需要调整某些规则** → 告诉我哪里需要改
-3. 📋 **先看测试案例** → 我写测试场景给你看
+**Total: Approx. 4-5 hours for all rules.**
 
 ---
 
-**文档版本：** v1.0  
-**下次更新：** 实现完成后
+## 🎯 How would you like to proceed?
+
+1. ✅ **Approve this plan** → I will start implementation.
+2. 🤔 **Adjust certain rules** → Let me know what needs to change.
+3. 📋 **View test cases first** → I will write test scenarios for your review.
+
+---
+
+**Document Version:** v1.0  
+**Next Update:** Upon implementation completion.

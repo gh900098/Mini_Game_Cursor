@@ -1,33 +1,33 @@
-# 🧪 游戏规则系统 - 完整测试计划
+# 🧪 Game Rules System - Complete Testing Plan
 
-**创建时间：** 2026-02-01  
-**状态：** 待执行  
-**目标：** 科学地测试所有8个规则的功能
+**Created:** 2026-02-01  
+**Status:** Pending Execution  
+**Objective:** Systematically test the functionality of all 8 game rules.
 
 ---
 
-## 📋 测试策略
+## 📋 Testing Strategy
 
-### 测试类型
-1. **Unit Tests** - 单元测试（每个方法独立）
-2. **Integration Tests** - API集成测试
-3. **End-to-End Tests** - 完整用户流程测试
+### Test Types
+1. **Unit Tests** - Independent testing of each method.
+2. **Integration Tests** - API integration testing.
+3. **End-to-End Tests** - Complete user flow testing.
 
-### 测试优先级
+### Test Priorities
 - 🔴 **Critical** - dailyLimit, cooldown, oneTimeOnly, timeLimitConfig
 - 🟡 **Important** - minLevel, budgetConfig
 - 🟢 **Nice-to-have** - dynamicProbConfig, vipTiers
 
 ---
 
-## 🚧 Prerequisites（测试前必须完成）
+## 🚧 Prerequisites (Must be completed before testing)
 
 ### 1. Database Setup ✅ Required
 
-**需要执行的Migration：**
+**Migration to be executed:**
 
 ```sql
--- 1. 创建 play_attempts 表
+-- 1. Create play_attempts table
 CREATE TABLE IF NOT EXISTS play_attempts (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   member_id UUID NOT NULL REFERENCES members(id) ON DELETE CASCADE,
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS play_attempts (
   success BOOLEAN DEFAULT TRUE,
   ip_address VARCHAR(45),
   
-  -- 索引
+  -- Indexes
   CONSTRAINT fk_member FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
   CONSTRAINT fk_instance FOREIGN KEY (instance_id) REFERENCES game_instances(id) ON DELETE CASCADE
 );
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS play_attempts (
 CREATE INDEX idx_play_attempts_member_instance ON play_attempts(member_id, instance_id);
 CREATE INDEX idx_play_attempts_attempted_at ON play_attempts(attempted_at);
 
--- 2. 创建 budget_tracking 表
+-- 2. Create budget_tracking table
 CREATE TABLE IF NOT EXISTS budget_tracking (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   instance_id UUID NOT NULL REFERENCES game_instances(id) ON DELETE CASCADE,
@@ -58,36 +58,36 @@ CREATE TABLE IF NOT EXISTS budget_tracking (
 
 CREATE INDEX idx_budget_tracking_date ON budget_tracking(tracking_date);
 
--- 3. 修改 members 表
+-- 3. Modify members table
 ALTER TABLE members ADD COLUMN IF NOT EXISTS level INT DEFAULT 1;
 ALTER TABLE members ADD COLUMN IF NOT EXISTS vip_tier VARCHAR(20);
 ALTER TABLE members ADD COLUMN IF NOT EXISTS experience INT DEFAULT 0;
 ```
 
-**执行方式：**
+**Execution Method:**
 ```bash
-# 连接到production database
+# Connect to production database
 sshpass -p 'Abcd01923' ssh root@154.26.136.139
 
-# 进入database container
+# Enter database container
 docker exec -it minigame-db psql -U postgres -d minigame
 
-# 粘贴上面的SQL
+# Paste the SQL above
 \i /path/to/migration.sql
 
-# 或者直接粘贴SQL语句
+# Or paste SQL statements directly
 ```
 
 ### 2. Test Game Instance ✅ Required
 
-**创建测试游戏实例：**
+**Create a test game instance:**
 
-通过Admin Panel创建一个test game instance with以下配置：
+Create a test game instance via the Admin Panel with the following configuration:
 
 ```json
 {
   "slug": "test-rules-wheel",
-  "name": "规则测试转盘",
+  "name": "Rules Test Wheel",
   "config": {
     "dailyLimit": 3,
     "cooldown": 30,
@@ -96,7 +96,7 @@ docker exec -it minigame-db psql -U postgres -d minigame
       "enable": true,
       "startTime": null,
       "endTime": null,
-      "activeDays": [1, 2, 3, 4, 5]  // 周一到周五
+      "activeDays": [1, 2, 3, 4, 5]  // Monday to Friday
     },
     "minLevel": 2,
     "budgetConfig": {
@@ -116,10 +116,10 @@ docker exec -it minigame-db psql -U postgres -d minigame
       { "name": "Platinum", "extraSpins": 5, "multiplier": 2 }
     ],
     "prizeList": [
-      { "icon": "10", "label": "10分", "weight": 40, "value": 10, "cost": 10, "isLose": false },
-      { "icon": "50", "label": "50分", "weight": 20, "value": 50, "cost": 50, "isLose": false },
-      { "icon": "❌", "label": "未中奖", "weight": 30, "value": 0, "cost": 0, "isLose": true },
-      { "icon": "💎", "label": "大奖", "weight": 10, "value": 1000, "cost": 1000, "isLose": false }
+      { "icon": "10", "label": "10 Points", "weight": 40, "value": 10, "cost": 10, "isLose": false },
+      { "icon": "50", "label": "50 Points", "weight": 20, "value": 50, "cost": 50, "isLose": false },
+      { "icon": "❌", "label": "No Prize", "weight": 30, "value": 0, "cost": 0, "isLose": true },
+      { "icon": "💎", "label": "Jackpot", "weight": 10, "value": 1000, "cost": 1000, "isLose": false }
     ]
   }
 }
@@ -127,7 +127,7 @@ docker exec -it minigame-db psql -U postgres -d minigame
 
 ### 3. Test Users ✅ Required
 
-**创建测试用户：**
+**Create test users:**
 
 ```sql
 -- Normal user (level 1, no VIP)
@@ -145,10 +145,10 @@ VALUES ('test-user-3', 'your-company-id', 'test3', 'TestUser3', 5, 'Gold', 0);
 
 ### 4. Authentication Tokens ✅ Required
 
-**获取JWT Token：**
+**Obtain JWT Tokens:**
 
 ```bash
-# Method 1: 通过API登录获取token
+# Method 1: Login via API to get token
 curl -X POST http://api.xseo.me/auth/member/login \
   -H "Content-Type: application/json" \
   -d '{
@@ -163,7 +163,7 @@ curl -X POST http://api.xseo.me/auth/member/login \
   "member": { ... }
 }
 
-# 保存token到环境变量
+# Save tokens to environment variables
 export TEST_TOKEN_1="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 export TEST_TOKEN_2="..."
 export TEST_TOKEN_3="..."
@@ -173,44 +173,44 @@ export TEST_TOKEN_3="..."
 
 ## 🧪 Test Cases
 
-### Test Suite 1: dailyLimit（每日次数限制）
+### Test Suite 1: dailyLimit
 
 #### Test 1.1: Normal user daily limit
-**配置：** dailyLimit = 3, no VIP  
-**步骤：**
+**Configuration:** dailyLimit = 3, no VIP  
+**Steps:**
 ```bash
-# 第1次 - 应该成功
+# 1st time - should succeed
 curl -X POST http://api.xseo.me/scores/test-rules-wheel \
   -H "Authorization: Bearer $TEST_TOKEN_1" \
   -H "Content-Type: application/json" \
   -d '{"score": 10, "metadata": {"prizeIndex": 0}}'
 
-# 第2次 - 应该成功
+# 2nd time - should succeed
 curl -X POST http://api.xseo.me/scores/test-rules-wheel \
   -H "Authorization: Bearer $TEST_TOKEN_1" \
   -H "Content-Type: application/json" \
   -d '{"score": 10, "metadata": {"prizeIndex": 0}}'
 
-# 第3次 - 应该成功
+# 3rd time - should succeed
 curl -X POST http://api.xseo.me/scores/test-rules-wheel \
   -H "Authorization: Bearer $TEST_TOKEN_1" \
   -H "Content-Type: application/json" \
   -d '{"score": 10, "metadata": {"prizeIndex": 0}}'
 
-# 第4次 - 应该返回 DAILY_LIMIT_REACHED
+# 4th time - should return DAILY_LIMIT_REACHED
 curl -X POST http://api.xseo.me/scores/test-rules-wheel \
   -H "Authorization: Bearer $TEST_TOKEN_1" \
   -H "Content-Type: application/json" \
   -d '{"score": 10, "metadata": {"prizeIndex": 0}}'
 ```
 
-**期望结果：**
+**Expected Result:**
 ```json
 {
   "statusCode": 400,
   "error": "Bad Request",
   "code": "DAILY_LIMIT_REACHED",
-  "message": "您今天的游戏次数已用完（3次/天）",
+  "message": "Daily play limit reached (3 times/day)",
   "resetAt": "2026-02-02T00:00:00Z",
   "remaining": 0,
   "limit": 3
@@ -218,18 +218,18 @@ curl -X POST http://api.xseo.me/scores/test-rules-wheel \
 ```
 
 #### Test 1.2: VIP user extra spins
-**配置：** dailyLimit = 3, Gold VIP (+2 extra)  
-**步骤：** 使用 TEST_TOKEN_3 (Gold VIP) 玩5次游戏  
-**期望结果：** 前5次成功，第6次返回 DAILY_LIMIT_REACHED (limit: 5)
+**Configuration:** dailyLimit = 3, Gold VIP (+2 extra)  
+**Steps:** Play 5 games using TEST_TOKEN_3 (Gold VIP)  
+**Expected Result:** First 5 succeed, 6th returns DAILY_LIMIT_REACHED (limit: 5)
 
 #### Test 1.3: Check player status
-**步骤：**
+**Steps:**
 ```bash
 curl http://api.xseo.me/scores/status/test-rules-wheel \
   -H "Authorization: Bearer $TEST_TOKEN_1"
 ```
 
-**期望结果：**
+**Expected Result:**
 ```json
 {
   "canPlay": false,
@@ -242,25 +242,25 @@ curl http://api.xseo.me/scores/status/test-rules-wheel \
 
 ---
 
-### Test Suite 2: cooldown（冷却时间）
+### Test Suite 2: cooldown
 
 #### Test 2.1: Basic cooldown check
-**配置：** cooldown = 30秒  
-**步骤：**
+**Configuration:** cooldown = 30 seconds  
+**Steps:**
 ```bash
-# 第1次 - 应该成功
+# 1st time - should succeed
 curl -X POST http://api.xseo.me/scores/test-rules-wheel \
   -H "Authorization: Bearer $TEST_TOKEN_2" \
   -H "Content-Type: application/json" \
   -d '{"score": 10}'
 
-# 立即第2次 - 应该返回 COOLDOWN_ACTIVE
+# Immediate 2nd time - should return COOLDOWN_ACTIVE
 curl -X POST http://api.xseo.me/scores/test-rules-wheel \
   -H "Authorization: Bearer $TEST_TOKEN_2" \
   -H "Content-Type: application/json" \
   -d '{"score": 10}'
 
-# 等待31秒后再试 - 应该成功
+# Wait 31 seconds and retry - should succeed
 sleep 31
 curl -X POST http://api.xseo.me/scores/test-rules-wheel \
   -H "Authorization: Bearer $TEST_TOKEN_2" \
@@ -268,11 +268,11 @@ curl -X POST http://api.xseo.me/scores/test-rules-wheel \
   -d '{"score": 10}'
 ```
 
-**期望结果（第2次）：**
+**Expected Result (2nd time):**
 ```json
 {
   "code": "COOLDOWN_ACTIVE",
-  "message": "请等待30秒后再玩",
+  "message": "Please wait 30 seconds before playing again",
   "cooldownSeconds": 30,
   "remainingSeconds": 29,
   "canPlayAt": "2026-02-01T09:10:30Z"
@@ -281,46 +281,45 @@ curl -X POST http://api.xseo.me/scores/test-rules-wheel \
 
 ---
 
-### Test Suite 3: oneTimeOnly（只能玩一次）
+### Test Suite 3: oneTimeOnly
 
 #### Test 3.1: Lifetime one-time limit
-**配置：** oneTimeOnly = true  
-**步骤：**
+**Configuration:** oneTimeOnly = true  
+**Steps:**
 ```bash
-# 创建一个oneTimeOnly的游戏
-# 在admin panel创建 test-onetime-wheel (oneTimeOnly: true)
+# Create a oneTimeOnly game in Admin Panel: test-onetime-wheel (oneTimeOnly: true)
 
-# 第1次 - 应该成功
+# 1st time - should succeed
 curl -X POST http://api.xseo.me/scores/test-onetime-wheel \
   -H "Authorization: Bearer $TEST_TOKEN_1" \
   -H "Content-Type: application/json" \
   -d '{"score": 10}'
 
-# 第2次 - 应该返回 ALREADY_PLAYED
+# 2nd time - should return ALREADY_PLAYED
 curl -X POST http://api.xseo.me/scores/test-onetime-wheel \
   -H "Authorization: Bearer $TEST_TOKEN_1" \
   -H "Content-Type: application/json" \
   -d '{"score": 10}'
 
-# 第二天再试 - 仍然返回 ALREADY_PLAYED（终身限制）
+# Retry the next day - should still return ALREADY_PLAYED (lifetime limit)
 ```
 
-**期望结果（第2次）：**
+**Expected Result (2nd time):**
 ```json
 {
   "code": "ALREADY_PLAYED",
-  "message": "您已经玩过此游戏，每人仅限一次机会"
+  "message": "You have already played this game. Limited to one game per person."
 }
 ```
 
 ---
 
-### Test Suite 4: timeLimitConfig（时间限制）
+### Test Suite 4: timeLimitConfig
 
 #### Test 4.1: Active days check
-**配置：** activeDays = [1,2,3,4,5] (周一到周五)  
-**测试时间：** 周六或周日  
-**步骤：**
+**Configuration:** activeDays = [1,2,3,4,5] (Monday to Friday)  
+**Test Time:** Saturday or Sunday  
+**Steps:**
 ```bash
 curl -X POST http://api.xseo.me/scores/test-rules-wheel \
   -H "Authorization: Bearer $TEST_TOKEN_1" \
@@ -328,35 +327,35 @@ curl -X POST http://api.xseo.me/scores/test-rules-wheel \
   -d '{"score": 10}'
 ```
 
-**期望结果（如果今天是周末）：**
+**Expected Result (if today is weekend):**
 ```json
 {
   "code": "INVALID_DAY",
-  "message": "此游戏仅在周一、周二、周三、周四、周五开放",
+  "message": "This game is only open on Monday, Tuesday, Wednesday, Thursday, Friday",
   "activeDays": [1, 2, 3, 4, 5]
 }
 ```
 
 #### Test 4.2: Date range check
-**配置：** startTime = "2026-02-10", endTime = "2026-02-20"  
-**测试时间：** 2026-02-01  
-**期望结果：**
+**Configuration:** startTime = "2026-02-10", endTime = "2026-02-20"  
+**Test Time:** 2026-02-01  
+**Expected Result:**
 ```json
 {
   "code": "NOT_STARTED",
-  "message": "活动尚未开始",
+  "message": "Activity has not started yet",
   "startTime": "2026-02-10T00:00:00Z"
 }
 ```
 
 ---
 
-### Test Suite 5: minLevel（等级要求）
+### Test Suite 5: minLevel
 
 #### Test 5.1: Level too low
-**配置：** minLevel = 2  
-**测试用户：** TEST_TOKEN_1 (level 1)  
-**步骤：**
+**Configuration:** minLevel = 2  
+**Test User:** TEST_TOKEN_1 (level 1)  
+**Steps:**
 ```bash
 curl -X POST http://api.xseo.me/scores/test-rules-wheel \
   -H "Authorization: Bearer $TEST_TOKEN_1" \
@@ -364,12 +363,12 @@ curl -X POST http://api.xseo.me/scores/test-rules-wheel \
   -d '{"score": 10}'
 ```
 
-**期望结果：**
+**Expected Result:**
 ```json
 {
   "statusCode": 403,
   "code": "LEVEL_TOO_LOW",
-  "message": "此游戏需要达到等级2",
+  "message": "This game requires level 2",
   "required": 2,
   "current": 1,
   "missing": 1
@@ -377,31 +376,31 @@ curl -X POST http://api.xseo.me/scores/test-rules-wheel \
 ```
 
 #### Test 5.2: Level sufficient
-**测试用户：** TEST_TOKEN_2 (level 3)  
-**期望结果：** 成功玩游戏
+**Test User:** TEST_TOKEN_2 (level 3)  
+**Expected Result:** Success
 
 ---
 
-### Test Suite 6: budgetConfig（预算控制）
+### Test Suite 6: budgetConfig
 
 #### Test 6.1: Daily budget check
-**配置：** dailyBudget = 1000  
-**测试步骤：**
+**Configuration:** dailyBudget = 1000  
+**Test Steps:**
 ```bash
-# 清空今日预算记录
+# Clear today's budget records
 DELETE FROM budget_tracking WHERE tracking_date = CURRENT_DATE;
 
-# 连续玩游戏直到赢取奖品（假设每次cost=100）
-# 重复10次后，total_cost应该达到1000
+# Play games continuously until prizes are won (assuming cost=100 each time)
+# After 10 times, total_cost should reach 1000
 
-# 第11次应该返回 DAILY_BUDGET_EXCEEDED
+# 11th time should return DAILY_BUDGET_EXCEEDED
 ```
 
-**期望结果：**
+**Expected Result:**
 ```json
 {
   "code": "DAILY_BUDGET_EXCEEDED",
-  "message": "今日预算已用完，明天再来吧",
+  "message": "Today's budget has been exhausted. Please come back tomorrow.",
   "dailyBudget": 1000,
   "spent": 1000,
   "resetAt": "2026-02-02T00:00:00Z"
@@ -409,74 +408,73 @@ DELETE FROM budget_tracking WHERE tracking_date = CURRENT_DATE;
 ```
 
 #### Test 6.2: Budget tracking
-**验证步骤：**
+**Verification Steps:**
 ```sql
 SELECT * FROM budget_tracking 
 WHERE instance_id = 'test-rules-wheel-id' 
 AND tracking_date = CURRENT_DATE;
 
--- 应该看到：
--- total_cost = 累计的奖品cost
--- play_count = 玩的次数
+-- Should see:
+-- total_cost = Accumulated prize costs
+-- play_count = Number of plays
 ```
 
 ---
 
-### Test Suite 7: dynamicProbConfig（动态概率）
+### Test Suite 7: dynamicProbConfig
 
 #### Test 7.1: Loss streak adjustment
-**配置：** lossStreakLimit = 3, lossStreakBonus = 20%  
-**测试步骤：**
+**Configuration:** lossStreakLimit = 3, lossStreakBonus = 20%  
+**Test Steps:**
 ```bash
-# 1. 创建3次连输记录（手动插入或玩游戏）
+# 1. Create 3 consecutive losing records (manually insert or play)
 INSERT INTO scores (member_id, instance_id, score, metadata)
 VALUES 
   ('test-user-1', 'instance-id', 0, '{"isLose": true}'),
   ('test-user-1', 'instance-id', 0, '{"isLose": true}'),
   ('test-user-1', 'instance-id', 0, '{"isLose": true}');
 
-# 2. Frontend调用getDynamicWeights()时应该看到调整后的权重
-# 需要在frontend game engine里调用这个方法
+# 2. Adjusted weights should be visible when calling getDynamicWeights() in frontend
 ```
 
-**期望行为：**
-- Console输出：`[DynamicProb] User xxx loss streak: 3, adjusting weights`
-- 输奖品权重降低50%
-- 赢奖品权重增加20%
+**Expected Behavior:**
+- Console Output: `[DynamicProb] User xxx loss streak: 3, adjusting weights`
+- Loss weight reduced by 50%
+- Win weight increased by 20%
 
 ---
 
-### Test Suite 8: vipTiers（VIP倍数）
+### Test Suite 8: vipTiers
 
 #### Test 8.1: Score multiplier
-**配置：** Gold VIP multiplier = 1.5  
-**测试步骤：**
+**Configuration:** Gold VIP multiplier = 1.5  
+**Test Steps:**
 ```bash
-# 使用Gold VIP账号玩游戏，赢取10分
+# Play using Gold VIP account, win 10 points
 curl -X POST http://api.xseo.me/scores/test-rules-wheel \
   -H "Authorization: Bearer $TEST_TOKEN_3" \
   -H "Content-Type: application/json" \
   -d '{"score": 10, "metadata": {"prizeIndex": 0}}'
 
-# 查询member的points_balance
+# Query member's points_balance
 SELECT points_balance FROM members WHERE id = 'test-user-3';
 ```
 
-**期望结果：**
-- 原始分数：10
-- VIP倍数：1.5
-- **实际增加积分：15** (10 * 1.5)
+**Expected Result:**
+- Base score: 10
+- VIP multiplier: 1.5
+- **Actual points added: 15** (10 * 1.5)
 
 ---
 
-## 🔧 测试工具和脚本
+## 🔧 Testing Tools and Scripts
 
 ### Option 1: Manual API Testing (Postman/curl)
-**优点：** 简单直接，容易debug  
-**缺点：** 手动执行，重复劳动
+**Pros:** Simple, direct, easy to debug.  
+**Cons:** Labor-intensive, manual repetition.
 
 ### Option 2: Automated Test Script (Bash)
-**创建测试脚本：**
+**Create test script:**
 ```bash
 #!/bin/bash
 # test-game-rules.sh
@@ -506,7 +504,7 @@ echo "\n✅ All tests completed"
 ```
 
 ### Option 3: Jest Integration Tests
-**创建测试文件：**
+**Create test file:**
 ```typescript
 // apps/api/test/game-rules.e2e-spec.ts
 import { Test } from '@nestjs/testing';
@@ -548,7 +546,7 @@ describe('Game Rules (e2e)', () => {
 
 ---
 
-## 📊 测试结果记录
+## 📊 Test Results Log
 
 ### Test Execution Checklist
 
@@ -572,35 +570,31 @@ describe('Game Rules (e2e)', () => {
 
 ---
 
-## 🚨 我现在缺少的东西（执行测试前需要）
+## 🚨 Currently Missing (Required before testing)
 
 ### ❌ Missing Items
 
-1. **Database Migration执行权限**
-   - 需要access production database
-   - 或者创建test database
+1. **Database Migration Execution Privileges**
+   - Requires access to production database or creation of a test database.
 
 2. **Valid JWT Tokens**
-   - 需要3个test users的tokens
-   - 或者admin提供test tokens
+   - Requires tokens for 3 test users.
 
 3. **Test Game Instance**
-   - 需要在admin panel创建test instance
-   - 配置所有规则
+   - Needs to be created in Admin Panel with all rules configured.
 
 4. **Deployment**
-   - 代码已push，但API需要重启加载新代码
-   - Database migration需要执行
+   - API needs to be restarted to load latest code.
+   - Database migration needs to be executed.
 
 5. **Testing Framework Setup (Optional)**
-   - Jest配置
-   - Test database setup
+   - Jest configuration and test database setup.
 
 ---
 
-## ✅ 建议的测试流程
+## ✅ Recommended Testing Flow
 
-### Step 1: Prerequisites Setup (30分钟)
+### Step 1: Prerequisites Setup (30 mins)
 ```bash
 # 1. Deploy API to production
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 \
@@ -608,33 +602,30 @@ sshpass -p 'Abcd01923' ssh root@154.26.136.139 \
    docker compose -f docker-compose.prod.yml up -d --force-recreate api"
 
 # 2. Run database migrations
-# (需要DJ提供database access或执行migration script)
-
-# 3. Create test game instance via admin panel
-# 4. Create 3 test users and get their tokens
+# 3. Create test game instance via Admin Panel
+# 4. Create 3 test users and obtain their tokens
 ```
 
-### Step 2: Manual API Testing (1小时)
-- 使用curl或Postman执行所有test cases
-- 记录每个测试的结果
-- 截图error responses
+### Step 2: Manual API Testing (1 hr)
+- Execute all test cases using curl or Postman.
+- Record results and screenshots of error responses.
 
-### Step 3: Automated Testing (Optional, 2小时)
-- Setup Jest e2e tests
-- Run automated test suite
-- Generate test report
+### Step 3: Automated Testing (Optional, 2 hrs)
+- Setup and run Jest e2e test suite.
+- Generate test report.
 
 ---
 
-## 🎯 现在我需要DJ提供：
+## 🎯 What I need from DJ:
 
-1. ✅ **Database Migration执行** - 创建play_attempts和budget_tracking表
-2. ✅ **Test Users Tokens** - 3个不同level/VIP的用户JWT tokens
-3. ✅ **Test Game Instance** - 配置好所有规则的测试游戏
-4. 🔧 **API Deployment** - 重启API加载新代码
+1. ✅ **Execute Database Migration** - Create play_attempts and budget_tracking tables.
+2. ✅ **Provide Test User Tokens** - JWT tokens for 3 users with different levels/VIP statuses.
+3. ✅ **Create Test Game Instance** - Configured with all rules.
+4. 🔧 **API Deployment** - Restart API to load new code.
 
-**或者：**
-- 📝 **Database access** - 我可以自己执行migration和创建test data
-- 🔑 **Admin panel access** - 我可以自己创建test instance
+**Or:**
+- 📝 **Database access** - I can execute migrations and create test data myself.
+- 🔑 **Admin Panel access** - I can create the test instance myself.
 
-**有了这些，我可以立即开始科学的完整测试！** 🚀
+**With these, I can start the comprehensive testing immediately!** 🚀
+```

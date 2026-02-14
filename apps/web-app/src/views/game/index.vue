@@ -197,6 +197,16 @@
           <span>NO TOKENS WILL BE DEDUCTED</span>
         </div>
       </div>
+      
+      <!-- Social Mode (Budget Empty) Banner -->
+      <div v-else-if="gameStatus?.budgetExhausted && gameStatus?.exhaustionMode === 'soft'" class="absolute top-0 left-0 right-0 z-[60] pointer-events-none animate-fade-in">
+        <div class="bg-blue-600/90 backdrop-blur-md text-white text-[10px] font-bold py-1.5 px-4 text-center tracking-widest shadow-lg border-b border-blue-400/30 flex items-center justify-center gap-3">
+          <div class="i-carbon-star-filled text-blue-200 animate-pulse"></div>
+          <span>SOCIAL MODE ACTIVE: PLAYING FOR LEADERBOARD RANK</span>
+          <div class="i-carbon-star-filled text-blue-200 animate-pulse"></div>
+        </div>
+      </div>
+
       <div v-else-if="!instance" class="absolute inset-0 flex-center bg-slate-800">
         <div class="text-center">
           <div class="i-carbon-error text-6xl text-error mb-4"></div>
@@ -352,12 +362,16 @@ async function submitScore(score: number, metadata?: any) {
     const savedScore = res.data || res;
     const finalPoints = savedScore.finalPoints ?? score;
 
+    const isSocialMode = gameStatus.value?.budgetExhausted && gameStatus.value?.exhaustionMode === 'soft';
+
     if (gameStatus.value?.isImpersonated) {
       if (finalPoints > 0) {
         message.info(`[Test Mode] ${finalPoints} points would have been awarded.`);
       } else {
         message.info(`[Test Mode] Result submitted, but NOT recorded.`);
       }
+    } else if (isSocialMode) {
+      message.success('Great score! Your rank has been updated on the Leaderboard.');
     } else {
       if (finalPoints > 0) {
         message.success(`Awesome! You earned ${finalPoints} points!`);
@@ -393,6 +407,12 @@ async function submitScore(score: number, metadata?: any) {
           break;
         case 'DAILY_BUDGET_EXCEEDED':
           message.warning('今日预算已用完，明天再来吧');
+          break;
+        case 'MONTHLY_BUDGET_EXCEEDED':
+          message.warning('本月预算已用完，下个月再来吧');
+          break;
+        case 'TOTAL_BUDGET_EXCEEDED':
+          message.error('此活动总预算已耗尽，感谢参与');
           break;
         case 'INSUFFICIENT_BALANCE':
           message.error(`余额不足！本次游戏需要 ${errorData.required} 点数，当前仅剩 ${errorData.current}`);
@@ -484,6 +504,8 @@ function syncStatusToIframe() {
     cooldownRemaining: cooldownRemaining.value,
     balance: authStore.userInfo?.pointsBalance || 0,
     isImpersonated: gameStatus.value.isImpersonated || false,
+    budgetExhausted: gameStatus.value.budgetExhausted || false,
+    exhaustionMode: gameStatus.value.exhaustionMode || 'hard',
   };
   
   console.log('[Sync] Sending status to iframe:', simpleStatus);
@@ -711,6 +733,8 @@ watch(() => gameStatus.value, (status) => {
       blockDetails: status.blockDetails ? JSON.parse(JSON.stringify(status.blockDetails)) : null,
       balance: authStore.userInfo?.pointsBalance || 0,
       isImpersonated: status.isImpersonated || false,
+      budgetExhausted: status.budgetExhausted || false,
+      exhaustionMode: status.exhaustionMode || 'hard',
     };
     
     iframeRef.value.contentWindow?.postMessage({

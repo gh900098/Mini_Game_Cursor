@@ -33,7 +33,12 @@ export class GameRulesService {
     // 中优先级规则
     await this.checkMinLevel(memberId, instance);
     await this.checkBalance(memberId, instance);
-    await this.checkBudget(instance);
+
+    // 预算控制 - 如果是 soft mode (Points Only)，则不在这里抛出异常，允许进入游戏
+    // 真正的奖品拦截会在提交分数时发生
+    const budgetConfig = instance.config?.budgetConfig;
+    const isSoftMode = budgetConfig?.enable && budgetConfig?.exhaustionMode === 'soft';
+    await this.checkBudget(instance, !isSoftMode);
   }
 
   /**
@@ -257,12 +262,15 @@ export class GameRulesService {
 
   /**
    * 规则6: 预算控制 (Enterprise - Multi-level)
+   * @param instance Game instance
+   * @param throwError Whether to throw exception on failure (Hard Stop)
+   * @returns boolean True if budget is OK, False if exhausted (only if throwError is false)
    */
-  async checkBudget(instance: GameInstance): Promise<void> {
+  async checkBudget(instance: GameInstance, throwError: boolean = true): Promise<boolean> {
     const config = instance.config?.budgetConfig;
 
     // 1. Check if budget control is enabled
-    if (!config?.enable) return;
+    if (!config?.enable) return true;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -279,6 +287,8 @@ export class GameRulesService {
 
     // 3. Daily Budget Check
     if (config.dailyBudget && dailySpent >= config.dailyBudget) {
+      if (!throwError) return false;
+
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
 
@@ -291,8 +301,30 @@ export class GameRulesService {
       });
     }
 
-    // 4. Lifetime Budget Check (Enterprise Feature)
-    // We aggregate all costs for this instance
+    // 4. Monthly Budget Check
+    if (config.monthlyBudget) {
+      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const monthlyStats = await this.budgetRepo
+        .createQueryBuilder('tracking')
+        .select('SUM(tracking.totalCost)', 'total')
+        .where('tracking.instanceId = :instanceId', { instanceId: instance.id })
+        .andWhere('tracking.trackingDate >= :start', { start: firstDayOfMonth })
+        .getRawOne();
+
+      const monthlySpent = Number(monthlyStats?.total || 0);
+      if (monthlySpent >= config.monthlyBudget) {
+        if (!throwError) return false;
+
+        throw new BadRequestException({
+          code: 'MONTHLY_BUDGET_EXCEEDED',
+          message: '本月预算已用完，请联系管理员',
+          monthlyBudget: config.monthlyBudget,
+          spent: monthlySpent
+        });
+      }
+    }
+
+    // 5. Lifetime Budget Check (Enterprise Feature)
     const lifetimeStats = await this.budgetRepo
       .createQueryBuilder('tracking')
       .select('SUM(tracking.totalCost)', 'total')
@@ -300,9 +332,11 @@ export class GameRulesService {
       .getRawOne();
 
     const lifetimeSpent = Number(lifetimeStats?.total || 0);
-    const totalLimit = config.totalBudget || (todayTracking?.totalBudget); // Fallback to entity value if not in config
+    const totalLimit = config.totalBudget || (todayTracking?.totalBudget);
 
     if (totalLimit && totalLimit > 0 && lifetimeSpent >= totalLimit) {
+      if (!throwError) return false;
+
       throw new BadRequestException({
         code: 'TOTAL_BUDGET_EXCEEDED',
         message: '此活动总预算已耗尽',
@@ -310,14 +344,22 @@ export class GameRulesService {
         totalSpent: lifetimeSpent,
       });
     }
+
+    return true;
+  }
+
+  /**
+   * Helper to silently check if budget is exhausted
+   */
+  async isBudgetExhausted(instance: GameInstance): Promise<boolean> {
+    const isOk = await this.checkBudget(instance, false);
+    return !isOk;
   }
 
   /**
    * 更新预算并记录流水 (Enterprise - Ledger Integrated)
    */
   async updateBudget(instanceId: string, prizeCost: number, reference?: { type: string; id: string; metadata?: any }): Promise<void> {
-    if (prizeCost <= 0) return;
-
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -337,21 +379,23 @@ export class GameRulesService {
         });
       }
 
-      tracking.totalCost = Number(tracking.totalCost) + prizeCost;
+      tracking.totalCost = Number(tracking.totalCost) + (prizeCost || 0);
       tracking.playCount += 1;
       const savedTracking = await manager.save(tracking);
 
-      // 2. Record to Ledger (Audit Trail)
-      const ledgerRepo = manager.getRepository('BudgetLedger');
-      const ledgerEntry = ledgerRepo.create({
-        budgetId: savedTracking.id,
-        amount: prizeCost,
-        type: 'DEDUCTION',
-        referenceType: reference?.type,
-        referenceId: reference?.id,
-        metadata: reference?.metadata,
-      });
-      await manager.save('BudgetLedger', ledgerEntry);
+      // 2. Record to Ledger (Audit Trail) - Only if there's an actual cost
+      if (prizeCost > 0) {
+        const ledgerRepo = manager.getRepository('BudgetLedger');
+        const ledgerEntry = ledgerRepo.create({
+          budgetId: savedTracking.id,
+          amount: prizeCost,
+          type: 'DEDUCTION',
+          referenceType: reference?.type,
+          referenceId: reference?.id,
+          metadata: reference?.metadata,
+        });
+        await manager.save('BudgetLedger', ledgerEntry);
+      }
     });
   }
 
@@ -559,6 +603,9 @@ export class GameRulesService {
       }
     }
 
+    const budgetExhausted = await this.isBudgetExhausted(instance);
+    const budgetConfig = instance.config?.budgetConfig;
+
     const result: any = {
       canPlay,
       dailyLimit: effectiveLimit,
@@ -573,6 +620,9 @@ export class GameRulesService {
       balance: member?.pointsBalance || 0,
       costPerSpin: instance.config?.costPerSpin || 0,
       isImpersonated,
+      // Budget Info for Soft-Landing UI
+      budgetExhausted,
+      exhaustionMode: budgetConfig?.exhaustionMode || 'hard',
     };
 
     if (!canPlay && blockReason) {

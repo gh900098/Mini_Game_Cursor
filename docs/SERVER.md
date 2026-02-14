@@ -1,15 +1,15 @@
 # MiniGame Server Configuration
 
-1Panel 服务器配置和架构详情 🖥️
+1Panel server configuration and architecture details 🖥️
 
 ---
 
-## 🏗️ 服务器架构（重要！必读）
+## 🏗️ Server Architecture (Important! Must Read)
 
-**正确的架构（不要忘记！）：**
+**Correct Architecture (Do not forget!):**
 
 ```
-外部流量 (Internet)
+External traffic (Internet)
       ↓
 [Port 80/443] OpenResty (1Panel Nginx)
       ├─→ admin.xseo.me → http://127.0.0.1:3101 (Admin Panel)
@@ -24,20 +24,20 @@
       └─ minigame-redis    (internal only)
 ```
 
-**关键原则（永远不要忘记！）：**
-1. ✅ **1Panel 的 OpenResty 已经在 port 80/443** — 这是唯一的前端反向代理
-2. ✅ **Docker 容器只需要暴露内部端口** (127.0.0.1:3100, 3101, 3102)
-3. ❌ **不需要 docker-compose 里的 nginx 容器** — 会冲突 port 80！
-4. ✅ **所有域名通过 1Panel → 网站管理 → 反向代理配置**
+**Key Principles (Never Forget!):**
+1. ✅ **1Panel's OpenResty is already on port 80/443** — This is the only frontend reverse proxy.
+2. ✅ **Docker containers ONLY need to expose internal ports** (127.0.0.1:3100, 3101, 3102).
+3. ❌ **No nginx container is needed in docker-compose** — It will conflict on port 80!
+4. ✅ **All domains are configured via 1Panel → Website Management → Reverse Proxy.**
 
-**为什么不用 docker nginx：**
-- 因为 1Panel 已经提供了 OpenResty（nginx）
-- 我们通过 1Panel 的 Web UI 管理反向代理配置
-- 更简单、更统一、不会 port 冲突
+**Why not use docker nginx:**
+- Because 1Panel already provides OpenResty (nginx).
+- We manage reverse proxy configurations through the 1Panel Web UI.
+- Simpler, more unified, and no port conflicts.
 
 ---
 
-## 🖥️ 服务器信息
+## 🖥️ Server Information
 
 - **IP:** 154.26.136.139
 - **Username:** root
@@ -47,42 +47,42 @@
 - **RAM:** 23GB (20GB available)
 - **Hostname:** vmi2991856
 
-**SSH 连接方式：**
+**SSH Connection:**
 ```bash
 sshpass -p 'Abcd01923' ssh root@154.26.136.139
 ```
 
-### 🔐 1Panel 管理面板
+### 🔐 1Panel Management Panel
 - **Panel URL:** https://154.26.136.139:36699
 - **Username:** *(see DEPLOYMENT.md)*
 - **Password:** *(see DEPLOYMENT.md)*
-- **用途:** 管理 Docker、OpenResty、SSL 证书、数据库等
+- **Purpose:** Manage Docker, OpenResty, SSL certificates, databases, etc.
 
 ---
 
-## 📂 目录结构
+## 📂 Directory Structure
 
 ```
-/opt/minigame/                    # 主项目目录 (Git repo)
+/opt/minigame/                    # Main project directory (Git repo)
 ├── apps/
 │   ├── api/                      # NestJS Backend API
 │   ├── soybean-admin/            # Vue 3 Admin Panel
 │   └── web-app/                  # Vue 3 Player Web App
-├── docker-compose.prod.yml       # Docker Compose 配置 (无nginx!)
+├── docker-compose.prod.yml       # Docker Compose configuration (No nginx!)
 ├── Dockerfile.api                # API Dockerfile
 ├── Dockerfile.admin              # Admin Dockerfile
 ├── Dockerfile.webapp             # WebApp Dockerfile
-├── .env                          # 环境变量
-└── deploy.sh                     # 快速部署脚本
+├── .env                          # Environment variables
+└── deploy.sh                     # Quick deployment script
 
-/opt/1panel/www/conf.d/           # OpenResty 反向代理配置
-├── admin.xseo.me.conf            # Admin 反向代理
-├── api.xseo.me.conf              # API 反向代理 (已废弃?)
-└── game.xseo.me.conf             # Game 反向代理
+/opt/1panel/www/conf.d/           # OpenResty reverse proxy configuration
+├── admin.xseo.me.conf            # Admin reverse proxy
+├── api.xseo.me.conf              # API reverse proxy (Deprecated?)
+└── game.xseo.me.conf             # Game reverse proxy
 
 Docker Volumes:
-├── postgres_data                 # PostgreSQL 数据持久化
-└── api_uploads                   # API 上传文件存储
+├── postgres_data                 # PostgreSQL data persistence
+└── api_uploads                   # API upload file storage
 ```
 
 ---
@@ -92,14 +92,14 @@ Docker Volumes:
 ### Backend API
 - **Container:** `minigame-api`
 - **Build:** `Dockerfile.api`
-- **Port:** 127.0.0.1:3100:3000 (内部端口3000映射到外部3100)
+- **Port:** 127.0.0.1:3100:3000 (Internal port 3000 mapped to external 3100)
 - **Environment:** 
   - NODE_ENV=production
   - DB_HOST=postgres
   - REDIS_HOST=redis
   - CORS_ORIGINS=https://admin.xseo.me,https://game.xseo.me
 - **Depends on:** postgres, redis
-- **Health check:** postgres & redis 必须 healthy
+- **Health check:** postgres & redis must be healthy
 
 ### Admin Panel
 - **Container:** `minigame-admin`
@@ -118,23 +118,23 @@ Docker Volumes:
 ### PostgreSQL
 - **Container:** `minigame-postgres`
 - **Image:** postgres:15-alpine
-- **Port:** Internal only (5432 不对外暴露)
+- **Port:** Internal only (5432 not exposed externally)
 - **Database:** `minigame`
 - **User:** `postgres`
-- **Password:** 从 .env 读取
+- **Password:** Read from .env
 - **Volume:** `postgres_data:/var/lib/postgresql/data`
 
 ### Redis
 - **Container:** `minigame-redis`
 - **Image:** redis:7-alpine
-- **Port:** Internal only (6379 不对外暴露)
+- **Port:** Internal only (6379 not exposed externally)
 - **Health check:** redis-cli ping
 
 ---
 
-## 🌐 1Panel OpenResty 反向代理配置
+## 🌐 1Panel OpenResty Reverse Proxy Configuration
 
-**配置路径:** `/opt/1panel/www/conf.d/`
+**Configuration Path:** `/opt/1panel/www/conf.d/`
 
 ### admin.xseo.me
 ```nginx
@@ -188,181 +188,181 @@ server {
 }
 ```
 
-**如何修改配置：**
-1. 登录 1Panel → 网站
-2. 找到对应域名 → 配置
-3. 编辑 Nginx 配置
-4. 保存后自动 reload
+**How to Modify Configuration:**
+1. Login to 1Panel → Websites.
+2. Find corresponding domain → Configuration.
+3. Edit Nginx configuration.
+4. Save to automatically reload.
 
 ---
 
 ## 🔐 Environment Variables
 
-文件: `/opt/minigame/.env`
+File: `/opt/minigame/.env`
 
-**重要字段：**
+**Important Fields:**
 ```env
 DB_PASSWORD=postgres
 JWT_SECRET=change_me_in_production
 CORS_ORIGINS=https://admin.xseo.me,https://game.xseo.me
 ```
 
-**注意：** 敏感信息不要提交到 Git！服务器上的 .env 有实际值。
+**Note:** Sensitive information should NOT be committed to Git! The `.env` on the server has the actual values.
 
 ---
 
-## 🛠️ 常用管理命令
+## 🛠️ Common Management Commands
 
-### 查看容器状态
+### Check Container Status
 ```bash
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' | grep minigame"
 ```
 
-### 查看日志
+### View Logs
 ```bash
-# API 日志
+# API Logs
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker logs minigame-api --tail 50 -f"
 
-# Admin 日志
+# Admin Logs
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker logs minigame-admin --tail 50"
 
-# WebApp 日志
+# WebApp Logs
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker logs minigame-webapp --tail 50"
 ```
 
-### 重启服务
+### Restart Services
 ```bash
-# 重启所有 MiniGame 容器
+# Restart all MiniGame containers
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "cd /opt/minigame && docker compose -f docker-compose.prod.yml restart"
 
-# 重启单个服务
+# Restart single service
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker restart minigame-api"
 ```
 
-### 进入容器
+### Enter Containers
 ```bash
-# 进入 API 容器
+# Enter API container
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker exec -it minigame-api sh"
 
-# 进入 PostgreSQL
+# Enter PostgreSQL
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "docker exec -it minigame-postgres psql -U postgres -d minigame"
 ```
 
-### OpenResty 管理
+### OpenResty Management
 ```bash
-# 查看 OpenResty 进程
+# Check OpenResty processes
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "ps aux | grep openresty"
 
-# 查看 OpenResty 配置
+# Check OpenResty configuration
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "ls -la /opt/1panel/www/conf.d/ | grep xseo"
 
-# 测试配置语法
+# Test configuration syntax
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "openresty -t"
 
-# 重新加载配置
+# Reload configuration
 sshpass -p 'Abcd01923' ssh root@154.26.136.139 "systemctl reload openresty"
 ```
 
 ---
 
-## 🔍 故障排查 Checklist
+## 🔍 Troubleshooting Checklist
 
-### 1. Docker 服务检查
+### 1. Docker Service Check
 ```bash
 docker ps | grep minigame
-# 应该看到 5 个容器：api, admin, webapp, postgres, redis
-# 所有状态应该是 "Up X minutes/hours"
+# Should see 5 containers: api, admin, webapp, postgres, redis
+# All statuses should be "Up X minutes/hours"
 ```
 
-### 2. 端口映射检查
+### 2. Port Mapping Check
 ```bash
-# 确认端口绑定正确
+# Confirm port bindings are correct
 netstat -tlnp | grep -E '3100|3101|3102'
-# 应该显示:
+# Should display:
 # 127.0.0.1:3100 (API)
 # 127.0.0.1:3101 (Admin)
 # 127.0.0.1:3102 (WebApp)
 ```
 
-### 3. OpenResty 检查
+### 3. OpenResty Check
 ```bash
-# 确认 OpenResty 在 port 80
+# Confirm OpenResty is on port 80
 lsof -i :80
-# 应该显示 openresty 进程
+# Should display openresty process
 
-# 检查配置文件存在
+# Check configuration files exist
 ls /opt/1panel/www/conf.d/ | grep xseo
-# 应该看到 admin.xseo.me.conf 和 game.xseo.me.conf
+# Should see admin.xseo.me.conf and game.xseo.me.conf
 ```
 
-### 4. 反向代理测试
+### 4. Reverse Proxy Test
 ```bash
-# 测试 admin panel
+# Test admin panel
 curl -I http://localhost:3101
 curl -I http://admin.xseo.me
 
-# 测试 API
+# Test API
 curl http://localhost:3100/health
 curl http://admin.xseo.me/api/health
 ```
 
-### 5. 数据库连接测试
+### 5. Database Connection Test
 ```bash
-# 从 API 容器测试
+# Test from API container
 docker exec minigame-api node -e "console.log('DB_HOST:', process.env.DB_HOST)"
 ```
 
 ---
 
-## 🚨 常见问题
+## 🚨 Common Issues
 
-### 问题 1: Port 80 被占用 (docker nginx 冲突)
-**症状:** `failed to bind host port 0.0.0.0:80/tcp: address already in use`
+### Issue 1: Port 80 is Occupied (docker nginx conflict)
+**Symptoms:** `failed to bind host port 0.0.0.0:80/tcp: address already in use`
 
-**原因:** docker-compose.prod.yml 里有 nginx 服务，和 OpenResty 冲突
+**Cause:** `docker-compose.prod.yml` has an nginx service, which conflicts with OpenResty.
 
-**解决方案:**
-1. 确认 docker-compose.prod.yml **没有** nginx 服务
-2. 所有反向代理通过 1Panel OpenResty 管理
-3. 重新部署: `docker compose -f docker-compose.prod.yml up -d`
+**Solution:**
+1. Confirm `docker-compose.prod.yml` **DOES NOT** have an nginx service.
+2. Manage all reverse proxies through 1Panel OpenResty.
+3. Redeploy: `docker compose -f docker-compose.prod.yml up -d`
 
-### 问题 2: 502 Bad Gateway
-**可能原因:**
-- Docker 容器没启动
-- 端口映射错误
-- OpenResty 配置错误
+### Issue 2: 502 Bad Gateway
+**Possible Causes:**
+- Docker container not started.
+- Incorrect port mapping.
+- OpenResty configuration error.
 
-**解决步骤:**
+**Resolution Steps:**
 ```bash
-# 1. 检查容器状态
+# 1. Check container status
 docker ps | grep minigame
 
-# 2. 检查端口
+# 2. Check ports
 netstat -tlnp | grep -E '3100|3101|3102'
 
-# 3. 检查日志
+# 3. Check logs
 docker logs minigame-api --tail 50
 
-# 4. 重启容器
+# 4. Restart container
 docker restart minigame-api
 ```
 
-### 问题 3: CORS 错误
-**症状:** 前端无法调用 API，浏览器 console 显示 CORS error
+### Issue 3: CORS Error
+**Symptoms:** Frontend cannot call the API, browser console shows CORS error.
 
-**解决:**
-检查 API 容器的 CORS_ORIGINS 环境变量:
+**Resolution:**
+Check the `CORS_ORIGINS` environment variable of the API container:
 ```bash
 docker exec minigame-api sh -c 'echo $CORS_ORIGINS'
-# 应该包含: https://admin.xseo.me,https://game.xseo.me
+# Should contain: https://admin.xseo.me,https://game.xseo.me
 ```
 
-如果不对，修改 docker-compose.prod.yml 然后重启。
+If incorrect, modify `docker-compose.prod.yml` and restart.
 
-### 问题 4: 代码更新后没变化
-**可能原因:** Docker image cache
+### Issue 4: No changes after code update
+**Possible Cause:** Docker image cache.
 
-**解决:**
+**Resolution:**
 ```bash
 cd /opt/minigame
 git pull origin main
@@ -372,17 +372,18 @@ docker compose -f docker-compose.prod.yml up -d
 
 ---
 
-## 🔗 相关文档
+## 🔗 Related Documents
 
-- **部署流程:** [DEPLOYMENT.md](./DEPLOYMENT.md)
-- **功能文档:** [FEATURES.md](./FEATURES.md)
-- **故障排查:** [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+- **Deployment Flow:** [DEPLOYMENT.md](./DEPLOYMENT.md)
+- **Features:** [FEATURES.md](./FEATURES.md)
+- **Troubleshooting:** [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
 
 ---
 
 ## 📝 Notes
 
-- 该服务器还运行其他服务（ERPNext, n8n, DomainMod）
-- 所有 HTTPS 证书通过 Cloudflare 管理
-- 1Panel 提供统一的 Web 管理界面
-- 定期备份数据库和上传文件！
+- This server also runs other services (ERPNext, n8n, DomainMod).
+- All HTTPS certificates are managed via Cloudflare.
+- 1Panel provides a unified Web management interface.
+- Regularly backup databases and uploaded files!
+```

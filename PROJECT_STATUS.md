@@ -5,9 +5,9 @@
 **Server Status:** 🟢 Running. (API:3100, Admin:3101, Web:3102).
 
 ## 🎯 Current Focus (AI Memory)
-- **Active Mission:** Finalizing Tenant Isolation (BUG-002).
-- **Current Branch:** `fix/tenant-isolation-integrity`.
-- **Status:** ✅ Completed Implementation.
+- **Active Mission:** Enterprise Budget System (Phase 2: Soft-Landing Refinement) ✅
+- **Current Branch:** `main` (Merged)
+- **Status:** 🟢 Universal Social Mode Protection Live.
 
 ### Context
 Prize ledger enhancements completed and merged to main.
@@ -38,7 +38,9 @@ Prize ledger enhancements completed and merged to main.
 | BUG-002 | 🟢 Bug | Tenant Isolation (Admin/Member endpoints) | ✅ Fixed |
 | FEAT-001 | 🟢 Feat | Dynamic Probabilities (Phase 4) | ⏳ Pending |
 
+
 ## ✅ Recently Completed
+- [x] **Budget Tracking & Social Mode** (Budget Ledger + Social Mode Prize Masking - 2026-02-14)
 - [x] **Flexible Prize Type Configuration** (isPoints logic + UI layout refinements + Metadata enrichment - 2026-02-14)
 - [x] **Prize Ledger Enhancements** (Receipt upload + Details display + Value fix - 2026-02-13)
 - [x] **UI/UX Pro Max Skill Installation** (Design intelligence system - 2026-02-13)
