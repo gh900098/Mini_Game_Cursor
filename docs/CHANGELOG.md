@@ -4,6 +4,42 @@
  
  ---
 
+## [2026-02-14 Evening] Score History UI Enhancement (Reliability Update)
+
+### 🎨 UI/UX Improvement
+
+**Core Requirements:**
+- Enhance the "Score History" table to be more "reliable" and transparent.
+- Split ambiguous "Points" into "Base Value", "Multiplier", and "Final Award".
+- Visually distinguish between Costs (Red) and Rewards (Green/Blue).
+
+### 📝 Features Implemented
+
+#### 1. Financial Transparency
+- **Split Columns**:
+    - **Base Value**: The raw score from the game engine.
+    - **Multiplier**: Shows `x2`, `x5` etc. (or `-` if x1).
+    - **Final Award**: The actual net points added to the user's wallet.
+    - **Cost**: Explicitly shows the token cost (e.g., `-20`) in Red.
+
+#### 2. Visual Hierarchy
+- **Cost**: Styled with `text-error` (Red).
+- **Final Award**: Styled with `text-primary` (Bold Blue) for positive values.
+- **Prize Details**: 
+    - **Big Win/Jackpot**: Gold/Orange tags with 🏆 icon.
+    - **Physical Items**: Green/Success tags with 📦 icon.
+    - **Try Again**: Gray/Default tags to reduce visual noise.
+
+### 📊 Technical Details
+- **File**: `apps/soybean-admin/src/views/games/scores/index.vue`
+- **Typing**: Validated against `Api.Management.Score` interface.
+
+### ✅ Deployment
+- ✅ Admin service rebuilt & deployed.
+- ✅ Verified in production mode.
+
+---
+
 ## [2026-02-14 Afternoon] Tenant Isolation Integrity (BUG-002)
 
 ### 🛡️ Security Enhancement

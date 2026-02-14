@@ -29,82 +29,125 @@ const columns: DataTableColumns<Api.Management.Score> = [
     title: 'Player',
     key: 'member',
     minWidth: 120,
-    render(row: any) {
-      return <span class="font-medium whitespace-nowrap">{row.member?.username || row.member?.externalId || 'Guest'}</span>;
+    render(row) {
+      const name = row.member?.username || row.member?.externalId || 'Guest';
+      return <span class="font-medium whitespace-nowrap">{name}</span>;
     }
   },
   {
-    title: 'Game Instance',
+    title: 'Game Info',
     key: 'instance',
     minWidth: 150,
     ellipsis: { tooltip: true },
-    render(row: any) {
+    render(row) {
       return <span class="text-gray-600">{row.instance?.name || '-'}</span>;
     }
   },
   {
-    title: 'Points',
-    key: 'finalPoints',
+    title: 'Base Value',
+    key: 'score',
+    width: 100,
+    align: 'right',
+    render(row) {
+      return <span class="text-gray-600 tabular-nums">{row.score ?? 0}</span>;
+    }
+  },
+  {
+    title: 'Multi',
+    key: 'multiplier',
     width: 80,
     align: 'center',
     render(row) {
-      return <span class="font-bold text-primary text-base">{row.finalPoints ?? 0}</span>;
+      if (row.multiplier && row.multiplier > 1) {
+        return (
+          <NTag size="small" type="info" round bordered={false} class="font-bold">
+            x{row.multiplier}
+          </NTag>
+        );
+      }
+      return <span class="text-gray-300 text-xs">-</span>;
     }
   },
   {
-    title: 'Deduction',
+    title: 'Final Award',
+    key: 'finalPoints',
+    width: 120,
+    align: 'right',
+    render(row) {
+      const points = row.finalPoints ?? 0;
+      if (points > 0) {
+        return <span class="font-bold text-primary text-base tabular-nums">+{points}</span>;
+      }
+      return <span class="text-gray-400 tabular-nums">0</span>;
+    }
+  },
+  {
+    title: 'Cost',
     key: 'tokenCost',
-    width: 90,
-    align: 'center',
+    width: 100,
+    align: 'right',
     render(row) {
-      return <span class="text-error font-medium">-{row.tokenCost}</span>;
+      if (!row.tokenCost) return <span class="text-gray-300">-</span>;
+      return <span class="text-error font-medium tabular-nums">-{row.tokenCost}</span>;
     }
   },
   {
-    title: 'Metadata',
+    title: 'Prize Details',
     key: 'metadata',
-    minWidth: 300,
+    minWidth: 250,
     render(row) {
-      if (!row.metadata) return <span class="text-gray-400">-</span>;
+      if (!row.metadata) return <span class="text-gray-300">-</span>;
       
       const meta = row.metadata;
       const tags: VNode[] = [];
       
+      // "Try Again" / Lose
       if (meta.isLose === true) {
-        tags.push(<NTag size="small" type="default" round bordered={false} class="opacity-60">Try Again</NTag>);
+        tags.push(<NTag size="small" type="default" bordered={false} class="opacity-50 text-xs">Try Again</NTag>);
       }
       
+      // Prize Name (Physical or E-Gift)
       if (meta.prize) {
-        const isBig = String(meta.prize).toLowerCase().includes('big') || String(meta.prize).toLowerCase().includes('jackpot');
+        const prizeName = String(meta.prize);
+        const lowerName = prizeName.toLowerCase();
+        const isBig = lowerName.includes('big') || lowerName.includes('jackpot');
+        const isPhysical = meta.prizeType === 'PHYSICAL' || meta.isPhysical; // Fallback check
+        
+        let icon = '🎁';
+        if (isBig) icon = '🏆';
+        else if (isPhysical) icon = '📦';
+        else if (lowerName.includes('coin') || lowerName.includes('point')) icon = '🪙';
+
         tags.push(
-          <NTag size="small" type={isBig ? 'warning' : 'success'} round strong>
-            {isBig ? '🏆' : '🎁'} {meta.prize}
+          <NTag size="small" type={isBig ? 'warning' : 'success'} round strong class={isBig ? 'shadow-sm' : ''}>
+            {icon} {prizeName}
           </NTag>
         );
       }
       
-      if (row.multiplier && row.multiplier > 1) {
-        tags.push(<NTag size="small" type="info" round bordered={false}>x{row.multiplier}</NTag>);
+      // Fallback if no specific tags
+      if (tags.length === 0) {
+         return (
+            <NTooltip trigger="hover" placement="top">
+              {{
+                trigger: () => <span class="text-xs text-gray-400 cursor-help underline decoration-dotted">Raw Data</span>,
+                default: () => <pre class="text-[10px] m-0">{JSON.stringify(meta, null, 2)}</pre>
+              }}
+            </NTooltip>
+         );
       }
 
-      // If no specific tags were matched, or to show extra info
-      const hasTags = tags.length > 0;
-      
+      // Render tags + tooltip for full data
       return (
-        <NTooltip trigger="hover" placement="left">
-          {{
-            trigger: () => (
-              <NSpace size={[4, 4]} wrap>
-                {hasTags ? tags : <span class="text-xs opacity-50 font-mono">Check Details</span>}
-              </NSpace>
-            ),
-            default: () => (
-              <pre class="text-[10px] m-0 p-4px leading-tight">
-                {JSON.stringify(meta, null, 2)}
-              </pre>
-            )
-          }}
-        </NTooltip>
+        <NSpace size={[4, 0]} align="center" wrap>
+          {tags}
+             <NTooltip trigger="click" placement="left">
+              {{
+                trigger: () => <span class="i-carbon-information text-gray-300 hover:text-primary cursor-pointer text-xs" />,
+                default: () => <pre class="text-[10px] m-0 p-1">{JSON.stringify(meta, null, 2)}</pre>
+              }}
+            </NTooltip>
+        </NSpace>
       );
     }
   }

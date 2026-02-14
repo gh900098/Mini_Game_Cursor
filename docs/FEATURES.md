@@ -514,6 +514,38 @@ This system handles prize issuance, distinguishes between different prize nature
 
 ---
 
+## 📊 Score History UI System
+
+**Implementation Date:** 2026-02-14  
+**Status:** Live ✅
+
+### 📍 Location
+- **Frontend View:** `apps/soybean-admin/src/views/games/scores/index.vue`
+- **API Interface:** `Api.Management.Score`
+
+### 🎯 Feature Description
+The Score History UI provides a transparent and reliable breakdown of every game transaction. It moves away from a single "Points" column to a detailed financial ledger view.
+
+### ⚙️ Column Structure
+
+#### 1. Base Value & Multiplier
+- **Base Value**: The raw score from the game.
+- **Multiplier**: Applied multiplier (e.g., VIP tier).
+- **Formula**: `Final Award = Base Value * Multiplier`.
+
+#### 2. Final Award vs Cost
+- **Final Award**: The *gross* points awarded to the player. Displayed in **Blue/Green** (e.g., `+500`).
+- **Cost**: The cost to play the round. Displayed in **Red** (e.g., `-20`).
+- **Net Profit**: User can easily calculate `Final - Cost`.
+
+### 🎨 Visual Language
+- **🏆 Jackpot/Big Win**: Gold/Orange tags.
+- **📦 Physical Prize**: Green tags with Box icon.
+- **🪙 Points/Coins**: Default styling.
+- **Try Again**: Grayed out to reduce noise.
+
+---
+
 ## 👥 Member Management System
 
 **Implementation Date:** 2026-02-01  
