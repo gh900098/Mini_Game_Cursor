@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, Request, ForbiddenException } from '@nestjs/common';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles, RoleLevel } from '../../common/decorators/roles.decorator';
@@ -37,7 +37,13 @@ export class AdminMembersController {
     ) { }
 
     @Get()
-    async getMembers(@Query('companyId') companyId?: string) {
+    async getMembers(@Request() req: any, @Query('companyId') requestedCompanyId?: string) {
+        const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
+
+        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
+            throw new ForbiddenException('You do not have access to this company');
+        }
+
         const query = this.membersRepo
             .createQueryBuilder('member')
             .leftJoinAndSelect('member.company', 'company')
@@ -52,15 +58,29 @@ export class AdminMembersController {
     }
 
     @Get(':id')
-    async getMember(@Param('id') id: string) {
-        return this.membersRepo.findOne({
+    async getMember(@Request() req: any, @Param('id') id: string) {
+        const member = await this.membersRepo.findOne({
             where: { id },
             relations: ['company'],
         });
+
+        if (!member) return null;
+
+        // Tenant Isolation Check
+        if (!req.user.isSuperAdmin && member.companyId !== req.user.currentCompanyId) {
+            throw new ForbiddenException('You do not have access to this member');
+        }
+
+        return member;
     }
 
     @Post()
     async createMember(@Body() data: Partial<Member>, @Request() req: any) {
+        // Enforce current admin's company ID
+        if (!req.user.isSuperAdmin) {
+            data.companyId = req.user.currentCompanyId;
+        }
+
         if (data.password) {
             data.password = await bcrypt.hash(data.password, 10);
         }
@@ -87,8 +107,21 @@ export class AdminMembersController {
         @Body() data: Partial<Member>,
         @Request() req: any
     ) {
+        const member = await this.membersRepo.findOne({ where: { id } });
+        if (!member) throw new ForbiddenException('Member not found');
+
+        // Tenant Isolation Check
+        if (!req.user.isSuperAdmin && member.companyId !== req.user.currentCompanyId) {
+            throw new ForbiddenException('You do not have access to this member');
+        }
+
         if (data.password) {
             data.password = await bcrypt.hash(data.password, 10);
+        }
+
+        // Prevent moving member to another company
+        if (data.companyId) {
+            delete data.companyId;
         }
 
         await this.membersRepo.update(id, data);
@@ -171,7 +204,12 @@ export class AdminMembersController {
         @Request() req: any
     ) {
         const member = await this.membersRepo.findOne({ where: { id } });
-        if (!member) throw new Error('Member not found');
+        if (!member) throw new ForbiddenException('Member not found');
+
+        // Tenant Isolation Check
+        if (!req.user.isSuperAdmin && member.companyId !== req.user.currentCompanyId) {
+            throw new ForbiddenException('You do not have access to this member');
+        }
 
         const balanceBefore = member.pointsBalance;
         const balanceAfter = balanceBefore + body.amount;
@@ -299,7 +337,12 @@ export class AdminMembersController {
     @Roles(RoleLevel.COMPANY_ADMIN)
     async deleteMember(@Param('id') id: string, @Request() req: any) {
         const member = await this.membersRepo.findOne({ where: { id } });
-        if (!member) throw new Error('Member not found');
+        if (!member) throw new ForbiddenException('Member not found');
+
+        // Tenant Isolation Check
+        if (!req.user.isSuperAdmin && member.companyId !== req.user.currentCompanyId) {
+            throw new ForbiddenException('You do not have access to this member');
+        }
 
         // Check for related data
         const [scoreCount, playCount, txCount] = await Promise.all([

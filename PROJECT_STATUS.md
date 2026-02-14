@@ -5,9 +5,9 @@
 **Server Status:** 🟢 Running. (API:3100, Admin:3101, Web:3102).
 
 ## 🎯 Current Focus (AI Memory)
-- **Active Mission:** Ready for next user request.
-- **Current Branch:** `main`.
-- **Status:** ✅ Ready.
+- **Active Mission:** Finalizing Tenant Isolation (BUG-002).
+- **Current Branch:** `fix/tenant-isolation-integrity`.
+- **Status:** ✅ Completed Implementation.
 
 ### Context
 Prize ledger enhancements completed and merged to main.
@@ -35,10 +35,11 @@ Prize ledger enhancements completed and merged to main.
 | ID | Type | Description | Status |
 | :--- | :--- | :--- | :--- |
 | BUG-001 | 🔴 Bug | Agent Amnesia (Need to load context) | 🚧 In Progress |
-| BUG-002 | 🟡 Bug | Tenant Isolation (Check ScoresController) | ⚠️ Watchlist |
+| BUG-002 | 🟢 Bug | Tenant Isolation (Admin/Member endpoints) | ✅ Fixed |
 | FEAT-001 | 🟢 Feat | Dynamic Probabilities (Phase 4) | ⏳ Pending |
 
 ## ✅ Recently Completed
+- [x] **Flexible Prize Type Configuration** (isPoints logic + UI layout refinements + Metadata enrichment - 2026-02-14)
 - [x] **Prize Ledger Enhancements** (Receipt upload + Details display + Value fix - 2026-02-13)
 - [x] **UI/UX Pro Max Skill Installation** (Design intelligence system - 2026-02-13)
 - [x] **Member Detail UI Improvements** (Tab reordering + enhanced prize info - 2026-02-13)

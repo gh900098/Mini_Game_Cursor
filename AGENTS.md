@@ -9,10 +9,11 @@
 
 ### 1. Unified Record of Every Change
 **Every modification to the codebase MUST be recorded immediately.** 
-- Update `CHANGELOG.md` for all logic changes, bug fixes, and feature additions.
-- Update `FEATURES.md` if a feature's behavior, configuration, or impact changes.
-- Update `CODEMAP.md` if files are added, moved, or deleted.
-- Update `TROUBLESHOOTING.md` if a bug's root cause and fix are identified as recurring or high-impact.
+- Update `CHANGELOG.md` for all logic changes, bug fixes, and feature additions (English only).
+- Update `FEATURES.md` if a feature's behavior, configuration, or impact changes (English only).
+- Update `CODEMAP.md` if files are added, moved, or deleted (English only).
+- Update `TROUBLESHOOTING.md` if a bug's root cause and fix are identified as recurring or high-impact (English only).
+- **Language Standard:** All markdown documentation MUST be in English. Chinese is reserved ONLY for i18n translation files.
 
 > [!IMPORTANT]
 > This is a hard requirement for traceability and maintaining a high-fidelity "Project Memory". Never skip recording, no matter how small the change.

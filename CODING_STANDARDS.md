@@ -62,9 +62,10 @@ Before writing ANY code, you MUST read these files to understand the current sta
 - **API calls:** Use `src/service/api/*.ts`. Do not use `axios` directly in components.
 
 ## 4. Documentation is Code (The "Audit Trail")
-- **If Feature:** Update `docs/FEATURES.md` (How it works).
-- **If Bug:** Update `docs/TROUBLESHOOTING.md` (Issue -> Cause -> Solution).
-- **Always:** Update `docs/CHANGELOG.md` (Summary of changes).
+- **If Feature:** Update `docs/FEATURES.md` (How it works - In English).
+- **If Bug:** Update `docs/TROUBLESHOOTING.md` (Issue -> Cause -> Solution - In English).
+- **Always:** Update `docs/CHANGELOG.md` (Summary of changes - In English).
+- **Language Policy:** All markdown records, status updates, and comments in documentation MUST be in English.
 - **Rule:** No PR merge without docs update.
 
 ## 5. Verification (The "Double Check")

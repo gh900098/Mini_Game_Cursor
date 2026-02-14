@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards, Request, ForbiddenException } from '@nestjs/common';
 import { ScoresService } from './scores.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -24,7 +24,13 @@ export class AdminScoresController {
     ) { }
 
     @Get('all')
-    async getAllScores(@Query('companyId') companyId?: string) {
+    async getAllScores(@Request() req: any, @Query('companyId') requestedCompanyId?: string) {
+        const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
+
+        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
+            throw new ForbiddenException('You do not have access to this company');
+        }
+
         const query = this.scoresRepo
             .createQueryBuilder('score')
             .leftJoinAndSelect('score.member', 'member')
@@ -41,7 +47,13 @@ export class AdminScoresController {
     }
 
     @Get('play-attempts')
-    async getPlayAttempts(@Query('companyId') companyId?: string) {
+    async getPlayAttempts(@Request() req: any, @Query('companyId') requestedCompanyId?: string) {
+        const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
+
+        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
+            throw new ForbiddenException('You do not have access to this company');
+        }
+
         const query = this.playAttemptsRepo
             .createQueryBuilder('attempt')
             .leftJoinAndSelect('attempt.member', 'member')
@@ -58,7 +70,13 @@ export class AdminScoresController {
     }
 
     @Get('budget-tracking')
-    async getBudgetTracking(@Query('companyId') companyId?: string) {
+    async getBudgetTracking(@Request() req: any, @Query('companyId') requestedCompanyId?: string) {
+        const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
+
+        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
+            throw new ForbiddenException('You do not have access to this company');
+        }
+
         const query = this.budgetTrackingRepo
             .createQueryBuilder('budget')
             .leftJoinAndSelect('budget.instance', 'instance')
@@ -74,7 +92,13 @@ export class AdminScoresController {
     }
 
     @Get('stats')
-    async getStats(@Query('companyId') companyId?: string) {
+    async getStats(@Request() req: any, @Query('companyId') requestedCompanyId?: string) {
+        const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
+
+        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
+            throw new ForbiddenException('You do not have access to this company');
+        }
+
         // Get overall statistics
         const scoresQuery = this.scoresRepo.createQueryBuilder('score');
         const attemptsQuery = this.playAttemptsRepo.createQueryBuilder('attempt');

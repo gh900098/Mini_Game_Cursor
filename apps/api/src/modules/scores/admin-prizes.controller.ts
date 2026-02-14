@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query, Request, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query, Request, UseInterceptors, UploadedFile, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MemberPrize, PrizeStatus } from './entities/member-prize.entity';
@@ -19,15 +19,23 @@ export class AdminPrizesController {
     @Get()
     @RequirePermission('manage_games')
     async getAllPrizes(
+        @Request() req: any,
         @Query('status') status?: PrizeStatus,
         @Query('memberId') memberId?: string,
         @Query('instanceId') instanceId?: string,
     ) {
+        const companyId = req.user.currentCompanyId;
+
         const query = this.memberPrizeRepo.createQueryBuilder('prize')
             .leftJoinAndSelect('prize.member', 'member')
             .leftJoinAndSelect('prize.instance', 'instance')
             .leftJoinAndSelect('instance.company', 'company')
             .orderBy('prize.createdAt', 'DESC');
+
+        // Tenant Isolation Check: Only Super Admins see all, others restricted to their company
+        if (!req.user.isSuperAdmin) {
+            query.where('instance.companyId = :companyId', { companyId });
+        }
 
         if (status) {
             query.andWhere('prize.status = :status', { status });
@@ -102,13 +110,19 @@ export class AdminPrizesController {
 
     @Get('stats')
     @RequirePermission('manage_games')
-    async getPrizeStats() {
-        const stats = await this.memberPrizeRepo.createQueryBuilder('prize')
+    async getPrizeStats(@Request() req: any) {
+        const companyId = req.user.currentCompanyId;
+
+        const query = this.memberPrizeRepo.createQueryBuilder('prize')
             .select('prize.status', 'status')
             .addSelect('COUNT(*)', 'count')
-            .groupBy('prize.status')
-            .getRawMany();
+            .leftJoin('prize.instance', 'instance')
+            .groupBy('prize.status');
 
-        return stats;
+        if (!req.user.isSuperAdmin) {
+            query.where('instance.companyId = :companyId', { companyId });
+        }
+
+        return query.getRawMany();
     }
 }

@@ -1,52 +1,94 @@
-# MiniGame 功能目录
+# MiniGame Feature Catalog
 
-**最后更新：** 2026-02-01
+**Last Updated:** 2026-02-14
 
-这个文档记录MiniGame project的所有主要功能，包括代码位置、工作原理、依赖关系和修改影响范围。
+This document records all major features of the MiniGame project, including code locations, working principles, dependencies, and modification impact scope.
 
 ---
 
-## 📂 Project结构概览
+## 🛡️ Tenant Isolation System
+
+**Implementation Date:** 2026-02-14  
+**Status:** Implementation Complete ✅
+
+### 📍 Location
+- **Scores Isolation:** `apps/api/src/modules/scores/scores.controller.ts`
+- **Admin Scores Isolation:** `apps/api/src/modules/scores/admin-scores.controller.ts`
+- **Admin Prizes Isolation:** `apps/api/src/modules/scores/admin-prizes.controller.ts`
+- **Admin Members Isolation:** `apps/api/src/modules/members/admin-members.controller.ts`
+- **Auth Strategy:** `apps/api/src/modules/auth/strategies/jwt.strategy.ts`
+
+### 🎯 Feature Description
+Ensures strict data segregation between different companies. An administrator or member from "Company A" cannot view or modify data belonging to "Company B".
+
+### ⚙️ Core Mechanisms
+
+#### 1. JWT Property Standardization
+The application distinguishes between technical `companyId` (for members) and `currentCompanyId` (for administrators/staff):
+- **Members:** Access scope is fixed to their `companyId`.
+- **Admins:** Access scope is determined by `currentCompanyId`, allowing Super Admins to switch contexts while enforcing strict boundaries for regular staff.
+
+#### 2. Explicit Ownership Check
+All sensitive endpoints implement a manual check to verify that the resource being accessed belongs to the user's company:
+```typescript
+if (!req.user.isSuperAdmin && resource.companyId !== req.user.currentCompanyId) {
+    throw new ForbiddenException('You do not have access to this resource');
+}
+```
+
+#### 3. Forced Context Injection
+For creation and listing operations, the authenticated user's `companyId` is automatically injected into queries, overriding any attempt to query other companies via parameters.
+
+#### 4. Super Admin Bypass
+Authorized Super Admins retain the ability to view all data by passing a `companyId` query parameter, which is only honored if `isSuperAdmin` is `true`.
+
+### 🚨 Modification Impact Scope
+- **CRITICAL:** Adding new controllers or modules MUST implement these checks.
+- **SECURITY:** Any changes to `JwtStrategy` or `auth.service.ts` may affect isolation integrity.
+
+---
+
+## 📂 Project Structure Overview
 
 ```
 MiniGame/
 ├── apps/
-│   ├── web-app/          # 游戏前端（用户玩游戏）
-│   ├── soybean-admin/    # 管理后台（配置游戏）
-│   └── api/              # 后端API（NestJS）
-├── docker/               # Docker配置
-└── docs/                 # 文档
+│   ├── web-app/          # Game Frontend (User plays games)
+│   ├── soybean-admin/    # Admin Panel (Configure games)
+│   └── api/              # Backend API (NestJS)
+├── docker/               # Docker Configuration
+└── docs/                 # Documentation
 ```
 
 ---
 
-## 🎯 游戏规则系统 (Game Rules)
+## 🎯 Game Rules System
 
-**实现日期：** 2026-02-01  
-**实施阶段：** Phase 1 + Phase 2 (高优先级规则)
+**Implementation Date:** 2026-02-01  
+**Implementation Phase:** Phase 1 + Phase 2 (High priority rules)
 
-### 📍 位置
-- **主服务：** `apps/api/src/modules/scores/game-rules.service.ts`
+### 📍 Location
+- **Main Service:** `apps/api/src/modules/scores/game-rules.service.ts`
 - **Entities:**
   - `apps/api/src/modules/scores/entities/play-attempt.entity.ts`
   - `apps/api/src/modules/scores/entities/budget-tracking.entity.ts`
-- **集成点：** `apps/api/src/modules/scores/scores.service.ts`
-- **API Endpoint：** `GET /scores/status/:instanceSlug`
+- **Integration Point:** `apps/api/src/modules/scores/scores.service.ts`
+- **API Endpoint:** `GET /scores/status/:instanceSlug`
 
-### 🎯 功能说明
+### 🎯 Feature Description
 
-游戏规则系统用于控制玩家的游戏行为，包括次数限制、时间控制、等级要求等。在用户玩游戏前验证规则，防止滥用和控制成本。
+The Game Rules System is used to control players' game behavior, including attempt limits, time control, level requirements, etc. Rules are verified before users play to prevent abuse and control costs.
 
-### ⚙️ 已实现的规则
+### ⚙️ Implemented Rules
 
-#### 1. dailyLimit（每日次数限制）
-- **用途：** 限制每个用户每天最多玩X次
-- **适用场景：** 防刷分、成本控制、营造稀缺性
-- **配置字段：** `config.dailyLimit` (number, 0 = 无限制)
-- **VIP加成：** 支持VIP会员额外次数
-- **错误码：** `DAILY_LIMIT_REACHED`
+#### 1. dailyLimit (Daily Attempt Limit)
+- **Purpose:** Limit the maximum number of times each user can play per day.
+- **Use Case:** Anti-farming, cost control, creating scarcity.
+- **Config Field:** `config.dailyLimit` (number, 0 = no limit)
+- **VIP Bonus:** Supports additional attempts for VIP members.
+- **Error Code:** `DAILY_LIMIT_REACHED`
 
-**示例配置：**
+**Example Configuration:**
 ```json
 {
   "dailyLimit": 3,
@@ -56,48 +98,48 @@ MiniGame/
 }
 ```
 
-**API响应：**
+**API Response:**
 ```json
 {
   "code": "DAILY_LIMIT_REACHED",
-  "message": "您今天的游戏次数已用完（3次/天）",
+  "message": "You have exhausted your daily attempts (3/day)",
   "resetAt": "2026-02-02T00:00:00Z",
   "remaining": 0,
   "limit": 3
 }
 ```
 
-#### 2. cooldown（冷却时间）
-- **用途：** 玩一次后必须等待X秒才能再玩
-- **适用场景：** 防快速刷分、减轻服务器压力
-- **配置字段：** `config.cooldown` (number, 秒, 0 = 无冷却)
-- **错误码：** `COOLDOWN_ACTIVE`
+#### 2. cooldown (Cooldown Period)
+- **Purpose:** Users must wait X seconds after playing before they can play again.
+- **Use Case:** Prevent rapid point farming, reduce server pressure.
+- **Config Field:** `config.cooldown` (number, seconds, 0 = no cooldown)
+- **Error Code:** `COOLDOWN_ACTIVE`
 
-**API响应：**
+**API Response:**
 ```json
 {
   "code": "COOLDOWN_ACTIVE",
-  "message": "请等待45秒后再玩",
+  "message": "Please wait 45 seconds before playing again",
   "cooldownSeconds": 60,
   "remainingSeconds": 45,
   "canPlayAt": "2026-02-01T08:10:00Z"
 }
 ```
 
-#### 3. oneTimeOnly（只能玩一次）
-- **用途：** 每个用户终身只能玩一次
-- **适用场景：** 新人首单礼、限时活动、稀缺奖品
-- **配置字段：** `config.oneTimeOnly` (boolean, default: false)
-- **错误码：** `ALREADY_PLAYED`
+#### 3. oneTimeOnly (Single Play Only)
+- **Purpose:** Each user can only play once in their lifetime.
+- **Use Case:** Newcomer welcome gifts, limited-time events, rare prizes.
+- **Config Field:** `config.oneTimeOnly` (boolean, default: false)
+- **Error Code:** `ALREADY_PLAYED`
 
-#### 4. timeLimitConfig（时间限制）
-- **用途：** 限制游戏在特定时间段内开放
-- **适用场景：** 限时活动、周末专属、营业时间
-- **配置字段：**
+#### 4. timeLimitConfig (Time Limit)
+- **Purpose:** Limit the game to be open during specific time periods.
+- **Use Case:** Limited-time events, weekend specials, business hours.
+- **Config Field:**
   ```typescript
   timeLimitConfig: {
     enable: boolean;
-    startTime: Date | null;  // 活动开始时间
+    startTime: Date | null;  // Event start time
     endTime: Date | null;    // 活动结束时间
     activeDays: number[];    // [0-6] 0=周日, 1=周一...
   }
@@ -114,9 +156,9 @@ MiniGame/
 }
 ```
 
-### 🗄️ 数据库表
+### 🗄️ Database Tables
 
-#### play_attempts（游戏尝试记录）
+#### play_attempts (Game Attempt Records)
 ```sql
 CREATE TABLE play_attempts (
   id UUID PRIMARY KEY,
@@ -128,18 +170,18 @@ CREATE TABLE play_attempts (
 );
 ```
 
-**用途：** 记录每次玩游戏的尝试，用于检查 dailyLimit, cooldown, oneTimeOnly
+**Purpose:** Records every attempt to play a game, used to verify dailyLimit, cooldown, and oneTimeOnly rules.
 
-#### members 新增字段
+#### members (New Fields)
 ```sql
 ALTER TABLE members ADD COLUMN level INT DEFAULT 1;
 ALTER TABLE members ADD COLUMN vip_tier VARCHAR(20);
 ALTER TABLE members ADD COLUMN experience INT DEFAULT 0;
 ```
 
-**用途：** 支持等级系统和VIP特权（minLevel和vipTiers规则）
+**Purpose:** Supports the leveling system and VIP privileges (minLevel and vipTiers rules).
 
-#### budget_tracking（预算跟踪）
+#### budget_tracking (Budget Tracking)
 ```sql
 CREATE TABLE budget_tracking (
   id UUID PRIMARY KEY,
@@ -151,87 +193,87 @@ CREATE TABLE budget_tracking (
 );
 ```
 
-**用途：** 跟踪每日/每月奖品成本，用于budgetConfig规则（Phase 3实现）
+**Purpose:** Tracks daily/monthly prize costs, used for budgetConfig rules (Implemented in Phase 3).
 
-### 🔗 依赖关系
+### 🔗 Dependencies
 
-**依赖于：**
-- `PlayAttempt` entity - 游戏尝试记录
-- `Member` entity - 用户等级和VIP信息
-- `GameInstance` entity - 游戏配置
+**Depends on:**
+- `PlayAttempt` entity - Game attempt records
+- `Member` entity - User level and VIP information
+- `GameInstance` entity - Game configuration
 
-**被调用于：**
-- `ScoresService.submit()` - 提交分数前验证规则
-- `ScoresController.getGameStatus()` - 查询玩家状态
+**Called by:**
+- `ScoresService.submit()` - Validates rules before submitting scores
+- `ScoresController.getGameStatus()` - Queries player eligibility status
 
-### 🔧 工作原理
+### 🔧 Working Principle
 
-#### 验证流程
+#### Validation Flow
 ```
-用户点击玩游戏
+User clicks to play game
   ↓
 Frontend: POST /scores/:instanceSlug
   ↓
 ScoresController.submit()
   ↓
-GameRulesService.validatePlay() ← 验证所有规则
-  ├─ checkTimeLimit()        ← 检查时间限制
-  ├─ checkOneTimeOnly()      ← 检查是否玩过
-  ├─ checkDailyLimit()       ← 检查今日次数
-  └─ checkCooldown()         ← 检查冷却时间
-  ↓ (全部通过)
-ScoresService.submit()       ← 记录分数
+GameRulesService.validatePlay() ← Validates all rules
+  ├─ checkTimeLimit()        ← Checks time limits
+  ├─ checkOneTimeOnly()      ← Checks if already played
+  ├─ checkDailyLimit()       ← Checks today's attempts
+  └─ checkCooldown()         ← Checks cooldown timer
+  ↓ (All pass)
+ScoresService.submit()       ← Records the score
   ↓
-GameRulesService.recordAttempt() ← 记录尝试
+GameRulesService.recordAttempt() ← Logs the attempt
   ↓
-返回结果
+Return Result
 ```
 
-#### 错误处理
-如果任何规则验证失败，抛出 `BadRequestException` 并返回错误码和详细信息：
+#### Error Handling
+If any rule validation fails, a `BadRequestException` is thrown, returning an error code and details:
 ```json
 {
   "statusCode": 400,
   "error": "Bad Request",
   "code": "DAILY_LIMIT_REACHED",
-  "message": "您今天的游戏次数已用完（3次/天）",
+  "message": "You have exhausted your daily attempts (3/day)",
   "resetAt": "2026-02-02T00:00:00Z",
   "remaining": 0,
   "limit": 3
 }
 ```
 
-### 📊 数据流
+### 📊 Data Flow
 
-#### 1. 验证游戏规则
+#### 1. Validating Game Rules
 ```
 Client → POST /scores/:instanceSlug
   ↓
 GameRulesService.validatePlay(memberId, instance)
-  ├─ 查询 play_attempts 表（今日次数、上次时间）
-  ├─ 检查 instance.config 配置
-  └─ 如果违规 → throw BadRequestException
-  ↓ (通过)
-继续执行 submit()
+  ├─ Query play_attempts table (attempts today, last play time)
+  ├─ Verify instance.config settings
+  └─ If violation → throw BadRequestException
+  ↓ (Success)
+Proceed to execute submit()
 ```
 
-#### 2. 查询玩家状态
+#### 2. Querying Player Status
 ```
 Client → GET /scores/status/:instanceSlug
   ↓
 GameRulesService.getPlayerStatus(memberId, instance)
-  ├─ 查询今日已玩次数
-  ├─ 计算VIP加成
-  └─ 返回 { canPlay, dailyLimit, played, remaining, resetAt }
+  ├─ Query attempts played today
+  ├─ Calculate VIP bonus attempts
+  └─ Return { canPlay, dailyLimit, played, remaining, resetAt }
 ```
 
-#### 3. 记录游戏尝试
+#### 3. Recording Game Attempts
 ```
-submit() 成功后
+After submit() succeeds
   ↓
 GameRulesService.recordAttempt(memberId, instanceId, true, ipAddress)
   ↓
-插入 play_attempts 表
+Insert into play_attempts table
 ```
 
 ### 🐛 常见问题

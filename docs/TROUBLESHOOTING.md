@@ -1303,3 +1303,30 @@ import { $t } from '@/locales';
 - 修复了 `ConfigForm.vue` 和 `SeedService.ts` 里的所有硬编码乱码。
 
 ---
+## 🛡️ BUG-002: Cross-Tenant Data Leak (Tenant Isolation)
+
+**Implementation Date:** 2026-02-14  
+**Status:** Fixed ✅
+
+### 症状
+- 管理员可以通过手动修改 URL 或 API 参数（如 `?companyId=XYZ`）访问他不属于的公司的数据。
+- 物理奖品列表泄露了所有公司的全量数据，没有按公司过滤。
+- 玩家可以通过修改 slug 提交分数到其他公司的游戏实例。
+
+### 根本原因
+- **缺少强制过滤：** 控制层（Controllers）过于依赖参数，而没有交叉校验 JWT 中的 `companyId`。
+- **JWT 属性不一致：** 在 `JwtStrategy` 中，普通会员使用 `companyId`，但 Admin/Staff 使用 `currentCompanyId`，导致部分控制器读取了错误的属性而绕过了过滤。
+- **全局查询：** 部分 `find()` 操作没有带上 `where: { companyId }` 条件。
+
+### 解决方案
+- **属性标准化：** 统一在 Admin 控制器中使用 `req.user.currentCompanyId`。
+- **显式所有权校验：** 在 `getOne`, `update`, `delete` 等操作中，先查询资源，然后对比 `resource.companyId === req.user.currentCompanyId`。
+- **参数注入：** 在 `getAll` 类操作中，强制覆盖或追加 `companyId` 过滤条件。
+- **Super Admin 例外：** 仅当 `isSuperAdmin: true` 时才允许通过 QueryParams 手动指定 `companyId`。
+
+### 🎓 教训
+- **Trust But Verify：** 永远不要信任客户端提供的 ID 或 Slug。
+- **Defense in Depth：** 即使前端隐藏了按钮，后端 API 也必须进行所有权校验。
+- **Consistency is Key：** JWT 载荷的各种属性必须在整个项目中保持一致的业务逻辑含义。
+
+---

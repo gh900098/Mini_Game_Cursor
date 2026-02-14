@@ -4,6 +4,39 @@
  
  ---
 
+## [2026-02-14 下午] Tenant Isolation Integrity (BUG-002)
+
+### 🛡️ 安全增强
+
+**核心需求:**
+- 确保不同公司之间的数据完全隔离
+- 防止管理员通过修改 URL 或参数跨过权限访问其他公司数据
+- 修复 Scores, Prizes, Members 模块中的多处隔离漏洞
+
+### 📝 实现功能
+
+#### 1. Controller-Level Ownership Checks
+- **AdminMembersController**: 保护所有成员 CRUD 操作。手动访问其他公司的 Member ID 现在会抛出 `ForbiddenException`。
+- **AdminPrizesController**: 修复了奖品全局泄露的问题，强制按照公司过滤。
+- **AdminScoresController**: 强制过滤所有分录和统计信息，屏蔽非法的 `companyId` 参数注入。
+- **ScoresController**: 玩家现在只能向其所属公司的游戏实例提交分数，严禁通过修改 slug 进行跨店刷分。
+
+#### 2. JWT Strategy Standardization
+- 统一了 Admin 用户使用 `currentCompanyId` 而不是 `companyId` 的逻辑。
+- 确保了在所有 Admin 后台控制器中，隔离属性的一致性，消除了因属性读取错误导致的权限绕过。
+
+#### 3. Super Admin Flexibility
+- 为系统管理员保留了全局视角。通过 `isSuperAdmin` 标记，允许开发和维护人员绕过隔离限制，同时确保普通商户管理员被严格锁定。
+
+### 📊 技术细节
+- **文件位置:** 所有 admin-*.controller.ts 进行了一致性重构。
+- **验证脚本:** 编写了 `tools/repro/isolation-leak-proof.js` 用于记录和复现潜在漏洞。
+
+### ✅ 部署
+- ✅ API service rebuilt & verified
+- ✅ 核心文档完成 (FEATURES.md, TROUBLESHOOTING.md)
+- ✅ 测试验证完毕
+
 ## [2026-02-14 早上] Flexible Prize Type Configuration & UI Refinement
 
 ### ✨ 新功能

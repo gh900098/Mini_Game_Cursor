@@ -16,7 +16,7 @@ export class ScoresController {
 
     @Post(':instanceSlug')
     @UseGuards(JwtAuthGuard)
-    submit(
+    async submit(
         @Request() req: any,
         @Param('instanceSlug') instanceSlug: string,
         @Body() body: { score: number; metadata?: any },
@@ -27,21 +27,47 @@ export class ScoresController {
         if (!memberId) {
             throw new Error('This endpoint requires a Member token');
         }
+
+        const instance = await this.gameInstancesService.findBySlug(instanceSlug);
+
+        // Tenant Isolation Check
+        if (!req.user.isSuperAdmin && instance.companyId !== companyId) {
+            throw new ForbiddenException('You do not have access to this game instance');
+        }
+
         return this.scoresService.submit(memberId, instanceSlug, body.score, body.metadata, ipAddress, req.user.isImpersonated, companyId);
     }
 
     @Get('leaderboard/:instanceSlug')
-    getLeaderboard(@Param('instanceSlug') instanceSlug: string, @Query('limit') limit?: number) {
-        return this.scoresService.getLeaderboard(instanceSlug, limit);
+    @UseGuards(JwtAuthGuard)
+    async getLeaderboard(@Request() req: any, @Param('instanceSlug') instanceSlug: string, @Query('limit') limit?: number) {
+        const companyId = req.user.companyId;
+        const instance = await this.gameInstancesService.findBySlug(instanceSlug);
+
+        // Tenant Isolation Check
+        if (!req.user.isSuperAdmin && instance.companyId !== companyId) {
+            throw new ForbiddenException('You do not have access to this leaderboard');
+        }
+
+        return this.scoresService.getLeaderboard(instanceSlug, limit, companyId);
     }
 
     @Get('leaderboard/c/:companySlug/:gameSlug')
+    @UseGuards(JwtAuthGuard)
     async getLeaderboardByCompany(
+        @Request() req: any,
         @Param('companySlug') companySlug: string,
         @Param('gameSlug') gameSlug: string,
         @Query('limit') limit?: number
     ) {
+        const companyId = req.user.companyId;
         const instance = await this.gameInstancesService.findByCompanyAndSlug(companySlug, gameSlug);
+
+        // Tenant Isolation Check
+        if (!req.user.isSuperAdmin && instance.companyId !== companyId) {
+            throw new ForbiddenException('You do not have access to this leaderboard');
+        }
+
         return this.scoresService.getLeaderboard(gameSlug, limit, instance.companyId);
     }
 
