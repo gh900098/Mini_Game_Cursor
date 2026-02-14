@@ -180,7 +180,14 @@ export class ScoresService {
         if (metadata?.prizeIndex !== undefined && instance.config?.prizeList) {
             const prize = instance.config.prizeList[metadata.prizeIndex];
             if (prize?.cost) {
-                await this.gameRulesService.updateBudget(instance.id, prize.cost);
+                await this.gameRulesService.updateBudget(instance.id, prize.cost, {
+                    type: 'SCORE',
+                    id: savedScore.id,
+                    metadata: {
+                        prizeIndex: metadata.prizeIndex,
+                        prizeName: prize.name || prize.label
+                    }
+                });
             }
         }
 

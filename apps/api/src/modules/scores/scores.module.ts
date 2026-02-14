@@ -8,6 +8,7 @@ import { GameRulesService } from './game-rules.service';
 import { Score } from './entities/score.entity';
 import { PlayAttempt } from './entities/play-attempt.entity';
 import { BudgetTracking } from './entities/budget-tracking.entity';
+import { BudgetLedger } from './entities/budget-ledger.entity';
 import { MemberPrize } from './entities/member-prize.entity';
 import { GameInstancesModule } from '../game-instances/game-instances.module';
 import { MembersModule } from '../members/members.module';
@@ -16,7 +17,7 @@ import { PrizesModule } from '../prizes/prizes.module';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Score, PlayAttempt, BudgetTracking, Member, MemberPrize]),
+        TypeOrmModule.forFeature([Score, PlayAttempt, BudgetTracking, BudgetLedger, Member, MemberPrize]),
         GameInstancesModule,
         MembersModule,
         PrizesModule,

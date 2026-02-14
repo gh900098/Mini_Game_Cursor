@@ -273,6 +273,15 @@ export function fetchGetBudgetTracking(params?: { companyId?: string }) {
     });
 }
 
+/** Get budget ledger */
+export function fetchGetBudgetLedger(params?: { companyId?: string }) {
+    return request<Api.Management.BudgetLedger[]>({
+        url: '/admin/scores/budget-ledger',
+        method: 'get',
+        params
+    });
+}
+
 /** Get all games */
 export function fetchGetGames() {
     return request<Api.Management.Game[]>({

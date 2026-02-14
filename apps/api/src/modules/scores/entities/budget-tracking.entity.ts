@@ -14,8 +14,14 @@ export class BudgetTracking {
   @Column({ type: 'date' })
   trackingDate: Date;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   totalCost: number;
+
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  totalBudget: number; // Lifetime budget for this instance
+
+  @Column({ type: 'integer', default: 80 })
+  alertThreshold: number; // Percentage
 
   @Column({ type: 'integer', default: 0 })
   playCount: number;

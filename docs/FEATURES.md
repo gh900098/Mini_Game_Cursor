@@ -140,11 +140,11 @@ The Game Rules System is used to control players' game behavior, including attem
   timeLimitConfig: {
     enable: boolean;
     startTime: Date | null;  // Event start time
-    endTime: Date | null;    // 活动结束时间
-    activeDays: number[];    // [0-6] 0=周日, 1=周一...
+    endTime: Date | null;    // Event end time
+    activeDays: number[];    // [0-6] 0=Sun, 1=Mon...
   }
   ```
-- **错误码：** `NOT_STARTED`, `ENDED`, `INVALID_DAY`
+- **Error Codes:** `NOT_STARTED`, `ENDED`, `INVALID_DAY`
 
 **示例：只在周末开放**
 ```json
@@ -276,41 +276,41 @@ GameRulesService.recordAttempt(memberId, instanceId, true, ipAddress)
 Insert into play_attempts table
 ```
 
-### 🐛 常见问题
+### 🐛 FAQs
 
-**Q: 如何测试规则？**
-A: 使用Postman或curl发送POST请求：
+**Q: How to test rules?**
+A: Use Postman or curl to send POST requests:
 ```bash
-# 1. 正常玩游戏
+# 1. Play game normally
 curl -X POST http://api.xseo.me/scores/test-wheel \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"score": 10}'
 
-# 2. 查询状态
+# 2. Query status
 curl http://api.xseo.me/scores/status/test-wheel \
   -H "Authorization: Bearer YOUR_TOKEN"
 
-# 3. 触发每日限制（连续玩3次后）
-# 应该返回 DAILY_LIMIT_REACHED 错误
+# 3. Trigger daily limit (after playing 3 times)
+# Should return DAILY_LIMIT_REACHED error
 ```
 
-**Q: 为什么我的规则不生效？**
-A: 检查以下几点：
-1. ✅ 游戏instance的config里有配置这个规则吗？
-2. ✅ 规则的值是否正确？（例如 dailyLimit: 0 表示无限制）
-3. ✅ API已经重启了吗？（修改代码后需要重启）
-4. ✅ Database表已经创建了吗？（play_attempts, budget_tracking）
+**Q: Why are my rules not working?**
+A: Check the following:
+1. ✅ Is this rule configured in the game instance config?
+2. ✅ Is the rule value correct? (e.g., dailyLimit: 0 means no limit)
+3. ✅ Has the API been restarted? (Code changes require restart)
+4. ✅ Are the database tables created? (play_attempts, budget_tracking)
 
-**Q: 如何重置玩家的游戏记录？**
-A: 直接删除 play_attempts 表的记录：
+**Q: How to reset player game records?**
+A: Directly delete records from the play_attempts table:
 ```sql
 DELETE FROM play_attempts 
 WHERE member_id = 'xxx' AND instance_id = 'yyy';
 ```
 
-**Q: VIP额外次数如何配置？**
-A: 在game instance的config里添加 vipTiers：
+**Q: How to configure VIP extra attempts?**
+A: Add vipTiers to the game instance config:
 ```json
 {
   "dailyLimit": 3,
@@ -322,12 +322,11 @@ A: 在game instance的config里添加 vipTiers：
 }
 ```
 
-然后更新member的vip_tier字段：
+Then update the member's vip_tier field:
 ```sql
 UPDATE members SET vip_tier = 'Gold' WHERE id = 'xxx';
 ```
 
-### 🚨 修改影响范围
 
 #### ✅ 安全修改（不影响其他功能）
 - 调整规则的阈值（dailyLimit, cooldown的具体数值）
@@ -349,84 +348,84 @@ UPDATE members SET vip_tier = 'Gold' WHERE id = 'xxx';
 - **API错误码：** `minigame/API.md`（待创建）
 - **故障排查：** `minigame/TROUBLESHOOTING.md`
 
-### ⚙️ 中优先级规则（Phase 3）
+### ⚙️ Medium Priority Rules (Phase 3)
 
-#### 5. minLevel（等级要求）
-- **用途：** 只有达到X级的用户才能玩
-- **适用场景：** 游戏门槛、会员特权、防止新号刷分
-- **配置字段：** `config.minLevel` (number, 0 = 无等级要求)
-- **错误码：** `LEVEL_TOO_LOW`
+#### 5. minLevel (Level Requirements)
+- **Purpose:** Only users who reach Level X can play
+- **Use Case:** Game threshold, member privileges, prevent botting
+- **Config Field:** `config.minLevel` (number, 0 = no level requirement)
+- **Error Code:** `LEVEL_TOO_LOW`
 
-**API响应：**
+**API Response:**
 ```json
 {
   "statusCode": 403,
   "code": "LEVEL_TOO_LOW",
-  "message": "此游戏需要达到等级5",
+  "message": "This game requires Level 5",
   "required": 5,
   "current": 2,
-  "missing": 3
+  "offset": 3
 }
 ```
 
-#### 6. budgetConfig（预算控制）
-- **用途：** 控制每日/每月发放的奖品总价值
-- **适用场景：** 成本控制、防止营销成本失控
-- **配置字段：**
+#### 6. budgetConfig (Budget Control)
+- **Purpose:** Control total value of prizes issued daily/monthly
+- **Use Case:** Cost control, prevent marketing budget overflow
+- **Config Field:**
   ```typescript
   budgetConfig: {
     enable: boolean;
-    dailyBudget: number;   // 每日预算（元）
-    monthlyBudget: number; // 每月预算（元）
+    dailyBudget: number;   // Daily budget
+    monthlyBudget: number; // Monthly budget
   }
   ```
-- **错误码：** `DAILY_BUDGET_EXCEEDED`, `MONTHLY_BUDGET_EXCEEDED`
-- **数据记录：** 每次玩家赢奖后，记录到 budget_tracking 表
+- **Error Code:** `DAILY_BUDGET_EXCEEDED`, `MONTHLY_BUDGET_EXCEEDED`
+- **Data Recording:** Recorded to the `budget_tracking` table after every win
 
-**如何使用：**
-- 在 prizeList 配置里添加 `cost` 字段：
+**How to use:**
+- Add the `cost` field in `prizeList` configuration:
   ```json
   {
     "icon": "💎",
-    "label": "大奖",
+    "label": "Grand Prize",
     "weight": 10,
     "value": 1000,
-    "cost": 100  // 这个奖品成本100元
+    "cost": 100  // This prize costs 100
   }
   ```
 - Backend会自动跟踪总成本
 
-### 🎮 低优先级规则（Phase 4）
+### 🎮 Low Priority Rules (Phase 4)
 
-#### 7. dynamicProbConfig（动态概率调整）
-- **用途：** 连输X次后，提高赢的概率（保底机制）
-- **适用场景：** 游戏平衡、提升玩家体验
-- **配置字段：**
+#### 7. dynamicProbConfig (Dynamic Probability Adjustment)
+- **Purpose:** Increase win probability after X consecutive losses (Pity mechanism)
+- **Use Case:** Game balancing, player experience improvement
+- **Config Field:**
   ```typescript
   dynamicProbConfig: {
     enable: boolean;
-    lossStreakLimit: number;  // 连输几次触发
-    lossStreakBonus: number;  // 增加概率百分比
+    lossStreakLimit: number;  // Triggered after X losses
+    lossStreakBonus: number;  // Bonus probability percentage
   }
   ```
 
-**工作原理：**
-- Frontend在决定prize时调用 `getDynamicWeights()`
-- Backend分析最近10次游戏记录
-- 如果连输达到阈值，调整权重：
-  - 输奖品权重 × 0.5
-  - 赢奖品权重 × (1 + bonus%)
+**Working Principle:**
+- Frontend calls `getDynamicWeights()` when determining a prize
+- Backend analyzes the last 10 game records
+- If the loss streak hits the threshold, adjust weights:
+  - Loss prize weight × 0.5
+  - Win prize weight × (1 + bonus%)
 
-**示例：**
+**Example:**
 ```typescript
-// 原始权重：[40, 20, 30, 10]
-// 连输3次后调整：[40*1.2, 20*1.2, 30*0.5, 10*1.2] = [48, 24, 15, 12]
+// Original weights: [40, 20, 30, 10]
+// After 3 losses: [40*1.2, 20*1.2, 30*0.5, 10*1.2] = [48, 24, 15, 12]
 ```
 
-#### 8. vipTiers（VIP特权）
-- **用途：** VIP会员享受额外次数和奖励倍数
-- **适用场景：** 会员差异化、增加付费动力
-- **配置字段：**
+#### 8. vipTiers (VIP Privileges)
+- **Purpose:** VIP members enjoy extra attempts and reward multipliers
+- **Use Case:** Member differentiation, increased incentive to pay
+- **Config Field:**
   ```typescript
   vipTiers: [
     { name: "Bronze", extraSpins: 0, multiplier: 1 },
@@ -436,243 +435,243 @@ UPDATE members SET vip_tier = 'Gold' WHERE id = 'xxx';
   ]
   ```
 
-**效果：**
-- **extraSpins:** 增加每日游戏次数
-  - 普通用户：dailyLimit = 3
-  - Gold VIP：dailyLimit = 3 + 2 = 5
-- **multiplier:** 奖励积分倍数
-  - 原始分数：10
-  - Gold VIP：10 × 1.5 = 15
+**Effect:**
+- **extraSpins:** Increases daily game attempts
+  - Standard User: `dailyLimit` = 3
+  - Gold VIP: `dailyLimit` = 3 + 2 = 5
+- **multiplier:** Reward points multiplier
+  - Base score: 10
+  - Gold VIP: 10 × 1.5 = 15
 
-**如何设置VIP：**
+**How to set VIP:**
 ```sql
 UPDATE members SET vip_tier = 'Gold' WHERE id = 'user-id';
 ```
 
-### ✅ 所有规则已实现！
+### ✅ All Rules Implemented!
 
-**Phase 1+2 (高优先级):** dailyLimit, cooldown, oneTimeOnly, timeLimitConfig  
-**Phase 3 (中优先级):** minLevel, budgetConfig  
-**Phase 4 (低优先级):** dynamicProbConfig, vipTiers
+**Phase 1+2 (High Priority):** dailyLimit, cooldown, oneTimeOnly, timeLimitConfig  
+**Phase 3 (Medium Priority):** minLevel, budgetConfig  
+**Phase 4 (Low Priority):** dynamicProbConfig, vipTiers
 
-**状态：** Backend代码完成 ✅  
-**下一步：** 测试验证（见 `minigame/TESTING-PLAN.md`）
-
----
+**Status:** Backend code complete ✅  
+**Next Step:** Testing/Verification (See `minigame/TESTING-PLAN.md`)
 
 ---
 
-## 🎁 奖品与元数据系统 (Prizes & Metadata)
+---
 
-**实现日期：** 2026-02-14  
-**主要功能：** 柔性奖品类型、积分校准、自动化元数据增强、人性化标签展示
+## 🎁 Prizes & Metadata System
 
-### 📍 位置
-- **Backend Service:** `apps/api/src/modules/scores/scores.service.ts` (发放逻辑)
+**Implementation Date:** 2026-02-14  
+**Primary Features:** Flexible prize types, points calibration, automatic metadata enrichment, human-friendly tags
+
+### 📍 Location
+- **Backend Service:** `apps/api/src/modules/scores/scores.service.ts` (Issuance logic)
 - **Backend Entities:** 
   - `apps/api/src/modules/prizes/entities/prize-type.entity.ts`
   - `apps/api/src/modules/scores/entities/score.entity.ts`
 - **Game Templates:** 
   - `apps/api/src/modules/game-instances/templates/spin-wheel.template.ts`
-  - `apps/api/src/modules/game-instances/game-instances.controller.ts` (V1 模板)
+  - `apps/api/src/modules/game-instances/game-instances.controller.ts` (V1 Template)
 - **Frontend Views:**
   - `apps/soybean-admin/src/views/games/scores/index.vue`
   - `apps/soybean-admin/src/views/games/member-detail/[id].vue`
 
-### 🎯 功能说明
+### 🎯 Feature Description
 
-该系统不仅负责奖品的发放，还负责区分不同奖品的性质（积分型 vs 非积分型），并自动补全和美化获奖元数据，确保管理后台的数据一目了然。
+This system handles prize issuance, distinguishes between different prize natures (points-based vs. non-points-based), and automatically enriches获奖 metadata to ensure admin panel data is clear and professional.
 
-### ⚙️ 核心机制
+### ⚙️ Core Mechanisms
 
-#### 1. 柔性奖品类型 (Flexible Prize Types)
-- **isPoints 属性**：`PrizeType` 实体新增 `isPoints` 字段。
-- **发放逻辑**：`ScoresService.submit()` 会检查奖品类型。
-  - `isPoints: true` (如 Points)：`finalPoints = winningScore`，计入会员余额和统计。
-  - `isPoints: false` (如 Item, Cash)：`finalPoints = 0`，记录获奖但不影响积分余额。
-- **解决问题**：防止物理奖品（如 iPhone）的价值被错误地累加到会员的 "Total Points" 中。
+#### 1. Flexible Prize Types
+- **isPoints Property**: `PrizeType` entity added `isPoints` field.
+- **Issuance Logic**: `ScoresService.submit()` checks the prize type.
+  - `isPoints: true` (e.g., Points): `finalPoints = winningScore`, credited to member balance and stats.
+  - `isPoints: false` (e.g., Item, Cash): `finalPoints = 0`, records the win but does not affect points balance.
+- **Problem Solved**: Prevents physical prizes (e.g., iPhone) from being incorrectly summed into the member's "Total Points".
 
-#### 2. 自动化元数据增强 (Metadata Enrichment)
-- **问题**：客户端有时会发送空的 `metadata.prize`，导致后台显示不全。
-- **解决方案**：后端 `ScoresService` 实施多层降级逻辑：
+#### 2. Automatic Metadata Enrichment
+- **Problem**: Clients sometimes send empty `metadata.prize`, leading to incomplete admin logs.
+- **Solution**: Backend `ScoresService` implements multi-layer fallback logic:
   ```typescript
   metadata.prize = label || prizeName || type || prizeType || 'Win';
   ```
-- **工作原理**：无论客户端是否发送名称，后端都会确保数据库中存入描述性的奖品名称。
+- **Working Principle**: Regardless of client input, the backend ensures descriptive prize names are stored.
 
-#### 3. 人性化标签展示 (Friendly Metadata Display)
-- **前端转换**：Admin UI 将原始 JSON 元数据转换为易读的彩色标签（Tag）。
-- **交互**：点击或悬停在标签上可查看完整 JSON 详情。
-- **显示内容**：自动识别并显示 "Winner", "Multiplier", "Deduction", "Item Name" 等关键信息。
+#### 3. Human-Friendly Tags
+- **Frontend Transformation**: Admin UI converts raw JSON metadata into readable color-coded Tags.
+- **Interaction**: Click or hover on tags to view full JSON details.
+- **Display Content**: Automatically identifies and displays "Winner", "Multiplier", "Deduction", "Item Name", etc.
 
-#### 4. 专业表格布局 (Professional Table Layout)
-- **防换行日期**：Time 列固定 **200px** 宽度并强制不换行 (`whitespace-nowrap`)。
-- **固定布局**：Time 列在左右滚动时始终固定在左侧，提升管理效率。
+#### 4. Professional Table Layout
+- **Anti-Wrap Dates**: Time column fixed at **200px** width with `whitespace-nowrap`.
+- **Fixed Layout**: Time column remains fixed on the left during horizontal scrolling.
 
-### 🚨 修改影响范围
-- **统计逻辑**：修改 `isPoints` 会直接影响全局仪表盘和会员详情的分数计算。
-- **游戏模板**：修改模板中的 `labels` 生成逻辑会影响新产生的 Score 记录。
+### 🚨 Modification Impact Scope
+- **Statistics Logic**: Modifying `isPoints` directly affects global dashboard and member detail point calculations.
+- **Game Templates**: Modifying `labels` generation logic in templates affects new Score records.
 
 ---
 
-## 👥 会员管理系统 (Member Management)
+## 👥 Member Management System
 
-**实现日期：** 2026-02-01  
-**状态：** 功能完善 🟢
+**Implementation Date:** 2026-02-01  
+**Status:** Fully Functional 🟢
 
-### 📍 位置
+### 📍 Location
 - **Backend Controller:** `apps/api/src/modules/members/admin-members.controller.ts`
 - **Backend Service:** `apps/api/src/modules/members/members.service.ts`
 - **Frontend List:** `apps/soybean-admin/src/views/management/member/index.vue`
 - **Frontend Detail:** `apps/soybean-admin/src/views/management/member/detail.vue`
 - **API Service:** `apps/api/src/service/api/management.ts`
 
-### 🎯 功能说明
-管理平台所有注册会员和游客。支持查看会员详情、积分历史、游戏记录、登录历史，以及手动调整积分和启用/禁用账号。
+### 🎯 Feature Description
+Manages all registered members and guests. Supports viewing member details, point history, play records, login history, and manual point adjustments or account enabling/disabling.
 
-### ⚙️ 核心功能
-1. **统一 ID 系统**：全面使用 UUID (String) 作为会员唯一标识，确保多端和第三方集成的兼容性。
-2. **状态切换**：支持通过 `isActive` 字段即时启用或禁用会员账号。
-3. **积分管理**：支持管理员手动加减积分，并要求填写调整原因，所有操作记录入库并同步到审计日志。
-4. **多维度历史记录**：
-   - 积分交易记录 (Credit History)
-   - 游戏参与记录 (Play History)
-   - 分数记录 (Scores)
-   - 登录足迹 (Login History)
+### ⚙️ Core Features
+1. **Unified ID System**: Uses UUID (String) as the unique identifier for members, ensuring compatibility across multiple platforms and 3rd party integrations.
+2. **Status Toggle**: Supports instant enabling or disabling of member accounts via the `isActive` field.
+3. **Points Management**: Allows admins to manually add/subtract points with mandatory reason fields; all operations are logged in the database and audit trail.
+4. **Multidimensional History**:
+   - Credit Transaction History
+   - Play History
+   - Score Records
+   - Login Footprints
 
-### 🚨 修改影响范围
-- **API Auth**: 禁用的会员无法获取 Token 或进行外部验证。
-- **Game Rules**: 游戏规则验证会检查会员状态。
-- **Audit Logic**: 所有关键修改都会触发审计日志记录。
+### 🚨 Modification Impact Scope
+- **API Auth**: Disabled members cannot obtain tokens or perform external validation.
+- **Game Rules**: Rule validation checks member status.
+- **Audit Logic**: All critical modifications trigger audit logging.
 
 ---
 
 ## 🎮 游戏前端 (web-app)
 
-### 1. 游戏Iframe容器
+### 1. Game Iframe Container
 
-#### 📍 位置
-- **主文件：** `apps/web-app/src/views/game/index.vue`
-- **相关文件：**
-  - `store/auth.ts` - 用户认证
-  - `store/settings.ts` - 音效设置
-  - `service/api.ts` - API调用
+#### 📍 Location
+- **Main File:** `apps/web-app/src/views/game/index.vue`
+- **Related Files:**
+  - `store/auth.ts` - User authentication
+  - `store/settings.ts` - Audio settings
+  - `service/api.ts` - API calls
 
-#### 🎯 功能说明
-游戏的主容器，通过iframe加载实际的游戏引擎。处理：
-- 游戏实例加载
-- 用户认证和token验证
-- 全屏模式
-- 音效控制（header和浮动按钮）
-- Loading状态和错误处理
+#### 🎯 Feature Description
+The primary container for games, loading the actual game engine via iframe. Handles:
+- Game instance loading
+- User authentication and token validation
+- Fullscreen mode
+- Audio control (header and floating button)
+- Loading state and error handling
 
-#### ⚙️ 配置项（从game instance读取）
-- `showSoundButton` (boolean, default: true) - 显示浮动音效按钮
-- `soundButtonOpacity` (number 0-100, default: 80) - 音效按钮透明度
-- `hideHeader` (query param) - 隐藏顶部header
+#### ⚙️ Configuration (from game instance)
+- `showSoundButton` (boolean, default: true) - Show floating audio button
+- `soundButtonOpacity` (number 0-100, default: 80) - Audio button opacity
+- `hideHeader` (query param) - Hide top header
 
-#### 🔗 依赖关系
-**依赖于：**
-- `authStore` - 获取用户token
-- `settingsStore` - 音效开关状态
-- API endpoint: `/api/game-instances/:slug/play` - 获取游戏URL
+#### 🔗 Dependencies
+**Depends on:**
+- `authStore` - Get user token
+- `settingsStore` - Audio toggle state
+- API endpoint: `/api/game-instances/:slug/play` - Get game URL
 
-**被依赖于：**
-- Router (`/game/:id`) - 导航到游戏页面
+**Referenced by:**
+- Router (`/game/:id`) - Navigation to the game page
 
-#### 🔧 工作原理
-1. 从route params获取game instance slug
-2. 调用API获取游戏配置和iframe URL
-3. 验证用户token（如果需要登录）
-4. 在iframe中加载游戏引擎
-5. 提供音效控制和全屏按钮
-6. postMessage通信（如果游戏引擎需要）
+#### 🔧 Working Principle
+1. Get game instance slug from route params
+2. Call API to get game configuration and iframe URL
+3. Validate user token (if login required)
+4. Load game engine in iframe
+5. Provide audio control and fullscreen button
+6. `postMessage` communication (if required by game engine)
 
-#### 📊 数据流
+#### 📊 Data Flow
 ```
 Route (/game/:id) 
   → API (/api/game-instances/:slug)
-  → 获取游戏配置
-  → 构建iframe URL
-  → iframe加载游戏引擎
-  → postMessage通信（设置token等）
+  → Fetch game config
+  → Build iframe URL
+  → Iframe loads game engine
+  → postMessage communication (set token, etc.)
 ```
 
-#### 🐛 常见问题
-1. **问题：** iframe加载失败
-   **原因：** Game instance不存在或未发布
-   **解决：** 检查slug是否正确，检查instance状态
+#### 🐛 FAQs
+1. **Problem:** Iframe fails to load
+   **Reason:** Game instance doesn't exist or is not published
+   **Solution:** Check slug correctness, check instance status
 
-2. **问题：** 音效按钮不显示
-   **原因：** `showSoundButton` 配置为false
-   **解决：** 在Admin Panel编辑game instance → Effects tab → 启用音效按钮
+2. **Problem:** Audio button not showing
+   **Reason:** `showSoundButton` configured as false
+   **Solution:** Edit game instance in Admin Panel → Effects tab → Enable audio button
 
-#### 🚨 修改影响范围
-**修改这个文件会影响：**
-- ✅ 游戏加载流程
-- ✅ 音效控制UI
-- ✅ 全屏功能
-- ❌ 不影响: 实际的游戏逻辑（在iframe内）
+#### 🚨 Modification Impact Scope
+**Modifying this file affects:**
+- ✅ Game loading flow
+- ✅ Audio control UI
+- ✅ Fullscreen functionality
+- ❌ Does not affect: Actual game logic (inside iframe)
 
-**需要rebuild：**
+**Requires Rebuild:**
 - `web-app` frontend
 
-**需要测试：**
-- 访问 `/game/:slug` 测试游戏加载
-- 测试音效按钮显示和功能
-- 测试全屏模式
+**Requires Test:**
+- Visit `/game/:slug` to test game loading
+- Test audio button display and functionality
+- Test fullscreen mode
 
 ---
 
-### 2. 游戏状态显示系统 (Floating Status Display)
+### 2. Floating Status Display
 
-**实现日期：** 2026-02-01
+**Implementation Date:** 2026-02-01
 
-#### 📍 位置
-- **主文件：** `apps/web-app/src/views/game/index.vue`
-- **API Endpoint：** `GET /api/scores/status/:instanceSlug`
-- **Backend Service：** `apps/api/src/modules/scores/game-rules.service.ts` → `getPlayerStatus()`
+#### 📍 Location
+- **Main File:** `apps/web-app/src/views/game/index.vue`
+- **API Endpoint:** `GET /api/scores/status/:instanceSlug`
+- **Backend Service:** `apps/api/src/modules/scores/game-rules.service.ts` → `getPlayerStatus()`
 
-#### 🎯 功能说明
-在游戏页面左上角显示浮动状态卡，实时显示玩家的游戏状态、剩余次数、时间限制、冷却时间等信息。支持收起/展开，颜色自动根据状态变化（红=blocked, 黄=warning, 蓝/紫=normal）。
+#### 🎯 Feature Description
+Displays a floating status card at the top-left of the game page, showing real-time player status, remaining attempts, time limits, cooldowns, etc. Supports collapse/expand; colors change based on status (Red=blocked, Yellow=warning, Blue/Purple=normal).
 
-**同时支持Live Preview模式** - Admin在配置游戏时可以在预览界面看到完整的状态信息。
+**Live Preview Support** - Admin can see full status information in the preview interface while configuring games.
 
-#### 🎨 显示内容
+#### 🎨 Display Content
 
 **1. One Time Only Warning**
-- 显示：⚠️ One Time Only (Used)
-- 条件：`gameStatus.oneTimeOnly === true`
-- 如果已玩过：显示 "(Used)" 标签（红色）
-- **隐藏每日次数显示** - 因为仅限一次是最高优先级
+- Display: ⚠️ One Time Only (Used)
+- Condition: `gameStatus.oneTimeOnly === true`
+- If already played: Displays "(Used)" tag (Red)
+- **Hides Daily Limit** - One-time only takes precedence.
 
-**2. Daily Limit (每日次数)**
-- 显示：🎮 3/5 (剩余/总数)
-- 条件：`!oneTimeOnly && dailyLimit > 0`
-- 颜色逻辑：
-  - 0次剩余 → 红色 (#ef4444)
-  - 1次剩余 → 黄色 (#facc15)
-  - 2+次剩余 → 蓝色/白色
+**2. Daily Limit**
+- Display: 🎮 3/5 (Remaining/Total)
+- Condition: `!oneTimeOnly && dailyLimit > 0`
+- Color Logic:
+  - 0 remaining → Red (#ef4444)
+  - 1 remaining → Yellow (#facc15)
+  - 2+ remaining → Blue/White
 
-**3. Time Limit (时间限制)**
-- 显示：📅 Mon, Tue, Wed 10:00-20:00
-- 条件：`timeLimitConfig.enable === true`
-- 颜色逻辑：
-  - **不在开放时间** → 红色 (#ef4444)
-  - **在开放时间内** → 蓝色 (#60a5fa)
-- 格式化：
+**3. Time Limit**
+- Display: 📅 Mon, Tue, Wed 10:00-20:00
+- Condition: `timeLimitConfig.enable === true`
+- Color Logic:
+  - **Outside active time** → Red (#ef4444)
+  - **Inside active time** → Blue (#60a5fa)
+- Formatting:
   - Day names: Sun, Mon, Tue, Wed, Thu, Fri, Sat
-  - Time range: HH:MM-HH:MM (24小时制)
+  - Time range: HH:MM-HH:MM (24h format)
 
-**4. Cooldown Timer (冷却倒计时)**
-- 显示：⏱️ 1m 30s
-- 条件：`cooldownRemaining > 0`
-- 实时倒计时 - 每秒更新
-- 颜色：黄色 (#facc15) - warning状态
+**4. Cooldown Timer**
+- Display: ⏱️ 1m 30s
+- Condition: `cooldownRemaining > 0`
+- Real-time countdown - updates every second
+- Color: Yellow (#facc15) - warning state
 
-**5. Block Reason (阻止原因)**
-- 显示在红色警告框内
-- 所有文字为英文：
+**5. Block Reason**
+- Displayed inside a red warning box
+- All text in English:
   - "Level too low! Need Lv5"
   - "Event not started yet"
   - "Event has ended"
@@ -680,22 +679,22 @@ Route (/game/:id)
   - "Already played (one time only)"
   - "No attempts left today"
 
-#### 🔘 Collapsed Button (收起状态)
-- 小圆形按钮，显示信息图标
-- 颜色状态：
-  - **红色 (danger):**
-    - `canPlay === false` (任何阻止原因)
+#### 🔘 Collapsed Button
+- Small circular button with information icon
+- Color states:
+  - **Red (danger):**
+    - `canPlay === false` (any block reason)
     - `oneTimeOnly && hasPlayedEver`
-    - `!isInActiveTime` (不在时间范围)
-    - `remaining === 0` (次数用完)
-  - **黄色 (warning):**
+    - `!isInActiveTime` (outside time range)
+    - `remaining === 0` (attempts exhausted)
+  - **Yellow (warning):**
     - `cooldownRemaining > 0`
     - `remaining === 1`
-  - **紫色 (normal):** 正常状态
+  - **Purple (normal):** Normal state
 
-#### 📊 API Response结构
+#### 📊 API Response Structure
 
-**Backend返回的完整status：**
+**Full Backend Status Response:**
 ```json
 {
   "canPlay": false,
@@ -705,7 +704,7 @@ Route (/game/:id)
   "resetAt": "2026-02-02T00:00:00.000Z",
   "blockReason": "ALREADY_PLAYED",
   "blockDetails": {
-    "message": "您已经玩过此游戏，每人仅限一次机会"
+    "message": "You have already played this game, only one attempt allowed per person"
   },
   "oneTimeOnly": true,
   "hasPlayedEver": true,
@@ -720,11 +719,11 @@ Route (/game/:id)
 }
 ```
 
-#### ⚙️ Frontend实现细节
+#### ⚙️ Frontend Implementation Details
 
 **Computed Properties:**
 ```javascript
-// 按钮折叠状态的颜色
+// Color of the collapsed button
 collapsedButtonStatus = computed(() => {
   if (!canPlay && blockReason) return 'danger';
   if (oneTimeOnly && hasPlayedEver) return 'danger';
@@ -735,7 +734,7 @@ collapsedButtonStatus = computed(() => {
   return 'normal';
 });
 
-// 次数文字颜色
+// Attempts text color
 remainingColor = computed(() => {
   if (remaining === 0) return '#ef4444'; // Red
   if (remaining === 1) return '#facc15'; // Yellow
@@ -745,7 +744,7 @@ remainingColor = computed(() => {
 
 **Helper Functions:**
 ```javascript
-// 格式化时间限制显示
+// Formatting time limit display
 formatTimeLimit(config) {
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const days = config.activeDays.map(d => dayNames[d]).join(', ');
@@ -753,7 +752,7 @@ formatTimeLimit(config) {
   return `${days} ${time}`;
 }
 
-// 格式化冷却时间
+// Formatting cooldown time
 formatCooldown(seconds) {
   if (seconds < 60) return `${seconds}s`;
   const mins = Math.floor(seconds / 60);
@@ -762,65 +761,65 @@ formatCooldown(seconds) {
 }
 ```
 
-#### 🔄 实时更新逻辑
+#### 🔄 Real-time Update Logic
 
-**1. 初次加载：**
+**1. Initial Load:**
 ```javascript
 onMounted(() => {
-  fetchGameStatus(); // 获取初始状态
+  fetchGameStatus(); // Initial fetch
   if (cooldownRemaining > 0) {
-    startCooldownTimer(); // 启动倒计时
+    startCooldownTimer(); // Start countdown
   }
 });
 ```
 
-**2. Cooldown倒计时：**
+**2. Cooldown Countdown:**
 ```javascript
 cooldownInterval = setInterval(() => {
   if (cooldownRemaining.value > 0) {
     cooldownRemaining.value--;
-    // 更新iframe内的游戏引擎
+    // Update game engine inside iframe
     postMessage({ type: 'game-status-update', cooldownRemaining });
   } else {
     clearInterval(cooldownInterval);
-    fetchGameStatus(); // 重新获取状态
+    fetchGameStatus(); // Re-fetch status
   }
 }, 1000);
 ```
 
-**3. Refresh按钮：**
-- 手动刷新状态
-- 动画：按钮旋转
+**3. Refresh Button:**
+- Manually refresh status
+- Animation: Button rotation
 
-#### 🎯 Live Preview支持
+#### 🎯 Live Preview Support
 
-**重要变更（2026-02-01）：**
-- ✅ **移除了 `!isPreview` 条件** - preview模式下也显示status
-- ✅ **Admin登录后可以在preview看到完整状态**
-- ✅ **帮助admin验证配置是否正确**
+**Significant Changes (2026-02-01):**
+- ✅ **Removed `!isPreview` condition** - Status now displays in preview mode.
+- ✅ **Admins can see full status in preview after logging in.**
+- ✅ **Helps admins verify correct configuration.**
 
-**逻辑：**
+**Logic:**
 ```javascript
-// 旧的逻辑 (错误)
+// Old Logic (Incorrect)
 if (isPreview.value || !authStore.token) return;
 
-// 新的逻辑 (正确)
+// New Logic (Correct)
 if (!authStore.token || !instanceSlug.value) return;
 ```
 
-**好处：**
-- Admin在编辑游戏配置时可以立即在preview看到效果
-- 不需要publish后才能测试
-- 修改"仅限一次"、"时间限制"等配置可以实时验证
+**Benefits:**
+- Admin can see changes immediately in preview while editing configurations.
+- No need to publish before testing.
+- Real-time verification for "One Time Only", "Time Limit", and other critical rules.
 
-#### 🌐 国际化 (i18n)
+#### 🌐 Internationalization (i18n)
 
-**前端统一使用英文** (2026-02-01):
-- 所有用户可见文字为英文
-- Admin backend保持中文
-- 未来如需多语言，通过i18n框架实现
+**Frontend Consistently Uses English** (2026-02-01):
+- All user-facing text is in English.
+- Admin backend remains in Chinese for now.
+- Future multi-language support will be implemented via an i18n framework.
 
-**文字映射：**
+**Text Mapping:**
 ```javascript
 const ERROR_MESSAGES = {
   'LEVEL_TOO_LOW': 'Level too low! Need Lv{level}',
@@ -833,7 +832,7 @@ const ERROR_MESSAGES = {
 };
 ```
 
-#### 🔗 与游戏引擎的通信
+#### 🔗 Communication with Game Engine
 
 **postMessage to iframe:**
 ```javascript
@@ -847,95 +846,95 @@ iframeRef.contentWindow.postMessage({
 }, '*');
 ```
 
-**游戏引擎接收：**
+**Game Engine Reception:**
 ```javascript
 window.addEventListener('message', (e) => {
   if (e.data.type === 'game-status-update') {
     const { canPlay, blockReason } = e.data.status;
-    // 更新Spin按钮状态
+    // Update Spin button state
     document.getElementById('spin-btn').disabled = !canPlay;
   }
 });
 ```
 
-#### 🐛 常见问题
+#### 🐛 FAQs
 
-**1. 问题：Preview模式看不到status**
-- **原因：** 旧版本有 `!isPreview` 条件
-- **解决：** 已修复（2026-02-01），rebuild web-app
+**1. Problem: Status not visible in Preview mode**
+- **Reason:** Old version had a `!isPreview` condition.
+- **Solution:** Fixed (2026-02-01), rebuild `web-app`.
 
-**2. 问题：颜色不显示（白色）**
-- **原因：** Inline style被parent CSS覆盖
-- **解决：** 使用computed property + inline style (优先级最高)
+**2. Problem: Colors not displaying (White)**
+- **Reason:** Inline styles were overridden by parent CSS.
+- **Solution:** Use computed property + inline style (highest priority).
 
-**3. 问题：Time limit显示中文**
-- **原因：** dayNames用了中文数组
-- **解决：** 改为 `['Sun', 'Mon', ...]`
+**3. Problem: Time limit shows Chinese**
+- **Reason:** `dayNames` used a Chinese array.
+- **Solution:** Changed to `['Sun', 'Mon', ...]`.
 
-**4. 问题：Cooldown不倒计时**
-- **原因：** Interval没有启动或被清除
-- **解决：** 检查 `startCooldownTimer()` 是否被调用
+**4. Problem: Cooldown not counting down**
+- **Reason:** Interval was not started or was cleared.
+- **Solution:** Ensure `startCooldownTimer()` is called.
 
-**5. 问题：API返回数据但前端不显示**
-- **原因：** Frontend没有rebuild
-- **解决：** `docker compose build --no-cache web-app`
+**5. Problem: API returns data but frontend doesn't display it**
+- **Reason:** Frontend was not rebuilt.
+- **Solution:** `docker compose build --no-cache web-app`.
 
-#### 🚨 修改影响范围
+#### 🚨 Modification Impact Scope
 
-**Backend修改（game-rules.service.ts）：**
-- ✅ 添加新字段到API response
-- ✅ 不影响现有游戏逻辑
-- ⚠️ 需要rebuild API容器
+**Backend Modifications (`game-rules.service.ts`):**
+- ✅ Added new fields to API response.
+- ✅ Does not affect existing game logic.
+- ⚠️ Requires API container rebuild.
 
-**Frontend修改（index.vue）：**
-- ✅ 新增status display UI
-- ✅ 支持preview模式
-- ✅ 统一英文文字
-- ⚠️ 需要rebuild web-app容器
+**Frontend Modifications (`index.vue`):**
+- ✅ New status display UI.
+- ✅ Supported in preview mode.
+- ✅ Standardized English text.
+- ⚠️ Requires `web-app` container rebuild.
 
-**需要测试：**
-1. 正常游戏页面显示status
-2. Live preview显示status
-3. 所有状态颜色正确（红/黄/蓝）
-4. Cooldown倒计时工作
-5. Time limit显示正确
-6. One time only显示和隐藏逻辑
-7. Refresh按钮工作
-8. Collapsed button颜色状态
+**Required Verification:**
+1. Confirm status display on the live game page.
+2. Confirm status display in the Live Preview.
+3. Validate all status colors (Red/Yellow/Blue).
+4. Verify cooldown timer functionality.
+5. Verify time limit accuracy.
+6. Check one-time-only show/hide logic.
+7. Verify Refresh button functionality.
+8. Validate collapsed button color states.
 
 ---
 
-### 3. 音效系统
+### 3. Audio System
 
-#### 📍 位置
-- **Store：** `apps/web-app/src/store/settings.ts`
-- **使用位置：**
-  - `views/game/index.vue` - 音效按钮
-  - (游戏引擎内部也可能使用)
+#### 📍 Location
+- **Store:** `apps/web-app/src/store/settings.ts`
+- **Usage:**
+  - `views/game/index.vue` - Audio button
+  - Used inside game engines
 
-#### 🎯 功能说明
-全局音效开关，控制游戏的所有音效（BGM、音效、win/lose sounds等）
+#### 🎯 Feature Description
+Global audio toggle that controls all game sounds (BGM, sound effects, win/lose sounds, etc.).
 
-#### ⚙️ 配置项
-- `soundEnabled` (boolean, default: true) - 音效是否启用
-- 存储在 localStorage (`soundEnabled` key)
+#### ⚙️ Configuration
+- `soundEnabled` (boolean, default: true) - Whether audio is enabled.
+- Stored in `localStorage` (`soundEnabled` key).
 
-#### 🔗 依赖关系
-**依赖于：**
-- localStorage - 持久化音效设置
+#### 🔗 Dependencies
+**Depends on:**
+- `localStorage` - Persistent audio settings.
 
-**被依赖于：**
-- 游戏容器 - 显示音效按钮
-- 游戏引擎 - 控制音效播放（通过postMessage）
+**Referenced by:**
+- Game Container - Displays audio toggle button.
+- Game Engine - Controls audio playback (via `postMessage`).
 
-#### 🔧 工作原理
-1. 初始化时从localStorage读取设置
-2. 用户点击音效按钮 → toggleSound()
-3. 更新store state
-4. 保存到localStorage
-5. （如果需要）通过postMessage通知iframe
+#### 🔧 Working Principle
+1. Reads settings from `localStorage` on initialization.
+2. User clicks audio button → `toggleSound()`.
+3. Updates store state.
+4. Saves to `localStorage`.
+5. (Optional) Notifies iframe via `postMessage`.
 
-#### 📊 数据流
+#### 📊 Data Flow
 ```
 User clicks sound button
   → settingsStore.toggleSound()
@@ -944,99 +943,99 @@ User clicks sound button
   → (Optional) postMessage to iframe
 ```
 
-#### 🐛 常见问题
-1. **问题：** 音效设置不记住
-   **原因：** localStorage被清除
-   **解决：** 重新设置音效
+#### 🐛 FAQs
+1. **Problem:** Audio settings not persistent
+   **Reason:** `localStorage` cleared.
+   **Solution:** Re-configure audio settings.
 
-#### 🚨 修改影响范围
-**修改这个store会影响：**
-- ✅ 所有依赖音效设置的组件
-- ✅ 游戏引擎的音效播放
+#### 🚨 Modification Impact Scope
+**Modifying this store affects:**
+- ✅ All components depending on audio settings.
+- ✅ Audio playback in game engines.
 
-**需要rebuild：**
-- `web-app` frontend
+**Requires Rebuild:**
+- `web-app` frontend.
 
-**需要测试：**
-- 点击音效按钮
-- 刷新页面验证设置持久化
-- 验证游戏内音效确实被开启/关闭
+**Required Verification:**
+- Click audio toggle button.
+- Refresh page to verify persistence.
+- Confirm game audio starts/stops accordingly.
 
 ---
 
 ## 🎛️ Admin Panel (soybean-admin)
 
-### 3. 游戏实例列表
+### 3. Game Instance List
 
-#### 📍 位置
-- **主文件：** `apps/soybean-admin/src/views/management/game-instance/index.vue`
-- **相关文件：**
-  - `api/` - API调用模块
+#### 📍 Location
+- **Main File:** `apps/soybean-admin/src/views/management/game-instance/index.vue`
+- **Related Files:**
+  - `api/` - API call modules
 
-#### 🎯 功能说明
-显示所有游戏实例的列表，支持：
-- 查看、编辑、删除游戏实例
-- 创建新游戏实例
-- 发布/下线游戏
-- 复制游戏URL
+#### 🎯 Feature Description
+Displays a list of all game instances, supporting:
+- Viewing, editing, and deleting game instances.
+- Creating new game instances.
+- Publishing/Unpublishing games.
+- Copying game URLs.
 
-#### ⚙️ 功能列表
-- 搜索和筛选
-- 分页
-- 状态管理（draft/published）
-- Batch operations（未来功能）
+#### ⚙️ Features List
+- Search and filtering.
+- Pagination.
+- Status management (draft/published).
+- Batch operations (future feature).
 
-#### 🔗 依赖关系
-**依赖于：**
-- API endpoint: `/api/game-instances` - CRUD operations
-- Router - 导航到编辑页面
+#### 🔗 Dependencies
+**Depends on:**
+- API endpoint: `/api/game-instances` - CRUD operations.
+- Router - Navigation to the edit page.
 
-**被依赖于：**
-- Dashboard - 快速访问游戏管理
+**Referenced by:**
+- Dashboard - Quick access to game management.
 
-#### 🔧 工作原理
-1. 页面加载时调用API获取游戏列表
-2. 显示table with columns: name, game type, status, actions
-3. 点击edit → 导航到 `/game-instance/:id/edit`
-4. 点击delete → 确认后调用API删除
+#### 🔧 Working Principle
+1. Calls the API to fetch the game list on page load.
+2. Displays a table with columns: name, game type, status, actions.
+3. Click "edit" → Navigate to `/game-instance/:id/edit`.
+4. Click "delete" → Confirm and call API to delete.
 
-#### 🐛 常见问题
-1. **问题：** 列表加载失败
-   **原因：** API连接问题或权限不足
-   **解决：** 检查network tab，验证用户权限
+#### 🐛 FAQs
+1. **Problem:** List fails to load
+   **Reason:** API connection issue or insufficient permissions.
+   **Solution:** Check the Network tab, verify user permissions.
 
-#### 🚨 修改影响范围
-**修改这个文件会影响：**
-- ✅ 游戏管理界面
-- ❌ 不影响: 游戏本身的功能
+#### 🚨 Modification Impact Scope
+**Modifying this file affects:**
+- ✅ Game management interface.
+- ❌ Does not affect: Game functionality itself.
 
-**需要rebuild：**
-- `admin` frontend
+**Requires Rebuild:**
+- `admin` frontend.
 
 ---
 
-### 4. 游戏配置表单 (ConfigForm) - 🔥 最复杂
+### 4. Game Configuration Form (ConfigForm) - 🔥 Most Complex
 
-#### 📍 位置
-- **主文件：** `apps/soybean-admin/src/views/management/game-instance/components/ConfigForm.vue`
-- **相关文件：**
-  - `locales/langs/zh-cn.ts` - 中文翻译
-  - `locales/langs/en-us.ts` - 英文翻译
-  - `seed.service.ts` (API) - Schema定义
+#### 📍 Location
+- **Main File:** `apps/soybean-admin/src/views/management/game-instance/components/ConfigForm.vue`
+- **Related Files:**
+  - `locales/langs/zh-cn.ts` - Chinese translations.
+  - `locales/langs/en-us.ts` - English translations.
+  - `seed.service.ts` (API) - Schema definitions.
 
-#### 🎯 功能说明
-**这是整个Admin Panel最复杂的组件！** 动态渲染游戏配置表单，支持：
-- 多tab布局（奖品配置、规则配置、外观与交互、特效与音频）
-- 动态表单（根据game template的schema生成）
-- 文件上传（图片、音频等）
-- 颜色选择器
-- 概率计算和自动平衡
-- i18n多语言支持
+#### 🎯 Feature Description
+**This is the most complex component in the entire Admin Panel!** It dynamically renders the game configuration form, supporting:
+- Multi-tab layout (Prizes, Rules, Visuals & Interactions, Effects & Audio).
+- Dynamic forms (generated based on the game template's schema).
+- File uploads (images, audio, etc.).
+- Color pickers.
+- Probability calculation and automatic balancing.
+- i18n multi-language support.
 
-#### ⚙️ Schema驱动
-ConfigForm的表单是**动态生成**的，根据game template的schema：
+#### ⚙️ Schema Driven
+ConfigForm's fields are **dynamically generated** based on the game template's schema:
 ```typescript
-// 来自 seed.service.ts
+// From seed.service.ts
 {
   name: 'showSoundButton',
   type: 'boolean',
@@ -1046,25 +1045,25 @@ ConfigForm的表单是**动态生成**的，根据game template的schema：
 }
 ```
 
-#### 🔗 依赖关系
-**依赖于：**
-- API endpoint: `/api/game-templates/:id/schema` - 获取schema
-- API endpoint: `/api/game-instances/:id/config` - 保存配置
-- API endpoint: `/game-instances/upload` - 上传文件
-- i18n system - 翻译所有labels
+#### 🔗 Dependencies
+**Depends on:**
+- API endpoint: `/api/game-templates/:id/schema` - Fetches schema.
+- API endpoint: `/api/game-instances/:id/config` - Saves configuration.
+- API endpoint: `/game-instances/upload` - Uploads files.
+- i18n system - Translates all labels.
 
-**被依赖于：**
-- 游戏实例编辑页面
+**Referenced by:**
+- Game instance edit page.
 
-#### 🔧 工作原理（简化版）
-1. 从API获取game template的schema
-2. 遍历schema生成表单fields
-3. 根据field type渲染不同的input（text/number/color/file等）
-4. 用户修改 → 更新formModel
-5. 点击保存 → 调用API更新config
-6. i18n: 使用 `t('page.manage.game.common.fieldName')` 翻译labels
+#### 🔧 Working Principle (Simplified)
+1. Fetches the game template schema from the API.
+2. Iterates through the schema to generate form fields.
+3. Renders different inputs (text/number/color/file, etc.) based on field type.
+4. User edits → Updates `formModel`.
+5. Click Save → Calls API to update config.
+6. i18n: Uses `t('page.manage.game.common.fieldName')` to translate labels.
 
-#### 📊 数据流
+#### 📊 Data Flow
 ```
 Load page
   → API: Get game template schema
@@ -1077,197 +1076,197 @@ User edits
   → API: Update game instance config
 ```
 
-#### ✨ 新功能：Tab Validation Status Display (2026-02-01)
-**功能：** 当tab有validation error时，tab标签显示红色文字和❌图标
+#### ✨ New Feature: Tab Validation Status Display (2026-02-01)
+**Feature:** When a tab has a validation error, the tab label displays red text and an ❌ icon.
 
-**实现：**
-- 添加 `isTabValid(tabName)` 函数检查tab validation状态
-- Prizes tab: 检查总概率是否=100%
-- Invalid tab的header显示红色 + ❌图标
-- 用户可一眼识别哪个tab需要修正
+**Implementation:**
+- Added `isTabValid(tabName)` function to check tab validation status.
+- Prizes tab: Checks if total probability equals 100%.
+- Invalid tab headers show red + ❌ icon.
+- Users can instantly identify which tab needs correction.
 
-**代码位置：**
-- `ConfigForm.vue` line ~685 (isTabValid函数)
-- `ConfigForm.vue` line ~1033 (tab template conditional class)
+**Code Location:**
+- `ConfigForm.vue` line ~685 (`isTabValid` function).
+- `ConfigForm.vue` line ~1033 (tab template conditional class).
 
-**扩展性：**
-- 可以为其他tabs添加validation rules
-- 例如：Rules tab检查dailyLimit>0，Visuals tab检查colors数量等
+**Extensibility:**
+- Validation rules can be added for other tabs.
+- Example: Rules tab checks `dailyLimit > 0`, Visuals tab checks color count, etc.
 
-#### 🐛 常见问题
-1. **问题：** 新配置项不显示
-   **原因：** Schema没更新或Admin没rebuild
-   **解决：** 重新run `/api/seed/run` + rebuild admin
+#### 🐛 FAQs
+1. **Problem:** New configuration items not showing
+   **Reason:** Schema not updated or Admin not rebuilt.
+   **Solution:** Re-run `/api/seed/run` + rebuild `admin`.
 
-2. **问题：** 翻译显示key而不是文本
-   **原因：** i18n定义缺失或有重复key
-   **解决：** 检查 `zh-cn.ts` 和 `en-us.ts`，确保没有重复的object keys
+2. **Problem:** Translations showing keys instead of text
+   **Reason:** i18n definition missing or duplicate keys.
+   **Solution:** Check `zh-cn.ts` and `en-us.ts`, ensure no duplicate object keys.
 
-3. **问题：** 文件上传失败
-   **原因：** 文件太大或格式不支持
-   **解决：** 检查file size (<50MB)，检查MIME type
+3. **Problem:** File upload fails
+   **Reason:** File size too large or format unsupported.
+   **Solution:** Check file size (<50MB) and MIME type.
 
-#### 🚨 修改影响范围
-**修改ConfigForm.vue会影响：**
-- ✅ 所有游戏的配置界面
-- ✅ 表单验证逻辑
-- ✅ 文件上传功能
-- ❌ 不影响: 游戏本身（只影响配置界面）
+#### 🚨 Modification Impact Scope
+**Modifying ConfigForm.vue affects:**
+- ✅ Configuration interface for all games.
+- ✅ Form validation logic.
+- ✅ File upload functionality.
+- ❌ Does not affect: The game itself (only affects the configuration interface).
 
-**修改seed.service.ts (schema)会影响：**
-- ✅ ConfigForm渲染的fields
-- ✅ 游戏的默认配置
-- ✅ **必须同时rebuild api + admin**
-- ✅ **必须重新run /api/seed/run**
+**Modifying seed.service.ts (schema) affects:**
+- ✅ Fields rendered in `ConfigForm`.
+- ✅ Default configurations for games.
+- ✅ **Must rebuild both `api` and `admin`.**
+- ✅ **Must re-run `/api/seed/run`.**
 
-**需要rebuild：**
-- `admin` frontend (任何UI改动)
-- `api` + `admin` (schema改动)
+**Requires Rebuild:**
+- `admin` frontend (any UI changes).
+- `api` + `admin` (schema changes).
 
-**需要测试：**
-- 编辑一个游戏实例
-- 测试所有tabs的字段
-- 测试文件上传
-- 验证翻译正确显示
-- 保存并验证config已更新
-
----
-
-### 5. i18n翻译系统
-
-#### 📍 位置
-- **配置：** `apps/soybean-admin/src/locales/index.ts`
-- **翻译文件：**
-  - `locales/langs/zh-cn.ts` - 中文
-  - `locales/langs/en-us.ts` - 英文
-- **使用：** 所有Vue components (`{{ t('key') }}`)
-
-#### 🎯 功能说明
-多语言支持系统，允许界面在中文和英文之间切换。
-
-#### ⚙️ 配置项
-- `locale` - 当前语言（localStorage: 'lang'）
-- `fallbackLocale` - 后备语言（'en-US'）
-
-#### 🔗 依赖关系
-**依赖于：**
-- vue-i18n - i18n library
-- locale files - 翻译定义
-
-**被依赖于：**
-- 所有需要翻译的components
-
-#### 🔧 工作原理
-1. App初始化时setup i18n
-2. 从localStorage读取用户的语言偏好
-3. Components使用 `t('key')` 获取翻译
-4. 如果key不存在，返回key本身（fallback）
-
-#### 🐛 常见问题
-1. **问题：** 显示key而不是翻译
-   **原因：** 翻译key不存在或有typo
-   **解决：** 检查zh-cn.ts和en-us.ts，确保key存在
-
-2. **问题：** 有些翻译是英文，有些是中文
-   **原因：** locale设置混乱或翻译缺失
-   **解决：** 检查当前locale，补充缺失的翻译
-
-3. **问题：** 重复的object key导致翻译覆盖 (2026-01-31 case)
-   **原因：** 同一个object里有两个相同的key
-   **解决：** 合并重复的定义
-
-#### 🚨 修改影响范围
-**修改翻译文件会影响：**
-- ✅ 所有使用该key的界面
-- ❌ 不影响: 功能逻辑
-
-**需要rebuild：**
-- `admin` frontend
-
-**需要测试：**
-- 切换语言
-- 验证所有界面的翻译正确显示
-- 检查是否有显示key的地方
-
-**⚠️ 重要规则（2026-01-31 lesson）：**
-1. 永远检查是否已有同名key
-2. 不要在同一个object里定义两个同名key
-3. 添加新翻译时，同时更新zh-cn.ts和en-us.ts
+**Required Verification:**
+- Edit a game instance.
+- Test fields in all tabs.
+- Test file uploads.
+- Verify translations display correctly.
+- Save and verify the config has updated.
 
 ---
 
-## ⚙️ 后端 API (api)
+### 5. i18n Translation System
 
-### 6. 游戏模板Seed系统
+#### 📍 Location
+- **Configuration:** `apps/soybean-admin/src/locales/index.ts`
+- **Translation Files:**
+  - `locales/langs/zh-cn.ts` - Chinese.
+  - `locales/langs/en-us.ts` - English.
+- **Usage:** All Vue components via `{{ t('key') }}`.
 
-#### 📍 位置
-- **主文件：** `apps/api/src/modules/seed/seed.service.ts`
-- **Controller：** `apps/api/src/modules/seed/seed.controller.ts`
-- **Endpoint：** `POST /api/seed/run`
+#### 🎯 Feature Description
+Multi-language support system allowing the interface to toggle between Chinese and English.
 
-#### 🎯 功能说明
-定义和初始化游戏模板（Game Templates），包括：
-- 游戏类型（Spin Wheel, Scratch Card等）
-- Schema定义（配置项的类型、默认值、验证规则）
-- 默认配置
-- i18n keys
+#### ⚙️ Configuration
+- `locale` - Current language (`localStorage`: 'lang').
+- `fallbackLocale` - Fallback language ('en-US').
 
-**这是整个系统的"基因"！** Schema决定了ConfigForm如何渲染。
+#### 🔗 Dependencies
+**Depends on:**
+- `vue-i18n` - i18n library.
+- Locale files - Translation definitions.
 
-#### ⚙️ Schema结构
+**Referenced by:**
+- All components requiring translation.
+
+#### 🔧 Working Principle
+1. Initializes `i18n` during App setup.
+2. Reads user's language preference from `localStorage`.
+3. Components use `t('key')` to retrieve translations.
+4. If a key doesn't exist, it returns the key itself (fallback).
+
+#### 🐛 FAQs
+1. **Problem:** Key displays instead of translation
+   **Reason:** Translation key missing or typo.
+   **Solution:** Check `zh-cn.ts` and `en-us.ts` to ensure the key exists.
+
+2. **Problem:** Some translations are English, others Chinese
+   **Reason:** Mixed locale settings or missing translations.
+   **Solution:** Check current locale, provide missing translations.
+
+3. **Problem:** Duplicate object keys causing translation overrides (2026-01-31 case)
+   **Reason:** Two identical keys in the same object.
+   **Solution:** Merge duplicate definitions.
+
+#### 🚨 Modification Impact Scope
+**Modifying translation files affects:**
+- ✅ All interfaces using that key.
+- ❌ Does not affect: Functional logic.
+
+**Requires Rebuild:**
+- `admin` frontend.
+
+**Required Verification:**
+- Toggle languages.
+- Verify correct translations across all screens.
+- Check for any displaying keys.
+
+**⚠️ IMPORTANT RULES (2026-01-31 Lesson):**
+1. Always check for existing duplicate keys.
+2. Never define two identical keys in the same object.
+3. Always update both `zh-cn.ts` and `en-us.ts` simultaneously.
+
+---
+
+## ⚙️ Backend API (api)
+
+### 6. Game Template Seed System
+
+#### 📍 Location
+- **Main File:** `apps/api/src/modules/seed/seed.service.ts`
+- **Controller:** `apps/api/src/modules/seed/seed.controller.ts`
+- **Endpoint:** `POST /api/seed/run`
+
+#### 🎯 Feature Description
+Defines and initializes Game Templates, including:
+- Game types (Spin Wheel, Scratch Card, etc.).
+- Schema definitions (types of config items, default values, validation rules).
+- Default configuration.
+- i18n keys.
+
+**This is the "DNA" of the entire system!** The schema determines how `ConfigForm` renders.
+
+#### ⚙️ Schema Structure
 ```typescript
 interface SchemaItem {
-  name: string;          // 配置项名称
-  type: string;          // 类型 (string/number/boolean/color/file/array等)
-  label?: string;        // 显示label（如果不用i18n）
-  i18nKey?: string;      // i18n key（优先使用）
-  defaultValue?: any;    // 默认值
-  tab: string;           // 属于哪个tab (prizes/rules/visuals/effects)
-  required?: boolean;    // 是否必填
-  validation?: object;   // 验证规则
+  name: string;          // Configuration item name
+  type: string;          // Type (string/number/boolean/color/file/array, etc.)
+  label?: string;        // Display label (if not using i18n)
+  i18nKey?: string;      // i18n key (preferred)
+  defaultValue?: any;    // Default value
+  tab: string;           // Tab category (prizes/rules/visuals/effects)
+  required?: boolean;    // Is required
+  validation?: object;   // Validation rules
 }
 ```
 
-#### 🔗 依赖关系
-**依赖于：**
-- Database - 存储game templates
-- TypeORM entities - GameTemplate entity
+#### 🔗 Dependencies
+**Depends on:**
+- Database - Stores game templates.
+- TypeORM entities - `GameTemplate` entity.
 
-**被依赖于：**
-- ConfigForm - 读取schema渲染表单
-- Game instances - 创建时选择template
+**Referenced by:**
+- `ConfigForm` - Reads schema to render forms.
+- Game instances - Choose template on creation.
 
-#### 🔧 工作原理
-1. 开发者在seed.service.ts定义game templates
-2. 调用 `/api/seed/run` 初始化数据库
-3. Templates存储在database
-4. ConfigForm从API读取schema
-5. 动态渲染配置表单
+#### 🔧 Working Principle
+1. Developer defines game templates in `seed.service.ts`.
+2. Call `/api/seed/run` to initialize the database.
+3. Templates are stored in the database.
+4. `ConfigForm` reads the schema from the API.
+5. Configuration form is rendered dynamically.
 
-#### 🐛 常见问题
-1. **问题：** 新配置项在Admin Panel不显示
-   **原因：** Seed没有重新run或Admin没rebuild
-   **解决：** 
-     - 修改seed.service.ts
-     - Rebuild API
-     - 重新run `/api/seed/run`
-     - Rebuild Admin
-     - 刷新Admin Panel
+#### 🐛 FAQs
+1. **Problem:** New configuration items do not show in Admin Panel
+   **Reason:** Seed not re-run or Admin not rebuilt.
+   **Solution:** 
+     - Modify `seed.service.ts`.
+     - Rebuild API.
+     - Re-run `/api/seed/run`.
+     - Rebuild Admin.
+     - Refresh Admin Panel.
 
-2. **问题：** Schema改动后旧游戏显示错误
-   **原因：** 旧游戏的config不包含新字段
-   **解决：** 编辑旧游戏，保存一次（会补充默认值）
+2. **Problem:** Old games show errors after Schema changes
+   **Reason:** Old game configurations do not include new fields.
+   **Solution:** Edit the old game once and save (it will append default values).
 
-#### 🚨 修改影响范围
-**修改seed.service.ts会影响：**
-- ✅ 新创建的游戏模板
-- ✅ ConfigForm的表单结构
-- ✅ 游戏的默认配置
-- ❌ 不直接影响: 已存在的游戏实例（需要手动编辑）
+#### 🚨 Modification Impact Scope
+**Modifying seed.service.ts affects:**
+- ✅ Newly created game templates.
+- ✅ `ConfigForm` structural layout.
+- ✅ Default game configurations.
+- ❌ Does not directly affect: Existing game instances (requires manual edit).
 
-**完整的修改流程：**
+**Full Modification Workflow:**
 ```bash
-# 1. 修改seed.service.ts
+# 1. Modify seed.service.ts
 vim apps/api/src/modules/seed/seed.service.ts
 
 # 2. Rebuild API
@@ -1276,210 +1275,210 @@ docker compose build --no-cache api
 # 3. Restart API
 docker compose up -d api
 
-# 4. 重新run seed
+# 4. Re-run seed
 curl -X POST https://api.xseo.me/api/seed/run
 
-# 5. Rebuild Admin (如果schema结构变化)
+# 5. Rebuild Admin (if schema structure changed)
 docker compose build --no-cache admin
 docker compose up -d admin
 
-# 6. 测试
-# - 创建新游戏实例
-# - 验证新配置项显示
-# - 验证翻译正确
+# 6. Verification
+# - Create new game instance
+# - Verify new configuration item shows
+# - Verify translation is correct
 ```
 
-**需要测试：**
-- 创建新游戏实例
-- 验证所有配置项显示
-- 验证默认值正确
-- 编辑旧游戏验证向后兼容
+**Required Verification:**
+- Create new game instance.
+- Verify all configuration items show.
+- Verify default values are correct.
+- Edit old games to verify backward compatibility.
 
 ---
 
-## 📝 文档维护说明
+## 📝 Documentation Maintenance Instruction
 
-### 更新规则
-**每次修改代码后，必须立即更新这个文档！**
+### Update Rules
+**Every time code is modified, this document must be updated immediately!**
 
-1. ✅ 添加了新功能 → 添加新章节
-2. ✅ 修改了现有功能 → 更新对应章节
-3. ✅ 解决了bug → 更新"常见问题"
-4. ✅ 改变了依赖关系 → 更新"依赖关系"
-5. ✅ 改变了影响范围 → 更新"修改影响范围"
+1. ✅ Added new feature → Add new section.
+2. ✅ Modified existing feature → Update corresponding section.
+3. ✅ Resolved bug → Update "FAQs".
+4. ✅ Changed dependencies → Update "Dependencies".
+5. ✅ Changed impact scope → Update "Modification Impact Scope".
 
-### 文档质量检查
-每个功能章节必须包含：
-- [ ] 位置（代码文件路径）
-- [ ] 功能说明
-- [ ] 配置项（如果有）
-- [ ] 依赖关系
-- [ ] 工作原理
-- [ ] 常见问题
-- [ ] 修改影响范围
-- [ ] 测试方法
+### Documentation Quality Check
+Every feature section must include:
+- [ ] Location (Code file path)
+- [ ] Feature Description
+- [ ] Configuration (if applicable)
+- [ ] Dependencies
+- [ ] Working Principle
+- [ ] FAQs
+- [ ] Modification Impact Scope
+- [ ] Testing Methods
 
 ---
 
-**这个文档是living document - 随代码一起演进！**
+**This is a living document - it evolves alongside the code!**
 
-### 7. 游戏实例CRUD API
+### 7. Game Instance CRUD API
 
-#### 📍 位置
-- **Controller：** `apps/api/src/modules/game-instances/game-instances.controller.ts`
-- **Service：** `apps/api/src/modules/game-instances/game-instances.service.ts`
-- **Entity：** `apps/api/src/modules/game-instances/entities/game-instance.entity.ts`
+#### 📍 Location
+- **Controller:** `apps/api/src/modules/game-instances/game-instances.controller.ts`
+- **Service:** `apps/api/src/modules/game-instances/game-instances.service.ts`
+- **Entity:** `apps/api/src/modules/game-instances/entities/game-instance.entity.ts`
 
-#### 🎯 功能说明
-游戏实例的完整CRUD操作，支持：
-- 创建新游戏实例
-- 获取游戏列表（支持筛选和分页）
-- 获取单个游戏详情
-- 更新游戏配置
-- 删除游戏
-- 发布/下线游戏
+#### 🎯 Feature Description
+Full CRUD operations for game instances, supporting:
+- Creating new instances.
+- Fetching lists (with filtering and pagination).
+- Fetching individual game details.
+- Updating game configurations.
+- Deleting games.
+- Publishing/Unpublishing games.
 
-#### ⚙️ 主要Endpoints
+#### ⚙️ Main Endpoints
 ```typescript
-POST   /api/game-instances          // 创建游戏
-GET    /api/game-instances          // 获取列表
-GET    /api/game-instances/:slug    // 获取详情
-PATCH  /api/game-instances/:id      // 更新配置
-DELETE /api/game-instances/:id      // 删除游戏
-POST   /api/game-instances/upload   // 上传文件（图片/音频）
-GET    /api/game-instances/:slug/play  // 获取游戏播放URL
+POST   /api/game-instances            // Create game
+GET    /api/game-instances            // Get list
+GET    /api/game-instances/:slug      // Get details
+PATCH  /api/game-instances/:id        // Update config
+DELETE /api/game-instances/:id        // Delete game
+POST   /api/game-instances/upload     // File upload (image/audio)
+GET    /api/game-instances/:slug/play // Get game play URL
 ```
 
-#### 🔗 依赖关系
-**依赖于：**
-- GameTemplate entity - 创建时选择模板
-- Database (PostgreSQL) - 存储数据
-- File upload system - 处理图片/音频上传
-- Auth guard - 验证权限
+#### 🔗 Dependencies
+**Depends on:**
+- `GameTemplate` entity - Choose template on creation.
+- Database (PostgreSQL) - Stores data.
+- File upload system - Handles image/audio uploads.
+- Auth guard - Verifies permissions.
 
-**被依赖于：**
-- Admin Panel - 管理游戏
-- Web App - 玩游戏
+**Referenced by:**
+- Admin Panel - Game management.
+- Web App - Playing games.
 
-#### 🔧 工作原理
+#### 🔧 Working Principle
 
-**创建游戏流程：**
-1. Admin选择game template
-2. POST /api/game-instances with templateId
-3. 复制template的默认config
-4. 生成唯一slug
-5. 保存到database
-6. 返回新游戏的ID和slug
+**Create Game Flow:**
+1. Admin selects a game template.
+2. POST `/api/game-instances` with `templateId`.
+3. Copies template default configuration.
+4. Generates a unique slug.
+5. Saves to the database.
+6. Returns the new game ID and slug.
 
-**更新游戏流程：**
-1. Admin修改ConfigForm
-2. PATCH /api/game-instances/:id with new config
-3. 验证config格式
-4. 更新database
-5. 返回更新后的游戏
+**Update Game Flow:**
+1. Admin modifies `ConfigForm`.
+2. PATCH `/api/game-instances/:id` with new configuration.
+3. Validates configuration format.
+4. Updates database.
+5. Returns updated game data.
 
-**播放游戏流程：**
-1. 用户访问 /game/:slug
-2. Web app调用 GET /api/game-instances/:slug/play
-3. API验证game是published
-4. 返回game config和iframe URL
-5. Web app加载游戏
+**Play Game Flow:**
+1. User visits `/game/:slug`.
+2. Web app calls GET `/api/game-instances/:slug/play`.
+3. API verifies game status is `published`.
+4. Returns game configuration and iframe URL.
+5. Web app loads the game.
 
-#### 📊 数据模型
+#### 📊 Data Model
 ```typescript
 GameInstance {
   id: string;
   name: string;
-  slug: string;         // URL-friendly唯一标识
-  templateId: string;   // 关联的game template
-  config: object;       // 游戏配置（JSON）
+  slug: string;         // URL-friendly unique identifier
+  templateId: string;   // Associated game template
+  config: object;       // Game configuration (JSON)
   status: enum;         // draft/published/archived
-  companyId: string;    // 所属公司
-  createdBy: string;    // 创建者
+  companyId: string;    // Owning company
+  createdBy: string;    // Creator
   createdAt: Date;
   updatedAt: Date;
 }
 ```
 
-#### 🐛 常见问题
-1. **问题：** 创建游戏失败
-   **原因：** 缺少必填字段或templateId无效
-   **解决：** 检查request body，验证template存在
+#### 🐛 FAQs
+1. **Problem:** Failed to create game
+   **Reason:** Missing required fields or invalid `templateId`.
+   **Solution:** Check request body, verify template exists.
 
-2. **问题：** 更新config后游戏显示还是旧配置
-   **原因：** 浏览器缓存或web app没有重新加载config
-   **解决：** Hard refresh浏览器
+2. **Problem:** Game shows old configuration after update
+   **Reason:** Browser cache or web app hasn't reloaded config.
+   **Solution:** Hard refresh the browser.
 
-3. **问题：** Slug重复错误
-   **原因：** 同名游戏已存在
-   **解决：** 修改游戏名称或手动指定slug
+3. **Problem:** Slug duplicate error
+   **Reason:** Game with the same name already exists.
+   **Solution:** Change game name or manually specify a slug.
 
-#### 🚨 修改影响范围
-**修改Controller/Service会影响：**
-- ✅ 所有游戏管理操作
-- ✅ Admin Panel的功能
-- ✅ Web App的游戏加载
+#### 🚨 Modification Impact Scope
+**Modifying Controller/Service affects:**
+- ✅ All game management operations.
+- ✅ Admin Panel functionality.
+- ✅ Web App game loading.
 
-**需要rebuild：**
-- `api` backend
+**Requires Rebuild:**
+- `api` backend.
 
-**需要重启：**
-- API服务
+**Requires Restart:**
+- API Service.
 
-**需要测试：**
-- 创建新游戏
-- 编辑游戏配置
-- 发布游戏
-- 访问游戏URL验证加载
-- 删除游戏
+**Required Verification:**
+- Create new game.
+- Edit game configuration.
+- Publish game.
+- Visit game URL to verify loading.
+- Delete game.
 
 ---
 
-### 8. 文件上传系统
+### 8. File Upload System
 
-#### 📍 位置
-- **Endpoint：** `POST /api/game-instances/upload`
-- **Controller：** `apps/api/src/modules/game-instances/game-instances.controller.ts` (line 886)
+#### 📍 Location
+- **Endpoint:** `POST /api/game-instances/upload`
+- **Controller:** `apps/api/src/modules/game-instances/game-instances.controller.ts` (line 886)
 
-#### 🎯 功能说明
-处理游戏相关的文件上传，支持：
-- 图片（logo, background, prizes等）
-- 音频文件（BGM, sound effects）
-- 自定义字体文件
-- 自动文件命名和存储
+#### 🎯 Feature Description
+Handles game-related file uploads, supporting:
+- Images (logo, background, prizes, etc.).
+- Audio files (BGM, sound effects).
+- Custom font files.
+- Automatic file naming and storage.
 
-#### ⚙️ 配置项
-- **最大文件大小：** 50MB
-- **支持格式：**
-  - 图片: jpg, jpeg, png, gif, webp
-  - 音频: mp3, wav, ogg
-  - 字体: ttf, otf, woff, woff2
-- **存储位置：** `uploads/` 目录
+#### ⚙️ Configuration
+- **Max File Size:** 50MB
+- **Supported Formats:**
+  - Images: `jpg`, `jpeg`, `png`, `gif`, `webp`
+  - Audio: `mp3`, `wav`, `ogg`
+  - Fonts: `ttf`, `otf`, `woff`, `woff2`
+- **Storage Path:** `uploads/` directory
 
-#### 🔗 依赖关系
-**依赖于：**
-- Multer middleware - 处理文件上传
-- File system - 存储文件
-- (Optional) CDN - 提供文件URL
+#### 🔗 Dependencies
+**Depends on:**
+- Multer middleware - Handles file uploads.
+- File system - Stores files.
+- (Optional) CDN - Serves file URLs.
 
-**被依赖于：**
-- ConfigForm - 上传按钮
-- 游戏实例 - 使用上传的文件
+**Referenced by:**
+- `ConfigForm` - Upload buttons.
+- Game instances - Using uploaded files.
 
-#### 🔧 工作原理
-1. ConfigForm触发文件选择
-2. POST /api/game-instances/upload with FormData
-   - file: File对象
-   - instanceId: 游戏ID（可选）
-   - customName: 自定义文件名（可选）
-   - category: 文件类别（可选，如'bgm', 'logo'等）
-3. API验证文件类型和大小
-4. 生成唯一文件名（避免覆盖）
-5. 保存到 `uploads/` 目录
-6. 返回文件URL
-7. ConfigForm更新对应的config字段
+#### 🔧 Working Principle
+1. `ConfigForm` triggers file selection.
+2. POST `/api/game-instances/upload` with `FormData`:
+   - `file`: File object.
+   - `instanceId`: Game ID (optional).
+   - `customName`: Custom filename (optional).
+   - `category`: File category (optional, e.g., 'bgm', 'logo').
+3. API validates file type and size.
+4. Generates unique filename (prevents overwrites).
+5. Saves to the `uploads/` directory.
+6. Returns file URL.
+7. `ConfigForm` updates corresponding config field.
 
-#### 📊 数据流
+#### 📊 Data Flow
 ```
 User selects file
   → ConfigForm triggerUpload()
@@ -1492,116 +1491,116 @@ User selects file
   → User saves game config
 ```
 
-#### 🎵 音效上传三模式（2026-01-31新增）⭐
+#### 🎵 Audio Upload Three-Mode System (New 2026-01-31) ⭐
 
-**功能：** ConfigForm的音效字段支持三种模式，带完整的UX体验。
+**Feature:** Audio fields in `ConfigForm` support three modes with a complete UX experience.
 
-**三种模式：**
+**Three Modes:**
 
-1. **🎵 使用主题默认音效**
-   - 值：`__THEME_DEFAULT__` 或 `/templates/{theme}/audio.mp3`
-   - 使用当前主题的默认音效
-   - 主题切换时自动更新音效
-   - 不占用用户存储空间
-   - ✅ 显示预览按钮（可播放/停止）
+1. **🎵 Use Theme Default Audio**
+   - Value: `__THEME_DEFAULT__` or `/templates/{theme}/audio.mp3`
+   - Uses the current theme's default audio.
+   - Automatically updates when the theme switches.
+   - Does not consume user storage.
+   - ✅ Includes Preview button (Play/Stop).
 
-2. **📤 自定义上传**
-   - 值：
-     - 未上传：`__CUSTOM_PENDING__` (internal placeholder，不显示给用户)
-     - 已上传：`/api/uploads/{companyId}/{instanceId}/audio/{filename}`
-   - 用户上传自己的音效文件
-   - 存储到用户专属文件夹
-   - **不会replace主题文件** ✅
-   - ✅ 显示预览按钮（上传后可用）
-   - ✅ Input显示友好placeholder："请上传音效文件"
+2. **📤 Custom Upload**
+   - Value:
+     - Not uploaded: `__CUSTOM_PENDING__` (internal placeholder, hidden from user).
+     - Uploaded: `/api/uploads/{companyId}/{instanceId}/audio/{filename}`
+   - Users upload their own audio files.
+   - Stored in the user's private folder.
+   - **Does not replace theme files.** ✅
+   - ✅ Includes Preview button (available after upload).
+   - ✅ Input displays friendly placeholder: "Please upload an audio file".
 
-3. **🔇 不使用音效**
-   - 值：空字符串 `''` 或 `null`
-   - 完全禁用该音效
-   - 游戏引擎跳过播放
-   - ✅ **隐藏音量/循环播放选项**（User-Centric！）
+3. **🔇 Do Not Use Audio**
+   - Value: Empty string `''` or `null`.
+   - Completely disables this audio event.
+   - Game engine skips playback.
+   - ✅ **Hides volume/loop options** (User-Centric!).
 
-**🎮 完整的UX体验（重要！）：**
+**🎮 Complete UX Experience (Important!):**
 
-1. **Preview按钮的完整行为：**
-   - 点击"预览" → 播放音效 + 按钮变为"⏸️ 停止"
-   - 再点击 → 停止播放 + 按钮恢复为"▶️ 预览"
-   - 播放结束后1.5秒自动恢复按钮
-   - **防止重叠播放**：点击另一个预览会停止当前播放
-   - State tracking：`audioPlayingStates` ref记录每个按钮状态
-   - Dynamic button text：根据state显示不同文字
+1. **Preview Button Behavior:**
+   - Click "Preview" → Play audio + Button becomes "⏸️ Stop".
+   - Click again → Stop playback + Button reverts to "▶️ Preview".
+   - Button auto-resets 1.5s after playback Ends.
+   - **No overlapping playback**: Clicking another preview stops the current one.
+   - State tracking: `audioPlayingStates` ref tracks each button's state.
+   - Dynamic button text: Displays based on current state.
 
-2. **条件显示选项（User-Centric）：**
-   - 选择"不使用音效" → **隐藏**音量和循环播放选项
-     - 原因：用户都不用音效了，显示音量选项会困惑
-   - 选择"自定义上传"或"使用主题" → **显示**音量和循环播放选项
-     - 即使还没上传，也显示（用户intent是要用音效）
+2. **Conditional Options (User-Centric):**
+   - Select "Do Not Use Audio" → **Hides** volume and loop options.
+     - Why: Avoids confusing users with useless options.
+   - Select "Custom Upload" or "Use Theme" → **Shows** volume and loop options.
+     - Shown even before upload (intent is to use audio).
 
-3. **File Picker正确识别audio files：**
-   - Accept attribute：`audio/*,audio/mpeg,audio/wav,audio/ogg,audio/mp4,.mp3,.wav,.ogg,.m4a,.aac`
-   - 同时提供MIME types和file extensions（browser compatibility）
-   - **使用`nextTick()`等待DOM更新**后才打开picker（关键！）
+3. **File Picker Audio Recognition:**
+   - `accept` attribute: `audio/*,audio/mpeg,audio/wav,audio/ogg,audio/mp4,.mp3,.wav,.ogg,.m4a,.aac`
+   - Provides both MIME types and file extensions (browser compatibility).
+   - **Uses `nextTick()` before opening picker** (Critical for DOM updates).
 
-**实现细节：**
+**Implementation Details:**
 
 1. **ConfigForm.vue Helper Functions:**
    
    **Audio Mode Management:**
-   - `getAudioMode(key)` - **从formModel实时derive mode（reactive）**
-     - ⚠️ 不再cache到audioModes，直接根据当前value判断
-     - 这样radio切换时UI立即更新
-   - `setAudioMode(key, mode)` - 设置mode并更新formModel值
-     - none: `''`
-     - theme: `'__THEME_DEFAULT__'`
-     - custom: `'__CUSTOM_PENDING__'` (未上传时的placeholder)
-   - `getThemeAudioUrl(key)` - 获取当前主题的默认音效URL
+   - `getAudioMode(key)` - **Real-time reactive mode derivation from formModel.**
+     - ⚠️ No longer cached in `audioModes`; judged directly by current value.
+     - Ensures UI updates instantly on radio switch.
+   - `setAudioMode(key, mode)` - Sets mode and updates `formModel` value.
+     - `none`: `''`
+     - `theme`: `'__THEME_DEFAULT__'`
+     - `custom`: `'__CUSTOM_PENDING__'` (pre-upload placeholder).
+   - `getThemeAudioUrl(key)` - Fetches current theme's default audio URL.
 
    **Audio Preview Management:**
-   - `currentAudio` - 当前播放的HTMLAudioElement
-   - `audioPlayingStates` ref - 记录每个按钮的playing state
-   - `toggleAudioPreview(key, url)` - Toggle play/stop
-     - 如果正在播放 → 停止
-     - 如果其他按钮在播放 → 先停止它
-     - 播放新音效 + 更新button state
-     - Audio ended → 1.5秒后auto-reset button
-   - `getPreviewButtonText(key, isTheme)` - Dynamic button text
-     - Playing: "⏸️ 停止"
-     - Idle: "▶️ 预览主题音效" 或 "▶️ 预览"
+   - `currentAudio` - Current playing `HTMLAudioElement`.
+   - `audioPlayingStates` ref - Tracks playing state for each button.
+   - `toggleAudioPreview(key, url)` - Toggle play/stop.
+     - If playing → Stop.
+     - If another button is playing → Stop it first.
+     - Play new audio + update button state.
+     - Audio end → 1.5s auto-reset button.
+   - `getPreviewButtonText(key, isTheme)` - Dynamic button text.
+     - Playing: "⏸️ Stop"
+     - Idle: "▶️ Preview Theme Audio" or "▶️ Preview"
 
    **File Upload:**
-   - `async triggerUpload(key, name, category, item, accept)` - **async！**
-     - 设置`currentUploadTarget`（包含accept attribute）
-     - **`await nextTick()`** - 等待Vue更新DOM ⚠️ 关键！
-     - 然后才click() file input
-     - 这样accept attribute已更新，file picker正确识别
+   - `async triggerUpload(key, name, category, item, accept)` - **Asynchronous!**
+     - Sets `currentUploadTarget` (including `accept` attribute).
+     - **`await nextTick()`** - Waits for Vue DOM update ⚠️ Critical!
+     - Calls `click()` on file input.
+     - Ensures `accept` attribute is updated so file picker recognizes formats.
 
    **Main Section Render (line 1229-1283):**
-   - 处理top-level fields
-   - Radio group显示三种选项
-   - Conditional UI（custom mode显示upload button和preview）
+   - Handles top-level fields.
+   - Radio group displays three options.
+   - Conditional UI (custom mode shows upload button and preview).
 
    **⚠️ Nested Collapse-Group Render (line 1143-1199):**
-   - **Audio fields实际在这里！** (bgmUrl, winSound等都在collapse-group里)
-   - 需要**复制完整的audio三模式logic**
-   - 使用`subItem.key`而不是`item.key`
-   - **Bug防范：** 修改audio field UI时，两个section都要更新！
+   - **Audio fields are actually located here!** (`bgmUrl`, `winSound`, etc., inside collapse-groups).
+   - Requires **copying full audio three-mode logic**.
+   - Uses `subItem.key` instead of `item.key`.
+   - **Bug Prevention:** When modifying audio field UI, both sections must be updated!
 
-2. **Game Engine (spin-wheel.template.ts):**
-   - `resolveAudioUrl(audioUrl, themeSlug, audioType)` - 解析audio URL
-   - **四种情况：**
-     1. 空字符串 `''` → 不播放音效（用户选"不使用"）
-     2. `'__CUSTOM_PENDING__'` → 不播放音效（用户选custom但还没上传）
-     3. `'__THEME_DEFAULT__'` 或 undefined → 使用theme默认音效
-     4. 实际URL → 使用用户上传的音效
+2. **Game Engine (`spin-wheel.template.ts`):**
+   - `resolveAudioUrl(audioUrl, themeSlug, audioType)` - Resolves audio URL.
+   - **Four Scenarios:**
+     1. Empty string `''` → No audio played (User selected "None").
+     2. `'__CUSTOM_PENDING__'` → No audio played (Custom selected but not yet uploaded).
+     3. `'__THEME_DEFAULT__'` or `undefined` → Use theme default audio.
+     4. Actual URL → Use user-uploaded audio.
 
 3. **Upload API:**
-   - 路径结构：`uploads/{companyId}/{instanceId}/audio/`
-   - 主题文件：`uploads/templates/{theme}/`
-   - **完全分离，互不影响** ✅
+   - Path structure: `uploads/{companyId}/{instanceId}/audio/`
+   - Theme files: `uploads/templates/{theme}/`
+   - **Completely isolated, no cross-impact.** ✅
 
-**⚠️ 重要：Audio Fields在Collapse-Group里！**
+**⚠️ Important: Audio Fields are in Collapse-Groups!**
 
-Audio fields定义在seed schema的collapse-group中：
+Audio fields are defined in the seed schema within collapse-groups:
 ```typescript
 {
   key: 'bgm_section',
@@ -1613,224 +1612,224 @@ Audio fields定义在seed schema的collapse-group中：
 }
 ```
 
-这意味着：
-- ✅ 它们会被nested render logic处理（line 1099-1155）
-- ❌ 不会被main section render处理（line 1229+）
-- 🎯 **修改audio UI时，必须修改collapse-group section！**
+This means:
+- ✅ They are handled by nested render logic (line 1099-1155).
+- ❌ They are not handled by the main section render (line 1229+).
+- 🎯 **When modifying the audio UI, the collapse-group section must be updated!**
 
-**文件存储示例：**
+**File Storage Example:**
 ```
 uploads/
-  ├── templates/                    # 主题默认文件（不会被替换）
+  ├── templates/                    # Theme default files (not replaced)
   │   ├── cyberpunk-elite/
   │   │   ├── bgm.mp3
   │   │   ├── win.mp3
   │   │   └── lose.mp3
   │   └── neon-night/
   │       └── ...
-  └── {companyId}/                  # 用户文件
+  └── {companyId}/                  # User files
       └── {instanceId}/
-          └── audio/                # 用户上传的音效
+          └── audio/                # User-uploaded audio
               ├── bgm.mp3
               ├── win.mp3
               └── jackpot.mp3
 ```
 
-**完整测试checklist：**
+**Full Testing Checklist:**
 
-1. **三种模式切换：**
-   - ✅ 选"使用主题默认" → **立即显示**预览按钮
-   - ✅ 选"自定义上传" → **立即显示**上传按钮（不需要关闭再打开collapse）
-   - ✅ 选"不使用音效" → **立即隐藏**音量/循环选项
+1. **Three-Mode Toggle:**
+   - ✅ Select "Use Theme Default" → **Instantly displays** Preview button.
+   - ✅ Select "Custom Upload" → **Instantly displays** Upload button (no need to close/reopen collapse).
+   - ✅ Select "Do Not Use Audio" → **Instantly hides** volume/loop options.
 
-2. **Preview按钮完整体验：**
-   - ✅ 点击"预览" → 播放 + 按钮变"⏸️ 停止"
-   - ✅ 再点击 → 停止 + 恢复按钮
-   - ✅ 多次点击同一按钮 → 不会重叠播放（toggle行为）
-   - ✅ 点击另一个预览 → 停止当前播放，播放新的
-   - ✅ 播放结束 → 1.5秒后自动恢复按钮
+2. **Preview Button Experience:**
+   - ✅ Click "Preview" → Play + Button becomes "⏸️ Stop".
+   - ✅ Click again → Stop + Restore button.
+   - ✅ Clicking the same button multiple times → No overlapping playback (toggle behavior).
+   - ✅ Clicking another preview → Stops current playback, plays new one.
+   - ✅ Playback end → Auto-restores button after 1.5 seconds.
 
-3. **File Picker测试：**
-   - ✅ 点击"上传音效文件" → File picker只显示audio files
-   - ✅ 点击"上传图片" → File picker只显示image files
-   - ✅ 上传成功后 → input显示实际URL，不是`__CUSTOM_PENDING__`
+3. **File Picker Test:**
+   - ✅ Click "Upload audio file" → File picker only shows audio files.
+   - ✅ Click "Upload image" → File picker only shows image files.
+   - ✅ After successful upload → Input displays actual URL, not `__CUSTOM_PENDING__`.
 
-4. **UX验证：**
-   - ✅ Custom模式未上传时 → input显示placeholder"请上传音效文件"
-   - ✅ 不使用音效时 → 音量/循环选项隐藏（不困惑用户）
-   - ✅ 所有操作都是reactive，不需要refresh
+4. **UX Verification:**
+   - ✅ Custom mode before upload → Input shows placeholder "Please upload an audio file".
+   - ✅ When audio unused → Volume/loop options hidden (avoids user confusion).
+   - ✅ All operations are reactive, no refresh needed.
 
-5. **Data flow验证：**
-   - ✅ 切换主题 → 默认音效自动跟随
-   - ✅ 保存后 → 游戏引擎正确播放对应音效
-   - ✅ 验证用户文件存储路径正确
+5. **Data Flow Verification:**
+   - ✅ Theme switch → Default audio follows theme automatically.
+   - ✅ After save → Game engine correctly plays corresponding audio.
+   - ✅ Verify correct storage path for user files.
 
-#### 🐛 常见问题和解决方案
+#### 🐛 FAQs and Solutions
 
-1. **问题：** Preview按钮点击后多次重叠播放，很吵
-   **原因：** 每次点击都创建new Audio()，没有stop previous
-   **解决：** ✅ 已修复 - 使用state tracking + stop previous audio
-   **代码：** `toggleAudioPreview()` 函数
+1. **Problem:** Preview button causes overlapping playback.
+   **Reason:** Every click created a `new Audio()` without stopping the previous one.
+   **Solution:** ✅ Fixed - Using state tracking + `stop previous audio`.
+   **Code:** `toggleAudioPreview()` function.
 
-2. **问题：** 选择radio后UI不更新，需要关闭再打开collapse
-   **原因：** `getAudioMode()`依赖cached audioModes，不reactive
-   **解决：** ✅ 已修复 - getAudioMode()直接从formModel derive，完全reactive
-   **代码：** Line ~95 `getAudioMode()` always derives from current formModel
+2. **Problem:** UI doesn't update after selecting radio button until closing/reopening collapse.
+   **Reason:** `getAudioMode()` relied on cached `audioModes`, which was not reactive.
+   **Solution:** ✅ Fixed - `getAudioMode()` now derives directly from `formModel`, making it fully reactive.
+   **Code:** Line ~95 `getAudioMode()` always derives from current `formModel`.
 
-3. **问题：** File picker显示"Image Files"而不是audio files
-   **原因：** Vue reactivity是异步的，click()时accept attribute还没更新到DOM
-   **解决：** ✅ 已修复 - 使用`await nextTick()`等待DOM更新后才click
-   **代码：** `async triggerUpload()` + `await nextTick()`
+3. **Problem:** File picker shows "Image Files" instead of audio files.
+   **Reason:** Vue reactivity is asynchronous; the `click()` occurred before the `accept` attribute updated in the DOM.
+   **Solution:** ✅ Fixed - Used `await nextTick()` to wait for DOM updates before calling `click()`.
+   **Code:** `async triggerUpload()` + `await nextTick()`.
 
-4. **问题：** Input显示`__CUSTOM_PENDING__`给用户看
-   **原因：** 直接用v-model绑定formModel，internal value暴露了
-   **解决：** ✅ 已修复 - 用`:value`computed，如果是pending显示空字符串
-   **代码：** `:value="formModel[key] === '__CUSTOM_PENDING__' ? '' : formModel[key]"`
+4. **Problem:** Input displays `__CUSTOM_PENDING__` to the user.
+   **Reason:** Direct `v-model` binding with `formModel` exposed the internal value.
+   **Solution:** ✅ Fixed - Used `:value` computed; displays empty string if `pending`.
+   **Code:** `:value="formModel[key] === '__CUSTOM_PENDING__' ? '' : formModel[key]"`
 
-5. **问题：** 条件隐藏的音量选项没生效
-   **原因：** Seed schema的condition已添加，但existing instances没refresh
-   **解决：** ✅ 运行data seeder refresh - `PATCH /api/seed/refresh-schemas`
-   **代码：** SeedService.refreshGameSchemas()
+5. **Problem:** Conditionally hidden volume options not taking effect.
+   **Reason:** Seed schema conditions added, but existing instances were not refreshed.
+   **Solution:** ✅ Run data seeder refresh - `PATCH /api/seed/refresh-schemas`.
+   **Code:** `SeedService.refreshGameSchemas()`.
 
-6. **问题：** 上传失败 - 413 Payload Too Large
-   **原因：** 文件超过50MB
-   **解决：** 压缩文件或选择更小的文件
+6. **Problem:** Upload failed - 413 Payload Too Large.
+   **Reason:** File exceeds 50MB.
+   **Solution:** Compress file or select a smaller file.
 
-7. **问题：** 上传失败 - 415 Unsupported Media Type
-   **原因：** 文件格式不支持
-   **解决：** 转换文件格式
+7. **Problem:** Upload failed - 415 Unsupported Media Type.
+   **Reason:** Unsupported file format.
+   **Solution:** Convert the file format.
 
-8. **问题：** 文件上传成功但游戏里看不到
-   **原因：** URL路径错误或文件没有public access
-   **解决：** 检查file URL，确保可以直接访问
+8. **Problem:** File upload successful but not visible in game.
+   **Reason:** Incorrect URL path or no public access.
+   **Solution:** Verify file URL and ensure it is publicly accessible.
 
-#### 🚨 修改影响范围
+#### 🚨 Modification Impact Scope
 
-**修改音效三模式logic会影响：**
-- ✅ ConfigForm - 所有audio fields的UI和行为
-- ✅ Game Engine - audio URL解析和播放
-- ✅ Seed Service - schema定义和refresh
-- ✅ 用户体验 - 所有涉及音效配置的操作
+**Modifying the audio three-mode logic affects:**
+- ✅ `ConfigForm` - UI and behavior for all audio fields.
+- ✅ Game Engine - Audio URL resolution and playback.
+- ✅ Seed Service - Schema definitions and refresh logic.
+- ✅ User Experience - All audio configuration operations.
 
-**需要rebuild：**
-- `admin` frontend (ConfigForm changes)
-- `api` backend (template changes)
+**Requires Rebuild:**
+- `admin` frontend (`ConfigForm` changes).
+- `api` backend (template changes).
 
-**需要测试：**
-- ✅ 三种模式切换的UI reactivity
-- ✅ Preview按钮的完整behavior（play/stop/auto-reset）
-- ✅ File picker正确识别file types
-- ✅ 条件显示/隐藏选项
-- ✅ 上传后的data flow
-- ✅ 游戏引擎正确播放音效
-- ✅ Refresh schemas应用到existing instances
+**Required Verification:**
+- ✅ UI reactivity on mode switch.
+- ✅ Preview button behavior (play/stop/auto-reset).
+- ✅ File picker recognition of file types.
+- ✅ Conditional option display/hide.
+- ✅ Post-upload data flow.
+- ✅ Correct audio playback in game engine.
+- ✅ Refresh schemas applied to existing instances.
 
 **User-Centric Principles Applied:**
-- 不显示internal values（`__CUSTOM_PENDING__`）给用户
-- 用友好的placeholder text
-- 隐藏无意义的选项（不使用音效 → 隐藏音量）
-- 完整的interaction flow（preview可以play/stop）
-- 防止annoying behavior（重叠播放）
-- Immediate reactive feedback（不需要关闭再打开）
+- No internal values (`__CUSTOM_PENDING__`) shown to users.
+- Use of friendly placeholder text.
+- Hidden irrelevant options (e.g., hiding volume if audio is disabled).
+- Complete interaction flow (Preview allows play and stop).
+- Prevention of annoying behaviors (e.g., overlapping playback).
+- Immediate reactive feedback (no reopen required).
 
 ---
 
-### 9. 用户认证系统
+### 9. User Authentication System
 
-#### 📍 位置
-- **Module：** `apps/api/src/modules/auth/`
-- **Controller：** `auth.controller.ts`
-- **Service：** `auth.service.ts`
-- **Strategy：** `jwt.strategy.ts`
-- **Guard：** `jwt-auth.guard.ts`
+#### 📍 Location
+- **Module:** `apps/api/src/modules/auth/`
+- **Controller:** `auth.controller.ts`
+- **Service:** `auth.service.ts`
+- **Strategy:** `jwt.strategy.ts`
+- **Guard:** `jwt-auth.guard.ts`
 
-#### 🎯 功能说明
-完整的JWT认证系统，支持：
-- 用户登录
-- Token生成和验证
-- Protected routes
-- Refresh token（可能）
-- Permission checking
+#### 🎯 Feature Description
+Full JWT authentication system, supporting:
+- User login.
+- Token generation and verification.
+- Protected routes.
+- Refresh tokens (optional).
+- Permission checking.
 
-#### ⚙️ 配置项
-- **JWT Secret：** 环境变量 `JWT_SECRET`
-- **Token过期时间：** 可配置（默认24h）
-- **Refresh token：** 可配置
+#### ⚙️ Configuration
+- **JWT Secret:** Environment variable `JWT_SECRET`.
+- **Token Expiry:** Configurable (default 24h).
+- **Refresh Token:** Configurable.
 
-#### 🔗 依赖关系
-**依赖于：**
-- User entity - 用户数据
-- bcrypt - 密码哈希
-- @nestjs/jwt - JWT生成
-- @nestjs/passport - 认证策略
+#### 🔗 Dependencies
+**Depends on:**
+- `User` entity - User data.
+- `bcrypt` - Password hashing.
+- `@nestjs/jwt` - JWT generation.
+- `@nestjs/passport` - Authentication strategy.
 
-**被依赖于：**
-- 所有需要认证的endpoints
-- Web App - 用户登录
-- Admin Panel - 管理员登录
+**Referenced by:**
+- All protected endpoints.
+- Web App - User login.
+- Admin Panel - Administrator login.
 
-#### 🔧 工作原理
+#### 🔧 Working Principle
 
-**登录流程：**
-1. 用户输入username/password
-2. POST /api/auth/login
-3. 验证credentials
-4. 生成JWT token
-5. 返回token + user info
-6. Client保存token (localStorage)
-7. 后续请求带上 `Authorization: Bearer <token>`
+**Login Flow:**
+1. User enters username/password.
+2. POST `/api/auth/login`.
+3. Credentials validated.
+4. JWT token generated.
+5. Returns token + user info.
+6. Client saves token (`localStorage`).
+7. Subsequent requests include `Authorization: Bearer <token>`.
 
-**Protected endpoint流程：**
-1. Client发送请求with Authorization header
-2. JwtAuthGuard拦截
-3. 验证token是否有效
-4. 解码token获取user info
-5. 注入到request.user
-6. Controller可以访问request.user
+**Protected Endpoint Flow:**
+1. Client sends request with `Authorization` header.
+2. `JwtAuthGuard` intercepts.
+3. Token validity verified.
+4. Token decoded to retrieve user info.
+5. Injected into `request.user`.
+6. Controller accesses `request.user`.
 
-#### 📊 Token结构
+#### 📊 Token Structure
 ```typescript
 {
   sub: string;      // User ID
   username: string;
   email: string;
-  roles: string[];  // 用户角色
-  iat: number;      // 签发时间
-  exp: number;      // 过期时间
+  roles: string[];  // User roles
+  iat: number;      // Issued at
+  exp: number;      // Expiry time
 }
 ```
 
-#### 🐛 常见问题
-1. **问题：** 401 Unauthorized
-   **原因：** Token过期或无效
-   **解决：** 重新登录获取新token
+#### 🐛 FAQs
+1. **Problem:** 401 Unauthorized
+   **Reason:** Token expired or invalid.
+   **Solution:** Re-login to obtain a new token.
 
-2. **问题：** Token验证失败
-   **原因：** JWT_SECRET配置错误
-   **解决：** 检查环境变量，确保前后端一致
+2. **Problem:** Token verification failure
+   **Reason:** `JWT_SECRET` misconfiguration.
+   **Solution:** Check environment variables for consistency across frontend and backend.
 
-3. **问题：** 登录成功但无法访问protected routes
-   **原因：** Token没有正确保存或发送
-   **解决：** 检查localStorage和Authorization header
+3. **Problem:** Login successful but protected routes inaccessible
+   **Reason:** Token not saved or sent correctly.
+   **Solution:** Check `localStorage` and `Authorization` header.
 
-#### 🚨 修改影响范围
-**修改认证logic会影响：**
-- ✅ 所有需要登录的功能
-- ✅ Token验证流程
-- ✅ 用户权限检查
+#### 🚨 Modification Impact Scope
+**Modifying authentication logic affects:**
+- ✅ All features requiring login.
+- ✅ Token verification flow.
+- ✅ User permission checks.
 
-**需要rebuild：**
-- `api` backend
+**Requires Rebuild:**
+- `api` backend.
 
-**需要重启：**
-- API服务
+**Requires Restart:**
+- API Service.
 
-**需要测试：**
-- 登录功能
-- Token验证
-- Protected routes
-- Token过期处理
-- Logout功能
+**Required Verification:**
+- Login functionality.
+- Token verification.
+- Protected routes.
+- Token expiry handling.
+- Logout functionality.
 
 ---
 
@@ -1844,94 +1843,94 @@ uploads/
 **总进度：** 9/17 (53%)
 
 
-### 10. 转盘游戏引擎 (Spin Wheel Template)
+### 10. Spin Wheel Game Engine (Spin Wheel Template)
 
-#### 📍 位置
-- **Template Generator：** `apps/api/src/modules/game-instances/templates/spin-wheel.template.ts`
-- **Called by：** `game-instances.controller.ts` (GET /:slug/play endpoint)
+#### 📍 Location
+- **Template Generator:** `apps/api/src/modules/game-instances/templates/spin-wheel.template.ts`
+- **Referenced by:** `game-instances.controller.ts` (GET `/:slug/play` endpoint)
 
-#### 🎯 功能说明
-生成完整的HTML游戏引擎，包含：
-- 转盘渲染（Canvas/SVG）
-- 旋转动画
-- 概率计算和奖品选择
-- 音效系统
-- UI渲染（按钮、logo、token bar等）
-- 结果展示
+#### 🎯 Feature Description
+Generates a complete HTML game engine, including:
+- Wheel rendering (Canvas/SVG).
+- Rotation animations.
+- Probability calculation and prize selection.
+- Audio system integration.
+- UI rendering (buttons, logo, token bar, etc.).
+- Result display.
 
-**这是游戏的"心脏"** - 所有游戏逻辑都在这个template里！
+**This is the "heart" of the game** - all game logic resides within this template!
 
-#### ⚙️ 输入参数 (SpinWheelConfig)
+#### ⚙️ Input Parameters (`SpinWheelConfig`)
 ```typescript
 {
-  prizeList: Prize[];         // 奖品列表
-  spinDuration: number;       // 旋转时间(ms)
-  spinTurns: number;          // 旋转圈数
-  bgColor: string;            // 背景颜色
-  bgImage: string;            // 背景图片
-  spinBtnText: string;        // 按钮文字
-  soundEnabled: boolean;      // 音效开关
-  // ... 还有几十个配置项
+  prizeList: Prize[];         // Prize list
+  spinDuration: number;       // Rotation duration (ms)
+  spinTurns: number;          // Number of turns
+  bgColor: string;            // Background color
+  bgImage: string;            // Background image
+  spinBtnText: string;        // Button text
+  soundEnabled: boolean;      // Audio toggle
+  // ... and dozens of other configuration items
 }
 ```
 
-#### 🔗 依赖关系
-**依赖于：**
-- Game instance config - 所有游戏配置
-- Uploaded assets - 图片/音频文件
+#### 🔗 Dependencies
+**Depends on:**
+- Game instance config - All game settings.
+- Uploaded assets - Image/audio files.
 
-**被依赖于：**
-- Game iframe - 加载这个HTML
+**Referenced by:**
+- Game iframe - Loads this HTML content.
 
-#### 🔧 工作原理
+#### 🔧 Working Principle
 
-**生成流程：**
-1. GET /:slug/play endpoint被调用
-2. 从database读取game instance config
-3. 调用 `generateSpinWheelHtml(config)`
-4. Template生成完整的HTML（包含CSS + JavaScript）
-5. 返回HTML string
-6. Iframe加载这个HTML
-7. 游戏开始运行
+**Generation Flow:**
+1. GET `/:slug/play` endpoint is called.
+2. Reads game instance config from the database.
+3. Calls `generateSpinWheelHtml(config)`.
+4. Template generates full HTML (including CSS + JavaScript).
+5. Returns HTML string.
+6. Iframe loads this HTML.
+7. Game starts running.
 
-**游戏运行流程（在生成的HTML内）：**
-1. 初始化Canvas/SVG渲染转盘
-2. 绘制奖品区块
-3. 用户点击SPIN按钮
-4. 客户端计算中奖奖品（根据概率）
-5. 执行旋转动画
-6. 到达目标角度后停止
-7. 显示结果popup
-8. 播放音效（如果启用）
-9. （可选）调用API记录结果
+**Game Execution Flow (Within generated HTML):**
+1. Initializes Canvas/SVG wheel rendering.
+2. Draws prize segments.
+3. User clicks SPIN button.
+4. Client calculates winning prize (based on probability).
+5. Executes rotation animation.
+6. Stops at target angle.
+7. Displays result popup.
+8. Plays audio (if enabled).
+9. (Optional) Calls API to record result.
 
-**概率计算：**
+#### Probability Calculation:
 ```typescript
-// 每个prize有chance属性（百分比）
+// Each prize has a chance property (percentage)
 prize = {
   name: "100 coins",
-  chance: 10,  // 10% 概率
+  chance: 10,  // 10% probability
   value: 100
 }
 
-// 生成随机数选择奖品
+// Generate random number to select prize
 const random = Math.random() * 100;
 let cumulative = 0;
-for (prize of prizeList) {
+for (const prize of prizeList) {
   cumulative += prize.chance;
   if (random < cumulative) {
-    return prize; // 中奖！
+    return prize; // Winner!
   }
 }
 ```
 
-#### 📊 生成的HTML结构
+#### 📊 Generated HTML Structure
 ```html
 <!DOCTYPE html>
 <html>
 <head>
   <style>
-    /* 所有CSS样式 */
+    /* All CSS styles */
     .wheel { ... }
     .spin-button { ... }
   </style>
@@ -1944,7 +1943,7 @@ for (prize of prizeList) {
   </div>
   
   <script>
-    // 所有游戏逻辑
+    // All game logic
     function initWheel() { ... }
     function spin() { ... }
     function calculateResult() { ... }
@@ -1953,104 +1952,104 @@ for (prize of prizeList) {
 </html>
 ```
 
-#### 🐛 常见问题
-1. **问题：** 转盘不显示
-   **原因：** Canvas初始化失败或prizeList为空
-   **解决：** 检查browser console，确保prizeList有数据
+#### 🐛 FAQs
+1. **Problem:** Wheel not displaying
+   **Reason:** Canvas initialization failed or `prizeList` is empty.
+   **Solution:** Check browser console, ensure `prizeList` has data.
 
-2. **问题：** 概率不准确
-   **原因：** prizeList的chance总和不是100%
-   **解决：** 在ConfigForm使用"Auto Balance"功能
+2. **Problem:** Probability inaccurate
+   **Reason:** Total `chance` in `prizeList` does not sum to 100%.
+   **Solution:** Use the "Auto Balance" feature in `ConfigForm`.
 
-3. **问题：** 图片/音频加载失败
-   **原因：** 文件URL错误或文件不存在
-   **解决：** 检查uploaded files，验证URL可访问
+3. **Problem:** Image/Audio loading failed
+   **Reason:** Incorrect file URL or file does missing.
+   **Solution:** Check uploaded files, verify URL accessibility.
 
-#### 🚨 修改影响范围
-**修改spin-wheel.template.ts会影响：**
-- ✅ 所有Spin Wheel类型的游戏
-- ✅ 游戏的视觉效果和动画
-- ✅ 概率计算逻辑
-- ❌ 不影响: 游戏配置（在database里）
+#### 🚨 Modification Impact Scope
+**Modifying `spin-wheel.template.ts` affects:**
+- ✅ All Spin Wheel type games.
+- ✅ Game visual effects and animations.
+- ✅ Probability calculation logic.
+- ❌ Does not affect: Game configurations (stored in database).
 
-**需要rebuild：**
-- `api` backend
+**Requires Rebuild:**
+- `api` backend.
 
-**需要重启：**
-- API服务
+**Requires Restart:**
+- API Service.
 
-**需要测试：**
-- 创建一个Spin Wheel游戏
-- 访问游戏URL
-- 测试旋转功能
-- 验证概率准确性
-- 测试所有配置项（音效、图片、动画等）
+**Required Verification:**
+- Create a Spin Wheel game.
+- Visit the game URL.
+- Test rotation functionality.
+- Verify probability accuracy.
+- Test all configuration items (audio, images, animations, etc.).
 
-**⚠️ 注意：**
-这个template是**server-side生成**的，不是client-side。每次访问游戏URL都会重新生成HTML。
-
----
-
-### 11. Admin Panel - 会员管理
-
-#### 📍 位置
-- **Module：** `apps/api/src/modules/members/`
-- **Frontend：** `apps/soybean-admin/src/views/management/member/`
-
-#### 🎯 功能说明
-管理游戏的会员（玩家），支持：
-- 查看会员列表
-- 会员详情
-- Token余额管理
-- 游戏历史记录
-- 封禁/解封会员
-
-#### ⚙️ 功能列表
-- CRUD操作
-- Token充值/扣除
-- 游戏记录查询
-- 统计数据
-
-#### 🔗 依赖关系
-**依赖于：**
-- Member entity
-- Game history records
-- Company association
-
-**被依赖于：**
-- 游戏系统 - 验证会员身份和余额
-- 统计系统 - 会员数据分析
-
-#### 🔧 工作原理
-1. Admin访问会员管理页面
-2. 调用API获取会员列表
-3. 可以查看会员详情
-4. 可以修改token余额
-5. 可以查看游戏历史
-
-#### 🐛 常见问题
-1. **问题：** 会员token余额不更新
-   **原因：** Cache或database同步问题
-   **解决：** 刷新页面，检查database
-
-#### 🚨 修改影响范围
-**需要rebuild：**
-- `api` (如果改后端)
-- `admin` (如果改前端)
+**⚠️ NOTE:**
+This template is **server-side generated**, not client-side. HTML is regenerated on every game URL access.
 
 ---
 
-### 12. 游戏历史/统计系统
+### 11. Admin Panel - Member Management
 
-#### 📍 位置
-- **Module：** `apps/api/src/modules/scores/` (或类似的history module)
+#### 📍 Location
+- **Module:** `apps/api/src/modules/members/`
+- **Frontend:** `apps/soybean-admin/src/views/management/member/`
 
-#### 🎯 功能说明
-记录和展示游戏数据：
-- 每次游戏的结果
-- 玩家的游戏历史
-- 统计数据（总游戏次数、总奖励等）
-- 数据分析
+#### 🎯 Feature Description
+Manages game members (players), supporting:
+- Viewing member list.
+- Member details view.
+- Token balance management.
+- Game history logs.
+- Blocking/Unblocking members.
+
+#### ⚙️ Features List
+- CRUD operations.
+- Token recharge/deduction.
+- Game record queries.
+- Statistical data.
+
+#### 🔗 Dependencies
+**Depends on:**
+- `Member` entity.
+- Game history records.
+- Company association.
+
+**Referenced by:**
+- Game system - Verifies member identity and balance.
+- Statistics system - Member data analysis.
+
+#### 🔧 Working Principle
+1. Admin accesses the member management page.
+2. Calls API to fetch the member list.
+3. Views individual member details.
+4. Modifies token balance.
+5. Reviews game history.
+
+#### 🐛 FAQs
+1. **Problem:** Member token balance not updating
+   **Reason:** Cache or database synchronization issue.
+   **Solution:** Refresh page, check database records.
+
+#### 🚨 Modification Impact Scope
+**Requires Rebuild:**
+- `api` (if backend modified).
+- `admin` (if frontend modified).
+
+---
+
+### 12. Game History/Statistics System
+
+#### 📍 Location
+- **Module:** `apps/api/src/modules/scores/` (or similar history module)
+
+#### 🎯 Feature Description
+Records and displays game data:
+- Individual game results.
+- Player game history.
+- Aggregate statistics (Total game count, total rewards, etc.).
+- Data analytics.
 
 #### ⚙️ 数据记录
 每次游戏后记录：
@@ -2148,78 +2147,78 @@ User starts game
   → Record transaction
 ```
 
-#### 🐛 常见问题
-1. **问题：** 余额扣除但游戏没开始
-   **原因：** 网络中断或游戏加载失败
-   **解决：** 实现transaction rollback或补偿机制
+#### 🐛 FAQs
+1. **Problem:** Balance deducted but game didn't start
+   **Reason:** Network interruption or game loading failure.
+   **Solution:** Implement transaction rollback or compensation mechanism.
 
-2. **问题：** 余额显示不准确
-   **原因：** Cache没更新
-   **解决：** 刷新页面重新获取余额
+2. **Problem:** Balance display inaccurate
+   **Reason:** Cache not updated.
+   **Solution:** Refresh page to re-fetch balance.
 
-#### 🚨 修改影响范围
-**修改余额logic会影响：**
-- ✅ 游戏的可玩性
-- ✅ 会员管理功能
-- ✅ 交易记录
+#### 🚨 Modification Impact Scope
+**Modifying balance logic affects:**
+- ✅ Game playability.
+- ✅ Member management features.
+- ✅ Transaction records.
 
-**需要rebuild：**
-- `api` (如果改后端逻辑)
-- `web-app` (如果改前端显示)
+**Requires Rebuild:**
+- `api` (if backend logic modified).
+- `web-app` (if frontend display modified).
 
-**需要测试：**
-- 余额扣除
-- 充值功能
-- 余额不足的处理
-- 交易记录准确性
+**Required Verification:**
+- Balance deduction.
+- Recharge functionality.
+- Handling insufficient balance.
+- Transaction record accuracy.
 
 ---
 
-### 14. 公司/多租户系统
+### 14. Company/Multi-tenant System
 
-#### 📍 位置
-- **Module：** `apps/api/src/modules/companies/`
-- **Entity：** Company entity
-- **Frontend：** `apps/soybean-admin/src/views/management/company/`
+#### 📍 Location
+- **Module:** `apps/api/src/modules/companies/`
+- **Entity:** `Company` entity.
+- **Frontend:** `apps/soybean-admin/src/views/management/company/`
 
-#### 🎯 功能说明
-支持多个公司/租户使用同一个系统：
-- 每个公司有独立的游戏实例
-- 每个公司有独立的会员
-- 数据隔离（公司A看不到公司B的数据）
-- 公司级别的配置和权限
+#### 🎯 Feature Description
+Supports multiple companies/tenants using the same system:
+- Each company has independent game instances.
+- Each company has independent members.
+- Data isolation (Company A cannot see Company B data).
+- Company-level configuration and permissions.
 
-#### ⚙️ 核心概念
+#### ⚙️ Core Concepts
 ```typescript
 Company {
   id: string;
   name: string;
-  slug: string;          // 公司唯一标识
-  settings: object;      // 公司级别配置
-  gameInstances: [];     // 该公司的游戏
-  members: [];           // 该公司的会员
+  slug: string;          // Unique company identifier
+  settings: object;      // Company-level settings
+  gameInstances: [];     // Games belonging to this company
+  members: [];           // Members belonging to this company
 }
 ```
 
-#### 🔗 依赖关系
-**依赖于：**
-- Database - 存储公司数据
-- Auth system - 验证用户属于哪个公司
+#### 🔗 Dependencies
+**Depends on:**
+- Database - Stores company data.
+- Auth system - Verifies which company the user belongs to.
 
-**被依赖于：**
-- 所有数据entities - 通过companyId关联
-- 游戏实例 - 属于某个公司
-- 会员 - 属于某个公司
+**Referenced by:**
+- All data entities - Linked via `companyId`.
+- Game instances - Belong to a company.
+- Members - Belong to a company.
 
-#### 🔧 工作原理
+#### 🔧 Working Principle
 
-**数据隔离：**
-1. 用户登录时获取companyId
-2. 所有查询都带上 `WHERE companyId = current_user.companyId`
-3. 创建资源时自动设置companyId
-4. API自动过滤其他公司的数据
+**Data Isolation:**
+1. User obtains `companyId` on login.
+2. All queries include `WHERE companyId = current_user.companyId`.
+3. Resource creation automatically sets `companyId`.
+4. API filters out other companies' data automatically.
 
-**多租户架构：**
+**Multi-tenant Architecture:**
 ```
 User login
   → Get user.companyId
@@ -2228,46 +2227,46 @@ User login
   → Data isolation guaranteed
 ```
 
-#### 🐛 常见问题
-1. **问题：** 看到其他公司的数据
-   **原因：** companyId过滤失效
-   **解决：** 检查query，确保所有查询都有companyId条件
+#### 🐛 FAQs
+1. **Problem:** Seeing other companies' data
+   **Reason:** `companyId` filtering failed.
+   **Solution:** Review queries, ensure all have `companyId` conditions.
 
-2. **问题：** 创建资源时companyId为空
-   **原因：** 没有从JWT token获取companyId
-   **解决：** 在service层自动注入companyId
+2. **Problem:** `companyId` null on resource creation
+   **Reason:** Failed to retrieve `companyId` from JWT token.
+   **Solution:** Automatically inject `companyId` at the service layer.
 
-#### 🚨 修改影响范围
-**修改公司系统会影响：**
-- ✅ 数据隔离逻辑
-- ✅ 所有CRUD操作
-- ✅ 用户权限
+#### 🚨 Modification Impact Scope
+**Modifying the company system affects:**
+- ✅ Data isolation logic.
+- ✅ All CRUD operations.
+- ✅ User permissions.
 
-**需要rebuild：**
-- `api` backend
+**Requires Rebuild:**
+- `api` backend.
 
-**需要测试：**
-- 数据隔离（公司A看不到公司B）
-- 跨公司访问被阻止
-- 公司管理功能
+**Required Verification:**
+- Data isolation (Company A vs Company B).
+- Cross-company access blocking.
+- Company management features.
 
 ---
 
-### 15. 权限管理系统
+### 15. Permission Management System
 
-#### 📍 位置
-- **Module：** `apps/api/src/modules/permissions/` + `roles/`
-- **Guards：** Permission guards
-- **Decorators：** `@RequirePermission()`, `@Roles()`
+#### 📍 Location
+- **Module:** `apps/api/src/modules/permissions/` + `roles/`.
+- **Guards:** Permission guards.
+- **Decorators:** `@RequirePermission()`, `@Roles()`.
 
-#### 🎯 功能说明
-基于角色的权限控制（RBAC）：
-- 定义角色（Admin, Editor, Viewer等）
-- 每个角色有不同的权限
-- 用户分配角色
-- API endpoints根据权限保护
+#### 🎯 Feature Description
+Role-Based Access Control (RBAC):
+- Roles definition (Admin, Editor, Viewer, etc.).
+- Each role has distinct permissions.
+- Users are assigned roles.
+- API endpoints protected based on permissions.
 
-#### ⚙️ 权限模型
+#### ⚙️ Permission Model
 ```typescript
 Role {
   id: string;
@@ -2277,30 +2276,30 @@ Role {
 
 User {
   id: string;
-  roles: Role[];        // 一个用户可以有多个角色
+  roles: Role[];        // A user can have multiple roles
 }
 ```
 
-#### 🔗 依赖关系
-**依赖于：**
-- Auth system - 验证用户身份
-- Role/Permission entities
-- JWT token - 包含用户角色
+#### 🔗 Dependencies
+**Depends on:**
+- Auth system - Verifies user identity.
+- Role/Permission entities.
+- JWT token - Contains user roles.
 
-**被依赖于：**
-- Protected API endpoints
-- Admin Panel - 显示/隐藏功能
+**Referenced by:**
+- Protected API endpoints.
+- Admin Panel - UI feature visibility.
 
-#### 🔧 工作原理
+#### 🔧 Working Principle
 
-**权限检查流程：**
-1. 用户访问protected endpoint
-2. AuthGuard验证token有效
-3. PermissionGuard检查用户权限
-4. 如果有权限 → 允许访问
-5. 如果没权限 → 返回403 Forbidden
+**Permission Check Flow:**
+1. User accesses protected endpoint.
+2. `AuthGuard` validates token.
+3. `PermissionGuard` checks user permissions.
+4. If authorized → Allow access.
+5. If unauthorized → Return 403 Forbidden.
 
-**使用方式：**
+**Usage Example:**
 ```typescript
 @Post()
 @Roles('admin', 'editor')
@@ -2310,119 +2309,109 @@ async createGame() {
 }
 ```
 
-#### 📊 常见权限类型
-- `game:*` - 游戏管理（create/edit/delete/view）
-- `member:*` - 会员管理
-- `company:*` - 公司管理
-- `user:*` - 用户管理
-- `system:*` - 系统配置
+#### 📊 Common Permission Types
+- `game:*` - Game management (create/edit/delete/view).
+- `member:*` - Member management.
+- `company:*` - Company management.
+- `user:*` - User management.
+- `system:*` - System configuration.
 
-#### 🐛 常见问题
-1. **问题：** 403 Forbidden但用户应该有权限
-   **原因：** 角色或权限配置错误
-   **解决：** 检查用户的roles和对应的permissions
+#### 🐛 FAQs
+1. **Problem:** 403 Forbidden despite user having permission
+   **Reason:** Role or permission misconfiguration.
+   **Solution:** Verify user's roles and corresponding permissions.
 
-2. **问题：** Super admin被阻止
-   **原因：** Permission check太严格
-   **解决：** 添加super admin bypass逻辑
+2. **Problem:** Super admin blocked
+   **Reason:** Overly strict permission check.
+   **Solution:** Implement Super Admin bypass logic.
 
-#### 🚨 修改影响范围
-**修改权限系统会影响：**
-- ✅ 所有protected endpoints
-- ✅ Admin Panel功能显示
-- ✅ 用户可执行的操作
+#### 🚨 Modification Impact Scope
+**Modifying the permission system affects:**
+- ✅ All protected endpoints.
+- ✅ Admin Panel feature visibility.
+- ✅ Operational capabilities for users.
 
-**需要rebuild：**
-- `api` backend
-- `admin` frontend (如果改UI)
+**Requires Rebuild:**
+- `api` backend.
+- `admin` frontend (if UI modified).
 
-**需要测试：**
-- 不同角色的权限
-- 权限继承
-- Super admin权限
-- 403错误处理
+**Required Verification:**
+- Cross-role permission testing.
+- Permission inheritance.
+- Super admin level access.
+- 403 error handling.
 
 ---
 
 ## 📝 Checkpoint 4 Summary
 
-**已新增功能 (3个):**
-- Token/余额管理系统
-- 公司/多租户系统
-- 权限管理系统
+**New Features Added (3):**
+- Token/Balance Management System
+- Company/Multi-tenant System
+- Permission Management System
 
-**总进度：** 15/17 (88%) 🎉
+**Overall Progress:** 15/17 (88%) 🎉
 
-**剩余工作（明天）：**
-- 2个辅助功能
+**Remaining Work (Tomorrow):**
+- 2 auxiliary features
 - CODEMAP.md
 - ARCHITECTURE.md
 
 
-### 16. 审计日志系统 (Audit Log)
+### 16. Audit Log System
 
-#### 📍 位置
-- **Module：** `apps/api/src/modules/audit-log/`
-- **Entity：** AuditLog entity
-- **Frontend：** `apps/soybean-admin/src/views/management/audit-log/` (如果有)
+#### 📍 Location
+- **Module:** `apps/api/src/modules/audit-log/`.
+- **Entity:** `AuditLog` entity.
+- **Frontend:** `apps/soybean-admin/src/views/management/audit-log/` (if available).
 
-#### 🎯 功能说明
-记录系统中的重要操作，用于：
-- 安全审计和合规
-- 追踪谁做了什么
-- 问题排查和调查
-- 操作历史回溯
+#### 🎯 Feature Description
+Records critical system operations for:
+- Security auditing and compliance.
+- Tracking user actions.
+- Troubleshooting and investigation.
+- Historical traceability.
 
-**记录的操作类型：**
-- 用户登录/登出
-- 游戏创建/编辑/删除
-- 会员余额变动
-- 配置修改
-- 权限变更
-- 敏感操作
+**Recorded Operation Types:**
+- User Login/Logout.
+- Game Create/Edit/Delete.
+- Member Balance Changes.
+- Configuration Modifications.
+- Permission Changes.
+- Sensitive Operations.
 
-#### ⚙️ 日志数据结构
+#### ⚙️ Log Data Structure
 ```typescript
 AuditLog {
   id: string;
-  timestamp: Date;           // 操作时间
-  userId: string;            // 操作者
-  userName: string;          // 操作者名称
-  action: string;            // 操作类型 (CREATE/UPDATE/DELETE/LOGIN等)
-  resource: string;          // 资源类型 (game/member/user等)
-  resourceId: string;        // 资源ID
-  details: object;           // 详细信息（变更前后对比等）
-  ipAddress: string;         // IP地址
-  userAgent: string;         // 浏览器/设备信息
-  companyId: string;         // 所属公司（多租户）
+  timestamp: Date;           // Time of operation
+  userId: string;            // Operator ID
+  userName: string;          // Operator name
+  action: string;            // Operation type (CREATE/UPDATE/DELETE/LOGIN, etc.)
+  resource: string;          // Resource type (game/member/user, etc.)
+  resourceId: string;        // Resource ID
+  details: object;           // Detailed information (before/after comparison)
+  ipAddress: string;         // IP address
+  userAgent: string;         // Browser/Device info
+  companyId: string;         // Owning company (Multi-tenancy)
   status: string;            // SUCCESS/FAILED
-  errorMessage?: string;     // 如果失败，错误信息
-}
-```
+Referenced by:
+- Compliance reports
+- Security investigations
+- Admin Panel - View logs
 
-#### 🔗 依赖关系
-**依赖于：**
-- Auth system - 获取当前用户
-- Request context - 获取IP/UserAgent
-- Database - 存储日志
+#### 🔧 Working Principle
 
-**被依赖于：**
-- 合规报告
-- 安全调查
-- Admin Panel - 查看日志
+**Automatic Logging Flow:**
+1. User performs an action (e.g., editing a game).
+2. Interceptor intercepts the request.
+3. Extracts operation info (user, action, resource).
+4. Records to `audit_log` table.
+5. Continues original operation execution.
 
-#### 🔧 工作原理
-
-**自动记录流程：**
-1. 用户执行操作（如编辑游戏）
-2. Interceptor拦截请求
-3. 提取操作信息（user, action, resource）
-4. 记录到audit_log表
-5. 继续执行原操作
-
-**手动记录：**
+**Manual Logging:**
 ```typescript
-// 在service中手动记录
+// Manually record in service
 await this.auditLogService.log({
   action: 'MEMBER_BALANCE_UPDATE',
   resource: 'member',
@@ -2436,16 +2425,16 @@ await this.auditLogService.log({
 });
 ```
 
-**查询日志：**
-- 按用户筛选
-- 按时间范围筛选
-- 按操作类型筛选
-- 按资源筛选
-- 全文搜索
+**Querying Logs:**
+- Filter by user
+- Filter by time range
+- Filter by action type
+- Filter by resource
+- Full-text search
 
-#### 📊 重要的审计场景
+#### 📊 Important Audit Scenarios
 
-**1. 余额变动追踪：**
+**1. Balance Change Tracking:**
 ```
 [2026-01-31 18:00] User:admin
 Action: MEMBER_BALANCE_UPDATE
@@ -2454,7 +2443,7 @@ Old: 1000 tokens → New: 1500 tokens
 Reason: Manual top-up
 ```
 
-**2. 配置修改：**
+**2. Configuration Modification:**
 ```
 [2026-01-31 17:00] User:editor
 Action: GAME_CONFIG_UPDATE
@@ -2462,67 +2451,63 @@ Game: spin-wheel-premium
 Changed: showSoundButton: true → false
 ```
 
-**3. 敏感操作：**
+**3. Sensitive Operations:**
 ```
 [2026-01-31 16:00] User:admin
 Action: USER_DELETE
 User: old_account@example.com
 IP: 192.168.1.100
 ```
+#### 🐛 FAQs
+1. **Problem:** Slow queries due to large volume of logs.
+   **Reason:** Lack of indexing or excessively long retention periods.
+   **Solution:** Add database indexes; periodically archive old logs.
 
-#### 🐛 常见问题
-1. **问题：** 日志太多，查询慢
-   **原因：** 没有索引或保留时间太长
-   **解决：** 添加数据库索引，定期归档旧日志
+2. **Problem:** Missing logs.
+   **Reason:** Some operations lack audit logging coverage.
+   **Solution:** Review interceptor coverage and add manual logging where necessary.
 
-2. **问题：** 日志缺失
-   **原因：** 某些操作没有加audit logging
-   **解决：** 检查interceptor覆盖范围，补充手动记录
+3. **Problem:** Logs not detailed enough.
+   **Reason:** The `details` field does not record sufficient state.
+   **Solution:** Enhance `details` to include before/after comparisons.
+#### 🚨 Modification Impact Scope
+**Modifying audit logs affects:**
+- ✅ Compliance.
+- ✅ Security investigation capabilities.
+- ✅ Troubleshooting efficiency.
 
-3. **问题：** 日志信息不够详细
-   **原因：** details字段没有记录足够信息
-   **解决：** 增强details，包含before/after对比
+**Requires Rebuild:**
+- `api` backend (if logic modified).
+- `admin` frontend (if UI modified).
 
-#### 🚨 修改影响范围
-**修改audit log会影响：**
-- ✅ 合规性
-- ✅ 安全调查能力
-- ✅ 问题排查效率
+**Required Verification:**
+- Perform various actions for log generation.
+- Test log querying functionality.
+- Test filtering and search.
+- Performance testing (with large log volumes).
 
-**需要rebuild：**
-- `api` backend (如果改logic)
-- `admin` frontend (如果改UI)
-
-**需要测试：**
-- 执行各种操作验证日志生成
-- 查询日志功能
-- 日志筛选和搜索
-- 性能（大量日志时）
-
-**⚠️ 最佳实践：**
-1. ✅ 记录敏感操作（余额、权限、删除）
-2. ✅ 记录变更前后对比
-3. ✅ 定期归档旧日志（如90天后）
-4. ✅ 添加数据库索引优化查询
-5. ✅ 异步记录避免影响性能
+**⚠️ Best Practices:**
+1. ✅ Log sensitive operations (balance, permissions, deletions).
+2. ✅ Record before/after diffs.
+3. ✅ Periodically archive old logs (e.g., after 90 days).
+4. ✅ Use database indexing for query optimization.
+5. ✅ Use asynchronous logging to avoid performance impact.
 
 ---
 
 ## 📝 Checkpoint 5 - FINAL Summary
 
-**已新增功能 (1个):**
-- 审计日志系统
+**New Features Added (1):**
+- Audit Log System.
 
-**🎉 今天最终进度：** 16/17 (94%)
+**🎉 Final Progress for Today:** 16/17 (94%)
 
-**剩余工作（明天）：**
-- 1个辅助功能（邮件/系统设置等）
-- CODEMAP.md
-- ARCHITECTURE.md
+**Remaining Work:**
+- 1 Auxiliary feature (Email/System Settings, etc.).
+- `CODEMAP.md`.
+- `ARCHITECTURE.md`.
 
-**Token使用：** ~127k/200k (还剩73k)
-
----
+**Token Usage:** ~127k/200k (73k remaining).
 
 ## 🏆 今天成就解锁
 
@@ -2542,15 +2527,15 @@ IP: 192.168.1.100
 - **Entity：** SystemSettings entity
 - **Frontend：** Admin Panel settings page
 
-#### 🎯 功能说明
-全局系统配置管理，支持：
-- 系统级别的配置选项
-- 邮件服务器配置
-- 支付网关配置（如果有）
-- 全局开关（维护模式等）
-- 品牌设置（logo、名称等）
+#### 🎯 Feature Description
+Global system configuration management, supporting:
+- System-level configuration options
+- Email server configuration
+- Payment gateway configuration (if any)
+- Global switches (maintenance mode, etc.)
+- Branding settings (logo, name, etc.)
 
-#### ⚙️ 常见配置项
+#### ⚙️ Common Configuration Items
 ```typescript
 SystemSettings {
   siteName: string;
@@ -2558,7 +2543,7 @@ SystemSettings {
   maintenanceMode: boolean;
   allowRegistration: boolean;
   
-  // Email配置
+  // Email Config
   emailEnabled: boolean;
   smtpHost: string;
   smtpPort: number;
@@ -2566,73 +2551,69 @@ SystemSettings {
   smtpPassword: string;
   emailFrom: string;
   
-  // 其他配置
+  // Other Config
   defaultLanguage: string;
   timezone: string;
   maxUploadSize: number;
 }
 ```
 
-#### 🔗 依赖关系
-**依赖于：**
-- Database - 存储配置
-- Admin auth - 只有admin可修改
+#### 🔗 Dependencies
+**Depends on:**
+- Database - Stores configurations.
+- Admin auth - Only administrators can modify.
 
-**被依赖于：**
-- 所有需要系统配置的模块
-- Email service
-- File upload
+**Referenced by:**
+- All modules requiring system configuration.
+- Email service.
+- File upload service.
+#### 🔧 Working Principle
+1. Configuration is loaded when the system starts.
+2. Admins can modify settings in the backend.
+3. Changes take effect immediately (or after a restart).
+4. Environment variable overrides are supported.
 
-#### 🔧 工作原理
-1. 系统启动时加载配置
-2. Admin可以在后台修改配置
-3. 保存后立即生效（或重启后生效）
-4. 可以设置环境变量覆盖
+#### 🐛 FAQs
+1. **Problem:** Modified settings not taking effect.
+   **Reason:** Service restart required.
+   **Solution:** Restart API service or use hot-reload.
 
-#### 🐛 常见问题
-1. **问题：** 修改配置后不生效
-   **原因：** 需要重启服务
-   **解决：** 重启API服务或使用hot-reload
+2. **Problem:** Email sending failure.
+   **Reason:** Erroneous SMTP configuration.
+   **Solution:** Check SMTP settings and test the connection.
+#### 🚨 Modification Impact Scope
+**Modifying system settings affects:**
+- ✅ Entire system behavior.
+- ✅ User experience.
+- ✅ Feature availability.
 
-2. **问题：** Email发送失败
-   **原因：** SMTP配置错误
-   **解决：** 检查SMTP设置，测试连接
-
-#### 🚨 修改影响范围
-**修改系统设置会影响：**
-- ✅ 整个系统的行为
-- ✅ 用户体验
-- ✅ 功能可用性
-
-**需要rebuild：**
-- `api` (如果改代码)
-- `admin` (如果改UI)
+**Requires Rebuild:**
+- `api` (if code changed).
+- `admin` (if UI changed).
 
 ---
 
-## 🎉 FEATURES.md 完成！
+## 🎉 FEATURES.md Complete!
 
-**最终统计：**
-- ✅ 17/17功能 (100%)
-- ✅ 每个功能都有完整文档
-- ✅ 包含位置、说明、依赖、常见问题、影响范围
+**Final Statistics:**
+- ✅ 17/17 Features (100%).
+- ✅ Each feature has comprehensive documentation.
+- ✅ Includes location, description, dependencies, FAQs, and impact scope.
 
-**这个文档是MiniGame project的permanent memory card！**
+**This document serves as the permanent memory card for the MiniGame project!**
 
 
----
+## 🎨 Confetti Effect Configuration System (Added 2026-01-31)
 
-## 🎨 彩纸效果配置系统 (2026-01-31新增)
+**⚠️ IMPORTANT: Emoji + Paper Layering (Fixed 2026-01-31)**
 
-**⚠️ IMPORTANT: Emoji + Paper Layering (2026-01-31 修复)**
+Emoji and confetti are **overlaid**, not mutually exclusive!
 
-Emoji和彩纸是**叠加显示**，不是二选一！
+**Correct Behavior:**
+- Select "Default Paper" → Only displays colored paper confetti.
+- Select "Emoji" → Colored paper + Emoji (both together!).
 
-**正确行为：**
-- 选择"默认纸片" → 只显示彩色纸片
-- 选择"Emoji" → 彩色纸片 + Emoji（两者一起！）
-
-**实现逻辑：**
+**Implementation Logic:**
 ```javascript
 // ALWAYS fire paper confetti (base layer)
 confetti({ colors: colors, particleCount: 150 });
@@ -2643,92 +2624,92 @@ if (emojiMode) {
 }
 ```
 
-**Why layering:**
-- Paper = 主体效果（丰富、饱满）
-- Emoji = 装饰效果（主题、趣味）
-- 一起显示 = 最佳视觉效果
+**Why Layering:**
+- Paper = Primary effect (rich, full).
+- Emoji = Decorative effect (theme, fun).
+- Both together = Optimal visual experience.
 
-
-### 📍 位置
+### 📍 Location
 **Admin Panel:**
-- `ConfigForm.vue` - color-list和emoji-list types渲染
-- Helper functions: Line ~207-305
+- `ConfigForm.vue` - `color-list` and `emoji-list` type rendering.
+- Helper functions: Lines ~207-305.
 
 **Backend:**
-- `seed.service.ts` - Schema定义 (Line ~972)
-- `spin-wheel.template.ts` - Confetti shapes支持 (Line ~1263)
+- `seed.service.ts` - Schema definition (Line ~972).
+- `spin-wheel.template.ts` - Confetti shapes support (Line ~1263).
 
 **i18n:**
-- `zh-cn.ts` + `en-us.ts` - 彩纸相关labels
+- `zh-cn.ts` + `en-us.ts` - Confetti-related labels.
 
-### 🎯 功能说明
+### 🎯 Feature Description
 
-**之前（Terrible UX）：**
-- 用户要手写hex color codes：`#ff0000,#00ff00,#0000ff`
-- 不知道颜色code是什么
-- 不知道要用逗号分隔
-- 没有emoji选项
+**Before (Terrible UX):**
+- Users had to manually type hex color codes: `#ff0000,#00ff00,#0000ff`.
+- Users didn't know which color codes to use.
+- Users didn't know they needed comma separation.
+- No emoji options.
 
-**现在（User-Centric）：**
-1. **🎨 彩纸颜色 - Color Picker List**
-   - 点击色块 → color picker弹出
-   - 不需要手写hex codes
-   - 添加/删除颜色
-   - 最多8个颜色
-   - Hover显示删除按钮
+**Now (User-Centric):**
+1. **🎨 Confetti Colors - Color Picker List**
+   - Click color block → Color picker pops up.
+   - No need to manually type hex codes.
+   - Add/Remove colors.
+   - Maximum 8 colors.
+   - Hover displays the delete button.
 
-2. **🎭 彩纸形状 - Emoji支持**
-   - Radio选择：默认纸片 / Emoji
-   - 预设20个派对主题emoji
-   - 点击emoji toggle选择/取消
-   - 最多10个emoji
-   - 选中的emoji有蓝色边框+放大效果
+2. **🎭 Confetti Shapes - Emoji Support**
+   - Radio selection: Default Paper / Emoji.
+   - 20 preset party-themed emojis.
+   - Click emoji to toggle selection/deselection.
+   - Maximum 10 emojis.
+   - Selected emojis feature a blue border and scaling effect.
 
-3. **🎬 预览按钮**
-   - 实时预览confetti效果
-   - 使用选择的颜色和emoji
-   - 放在emoji section下方
+3. **🎬 Preview Button**
+   - Real-time preview of confetti effect.
+   - Uses chosen colors and emojis.
+   - Located below the emoji section.
 
-### ⚙️ 配置项
-
+### ⚙️ Configuration Items
 **Schema Fields:**
 ```typescript
 {
   key: 'confetti_section',
   type: 'collapse-group',
   items: [
-    { key: 'confettiParticles', type: 'slider' },    // 粒子数量
-    { key: 'confettiSpread', type: 'slider' },       // 扩散角度
-    { key: 'confettiColors', type: 'color-list' },   // 颜色列表
-    { key: 'confettiShapeType', type: 'radio' },     // 形状类型
-    { key: 'confettiEmojis', type: 'emoji-list' }    // Emoji列表
+    { key: 'confettiParticles', type: 'slider' },    // Particle Count
+    { key: 'confettiSpread', type: 'slider' },       // Spread Angle
+    { key: 'confettiColors', type: 'color-list' },   // Color List
+    { key: 'confettiShapeType', type: 'radio' },     // Shape Type
+    { key: 'confettiEmojis', type: 'emoji-list' }    // Emoji List
   ]
 }
 ```
 
 **Default Values:**
-- confettiColors: `'#ff0000,#00ff00,#0000ff,#ffff00,#ff00ff'`
-- confettiShapeType: `'default'` (可选: 'default' | 'emoji')
-- confettiEmojis: `'🎉,⭐,❤️'`
+- `confettiColors`: `'#ff0000,#00ff00,#0000ff,#ffff00,#ff00ff'`
+- `confettiShapeType`: `'default'` (Options: `'default'` | `'emoji'`)
+- `confettiEmojis`: `'🎉,⭐,❤️'`
 
-**Preset Emojis (20个):**
-- 派对：🎉 🎊 🎈 🎁 
-- 星星：⭐ 🌟 💫 ✨ 
-- 爱心：❤️ 💙 💚 💛 💜 🧡
-- 成就：🏆 🥇 👑 💎 🔥 🎯
+**Preset Emojis (20 total):**
+- Party: 🎉 🎊 🎈 🎁 
+- Stars: ⭐ 🌟 💫 ✨ 
+- Hearts: ❤️ 💙 💚 💛 💜 🧡
+- Achievements: 🏆 🥇 👑 💎 🔥 🎯
 
-### 🔗 依赖关系
 
-**依赖于：**
-- Canvas-Confetti library (CDN)
-- NColorPicker component (Naive UI)
-- Vue reactivity system
+#### 🔗 Dependencies
 
-**被依赖于：**
-- Game engine - 读取config并渲染confetti
-- Admin Panel - 配置UI
+**Depends on:**
+- `Canvas-Confetti` library (CDN).
+- `NColorPicker` component (Naive UI).
+- Vue reactivity system.
 
-### 🔧 工作原理
+**Referenced by:**
+- Game engine - Reads config and renders confetti.
+- Admin Panel - UI configuration.
+
+
+### 🔧 Working Principle
 
 **1. ConfigForm UI (color-list type):**
 ```typescript
@@ -2757,7 +2738,7 @@ function updateColor(key: string, index: number, color: string) {
 />
 ```
 
-**2. ConfigForm UI (emoji-list type):**
+**2. ConfigForm UI (`emoji-list` type):**
 ```typescript
 // Helper Functions
 const presetEmojis = ['🎉', '🎊', ...]; // 20 preset emojis
@@ -2771,7 +2752,7 @@ function isEmojiSelected(key: string, emoji: string): boolean {
   // Check if emoji is in the list
 }
 
-// Render
+// Render logic
 <div 
   v-for="emoji in presetEmojis"
   @click="toggleEmoji(key, emoji)"
@@ -2813,98 +2794,99 @@ if (config.confettiShapeType === 'emoji') {
 confetti(confettiConfig);
 ```
 
-### 📊 数据流
+### 📊 Data Flow
 
 ```
-Admin配置
+Admin Configuration
   ↓
-用户点击色块/emoji
+User clicks color block/emoji
   ↓
-更新formModel (comma-separated string)
+formModel updates (comma-separated string)
   ↓
-保存到game instance config
+Saved to game instance config
   ↓
-Game engine读取并解析
+Game engine reads and parses
   ↓
-Canvas-confetti渲染
+Canvas-confetti renders
 ```
 
-**数据格式（保持backward compatibility）：**
-- Colors: `'#ff0000,#00ff00,#0000ff'` (逗号分隔hex codes)
-- Emojis: `'🎉,⭐,❤️'` (逗号分隔unicode emoji)
+**Data Format (Maintains backward compatibility):**
+- Colors: `'#ff0000,#00ff00,#0000ff'` (Comma-separated hex codes).
+- Emojis: `'🎉,⭐,❤️'` (Comma-separated unicode emojis).
 
-### 🐛 常见问题
 
-1. **问题：** 添加颜色/emoji没反应
-   **原因：** 已达到最大限制（8个颜色/10个emoji）
-   **解决：** 删除一些再添加，或看warning提示
+### 🐛 FAQs
 
-2. **问题：** Preview按钮点击没效果
-   **原因：** Canvas-confetti library没加载
-   **解决：** ✅ 已处理 - 自动加载CDN script
+1. **Problem:** Adding color/emoji has no effect.
+   **Reason:** Maximum limit reached (8 colors / 10 emojis).
+   **Solution:** Remove some before adding more, or check the warning message.
 
-3. **问题：** Emoji显示为方块
-   **原因：** 系统不支持该emoji
-   **解决：** 选择其他emoji，或使用默认纸片
+2. **Problem:** Preview button click has no effect.
+   **Reason:** `Canvas-Confetti` library failed to load.
+   **Solution:** ✅ Handled - Auto-loads CDN script.
 
-4. **问题：** 游戏里看不到emoji效果
-   **原因：** 没选择emoji mode或没保存
-   **解决：** 检查confettiShapeType是'emoji'，确保保存
+3. **Problem:** Emojis displayed as squares.
+   **Reason:** The system does not support the specific emoji font.
+   **Solution:** Choose a different emoji or use default paper.
 
-5. **问题：** 颜色删除按钮看不到
-   **原因：** 需要hover
-   **解决：** ✅ 设计 - hover时opacity从0变100
+4. **Problem:** Emoji effect not visible in game.
+   **Reason:** Emoji mode not selected or configuration not saved.
+   **Solution:** Ensure `confettiShapeType` is set to `'emoji'` and the configuration is saved.
 
-### 🚨 修改影响范围
+5. **Problem:** Color delete button is invisible.
+   **Reason:** Hover interaction required.
+   **Solution:** ✅ By design - Opacity transitions from 0 to 100 on hover.
 
-**修改彩纸配置会影响：**
-- ✅ Admin Panel - 配置UI
-- ✅ Game Engine - Confetti渲染
-- ✅ 用户体验 - 所有赢奖时的视觉效果
 
-**需要rebuild：**
-- `admin` frontend (ConfigForm changes)
-- `api` backend (schema + template changes)
+### 🚨 Modification Impact Scope
 
-**需要测试：**
-- ✅ 添加/删除颜色
-- ✅ Color picker选色
-- ✅ Emoji toggle选择
-- ✅ 最大限制提示
-- ✅ 预览按钮功能
-- ✅ 保存后游戏里实际效果
-- ✅ Default shapes vs Emoji shapes
-- ✅ Refresh schemas应用到existing instances
+**Modifying confetti configuration affects:**
+- ✅ Admin Panel - UI configuration.
+- ✅ Game Engine - Confetti rendering.
+- ✅ User Experience - All visual effects upon winning.
+
+**Requires Rebuild:**
+- `admin` frontend (`ConfigForm` changes).
+- `api` backend (schema + template changes).
+
+**Required Verification:**
+- ✅ Adding/Deleting colors.
+- ✅ Color picker selection.
+- ✅ Emoji toggle selection.
+- ✅ Maximum limit warnings.
+- ✅ Preview button functionality.
+- ✅ Actual in-game effects after saving.
+- ✅ Default shapes vs. Emoji shapes.
+- ✅ schema refresh applied to existing instances.
 
 ### 🎯 User-Centric Design Principles
 
-1. **不要让用户手写代码**
-   - ❌ 之前：手写`#ff0000,#00ff00`
-   - ✅ 现在：点击color picker
+1. **No manual code input for users**
+   - ❌ Before: Manually typing `#ff0000,#00ff00`
+   - ✅ Now: Clicking the color picker
 
-2. **直观的交互**
-   - 点击emoji就选择/取消
-   - 选中状态明显（蓝色边框+放大）
-   - Hover显示删除按钮
+2. **Intuitive Interaction**
+   - Click emoji to select/deselect.
+   - Clear selected state (blue border + scaling).
+   - Hover to display delete button.
 
-3. **实时反馈**
-   - 预览按钮看实际效果
-   - 限制达到时warning提示
-   - 选中emoji立即高亮
+3. **Real-time Feedback**
+   - Preview button to see actual effect.
+   - Warning message when limits are reached.
+   - Selected emojis highlight immediately.
 
-4. **合理的限制**
-   - 最多8个颜色（够用了）
-   - 最多10个emoji（不会太乱）
-   - 清晰的提示文字
+4. **Reasonable Limits**
+   - Max 8 colors (sufficient).
+   - Max 10 emojis (not too cluttered).
+   - Clear warning messages.
 
-5. **降低学习成本**
-   - 预设常用emoji
-   - 不需要知道hex codes
-   - 一看就懂的UI
+5. **Reduced Learning Curve**
+   - Preset common emojis.
+   - No need to know hex codes.
+   - Easy-to-understand UI.
 
 **Complete Solution ✓**
-- 一次性实现所有功能
-- Frontend + Backend + i18n
-- 两个render sections都支持
-- 完整的UX体验
-
+- All features implemented in one go.
+- Full stack coverage: Frontend + Backend + i18n.
+- Supporting both render sections.
+- Complete UX experience.

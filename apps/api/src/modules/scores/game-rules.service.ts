@@ -256,17 +256,18 @@ export class GameRulesService {
   }
 
   /**
-   * 规则6: 预算控制（中优先级，暂时注释）
+   * 规则6: 预算控制 (Enterprise - Multi-level)
    */
   async checkBudget(instance: GameInstance): Promise<void> {
     const config = instance.config?.budgetConfig;
 
+    // 1. Check if budget control is enabled
     if (!config?.enable) return;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 查询今日消耗
+    // 2. Query today's consumption
     const todayTracking = await this.budgetRepo.findOne({
       where: {
         instanceId: instance.id,
@@ -274,9 +275,9 @@ export class GameRulesService {
       },
     });
 
-    const dailySpent = todayTracking?.totalCost || 0;
+    const dailySpent = Number(todayTracking?.totalCost || 0);
 
-    // 检查每日预算
+    // 3. Daily Budget Check
     if (config.dailyBudget && dailySpent >= config.dailyBudget) {
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
@@ -289,36 +290,69 @@ export class GameRulesService {
         resetAt: tomorrow.toISOString(),
       });
     }
+
+    // 4. Lifetime Budget Check (Enterprise Feature)
+    // We aggregate all costs for this instance
+    const lifetimeStats = await this.budgetRepo
+      .createQueryBuilder('tracking')
+      .select('SUM(tracking.totalCost)', 'total')
+      .where('tracking.instanceId = :instanceId', { instanceId: instance.id })
+      .getRawOne();
+
+    const lifetimeSpent = Number(lifetimeStats?.total || 0);
+    const totalLimit = config.totalBudget || (todayTracking?.totalBudget); // Fallback to entity value if not in config
+
+    if (totalLimit && totalLimit > 0 && lifetimeSpent >= totalLimit) {
+      throw new BadRequestException({
+        code: 'TOTAL_BUDGET_EXCEEDED',
+        message: '此活动总预算已耗尽',
+        totalLimit,
+        totalSpent: lifetimeSpent,
+      });
+    }
   }
 
   /**
-   * 更新预算（在玩家赢奖后调用）
+   * 更新预算并记录流水 (Enterprise - Ledger Integrated)
    */
-  async updateBudget(instanceId: string, prizeCost: number): Promise<void> {
+  async updateBudget(instanceId: string, prizeCost: number, reference?: { type: string; id: string; metadata?: any }): Promise<void> {
+    if (prizeCost <= 0) return;
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Upsert budget tracking
-    const existingTracking = await this.budgetRepo.findOne({
-      where: {
-        instanceId,
-        trackingDate: today,
-      },
-    });
-
-    if (existingTracking) {
-      existingTracking.totalCost = Number(existingTracking.totalCost) + prizeCost;
-      existingTracking.playCount += 1;
-      await this.budgetRepo.save(existingTracking);
-    } else {
-      const tracking = this.budgetRepo.create({
-        instanceId,
-        trackingDate: today,
-        totalCost: prizeCost,
-        playCount: 1,
+    // 1. Transactional Update for Consistency
+    await this.budgetRepo.manager.transaction(async (manager) => {
+      // Upsert daily tracking
+      let tracking = await manager.findOne(BudgetTracking, {
+        where: { instanceId, trackingDate: today },
       });
-      await this.budgetRepo.save(tracking);
-    }
+
+      if (!tracking) {
+        tracking = manager.create(BudgetTracking, {
+          instanceId,
+          trackingDate: today,
+          totalCost: 0,
+          playCount: 0,
+        });
+      }
+
+      tracking.totalCost = Number(tracking.totalCost) + prizeCost;
+      tracking.playCount += 1;
+      const savedTracking = await manager.save(tracking);
+
+      // 2. Record to Ledger (Audit Trail)
+      const ledgerRepo = manager.getRepository('BudgetLedger');
+      const ledgerEntry = ledgerRepo.create({
+        budgetId: savedTracking.id,
+        amount: prizeCost,
+        type: 'DEDUCTION',
+        referenceType: reference?.type,
+        referenceId: reference?.id,
+        metadata: reference?.metadata,
+      });
+      await manager.save('BudgetLedger', ledgerEntry);
+    });
   }
 
   /**

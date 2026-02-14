@@ -179,8 +179,22 @@ declare namespace Api {
             instanceId: string;
             trackingDate: string;
             totalCost: number;
+            totalBudget: number;
+            alertThreshold: number;
             playCount: number;
             instance?: GameInstance;
+        }
+
+        interface BudgetLedger {
+            id: string;
+            budgetId: string;
+            amount: number;
+            type: 'DEDUCTION' | 'TOP_UP' | 'REFUND';
+            referenceType?: string;
+            referenceId?: string;
+            metadata?: any;
+            createdAt: string;
+            budget?: BudgetTracking;
         }
 
         interface Game {

@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { Score } from './entities/score.entity';
 import { PlayAttempt } from './entities/play-attempt.entity';
 import { BudgetTracking } from './entities/budget-tracking.entity';
+import { BudgetLedger } from './entities/budget-ledger.entity';
 
 @Controller('admin/scores')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -21,6 +22,8 @@ export class AdminScoresController {
         private playAttemptsRepo: Repository<PlayAttempt>,
         @InjectRepository(BudgetTracking)
         private budgetTrackingRepo: Repository<BudgetTracking>,
+        @InjectRepository(BudgetLedger)
+        private budgetLedgerRepo: Repository<BudgetLedger>,
     ) { }
 
     @Get('all')
@@ -83,6 +86,29 @@ export class AdminScoresController {
             .leftJoinAndSelect('instance.company', 'company')
             .orderBy('budget.trackingDate', 'DESC')
             .take(100);
+
+        if (companyId) {
+            query.where('company.id = :companyId', { companyId });
+        }
+
+        return query.getMany();
+    }
+
+    @Get('budget-ledger')
+    async getBudgetLedger(@Request() req: any, @Query('companyId') requestedCompanyId?: string) {
+        const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
+
+        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
+            throw new ForbiddenException('You do not have access to this company');
+        }
+
+        const query = this.budgetLedgerRepo
+            .createQueryBuilder('ledger')
+            .leftJoinAndSelect('ledger.budget', 'budget')
+            .leftJoinAndSelect('budget.instance', 'instance')
+            .leftJoinAndSelect('instance.company', 'company')
+            .orderBy('ledger.createdAt', 'DESC')
+            .take(500);
 
         if (companyId) {
             query.where('company.id = :companyId', { companyId });
