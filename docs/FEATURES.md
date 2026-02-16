@@ -6,6 +6,49 @@ This document records all major features of the MiniGame project, including code
 
 ---
 
+## 🔄 JK Synchronization System
+
+**Last Updated:** 2026-02-16  
+**Status:** Optimization Complete ✅
+
+### 📍 Location
+- **Scheduler:** `apps/api/src/modules/sync/sync.scheduler.ts`
+- **Processor:** `apps/api/src/modules/sync/sync.processor.ts`
+- **Controller:** `apps/api/src/modules/sync/sync.controller.ts`
+- **Admin UI:** `apps/soybean-admin/src/views/management/company/index.vue`
+- **Events:** `apps/api/src/app.module.ts` (EventEmitter config)
+
+### 🎯 Feature Description
+A robust, multi-tenant background synchronization system designed to keep player data, deposits, and withdrawals in sync with the JK Platform.
+
+### ⚙️ Core Mechanisms
+
+#### 1. Event-Driven Orchestration
+- Uses `@nestjs/event-emitter` to decouple company updates from the sync engine.
+- When an administrator saves new settings (Cron, Parameters, Toggles), a `sync.refresh` event is emitted.
+- The `SyncScheduler` catches this event and immediately re-registers the BullMQ repeatable jobs for that specific company.
+
+#### 2. Granular Per-Type Configuration
+- **Independent Toggles**: Enable/Disable Member, Deposit, or Withdrawal sync separately.
+- **Custom Cron**: Each sync type can have its own schedule (e.g., Members every 4 hours, Deposits every 5 minutes).
+- **Custom API Parameters**: Add arbitrary key-value pairs (like `agent_id` or `source`) that are injected into the outgoing API requests.
+
+#### 3. High-Performance Parallel Processing
+- **Batch Syncing**: Fetches up to 30 pages of data in parallel to maximize throughput.
+- **Incremental vs Full Mode**:
+    - **Incremental**: Only fetches up to `maxPages` (e.g., last 200 pages) to save bandwidth.
+    - **Full**: Iterates through all available data until completion.
+
+#### 4. Reliability & Deduplication
+- **Job ID Stability**: Uses stable IDs like `sync_member_{companyId}` to prevent duplicate schedules in BullMQ.
+- **Upsert Strategy**: Automatically creates new players or updates existing ones based on external IDs, ensuring no data loss during sync.
+
+### 🚨 Modification Impact Scope
+- **Memory Usage**: Increasing `removeOnComplete` (currently 500) will increase Redis memory consumption.
+- **API Rate Limits**: Batch size (currently 30) should be tuned based on the JK API's capacity to handle parallel requests.
+
+---
+
 ## 🛡️ Tenant Isolation System
 
 **Implementation Date:** 2026-02-14  

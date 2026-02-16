@@ -1,6 +1,6 @@
 import { Processor, WorkerHost, InjectQueue } from '@nestjs/bullmq';
 import { Job, Queue } from 'bullmq';
-import { Logger } from '@nestjs/common';
+import { Logger, Inject, forwardRef } from '@nestjs/common';
 import { JKBackendService } from './jk-backend.service';
 import { MembersService } from '../members/members.service';
 import { CompaniesService } from '../companies/companies.service';
@@ -12,6 +12,7 @@ export class SyncProcessor extends WorkerHost {
     constructor(
         private readonly jkService: JKBackendService,
         private readonly membersService: MembersService,
+        @Inject(forwardRef(() => CompaniesService))
         private readonly companiesService: CompaniesService,
         @InjectQueue('sync-queue') private readonly syncQueue: Queue,
     ) {

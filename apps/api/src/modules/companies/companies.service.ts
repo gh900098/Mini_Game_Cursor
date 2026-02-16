@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company } from './entities/company.entity';
@@ -10,6 +11,7 @@ export class CompaniesService {
   constructor(
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>,
+    private readonly eventEmitter: EventEmitter2,
   ) { }
 
   async create(createCompanyDto: CreateCompanyDto): Promise<Company> {
@@ -83,7 +85,14 @@ export class CompaniesService {
     }
 
     Object.assign(company, updateCompanyDto);
-    return await this.companyRepository.save(company);
+    const updated = await this.companyRepository.save(company);
+
+    // If jk_config was updated, notify listeners (e.g. SyncScheduler)
+    if (updateCompanyDto.jk_config) {
+      this.eventEmitter.emit('sync.refresh');
+    }
+
+    return updated;
   }
 
   async remove(id: string): Promise<void> {

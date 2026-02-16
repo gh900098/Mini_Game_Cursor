@@ -40,6 +40,7 @@ Granular sync configuration (Members, Deposits, Withdrawals) and tabbed Company 
 
 
 ## ✅ Recently Completed
+- [x] **Dynamic Sync Scheduler Refresh & API Parameter Recovery** (EventEmitter decoupled architecture + Fixed per-type parameter settings - 2026-02-16)
 - [x] **Sync System Optimization & UI Configuration** (Parallel Sync + Incremental Mode + Dynamic Cron + Admin UI - 2026-02-16)
 - [x] **Cron Job Visibility & Monitoring** (BullMQ 4-hour Repeatable Jobs + Concurrency Fix + Deduplication - 2026-02-15)
 - [x] **Impersonation Feature Fix** (Unified JWT Payload fields - 2026-02-15)

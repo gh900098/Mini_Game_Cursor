@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { SyncController } from './sync.controller';
 import { SyncProcessor } from './sync.processor';
@@ -16,7 +16,9 @@ import { SystemSettingsModule } from '../system-settings/system-settings.module'
     imports: [
         HttpModule,
         MembersModule,
+        MembersModule,
         CompaniesModule,
+        ConfigModule,
         ConfigModule,
         SystemSettingsModule,
         BullModule.registerQueue({
@@ -36,6 +38,6 @@ import { SystemSettingsModule } from '../system-settings/system-settings.module'
     ],
     controllers: [SyncController],
     providers: [SyncProcessor, JKBackendService, SyncScheduler],
-    exports: [BullModule, JKBackendService],
+    exports: [BullModule, JKBackendService, SyncScheduler],
 })
 export class SyncModule { }

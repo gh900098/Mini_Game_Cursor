@@ -60,20 +60,24 @@ const syncTypes = [
   { key: 'withdraw', label: 'Withdrawals', icon: 'icon-carbon-subtract-alt' }
 ];
 
-const extraParamsList = ref<{ key: string; value: string }[]>([]);
-
-watch(extraParamsList, (val) => {
-  const params: Record<string, string> = {};
-  val.forEach(item => {
-    if (item.key.trim()) {
-      params[item.key.trim()] = item.value;
-    }
-  });
-  // Update member sync params by default (or handle per type if needed)
-  if (formModel.jk_config.syncConfigs.member) {
-    formModel.jk_config.syncConfigs.member.syncParams = params;
+function addNewParam(type: string) {
+  if (!formModel.jk_config.syncConfigs[type].syncParams) {
+    formModel.jk_config.syncConfigs[type].syncParams = {};
   }
-}, { deep: true });
+  const id = Math.random().toString(36).substring(7);
+  formModel.jk_config.syncConfigs[type].syncParams[`param_${id}`] = '';
+}
+
+function deleteParam(type: string, key: string) {
+  delete formModel.jk_config.syncConfigs[type].syncParams[key];
+}
+
+function renameParam(type: string, oldKey: string, newKey: string) {
+  if (!newKey || oldKey === newKey) return;
+  const val = formModel.jk_config.syncConfigs[type].syncParams[oldKey];
+  delete formModel.jk_config.syncConfigs[type].syncParams[oldKey];
+  formModel.jk_config.syncConfigs[type].syncParams[newKey] = val;
+}
 
 const slugValidationStatus = ref<'success' | 'warning' | 'error' | undefined>(undefined);
 
@@ -212,7 +216,7 @@ function handleAdd() {
       }
     }
   });
-  extraParamsList.value = [];
+// Parameters are now managed directly in the syncConfigs object
   openModal();
 }
 
@@ -249,10 +253,7 @@ function handleEdit(row: Api.Management.Company) {
     }
   });
 
-  extraParamsList.value = Object.entries(formModel.jk_config.syncConfigs.member?.syncParams || {}).map(([key, value]) => ({
-    key,
-    value: String(value)
-  }));
+// Parameters are now managed directly in the syncConfigs object
   
   openModal();
 }
@@ -438,6 +439,21 @@ getCompanies();
                   <NFormItem label="Schedule (Cron)">
                     <NInput v-model:value="formModel.jk_config.syncConfigs[type.key].syncCron" placeholder="e.g. 0 */4 * * * (Optional)" />
                   </NFormItem>
+
+                  <NDivider title-placement="left" dashed>Custom API Parameters</NDivider>
+                  <NSpace vertical>
+                    <NSpace v-for="(val, key) in formModel.jk_config.syncConfigs[type.key].syncParams" :key="key" align="center">
+                      <NInput :value="String(key)" @update:value="(newKey) => renameParam(type.key, String(key), newKey)" placeholder="Key" style="width: 150px" />
+                      <NInput v-model:value="formModel.jk_config.syncConfigs[type.key].syncParams[key]" placeholder="Value" style="width: 250px" />
+                      <NButton quaternary circle type="error" @click="deleteParam(type.key, String(key))">
+                        <template #icon><icon-carbon-trash-can /></template>
+                      </NButton>
+                    </NSpace>
+                    <NButton size="small" type="primary" ghost @click="addNewParam(type.key)">
+                      <template #icon><icon-ic-round-plus /></template>
+                      Add Parameter
+                    </NButton>
+                  </NSpace>
                 </template>
                 <div v-else class="py-10 text-center text-gray-400">
                   {{ type.label }} synchronization is disabled for this company.

@@ -4,6 +4,21 @@
 
 ---
 
+### Issue 14: Sync Parameters Missing from Admin UI
+
+**Cause:** Omitted during the refactor of the Company edit form into a tabbed interface.
+
+**Symptoms:**
+- Administrators cannot see the "Custom API Parameters" section.
+- Sync jobs fail to use necessary parameters (e.g., `agent_id`).
+
+**Solution (Fixed - 2026-02-16):**
+- Restored the dynamic key-value editor under the **Sync Settings** tab.
+- Added per-sync-type parameter support (Members, Deposits, Withdrawals).
+- Parameters are now correctly persisted in `jk_config.syncConfigs[type].syncParams`.
+
+---
+
 ## 🚀 Standard Operating Procedures (SOP)
 
 ### When modifying frontend code (`web-app` or `admin`):

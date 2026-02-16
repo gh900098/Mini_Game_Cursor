@@ -4,7 +4,64 @@
  
  ---
 
-## [2026-02-14 Evening] Score History UI Enhancement (Reliability Update)
+## [2026-02-16] Dynamic Sync Scheduler & API Parameter Recovery
+
+### 🏗️ Architectural Enhancement
+**Core Requirements:**
+- Resolve circular dependencies between `SyncModule`, `CompaniesModule`, and `MembersModule` without using `forwardRef`.
+- Implement a decoupled notification system to refresh the sync scheduler when company settings change.
+- Restore the "Custom API Parameters" UI that was omitted during recent tab refactoring.
+
+### 📝 Features Implemented
+
+#### 1. Event-Driven Sync Scheduler
+- **EventEmitter Integration**: Switched from direct service calls to NestJS `EventEmitter2`.
+- **Decoupled Refresh**: `CompaniesService` now emits `sync.refresh` events. `SyncScheduler` listens and re-initializes BullMQ jobs without direct coupling.
+- **Dynamic Scheduling**: Changes to Cron patterns in the UI are applied immediately with zero downtime.
+
+#### 2. Per-Type API Parameter Management
+- **Custom Parameters UI**: Restored the dynamic key-value editor for sync parameters.
+- **Granular Control**: Parameters can now be configured uniquely for **Members**, **Deposits**, and **Withdrawals**.
+- **Data Persistence**: Ensured `syncParams` are correctly saved into the `jk_config.syncConfigs` JSONB structure.
+
+#### 3. Full Production Deployment
+- **Rebuilt Stack**: Full rebuild of API, Worker, Admin, and WebApp services.
+- **Improved Build Process**: Updated Dockerfiles to handle pnpm lockfile synchronization during dependency updates.
+
+### 📊 Technical Details
+- **Backend**: `@nestjs/event-emitter`, `SyncScheduler.refreshScheduler()`, `CompaniesService.update()`.
+- **Frontend**: `apps/soybean-admin/src/views/management/company/index.vue`.
+- **Infrastructure**: `docker-compose.prod.yml`, `Dockerfile.api`, `Dockerfile.worker`.
+
+### ✅ Deployment
+- ✅ Verified live refresh logic (EventEmitter logs).
+- ✅ Verified 200-page incremental sync performance (~6 mins).
+- ✅ Verified parameter propagation to JK API requests.
+
+---
+
+## [2026-02-16] Sync System Optimization & UI Configuration
+
+### ✨ New Features
+**Core Requirements:**
+- Optimize the JK Sync system for high-volume data (35k+ users).
+- Implement granular scheduling control for administrators.
+
+### 📝 Features Implemented
+#### 1. Parallel Sync Orchestration
+- **Batch Processing**: Implemented parallel page fetching (30 pages per batch) in `SyncProcessor`.
+- **Incremental Mode**: Added `maxPages` limit to prevent infinite loops and control sync depth.
+
+#### 2. Tabbed Admin UI
+- **Organization**: Refactored Company edit form into a clean Tabbed interface (Basic, Sync, Auth).
+- **Per-Type Config**: Individual toggles and Cron inputs for different sync targets.
+
+### ✅ Deployment
+- ✅ Successfully synced 35,000 users in production mode.
+- ✅ Granular scheduling verified across multiple companies.
+
+---
+
 
 ### 🎨 UI/UX Improvement
 

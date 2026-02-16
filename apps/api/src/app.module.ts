@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -63,6 +64,7 @@ import { SyncModule } from './modules/sync/sync.module';
     PrizesModule,
     QueueModule,
     SyncModule,
+    EventEmitterModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [

@@ -1,10 +1,10 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { CronExpression } from '@nestjs/schedule';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { CompaniesService } from '../companies/companies.service';
 import { JKBackendService } from './jk-backend.service';
 import { SystemSettingsService } from '../system-settings/system-settings.service';
+import { OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class SyncScheduler implements OnModuleInit {
@@ -18,7 +18,24 @@ export class SyncScheduler implements OnModuleInit {
     ) { }
 
     async onModuleInit() {
-        this.logger.log('Initializing granular sync repeatable jobs...');
+        await this.refreshScheduler();
+    }
+
+    /**
+     * Listens for company configuration changes and refreshes the scheduler.
+     */
+    @OnEvent('sync.refresh')
+    async handleSyncRefresh() {
+        this.logger.log('Received sync.refresh event. Re-initializing schedule...');
+        await this.refreshScheduler();
+    }
+
+    /**
+     * Public method to re-initialize all repeatable jobs from the database.
+     * Can be triggered on company configuration changes to update CRON patterns without restart.
+     */
+    async refreshScheduler() {
+        this.logger.log('Refreshing granular sync repeatable jobs...');
 
         // 1. Fetch Global Default Cron
         const globalCron = await this.settingsService.getSetting('sync_hourly_cron') || '0 */4 * * *';
@@ -56,19 +73,19 @@ export class SyncScheduler implements OnModuleInit {
                     {
                         type: 'company-batch',
                         companyId: company.id,
-                        syncType: type // Pass the specific type
+                        syncType: type
                     },
                     {
                         repeat: {
                             pattern: typeCron,
                         },
-                        jobId: `sync_${type}_${company.id}`, // Specific ID per type
+                        jobId: `sync_${type}_${company.id}`,
                         removeOnComplete: 100,
                     },
                 );
             }
         }
 
-        this.logger.log(`Granular scheduler initialized for ${enabledCompanies.length} companies.`);
+        this.logger.log(`Granular scheduler refreshed for ${enabledCompanies.length} companies.`);
     }
 }

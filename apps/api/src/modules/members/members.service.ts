@@ -1,19 +1,29 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, Logger, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In, Between } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Member } from './entities/member.entity';
 import { LoginHistory } from './entities/login-history.entity';
+import { CreditTransaction } from './entities/credit-transaction.entity';
+import { CompaniesService } from '../companies/companies.service';
+import { AuditLogService } from '../audit-log/audit-log.service';
 
 @Injectable()
 export class MembersService {
+    private readonly logger = new Logger(MembersService.name);
+
     constructor(
         @InjectRepository(Member)
         private readonly memberRepository: Repository<Member>,
+        @InjectRepository(CreditTransaction)
+        private readonly transactionRepository: Repository<CreditTransaction>,
         @InjectRepository(LoginHistory)
         private readonly loginHistoryRepo: Repository<LoginHistory>,
         private readonly jwtService: JwtService,
+        @Inject(forwardRef(() => CompaniesService))
+        private readonly companiesService: CompaniesService,
+        private readonly auditLogService: AuditLogService,
     ) { }
 
     async validateMember(username: string, pass: string): Promise<any> {
@@ -96,7 +106,7 @@ export class MembersService {
             member = this.memberRepository.create({
                 companyId,
                 externalId,
-                username: username || `player_${externalId.slice(-4)}`,
+                username: username || `player_${externalId.slice(-4)} `,
                 isAnonymous: false,
             });
             await this.memberRepository.save(member);
