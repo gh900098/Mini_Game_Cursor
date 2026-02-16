@@ -403,6 +403,14 @@ getCompanies();
                      <NInputNumber v-model:value="formModel.jk_config.proxy.port" :min="1" :max="65535" placeholder="8080" />
                    </NFormItem>
                  </NSpace>
+                 <NSpace>
+                   <NFormItem label="Username" path="jk_config.proxy.username">
+                     <NInput v-model:value="formModel.jk_config.proxy.username" placeholder="Optional" />
+                   </NFormItem>
+                   <NFormItem label="Password" path="jk_config.proxy.password">
+                     <NInput v-model:value="formModel.jk_config.proxy.password" type="password" show-password-on="click" placeholder="Optional" />
+                   </NFormItem>
+                 </NSpace>
                </template>
              </template>
           </NForm>
