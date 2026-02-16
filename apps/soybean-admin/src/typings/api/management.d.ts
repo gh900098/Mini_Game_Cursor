@@ -66,6 +66,36 @@ declare namespace Api {
             isActive: boolean;
             inactiveAt?: string | null;
             settings?: Record<string, any>;
+            jk_config?: {
+                enabled: boolean;
+                apiUrl: string;
+                accessId: string;
+                accessToken: string;
+                ipWhitelistEnabled?: boolean;
+                ipWhitelist?: string;
+                syncMode?: 'full' | 'incremental';
+                maxPages?: number;
+                proxy?: {
+                    enabled: boolean;
+                    protocol: 'http' | 'socks5';
+                    host: string;
+                    port: number;
+                    username?: string;
+                    password?: string;
+                };
+                syncConfigs?: Record<string, {
+                    enabled: boolean;
+                    syncMode: 'full' | 'incremental';
+                    maxPages: number;
+                    syncCron?: string;
+                    syncParams?: Record<string, any>;
+                }>;
+                // Legacy support
+                syncMode?: 'full' | 'incremental';
+                maxPages?: number;
+                syncParams?: Record<string, any>;
+                syncCron?: string;
+            };
             createdAt?: string;
             updatedAt?: string;
         }

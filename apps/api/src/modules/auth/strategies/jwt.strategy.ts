@@ -21,8 +21,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         // Handle Member tokens (Marketplace players)
         if (payload.role === 'member' || payload.isMember === true) {
             return {
+                userId: payload.sub, // Added for consistency with admin
                 memberId: payload.sub,
                 externalId: payload.externalId,
+                currentCompanyId: payload.companyId, // Added for consistency with admin
                 companyId: payload.companyId,
                 role: 'member',
                 isImpersonated: !!payload.isImpersonated

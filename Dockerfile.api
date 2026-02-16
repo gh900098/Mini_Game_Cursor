@@ -23,6 +23,15 @@ COPY apps/api ./apps/api
 # Copy uploads directory with templates (including DESIGN_GUIDE.md)
 COPY apps/api/uploads ./apps/api/uploads
 
+# Isolate workspace to just API to prevent pnpm from resolving missing sibling dependencies
+RUN echo "packages: ['apps/api']" > pnpm-workspace.yaml
+
+# Ensure dependencies are linked
+RUN pnpm install --filter api --frozen-lockfile=false
+
+# Emergency fix: Force install missing deps into apps/api/node_modules using npm to bypass pnpm workspace issues
+RUN cd apps/api && npm install --no-save
+
 # Build API from root
 RUN pnpm --filter api build
 
@@ -39,8 +48,8 @@ COPY --from=builder /app/apps/api/dist ./dist
 # Copy template assets
 COPY --from=builder /app/apps/api/uploads ./uploads
 
-# Install production dependencies directly
-RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --prod
+# Install production dependencies directly using npm for better standalone reliability
+RUN npm install --omit=dev
 
 # Create public directory
 RUN mkdir -p public

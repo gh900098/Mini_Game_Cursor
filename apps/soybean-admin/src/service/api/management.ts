@@ -283,7 +283,7 @@ export function fetchGetBudgetLedger(params?: { companyId?: string }) {
 }
 
 /** Get all games */
-export function fetchGetGames() {
+export function fetchGetAdminGames() {
     return request<Api.Management.Game[]>({
         url: '/admin/games/all',
         method: 'get'

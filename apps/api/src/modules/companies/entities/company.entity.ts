@@ -14,6 +14,37 @@ export class Company {
     @Column({ type: 'jsonb', nullable: true })
     settings: Record<string, any>;
 
+    @Column({ type: 'jsonb', nullable: true })
+    jk_config: {
+        enabled: boolean;
+        apiUrl: string;
+        accessId: number;
+        accessToken: string;
+        ipWhitelistEnabled?: boolean;
+        ipWhitelist?: string; // Comma separated IPs
+        proxy?: {
+            enabled: boolean;
+            protocol: 'http' | 'socks5';
+            host: string;
+            port: number;
+            username?: string;
+            password?: string;
+        };
+        /** Granular configs per type (member, deposit, withdraw etc) */
+        syncConfigs?: Record<string, {
+            enabled: boolean;
+            syncMode: 'full' | 'incremental';
+            maxPages: number;
+            syncCron?: string;
+            syncParams?: Record<string, any>;
+        }>;
+        // Legacy / Root fallback fields (for migration)
+        syncParams?: Record<string, any>;
+        syncCron?: string;
+        syncMode?: 'full' | 'incremental';
+        maxPages?: number;
+    };
+
     @Column({ length: 255, nullable: true })
     apiSecret: string;
 

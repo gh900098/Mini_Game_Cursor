@@ -194,7 +194,7 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'management_audit-log',
           i18nKey: 'route.management_audit-log',
-          roles: 'audit-logs:read'
+          roles: ['audit-logs:read']
         }
       },
       {
@@ -266,6 +266,18 @@ export const generatedRoutes: GeneratedRoute[] = [
           roles: ['R_SUPER', 'R_ADMIN'],
           icon: 'ph:users',
           order: 3
+        }
+      },
+      {
+        name: 'management_sync-settings',
+        path: '/management/sync-settings',
+        component: 'view.management_sync-settings',
+        meta: {
+          title: 'management_sync-settings',
+          i18nKey: 'route.management_sync-settings',
+          roles: ['R_SUPER'],
+          icon: 'carbon:settings-adjust',
+          order: 4
         }
       }
     ]

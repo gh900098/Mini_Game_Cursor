@@ -42,7 +42,7 @@ export function setupElegantRouter() {
         management_company: ['R_SUPER'],
         'management_email-settings': ['R_SUPER'],
         management_permission: ['R_SUPER'],
-        management_route: ['R_SUPER'],
+
         games_list: ['R_SUPER', 'R_ADMIN', 'R_USER']
       };
 
@@ -53,7 +53,7 @@ export function setupElegantRouter() {
         management_company: 'carbon:enterprise',
         'management_email-settings': 'carbon:email',
         management_permission: 'carbon:user-access',
-        management_route: 'carbon:ibm-cloud-key-protect',
+
         games: 'ion:game-controller',
         games_list: 'ion:game-controller-outline'
       };
@@ -67,7 +67,7 @@ export function setupElegantRouter() {
         management_user: 3,
         'management_email-settings': 4,
         management_permission: 5,
-        management_route: 6
+
       };
 
       if (roleMap[key]) {

@@ -1361,3 +1361,24 @@ docker exec minigame-api grep -r "NewUniqueString" dist/
 ### Lesson Learned
 - When modifying core logic that requires compilation (TypeScript -> JavaScript), **always** use `--no-cache` if standard builds fail to apply changes.
 - Trust but verify: Check the running container's filesystem.
+---
+
+### Issue 14: Docker Build Fails with "Cannot find module" at runtime (pnpm workspaces)
+
+**Symptoms:**
+- Docker build completes successfully.
+- Container starts but crashes with `Error: Cannot find module 'xxx'`.
+- This often happens with newly added dependencies in a monorepo.
+
+**Cause:**
+`pnpm` workspace resolution can be inconsistent inside Docker if the lockfile is not perfectly synchronized or if the production stage doesn't have the workspace context.
+
+**Solution:**
+1. **Host-side Sync:** Run `pnpm install --lockfile-only` on the host after adding dependencies to ensure the lockfile is up to date without hitting file locking issues.
+2. **Emergency Builder Fix:** In the `builder` stage, explicitly install missing modules into the local `node_modules` of the app:
+   ```dockerfile
+   RUN cd apps/api && npm install --no-save
+   ```
+3. **Robust Production Stage:** Use `npm install --omit=dev` in the standalone production stage instead of `pnpm install --prod` to ensure a clean, isolated dependency tree.
+
+**Commit Reference:** `Dockerfile.api` updates on 2026-02-14.

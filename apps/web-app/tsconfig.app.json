@@ -15,6 +15,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "vite/client": [
+        "../../node_modules/vite/client.d.ts"
       ]
     }
   }

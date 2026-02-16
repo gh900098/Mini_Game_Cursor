@@ -38,9 +38,9 @@ export class AdminMembersController {
 
     @Get()
     async getMembers(@Request() req: any, @Query('companyId') requestedCompanyId?: string) {
-        const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
+        const targetCompanyId = req.user.currentCompanyId || req.user.companyId || requestedCompanyId;
 
-        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
+        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== targetCompanyId) {
             throw new ForbiddenException('You do not have access to this company');
         }
 
@@ -50,8 +50,8 @@ export class AdminMembersController {
             .orderBy('member.createdAt', 'DESC')
             .take(1000);
 
-        if (companyId) {
-            query.where('member.companyId = :companyId', { companyId });
+        if (targetCompanyId) {
+            query.where('member.companyId = :companyId', { companyId: targetCompanyId });
         }
 
         return query.getMany();

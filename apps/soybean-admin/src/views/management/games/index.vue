@@ -2,7 +2,7 @@
 import { ref, h } from 'vue';
 import { NCard, NDataTable, NTag, NSpace, NImage, NButton, NPopconfirm } from 'naive-ui';
 import type { DataTableColumns } from 'naive-ui';
-import { fetchGetGames, fetchCreateGame, fetchUpdateGame, fetchDeleteGame } from '@/service/api/management';
+import { fetchGetAdminGames, fetchCreateGame, fetchUpdateGame, fetchDeleteGame } from '@/service/api/management';
 import { useLoading, useBoolean } from '@sa/hooks';
 import GameForm from './components/GameForm.vue';
 import fallbackImage from '@/assets/imgs/soybean.jpg';
@@ -118,7 +118,7 @@ const columns: DataTableColumns<Api.Management.Game> = [
 
 async function getGames() {
   startLoading();
-  const { data, error } = await fetchGetGames();
+  const { data, error } = await fetchGetAdminGames();
   if (!error) {
     games.value = data;
   }

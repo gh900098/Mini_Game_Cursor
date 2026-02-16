@@ -1,0 +1,1000 @@
+﻿[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17753767[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17753678[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17753599[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17753162[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 83e32afd-15f6-4c27-a802-ba0d951cd8e1 (17753936)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d8315e1d-9a0d-4331-97a8-d52ea6296bed (17753767)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 80266487-3d9b-4652-8482-5309bff38d3e (17753678)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member bc3fb892-fdeb-4635-b254-7be8a15a186f (17753599)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17753378[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17753007[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17752890[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17752726[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17752623[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 83b86f5b-dfe7-44aa-920c-dde6fd45a621 (17753378)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 30e8278c-653a-424a-a47f-c99cd626aeb1 (17753007)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 1b0ed96e-8415-4b65-b84a-150a931da6bc (17752890)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 345f3f0d-1cdd-49d2-9316-153b31c8adb3 (17752726)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 9a70ccf0-8e2d-47a7-bf16-aac7d6fc264b (17753162)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:11 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c555df01-435d-4549-bc69-9f9c21e05228 (17752623)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17752292[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d1a99f23-8fc9-4711-b037-4441a11dee5b (17752292)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17752248[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17752241[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17752105[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17752085[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17752092[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cf7a3bda-9792-4e0d-a0c8-c773ca830761 (177522A8)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cd62c2c2-80af-45b8-b3e4-f8802732631f (177522A1)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 5cd29c43-cf9f-48ec-ba44-6ea28f4f1b17 (17752105)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member e9252107-3015-4e4e-9ee5-7b8bf1025083 (17752085)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17752073[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17752064[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17752044[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17751598[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17751831[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 07082b5e-c638-475c-b5de-1cd1f29cadbf (17752073)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 231d3c37-56f1-412c-94c6-f26d8be44710 (1775206A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 54ca5d94-2aab-4719-be24-818cf78a8e37 (177520AA)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member db288715-4d18-4c6b-9d0f-7e41d1e07771 (17751598)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member dec0fea7-a7ec-4ea0-9fed-62b394fe7b36 (17752092)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:13 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 5d23e9ca-5f78-4769-822a-5ec0269e3d30 (17751831)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17750965[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 3273bad1-8b39-4d3a-9d6f-7194ef71a72f (17750965)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17750953[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17750647[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17750270[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17750096[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17750056[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17749653[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d7058720-77f4-4ac4-be8a-32a5c637ef97 (17750953)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d7feae94-686c-4110-8642-e30ab071d6e7 (177506A7)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 62ae5773-edbc-4f17-8642-b181dca7a2f9 (17750270)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 88aff1ea-8275-46af-b223-b3d103cf4829 (17750096)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 8df6f01e-fe5a-4419-a818-9454defc1855 (17750056)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17749322[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17749020[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17748532[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17748335[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 4d553bbb-3363-4d6a-90ac-edc0184da155 (177A9322)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member f481c75c-eaaa-49fe-8a33-a79ab3065e3e (177A9020)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 4353b676-e115-4ff1-b72c-fc934d3ddd86 (177A8532)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 084a2434-43d9-48de-8e01-9514de84cb34 (177A9653)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:15 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 8656c1e9-ff28-4c67-b964-54600cfaeda1 (177A8335)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17747926[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 7f527612-34c8-4ded-8851-5ba529523318 (177A7926)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17747697[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17747668[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17747224[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17747163[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17746916[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17746989[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c433e9b6-534d-439c-9da9-5742cc23ff49 (177A7697)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 967aae92-7ef5-4fc1-92e3-12bde3a30d1c (177A7668)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 5dfb7132-8993-4936-8af6-f6f6b9346e31 (177A722A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member af53963d-ea61-4d72-acb1-1817f0cf7274 (177A7163)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 03113482-9679-4ad9-aaee-5489c6f219e1 (177A6916)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17746442[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17746406[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17745413[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17744432[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 33f02747-81f6-477c-a195-f1ddec0b205d (177A6AA2)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member abc66bd7-647a-4f20-904d-d0f47b5df86b (177A6A06)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 0cd4df10-c471-4104-ba55-2cfc4e300292 (177A5A13)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c7a00721-9fe4-4dfb-a667-507e5f8bd6e0 (177A6989)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:17 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 9e39f222-7256-40a2-916a-b79c7e07bd2f (177AAA32)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17743435[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 0d3a48e9-0147-40c0-a17c-4aff553dbc05 (177A3A35)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17743179[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17742609[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17742275[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17737378[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17735428[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17734169[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 1c8db9f5-7f91-4233-a31a-16fd923e8b58 (177A3179)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 0ec21860-2a22-4819-8f47-a6885aeaa856 (177A2609)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 578b16b1-c0c3-4d24-b4e8-650572f9dead (177A2275)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ebb742da-f122-489d-a3e2-f04247f22347 (17737378)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 1c776c69-393d-459f-a096-952625d4c3c1 (17735A28)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17733375[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17732143[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17730919[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17729098[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member fd5a3493-344a-46a5-90ee-88bb43986fb5 (17733375)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ff0b824b-c0a2-43aa-9d4e-387153f4c866 (177321A3)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ae1f557c-8371-4324-a8f3-ec99926327c9 (17730919)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 8e8576b1-7220-4cc4-bcfb-0846f7e6698c (1773A169)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:18 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ec7f1baa-fcab-4274-b7bb-fd11ee304cca (17729098)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17727105[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member b7852756-47f7-4a6a-9dfb-c190014d156a (17727105)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17727053[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17726488[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17726285[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17724797[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17724023[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member f8475736-29fb-407f-a23e-db55ccb65009 (17727053)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 86f5bac3-7cba-4cfc-adaa-8861ca44d3d6 (17726A88)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d6707fd2-b86d-4bfd-8958-5af05d55a4bc (17726285)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 4c04e2f9-6478-45e8-8f78-14af294eae50 (1772A797)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17723405[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17724015[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17722066[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17721723[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17720899[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 28ea1e62-ad59-4d8c-b332-9c732f219b06 (17723A05)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member dbd087dc-44ea-42a7-9463-bd1fa7762118 (1772A015)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 84be7485-c20a-43d7-8d32-e9fb2a4b153b (17722066)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member eab120b4-4c20-4c1e-8ef8-471f42038581 (17721723)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member a52569e5-2dd8-4f0c-be58-852845de9aae (1772A023)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:21 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 6e37869f-440f-483c-8040-688de4baeb05 (17720899)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17714294[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member e33a4cda-d3ac-4656-8a08-988bc9fb566b (1771A29A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17714122[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17713409[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17713281[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17711087[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17711006[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17710041[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 9dda1658-f866-48ba-90c3-ca8474edec19 (1771A122)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member daba8e82-dd85-408f-a875-47de188f5990 (17713A09)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 4105a275-f0d8-4bbe-94c2-7cce6bf7798f (17713281)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 7509d725-9bb1-47d4-a797-248e9c9a51d1 (17711087)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d0681938-9feb-4278-b841-6f9ab6df6514 (17711006)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17708455[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17707082[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17704211[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17702253[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member e30343dc-b43e-4f83-b8b0-1d50170ad003 (17708A55)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cdc8a48d-0b24-4ba6-a502-a8415f592559 (17707082)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 65229b4e-4ede-4abb-9ad2-58e5b330626e (1770A211)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member a9532111-c034-48b9-b5cc-e6e66730b6c9 (177100A1)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:23 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member f5fdbde4-c9b3-4ae1-ba63-23868af87a97 (17702253)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17700238[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 63f09b4f-ea22-4693-875e-124c4397e429 (17700238)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17700117[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17700033[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17699639[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17698511[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17697059[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 611a6d99-3544-49ac-acb5-64703227d39e (17700117)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ecbc3fc6-3ccc-4796-80c7-e7936f843b9e (17700033)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c11596a9-d12c-4e64-b027-7e671a201f3f (17699639)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 8806be6e-4ef3-40d5-9746-2c34f6dc3fa1 (17698511)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17697949[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17696957[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17696661[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17694356[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:24 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17694138[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:25 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 750039cd-0af1-4ddb-ac3a-a1531609e549 (176979A9)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:25 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 8eb3359f-e062-4be7-bb16-a7987a92684b (17696957)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:25 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 781f0ce3-4783-4628-8b2e-2d16c0f5f806 (17696661)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:25 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 82196547-b672-4a03-b6cb-f3bae1e1d535 (1769A356)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:25 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ceebc711-41dd-4292-be8a-9f1ed1679bde (17697059)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:25 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 7c023c4c-b3b6-4cbb-9370-ba596f52beb3 (1769A138)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17689584[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ff28cfcd-b029-45c5-971c-dfd7a812f50a (1768958A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17689472[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17688897[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17688452[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17687292[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17685160[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 126d7f5d-4fcd-4b3a-85f6-07e32bae146c (17689A72)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 351d5b1a-393a-4b3d-8a57-dfde30c51278 (17688897)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 3d9efb00-2a27-4fdb-ad22-be98a440e044 (17688A52)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member b8d9b478-5fd2-4049-922b-29b69529dd1e (17687292)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17683821[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17684467[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17683459[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17683242[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17682565[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ef26b323-b150-4683-acb7-998fcba7f967 (17683821)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 6c09cc22-e133-4655-a88d-32fc69477764 (1768AA67)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cacc78e3-65b3-4992-a8af-4887d583d864 (17683A59)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cb26d20a-1c67-4da2-851a-64cd348ba222 (176832A2)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 4826f64e-71f6-48a9-b70f-d6a7c430d30e (17685160)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:26 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 8f1105df-76f8-4883-b568-73443869e1c4 (17682565)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17681080[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 2a59789c-034a-4695-80fd-142b58cf2efc (17681080)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17679541[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17679045[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17676807[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17675258[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17673871[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17673241[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 8af043fc-4d3a-4b22-b4fd-d2892cec6c97 (176795A1)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 5f534af1-8cdf-4c8b-aa60-ba1de7f06cf8 (176790A5)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member aae19745-703f-4dc2-bc0b-3056bb5716e3 (17676807)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member f7058e32-c020-4c6e-8801-395b60716cfc (17675258)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d95cfd25-a7be-4065-8495-e82e7f588d98 (17673871)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17671923[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17671467[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17666837[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17665427[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member f77f9222-7c35-44f7-98ff-bc7b752699bd (17671923)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cda0c6db-4600-4098-a5db-6b4badad5438 (17671A67)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member a5a8b820-eba9-4e33-8cab-63d577c29990 (17666837)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 95800ec6-e096-4051-86bd-830e437156ba (176732A1)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:28 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 4e17cfc5-fde9-4ae8-9413-dbb93f43b562 (17665A27)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17664876[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 9d8e641c-16a3-45e7-96c3-e57134e16304 (1766A876)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17663577[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17663551[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17662304[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17661635[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17659737[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ea1a6fbe-96cf-4341-98f4-7290b639e5af (17663577)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 7c1db177-ec42-401a-8d6d-5a5d1ecbe07c (17663551)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 8c70da73-0bbc-47c9-8bec-8228ebedf60a (1766230A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member e5fd4b26-c00c-4330-987e-318fcbea988c (17661635)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17659248[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17659161[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17658828[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17658237[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17657408[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 574b2b02-dde3-4c12-868b-7cbf341245a7 (176592A8)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c0b5b269-21a4-47c7-affc-0210fb5ac041 (17659161)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 02bb6204-aa2d-4c10-98f7-29a72189d7ee (17658828)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 39e30b51-6ff6-485f-b249-cb763cc76ed5 (17658237)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 2ed708ab-be41-49eb-8975-7ae793bb556a (17659737)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:30 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d7ea9d9a-f2c8-4b97-9a8e-9b414837deb2 (17657A08)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17656964[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member bdcda026-29eb-4bdc-90db-0aa8340960ea (1765696A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17656717[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17656618[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17656505[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17655470[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d93707b1-e469-4746-bedb-c8b940a18ebf (17656717)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 9c773ce2-fa5a-4f24-a49a-060b90433a0e (17656618)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member be46ec2e-632a-41e8-973a-566b293cc07f (17656505)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17652313[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17653870[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17650645[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17651189[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17649753[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17648876[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ffd83dbf-912b-44eb-870f-618c1d9be7a1 (17652313)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 46ab0e1d-50cb-4e3f-9d97-94f825212e43 (17653870)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member dbf4541b-a3e8-4c5c-bd2c-ae9e045715f1 (176506A5)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 60e1d795-7137-4e0d-904d-44bb121eb47f (17651189)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 1c95715f-e7c5-4291-aef8-be2a71e28d76 (176A9753)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member f1383ab4-c75f-4980-a3fc-accf874b0dbc (17655A70)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:32 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ea0a927c-db8e-44fb-a02d-ad7d8beab555 (176A8876)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17645692[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 1f0cecdc-6cf5-4496-8f2a-ceba4b21e2c4 (176A5692)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17644784[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17644506[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17644299[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17642442[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17642269[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17641453[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d459247c-3d37-4f5b-8ae3-ff355f25ba05 (176AA78A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 3abd4230-92b3-4326-8a30-6263f5413649 (176AA506)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cbcac7e4-7298-434a-8d1d-a8d2df3d6cf9 (176AA299)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c7d4a5cc-6be6-42f7-bfa5-63f84e59b0a2 (176A2AA2)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member fd9268fa-67b0-427e-90fe-5937fed4fee7 (176A2269)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17641314[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17640173[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17639474[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17638430[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 48a0775c-b51c-46f9-8c84-13bfc2d67b78 (176A131A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 43f9a73f-6a45-40fe-be13-ee10a02aadd8 (176A0173)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 8de833c0-fc00-465d-8d74-a5703ab73f73 (17639A7A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member fd731acb-7434-4387-83bd-93cc62f560e4 (176A1A53)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:34 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 00226f13-16e1-4254-8ed5-f510383c954e (17638A30)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17635305[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member bdb44f1e-9272-4876-a045-83d1c42be5fd (17635305)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17634552[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17634722[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17628924[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17633292[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17628102[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17627825[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member b985db7a-1ee1-4e36-a105-0aa28e01f12c (1763A552)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c3ae100b-fb20-4dd1-9210-237c792f49b9 (1763A722)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 49572eac-31f9-42f5-89be-52a347a70bfc (1762892A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member e236196d-a5a0-428b-b44c-b7574316733b (17633292)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 89dd26d2-1b21-418c-bc08-8143f75bf7b1 (17628102)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17626052[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17624868[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17625527[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17623481[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member bbcc0665-4bf3-4b10-befc-d1b2f24be271 (17626052)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 4af5df5e-9c76-4835-b3f7-db237409c486 (1762A868)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cf4a6e07-3cff-4e63-aab7-f004423bd121 (17625527)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c2770e61-101e-4121-9358-52388c1ec5ab (17627825)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:36 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 8a1f4858-113d-47be-b93a-5da56d73932f (17623A81)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17621292[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 05f63c1a-03a7-4bbf-bcdf-b48c60553f79 (17621292)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17620977[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17620892[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17619577[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17619087[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17617827[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17615701[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 98bcda41-80cf-477d-950d-c9925ab7e9a6 (17620977)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 4d9120f2-93c0-4d50-84c9-e1d0660d7a65 (17620892)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member deb8948c-66f7-487d-8a2e-99a4b1c17852 (17619577)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 2dd12a32-264c-4278-92c3-aa301f3b69ac (17619087)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 19619964-0d5a-4894-a730-7e283627c59f (17617827)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17615160[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17613639[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17612134[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17611616[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 97f29e7d-32aa-4214-8544-00ed5aaceb43 (17615160)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 6605d7f5-4e0b-470f-91a2-71967b1717ad (17613639)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 85b044b5-d3ab-4a6d-9140-59482fcbf1ef (1761213A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member f4ead097-b79b-473e-948d-c0f1cd9d1101 (17615701)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:38 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 2189244a-2aa9-45eb-b2f2-1a26270f033d (17611616)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17610731[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 45b2880f-0878-4fde-9801-5ddbc3a51d4b (17610731)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17610209[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17609593[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17609533[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17608412[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17607809[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 26b67fc6-ca96-400c-8108-2cf458577e12 (17610209)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 6476b883-ba54-4d02-ad61-009624b5cd4f (17609593)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 04f70012-a1ac-468e-b1a1-b567a7d0a695 (17609533)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member e6673c5f-a167-4aab-908c-fc6876d6caf9 (17608A12)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17607110[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17605060[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17605893[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17601948[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17600841[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c31feef6-542c-4689-9f4e-8254202dbb6a (17607110)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cb44a075-a0b9-40b7-b66e-aa9fdbd088c1 (17605060)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member e26caed3-85ce-4bf2-ae61-b56ae2bfc381 (17605893)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member b47a67c5-01ee-4e1e-9064-20f5d8c6378a (176019A8)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member f492cae8-572b-485d-a699-3f8ad2707419 (17607809)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:40 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 033693f3-23c3-4533-bbd8-60c1d2df1f44 (176008A1)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17599582[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d28193b8-0aa3-43ac-89cb-67cde86bbb81 (17599582)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17599023[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17598730[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17597107[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17593392[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17596676[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17593322[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member bf62bb30-f193-4f06-9559-29d972976388 (17599023)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 8baa5b2d-4ad1-4db2-a16e-b89c427e090b (17598730)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 47ddd285-f9c4-4e74-881a-fe635a02f870 (17597107)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 001ade1b-912d-42c1-9a1c-ec45c2e03010 (17593392)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c172fcb0-cdd2-42e6-ab44-ac066f566a19 (17596676)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17591964[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17590675[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17588821[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17589785[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 472b5500-84b7-4e8c-9588-e6145fea4ca2 (1759196A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 73c26c22-fcfb-4276-ae70-6168c61382b8 (17590675)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 0e46e111-3728-4f56-b1af-ec84203a58f1 (17588821)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d088e8b8-2f9b-4f6e-8b1e-493be3267201 (17593322)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:41 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 2f640fd8-9f5e-4f2b-ab72-a55b5fd272be (17589785)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17587051[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 693fc779-835c-4097-8b01-db020bd3ecc7 (17587051)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17586803[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17585985[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17585119[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17584624[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17583682[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 4ca21099-af0f-4978-b828-e48810cc6450 (17586803)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member eb7a3e8b-d838-4707-8693-341c90329850 (17585985)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member fdd7f395-ae0e-42aa-bbf7-a28b8336ed72 (17585119)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ab0affc0-c30c-4c47-afc4-06517a37418e (1758A62A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17580588[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17579568[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17579448[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17579348[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d5525ccc-378a-45ba-9ffb-7ec1c337b87c (17580588)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member e84161a7-f012-450e-9ac7-644944667085 (17579568)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member f314e11f-7c1d-447e-9a59-899020925375 (17579AA8)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 685898a0-080a-47c1-bcf7-71c69bc85133 (17583682)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:43 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 283f595f-82c0-431c-847c-076a1aa8a8ad (175793A8)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17579295[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17579209[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17579175[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17579161[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17579142[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17576561[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member b2b38ed9-3ada-4b25-9b60-3d57bdbad4fc (17579295)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17574634[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17574007[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17573889[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17573689[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 788c8453-0147-4ec6-a128-834202ee64fb (17579209)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ba6736e7-f29f-44f1-895b-f9fc4d6e0ed6 (17579175)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member bd36197f-3418-4c77-95a0-dc521bd6a7ff (17579161)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member e7d97081-8521-4f10-b4ea-04707abc6941 (175791A2)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 50b8fbde-3961-424a-a142-1394e4d1e017 (1757A63A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 219be195-e4ab-4063-83e7-5977d0c7f747 (17573889)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d5d267f6-89a5-4885-850e-5acd64914487 (1757A007)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d20d0fc9-98a4-4afe-9e2f-a813cc3eca7e (17576561)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:45 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member f656d68c-5266-47f6-9b1c-169a0c584372 (17573689)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17572751[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 796f0d30-c579-4c41-a601-83b771b17d0e (17572751)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17571899[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17570670[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17570484[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17569791[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17569228[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17568484[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17567808[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17567381[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17566540[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member a04f61f9-5434-4990-ae0f-2244938f3a6f (17571899)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 1cb084a0-a2ad-44e4-a99c-e100979cbd8a (17570670)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ec0a4338-655d-4e06-8d1d-fc2eb03f95e3 (17570A8A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 38362cee-0984-4306-8c33-a86cdf9a76bb (17569791)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 88b3b750-0c34-463f-b867-9b8485072e8c (17568A8A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c7921d6c-df66-443d-9f09-3eb2c01e8834 (17567808)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member bc35238b-1795-425a-873c-19fb79fa55af (175665A0)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 4d927fdc-933e-47f9-83ef-d724274667eb (17567381)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:47 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 043b0bd7-d44c-4575-b130-e25f824d19ea (17569228)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17563414[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 9d99965c-350d-42a5-8b1f-d88f0829c464 (17563A1A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17563274[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17563014[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17562991[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17559819[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17559061[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17557900[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17556383[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17556249[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17555077[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17553726[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 27a7c4ba-b889-4e9f-921e-c91f62d95709 (1756327A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 3bc19baf-4985-4134-83ac-2a04cf052be3 (1756301A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member e444da84-5fe8-42c6-a7f4-fe3e005ce13e (17562991)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member a19275af-3b2a-463a-bb94-1d75b75fe5bd (17559819)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 5eeb82a3-cf7c-439c-83b0-bc8d74703839 (17559061)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member dd5b73ba-2704-4d5b-9054-51eb28bd773c (17556383)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 37e821e6-7448-468d-a5e3-46107e095cb6 (17555077)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member a1138901-7f2d-4a22-94aa-c60450af30d1 (175562A9)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 35447212-099a-4b84-8226-385a54bdac40 (17557900)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:49 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 05b8101e-9666-4f53-b67c-a167791fd066 (17553726)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17553110[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 57c4b7ff-6361-4d23-8287-0a345edc8db4 (17553110)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17551341[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17551326[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17549572[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17548992[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17548365[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17547390[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17546674[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17546245[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17544074[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17543959[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 0a2c5aa3-5093-4f12-9e49-fd71272dc407 (175513A1)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cd345ff1-4045-464c-befd-34caa3f6ed5f (17551326)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ca2d92cf-f5c8-4ada-8a74-2aa8361b9846 (175A9572)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 2e4a0138-2ecb-4102-9fbf-792a4fad20ca (175A8992)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 0af59835-6fec-48f9-889a-bc13330c192a (175A7390)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cae149ab-e8ac-4261-862f-b296ddfb6f96 (175A62A5)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 1b319333-9f3b-455d-9248-a4d226c34ba2 (175A667A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 9728afc4-6e1a-461d-af10-ab5c04ca8361 (175AA07A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member a6f7310d-7c8b-45bd-9f87-aca661acd11a (175A8365)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:51 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 05ab230e-fe5a-4d5c-be5a-c088c29f3642 (175A3959)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17541373[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 28e97561-6fb5-4aa1-871c-3c78b82add43 (175A1373)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17540505[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17540462[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17540210[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17539381[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17538311[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17537457[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17537105[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17536336[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17535891[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17533654[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 9bd2d3ab-acbc-4535-a5a9-18d973b9941f (175A0505)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member eeeaaf8c-9278-43a0-a175-b10dcfecb33e (175A0A62)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cf2a685f-6ee8-4213-9cf6-29880cd59b53 (175A0210)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 84948e67-1167-45ee-9fa9-14778514f3e3 (17539381)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 8d29e505-0d8a-4d5d-9e46-d5b9b976283c (17537A57)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member a1f1c2f9-5d5b-42b9-9f3c-ba2d40e26f23 (17537105)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 9c823faa-575c-4fa8-bd05-d5e9d24d985c (17536336)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d558b524-ff06-4ef0-a835-db3534b23688 (17535891)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 50a3c560-d649-4595-8ab0-c15907220198 (17538311)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:53 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d6835fc5-014e-49eb-9c72-718d793eb1dd (1753365A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17532572[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member b0df6996-07b7-41bf-9eeb-dd66d359fcfe (17532572)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17531877[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17529939[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17531649[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17529154[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17528414[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17527413[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17526627[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17526161[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17525718[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17524476[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cd6ebc46-bfab-4822-b074-fa8b430a0f54 (17531877)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 0751c75a-f920-4d14-8c60-51aa324b9c82 (17529939)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 42789d9c-fcbc-4dfd-beea-91542e93e0d4 (175316A9)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 586123db-893a-4a86-b793-8937a00394c9 (1752915A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member a1d47349-ee52-45ef-b1b9-8da62e569e9e (17527A13)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 6573fa02-ff0e-47ba-b577-ec1f55bd58c4 (17526627)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 3f6d401c-3305-4a72-bded-7af2193d51e7 (17525718)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 6efbfab9-b5cd-4760-89b4-8bf16587db7b (17526161)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 7bfc2a16-9361-4b07-b377-a35e6309d7e5 (17528A1A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:55 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member dad0298a-8e80-48ec-9813-12a1efcfbbbc (1752AA76)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17522160[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 453089f4-76d8-4171-b913-983cff6a7d6d (17522160)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17522041[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17521188[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17520236[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17518563[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17516616[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17516256[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17516112[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17515476[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17515197[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17515103[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c3827389-6fdb-477c-956f-48383866b173 (175220A1)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 888ede70-1c03-4481-a7bf-81c374b8a982 (17521188)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 40b93704-401c-481d-bc21-d1098076c230 (17520236)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 6ff80ed1-21bc-4849-a680-a894cb3af210 (17518563)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 6a171ef7-a212-4ba0-b5ed-6c50e86c4765 (17516616)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 34ccf7d2-c949-468b-a48b-810618bd5f22 (17516256)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 69a07d91-e807-43d9-a13c-40d682cbb6e3 (17515A76)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 9178fec1-8264-4ada-86c4-ea7820a0d0b8 (17515197)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member b3698ffc-c524-4e25-8106-8ffa65e9ab90 (17515103)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:57 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 026631f6-1a4c-4437-baaa-0c8ee5b8ad84 (17516112)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17513098[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member b3e9f29a-6a17-4912-bbf0-fe8fad4208bd (17513098)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17512841[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17512766[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17511803[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17511772[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17511385[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17511095[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17511064[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17510922[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17511063[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17510789[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 4e2e6d8a-dbea-4564-a612-0b548d0a7c54 (175128A1)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 84b4ec39-e90a-4f16-b555-108aa88501cb (17512766)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 70723946-8e9e-43f5-97c3-89710ee7406c (17511803)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member de25f893-0d5d-465a-ae1b-68b6534ef254 (17511772)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 2e124999-3a71-4f6e-9da4-8c91e83348ea (17511385)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member b5039532-830d-4ff5-b8f9-ea1edc25d9aa (17511095)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 7e343d99-7723-4979-a9e3-35945bbcd217 (17510922)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cd083c1b-14ce-45b9-9396-e20196006e57 (17511063)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 678c4aae-dd29-430c-8480-0d7dc37a25d8 (1751106A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:15:59 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 7d28d949-dbb1-4f76-9071-8ce0ad810ae9 (17510789)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17510499[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ba738bbf-38e8-4dbc-a3ce-6c4deaec54d7 (17510A99)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17509292[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17509230[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17507554[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17505484[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17502953[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17502534[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17501626[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17500777[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17500752[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17500319[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 9687e3f6-5cf3-452b-8497-0694eea52379 (17509292)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 19bc0d99-955c-45b8-9a8c-edcc91aa6ec6 (17509230)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 41cedda7-5026-4644-a539-71b2f5a2e049 (1750755A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 9d9d00ca-f496-42da-b25c-2df9a5d5fb93 (17505A8A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 70e8d0f4-3ba9-49cb-83f3-01778e26500a (17502953)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 92fe9150-8527-4833-a65a-dda23f88eadb (1750253A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 30006bca-4bc3-4185-b808-dd8f200cc79d (17500777)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 75a0c700-1a83-401c-b198-346137f1062d (17500752)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member e21552a3-1403-4f0f-855e-a0553e831db9 (17500319)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:02 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 7f7dfbc9-71c9-45e1-8e67-7e6420f6ce4a (17501626)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17499835[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 9e8fa584-e30d-46a6-9e45-e08ec803b0b6 (17A99835)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17499533[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17497828[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17496460[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17495663[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17495020[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17493637[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17492762[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17492724[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17492587[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17488202[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 16b06e25-a317-4292-a914-daaa9069d041 (17A99533)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 81403a9a-a396-434d-8509-c772a02cd557 (17A97828)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member dcf60180-9dbb-4efc-8737-97ba818a8382 (17A96A60)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 23ba820e-4799-4766-88fb-9db275db20cf (17A95663)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c49e532f-0a4d-4b83-b90a-7171cf7434f5 (17A93637)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 4ab07c12-b571-4717-acc4-f42cc8c06677 (17A92762)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 83b65e3d-3fbf-4306-98b2-cf6353fd5aa9 (17A9272A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 82616d19-60fb-4e63-a574-c36f639f6e02 (17A92587)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member f684d938-0f93-4bf0-afbd-435e8a9049fb (17A95020)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:04 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member dd339672-12bb-49ac-96c0-b43d2ead1604 (17A88202)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17486875[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 0c7d9a38-ed1c-49e8-b624-3c1a9796ae0f (17A86875)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17486821[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17485459[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17482896[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17482186[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17481429[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17481503[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17481333[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17480838[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17480753[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17480297[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member e3044b1c-0a21-4379-b77a-44f93b1c8fea (17A86821)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 44874d23-8cd0-4ef3-a3d6-4bd42ddc0849 (17A85A59)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 6224e03b-ef23-4e2b-bfb1-43b4f9549253 (17A82896)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member ae42317f-895c-4c9b-9b2a-3b3b84e98348 (17A82186)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 898c09a0-4456-4d9d-a889-ef3af0dead62 (17A81A29)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member a221991b-c2dc-4a44-b6a6-b211c03db81d (17A81333)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member af791689-8706-439a-b6a7-ab7ee96f107a (17A81503)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 198d7412-06b8-4062-8ff2-172509b3394e (17A80838)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 5a3c65fb-c188-4ded-b355-d50be4b69e2f (17A80753)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:06 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member a3d93671-78c7-4943-acc3-1a6771552c21 (17A80297)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17479968[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member b277b856-a282-457d-b49b-7ec2bfca61fb (17A79968)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17479503[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17479365[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17478009[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17477489[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17476559[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17476117[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17475460[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17474798[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17474200[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17473492[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 6cccec44-759c-4509-89e9-c42c4f162b57 (17A79503)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 4b58cffb-03cf-4e9e-9175-5eb261ab49c9 (17A79365)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 1be7a440-dc51-4d69-ad52-f5eb3d14e449 (17A78009)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member cc713111-bda1-4562-858b-3fd0a18e11e4 (17A77A89)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 32e90c8e-a5e8-408b-9171-877cb4ee90d8 (17A76117)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member c762a284-08a9-44d1-a5bc-2c595eb2a9ca (17A7A798)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 841a787d-e2dd-4c65-8a27-c68939609926 (17A75A60)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 276bab96-7fc7-4d2f-af9b-6c2f37716da9 (17A76559)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 2d365f2b-57e1-4659-a510-beee36e65dc8 (17A7A200)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:08 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 05b528cc-7040-41f2-a544-f38520a14489 (17A73A92)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17473375[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 5df69acb-b54e-4cdb-aa2f-5c43dad6e417 (17A73375)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[v2.1] Processing member sync for company 278b1fdc-4131-4ba9-a3c9-78fc182197fd (Source: cron_hourly)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17472902[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17472499[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17471390[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17471199[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17470464[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17470068[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17469891[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17468160[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17467180[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32m[Optimization] Using provided payload for member sync: 17463548[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 54e6a9fc-698c-43fd-99af-dd2b9fade125 (17A72902)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 5251b600-365f-4b3b-b562-7d9c591563d9 (17A72A99)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 524beeb1-9b68-4737-9874-fbb0b59bded6 (17A71390)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 59a8f4f3-f826-40a1-951a-13f9415e1428 (17A71199)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 07be49a9-41a0-48dc-892c-dcc502703512 (17A70A6A)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member d1b673c1-59c1-4043-9f10-950929734226 (17A70068)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 08014c2a-695a-4dd0-929a-f948196e894a (17A68160)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 77ff12bc-5e0a-484c-99c8-e1ee9d0797f1 (17A67180)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 620abec2-eea1-4d3d-a7c3-8266d8e57963 (17A635A8)[39m
+[32m[Nest] 18  - [39m02/15/2026, 1:16:10 PM [32m    LOG[39m [38;5;3m[SyncProcessor] [39m[32mSuccessfully synced member 1c8e18bd-f86c-4479-93bd-171e5ebb3a3c (17A69891)[39m

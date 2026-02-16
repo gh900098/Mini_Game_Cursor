@@ -19,7 +19,8 @@ export class MembersController {
             return this.membersService.findAll();
         }
 
-        return this.membersService.findAllByCompany(req.user.currentCompanyId);
+        const targetCompanyId = req.user.currentCompanyId || req.user.companyId;
+        return this.membersService.findAllByCompany(targetCompanyId || '');
     }
 
     @Get(':id')
@@ -47,7 +48,7 @@ export class MembersController {
     @UseGuards(JwtAuthGuard)
     getProfile(@Request() req: any) {
         // req.user contains the payload from JWT strategy
-        // We might want to fetch fresh data from DB
-        return this.membersService.findById(req.user.userId || req.user.sub);
+        const userId = req.user.userId || req.user.memberId || req.user.sub;
+        return this.membersService.findById(userId);
     }
 }

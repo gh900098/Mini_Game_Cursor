@@ -30,7 +30,7 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   games_prizes: () => import("@/views/games/prizes/index.vue"),
   games_scores: () => import("@/views/games/scores/index.vue"),
   home: () => import("@/views/home/index.vue"),
-  management: () => import("@/views/management/_route/index.vue"),
+
   "management_audit-log": () => import("@/views/management/audit-log/index.vue"),
   management_company: () => import("@/views/management/company/index.vue"),
   "management_email-settings": () => import("@/views/management/email-settings/index.vue"),
@@ -38,5 +38,6 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   management_permission: () => import("@/views/management/permission/index.vue"),
   management_role: () => import("@/views/management/role/index.vue"),
   management_user: () => import("@/views/management/user/index.vue"),
+  "management_sync-settings": () => import("@/views/management/sync-settings/index.vue"),
   "user-center": () => import("@/views/user-center/index.vue"),
 };

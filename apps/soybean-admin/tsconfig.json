@@ -3,10 +3,6 @@
     "target": "ESNext",
     "jsx": "preserve",
     "jsxImportSource": "vue",
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules"
-    ],
     "lib": [
       "DOM",
       "ESNext"
@@ -15,11 +11,20 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
+      "~/*": [
+        "./*"
+      ],
       "@/*": [
         "./src/*"
       ],
-      "~/*": [
-        "./*"
+      "vite/client": [
+        "../../node_modules/vite/client.d.ts"
+      ],
+      "naive-ui/volar": [
+        "../../node_modules/naive-ui/volar.d.ts"
+      ],
+      "unplugin-icons/types/vue": [
+        "../../node_modules/unplugin-icons/types/vue.d.ts"
       ]
     },
     "resolveJsonModule": true,

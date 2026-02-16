@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
@@ -19,6 +20,8 @@ import { ScoresModule } from './modules/scores/scores.module';
 import { MembersModule } from './modules/members/members.module';
 import { GameInstancesModule } from './modules/game-instances/game-instances.module';
 import { PrizesModule } from './modules/prizes/prizes.module';
+import { QueueModule } from './common/queues/queue.module';
+import { SyncModule } from './modules/sync/sync.module';
 
 @Module({
   imports: [
@@ -40,6 +43,7 @@ import { PrizesModule } from './modules/prizes/prizes.module';
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
     AuthModule,
     UsersModule,
     CompaniesModule,
@@ -57,6 +61,8 @@ import { PrizesModule } from './modules/prizes/prizes.module';
     MembersModule,
     GameInstancesModule,
     PrizesModule,
+    QueueModule,
+    SyncModule,
   ],
   controllers: [AppController],
   providers: [

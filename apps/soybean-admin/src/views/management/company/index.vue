@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { ref, reactive, watch, computed } from 'vue';
-import { NButton, NTag, NSpace, NPopconfirm, NCard, NDataTable, NModal, NForm, NFormItem, NInput, NSwitch, NDatePicker } from 'naive-ui';
+import { NButton, NTag, NSpace, NPopconfirm, NCard, NDataTable, NModal, NForm, NFormItem, NInput, NSwitch, NDatePicker, NDivider, NInputNumber, NSelect, NTabs, NTabPane, NTooltip } from 'naive-ui';
 import type { DataTableColumns } from 'naive-ui';
 import { fetchGetCompanies, fetchCreateCompany, fetchUpdateCompany, fetchDeleteCompany } from '@/service/api/management';
 import { useAuthStore } from '@/store/modules/auth';
@@ -30,8 +30,50 @@ const formModel = reactive({
   isActive: true,
   inactiveAt: null as number | null,
   apiSecret: '',
-  defaultTokenCost: 10
+  defaultTokenCost: 10,
+  jk_config: {
+    enabled: false,
+    apiUrl: '',
+    accessId: '',
+    accessToken: '',
+    ipWhitelistEnabled: false,
+    ipWhitelist: '',
+    proxy: {
+      enabled: false,
+      protocol: 'http' as 'http' | 'socks5',
+      host: '',
+      port: 8080,
+      username: '',
+      password: ''
+    },
+    syncConfigs: {
+      member: { enabled: true, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
+      deposit: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
+      withdraw: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} }
+    } as Record<string, any>
+  }
 });
+
+const syncTypes = [
+  { key: 'member', label: 'Members', icon: 'icon-carbon-user' },
+  { key: 'deposit', label: 'Deposits', icon: 'icon-carbon-add-alt' },
+  { key: 'withdraw', label: 'Withdrawals', icon: 'icon-carbon-subtract-alt' }
+];
+
+const extraParamsList = ref<{ key: string; value: string }[]>([]);
+
+watch(extraParamsList, (val) => {
+  const params: Record<string, string> = {};
+  val.forEach(item => {
+    if (item.key.trim()) {
+      params[item.key.trim()] = item.value;
+    }
+  });
+  // Update member sync params by default (or handle per type if needed)
+  if (formModel.jk_config.syncConfigs.member) {
+    formModel.jk_config.syncConfigs.member.syncParams = params;
+  }
+}, { deep: true });
 
 const slugValidationStatus = ref<'success' | 'warning' | 'error' | undefined>(undefined);
 
@@ -141,7 +183,36 @@ const columns: DataTableColumns<Api.Management.Company> = [
 
 function handleAdd() {
   isEdit.value = false;
-  Object.assign(formModel, { id: '', name: '', slug: '', isActive: true });
+  Object.assign(formModel, { 
+    id: '', 
+    name: '', 
+    slug: '', 
+    isActive: true,
+    apiSecret: '',
+    defaultTokenCost: 10,
+    jk_config: { 
+      enabled: false, 
+      apiUrl: '', 
+      accessId: '', 
+      accessToken: '', 
+      ipWhitelistEnabled: false,
+      ipWhitelist: '',
+      proxy: {
+        enabled: false,
+        protocol: 'http',
+        host: '',
+        port: 8080,
+        username: '',
+        password: ''
+      },
+      syncConfigs: {
+        member: { enabled: true, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
+        deposit: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
+        withdraw: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} }
+      }
+    }
+  });
+  extraParamsList.value = [];
   openModal();
 }
 
@@ -154,8 +225,35 @@ function handleEdit(row: Api.Management.Company) {
     isActive: row.isActive,
     apiSecret: row.apiSecret || '',
     inactiveAt: row.inactiveAt ? new Date(row.inactiveAt).getTime() : null,
-    defaultTokenCost: row.settings?.defaultTokenCost ?? 10
+    defaultTokenCost: row.settings?.defaultTokenCost ?? 10,
+    jk_config: {
+        enabled: row.jk_config?.enabled ?? false,
+        apiUrl: row.jk_config?.apiUrl ?? '',
+        accessId: row.jk_config?.accessId ?? '',
+        accessToken: row.jk_config?.accessToken ?? '',
+        ipWhitelistEnabled: row.jk_config?.ipWhitelistEnabled ?? false,
+        ipWhitelist: row.jk_config?.ipWhitelist ?? '',
+        proxy: {
+            enabled: row.jk_config?.proxy?.enabled ?? false,
+            protocol: row.jk_config?.proxy?.protocol ?? 'http',
+            host: row.jk_config?.proxy?.host ?? '',
+            port: row.jk_config?.proxy?.port ?? 8080,
+            username: row.jk_config?.proxy?.username ?? '',
+            password: row.jk_config?.proxy?.password ?? ''
+        },
+        syncConfigs: {
+            member: row.jk_config?.syncConfigs?.member ?? { enabled: true, syncMode: row.jk_config?.syncMode ?? 'incremental', maxPages: row.jk_config?.maxPages ?? 200, syncCron: row.jk_config?.syncCron ?? '', syncParams: row.jk_config?.syncParams ?? {} },
+            deposit: row.jk_config?.syncConfigs?.deposit ?? { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
+            withdraw: row.jk_config?.syncConfigs?.withdraw ?? { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} }
+        }
+    }
   });
+
+  extraParamsList.value = Object.entries(formModel.jk_config.syncConfigs.member?.syncParams || {}).map(([key, value]) => ({
+    key,
+    value: String(value)
+  }));
+  
   openModal();
 }
 
@@ -181,7 +279,8 @@ async function handleSubmit() {
     inactiveAt: formModel.inactiveAt ? new Date(formModel.inactiveAt).toISOString() : null,
     settings: {
       defaultTokenCost: formModel.defaultTokenCost
-    }
+    },
+    jk_config: formModel.jk_config 
   };
 
   let error;
@@ -196,6 +295,29 @@ async function handleSubmit() {
     closeModal();
     getCompanies();
   }
+}
+
+const webhookBaseUrl = computed(() => {
+  const protocol = window.location.protocol;
+  const host = window.location.host;
+  return `${protocol}//${host}/api/webhooks/sync`;
+});
+
+const webhookUrls = computed(() => {
+  if (!formModel.id) return [];
+  const base = webhookBaseUrl.value;
+  return [
+    { type: 'member', url: `${base}/member/${formModel.id}` },
+    { type: 'deposit', url: `${base}/deposit/${formModel.id}` },
+    { type: 'withdraw', url: `${base}/withdraw/${formModel.id}` },
+    { type: 'ticket', url: `${base}/ticket/${formModel.id}` }
+  ];
+});
+
+function copyToClipboard(text: string) {
+  navigator.clipboard.writeText(text).then(() => {
+    window.$message?.success('Copied to clipboard');
+  });
 }
 
 // Init
@@ -222,29 +344,118 @@ getCompanies();
     </NCard>
 
     <NModal v-model:show="visible" preset="card" :title="isEdit ? $t('common.edit') : $t('common.add')" class="w-600px">
-      <NForm :model="formModel" label-placement="left" label-width="100">
-        <NFormItem label="Company Name" path="name">
-          <NInput v-model:value="formModel.name" placeholder="Enter company name" />
-        </NFormItem>
-        <NFormItem label="Slug" path="slug" :validation-status="slugValidationStatus">
-          <NInput v-model:value="formModel.slug" placeholder="Enter unique slug" :disabled="isEdit" />
-          <template #feedback>
-            Lowercase alphanumeric with hyphens, must be unique.
-          </template>
-        </NFormItem>
-        <NFormItem label="API Secret" path="apiSecret">
-          <NInput v-model:value="formModel.apiSecret" placeholder="Enter API secret for 3rd party integration" />
-        </NFormItem>
-        <NFormItem label="Default Token Cost" path="defaultTokenCost">
-          <NInputNumber v-model:value="formModel.defaultTokenCost" :min="0" placeholder="Default tokens per play" class="w-full" />
-        </NFormItem>
-        <NFormItem label="Active" path="isActive">
-          <NSwitch v-model:value="formModel.isActive" />
-        </NFormItem>
-        <NFormItem v-if="!formModel.isActive" label="Inactive Date" path="inactiveAt">
-          <NDatePicker v-model:value="formModel.inactiveAt" type="date" clearable placeholder="Select deactivation date" class="w-full" />
-        </NFormItem>
-      </NForm>
+      <NTabs type="line" animated>
+        <NTabPane name="basic" tab="Basic Info">
+          <NForm :model="formModel" label-placement="left" label-width="120" class="pt-4">
+            <NFormItem label="Company Name" path="name">
+              <NInput v-model:value="formModel.name" placeholder="Enter company name" />
+            </NFormItem>
+            <NFormItem label="Slug" path="slug" :validation-status="slugValidationStatus">
+              <NInput v-model:value="formModel.slug" placeholder="Enter unique slug" :disabled="isEdit" />
+              <template #feedback>
+                Lowercase alphanumeric with hyphens, must be unique.
+              </template>
+            </NFormItem>
+            <NFormItem label="API Secret" path="apiSecret">
+              <NInput v-model:value="formModel.apiSecret" placeholder="Enter API secret for 3rd party integration" />
+            </NFormItem>
+            <NFormItem label="Default Token Cost" path="defaultTokenCost">
+              <NInputNumber v-model:value="formModel.defaultTokenCost" :min="0" placeholder="Default tokens per play" class="w-full" />
+            </NFormItem>
+            <NFormItem label="Active" path="isActive">
+              <NSwitch v-model:value="formModel.isActive" />
+            </NFormItem>
+            <NFormItem v-if="!formModel.isActive" label="Inactive Date" path="inactiveAt">
+              <NDatePicker v-model:value="formModel.inactiveAt" type="date" clearable placeholder="Select deactivation date" class="w-full" />
+            </NFormItem>
+          </NForm>
+        </NTabPane>
+
+        <NTabPane name="platform" tab="JK Integration">
+          <NForm :model="formModel" label-placement="left" label-width="120" class="pt-4">
+             <NFormItem label="Enable Sync" path="jk_config.enabled">
+               <NSwitch v-model:value="formModel.jk_config.enabled" />
+             </NFormItem>
+             <template v-if="formModel.jk_config.enabled">
+               <NFormItem label="API URL" path="jk_config.apiUrl">
+                  <NInput v-model:value="formModel.jk_config.apiUrl" placeholder="https://api.jk-backend.com" />
+               </NFormItem>
+               <NFormItem label="Access ID" path="jk_config.accessId">
+                  <NInput v-model:value="formModel.jk_config.accessId" placeholder="Numeric Access ID" />
+               </NFormItem>
+               <NFormItem label="Access Token" path="jk_config.accessToken">
+                  <NInput v-model:value="formModel.jk_config.accessToken" type="password" show-password-on="click" placeholder="Secret Token" />
+               </NFormItem>
+               
+               <NDivider title-placement="left" dashed>Proxy Settings (Shared)</NDivider>
+               <NFormItem label="Enable Proxy" path="jk_config.proxy.enabled">
+                 <NSwitch v-model:value="formModel.jk_config.proxy.enabled" />
+               </NFormItem>
+               <template v-if="formModel.jk_config.proxy.enabled">
+                 <NFormItem label="Protocol" path="jk_config.proxy.protocol">
+                   <NSelect v-model:value="formModel.jk_config.proxy.protocol" :options="[{ label: 'HTTP / HTTPS', value: 'http' }, { label: 'SOCKS5', value: 'socks5' }]" />
+                 </NFormItem>
+                 <NSpace>
+                   <NFormItem label="Host" path="jk_config.proxy.host">
+                     <NInput v-model:value="formModel.jk_config.proxy.host" placeholder="e.g. 85.28.61.160" />
+                   </NFormItem>
+                   <NFormItem label="Port" path="jk_config.proxy.port">
+                     <NInputNumber v-model:value="formModel.jk_config.proxy.port" :min="1" :max="65535" placeholder="8080" />
+                   </NFormItem>
+                 </NSpace>
+               </template>
+             </template>
+          </NForm>
+        </NTabPane>
+
+        <NTabPane name="sync" tab="Sync Settings" :disabled="!formModel.jk_config.enabled">
+          <NTabs type="segment" animated class="mt-2">
+            <NTabPane v-for="type in syncTypes" :key="type.key" :name="type.key" :tab="type.label">
+              <NForm :model="formModel.jk_config.syncConfigs[type.key]" label-placement="left" label-width="120" class="pt-4">
+                <NFormItem label="Type Status">
+                  <NSwitch v-model:value="formModel.jk_config.syncConfigs[type.key].enabled" />
+                  <span class="ml-2 text-xs text-gray-500">Enable automatic {{ type.label.toLowerCase() }} sync</span>
+                </NFormItem>
+                
+                <template v-if="formModel.jk_config.syncConfigs[type.key].enabled">
+                  <NFormItem label="Sync Mode">
+                    <NSelect 
+                      v-model:value="formModel.jk_config.syncConfigs[type.key].syncMode" 
+                      :options="[{ label: 'Incremental (Fast)', value: 'incremental' }, { label: 'Full Sync', value: 'full' }]" 
+                    />
+                  </NFormItem>
+                  <NFormItem v-if="formModel.jk_config.syncConfigs[type.key].syncMode === 'incremental'" label="Max Pages">
+                     <NInputNumber v-model:value="formModel.jk_config.syncConfigs[type.key].maxPages" :min="1" class="w-full" />
+                  </NFormItem>
+                  <NFormItem label="Schedule (Cron)">
+                    <NInput v-model:value="formModel.jk_config.syncConfigs[type.key].syncCron" placeholder="e.g. 0 */4 * * * (Optional)" />
+                  </NFormItem>
+                </template>
+                <div v-else class="py-10 text-center text-gray-400">
+                  {{ type.label }} synchronization is disabled for this company.
+                </div>
+              </NForm>
+            </NTabPane>
+          </NTabs>
+        </NTabPane>
+
+        <NTabPane name="webhooks" tab="Webhooks" :disabled="!formModel.id">
+          <div class="bg-gray-50 p-4 rounded-8px border border-dashed border-gray-300 mt-4">
+            <p class="text-xs text-gray-500 mb-4 italic">Provide these URLs to the JK Platform to receive real-time updates.</p>
+            <div class="space-y-4">
+              <div v-for="item in webhookUrls" :key="item.type" class="flex flex-col space-y-1">
+                <div class="flex justify-between items-center pr-2">
+                  <span class="text-xs font-bold uppercase text-primary">{{ item.type }}</span>
+                  <NButton size="tiny" quaternary type="primary" @click="copyToClipboard(item.url)">Copy</NButton>
+                </div>
+                <code class="text-[11px] bg-white p-2 rounded border font-mono break-all whitespace-normal">
+                  {{ item.url }}
+                </code>
+              </div>
+            </div>
+          </div>
+        </NTabPane>
+      </NTabs>
       <template #footer>
         <NSpace justify="end">
           <NButton @click="closeModal">{{ $t('common.cancel') }}</NButton>

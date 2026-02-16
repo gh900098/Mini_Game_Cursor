@@ -166,4 +166,51 @@ export class MembersService {
             order: { pointsBalance: 'DESC' }
         });
     }
+
+    async upsertJKMember(
+        companyId: string,
+        externalId: string,
+        data: {
+            username: string;
+            realName?: string;
+            phoneNumber?: string;
+            email?: string;
+            metadata?: any;
+        }
+    ): Promise<Member> {
+        let member = await this.memberRepository.findOne({
+            where: { companyId, externalId }
+        });
+
+        if (member) {
+            // Update if changed
+            let changed = false;
+            if (member.username !== data.username) { member.username = data.username; changed = true; }
+            if (data.realName && member.realName !== data.realName) { member.realName = data.realName; changed = true; }
+            if (data.phoneNumber && member.phoneNumber !== data.phoneNumber) { member.phoneNumber = data.phoneNumber; changed = true; }
+            if (data.email && member.email !== data.email) { member.email = data.email; changed = true; }
+
+            // Merge metadata logic could be complex, for now simple override or merge
+            // member.metadata = { ...member.metadata, ...data.metadata };
+
+            if (changed) {
+                await this.memberRepository.save(member);
+            }
+        } else {
+            // Create
+            member = this.memberRepository.create({
+                companyId,
+                externalId,
+                username: data.username,
+                realName: data.realName,
+                phoneNumber: data.phoneNumber,
+                email: data.email,
+                metadata: { ...data.metadata, source: 'JK_SYNC' },
+                isAnonymous: false,
+                isActive: true,
+            });
+            await this.memberRepository.save(member);
+        }
+        return member;
+    }
 }
