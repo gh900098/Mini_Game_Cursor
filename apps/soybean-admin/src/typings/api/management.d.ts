@@ -91,8 +91,7 @@ declare namespace Api {
                     syncParams?: Record<string, any>;
                 }>;
                 // Legacy support
-                syncMode?: 'full' | 'incremental';
-                maxPages?: number;
+
                 syncParams?: Record<string, any>;
                 syncCron?: string;
             };

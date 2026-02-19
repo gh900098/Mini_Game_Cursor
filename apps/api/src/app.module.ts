@@ -23,6 +23,7 @@ import { GameInstancesModule } from './modules/game-instances/game-instances.mod
 import { PrizesModule } from './modules/prizes/prizes.module';
 import { QueueModule } from './common/queues/queue.module';
 import { SyncModule } from './modules/sync/sync.module';
+import { EncryptionModule } from './modules/encryption/encryption.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { SyncModule } from './modules/sync/sync.module';
     PrizesModule,
     QueueModule,
     SyncModule,
+    EncryptionModule,
     EventEmitterModule.forRoot(),
   ],
   controllers: [AppController],

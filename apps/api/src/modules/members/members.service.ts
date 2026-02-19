@@ -203,10 +203,30 @@ export class MembersService {
             // Merge metadata logic could be complex, for now simple override or merge
             // member.metadata = { ...member.metadata, ...data.metadata };
 
+            if (data.metadata && member.metadata) {
+                const mergedMeta = { ...member.metadata, ...data.metadata };
+                // Sanitize PII from metadata
+                delete mergedMeta.email;
+                delete mergedMeta.mobile;
+                delete mergedMeta.phone;
+                delete mergedMeta.phoneNumber;
+                delete mergedMeta.address;
+                member.metadata = mergedMeta;
+                changed = true;
+            }
+
             if (changed) {
                 await this.memberRepository.save(member);
             }
         } else {
+            // Sanitize metadata
+            const meta = { ...data.metadata, source: 'JK_SYNC' };
+            delete meta.email;
+            delete meta.mobile;
+            delete meta.phone;
+            delete meta.phoneNumber;
+            delete meta.address;
+
             // Create
             member = this.memberRepository.create({
                 companyId,
@@ -215,7 +235,7 @@ export class MembersService {
                 realName: data.realName,
                 phoneNumber: data.phoneNumber,
                 email: data.email,
-                metadata: { ...data.metadata, source: 'JK_SYNC' },
+                metadata: meta,
                 isAnonymous: false,
                 isActive: true,
             });

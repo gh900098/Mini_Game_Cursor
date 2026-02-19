@@ -12,6 +12,7 @@ import { Score } from '../scores/entities/score.entity';
 import { MemberPrize } from '../scores/entities/member-prize.entity';
 import { AuditLogService } from '../audit-log/audit-log.service';
 import { MembersService } from './members.service';
+import { maskEmail, maskPhone } from '../../common/utils/masking.utils';
 
 import * as bcrypt from 'bcrypt';
 
@@ -54,7 +55,14 @@ export class AdminMembersController {
             query.where('member.companyId = :companyId', { companyId: targetCompanyId });
         }
 
-        return query.getMany();
+        const members = await query.getMany();
+
+        // ALWAYS mask in list view
+        return members.map(m => {
+            m.email = maskEmail(m.email);
+            m.phoneNumber = maskPhone(m.phoneNumber);
+            return m;
+        });
     }
 
     @Get(':id')
@@ -69,6 +77,15 @@ export class AdminMembersController {
         // Tenant Isolation Check
         if (!req.user.isSuperAdmin && member.companyId !== req.user.currentCompanyId) {
             throw new ForbiddenException('You do not have access to this member');
+        }
+
+        // Check for permission to view sensitive data
+        const hasSensitivePermission = req.user.isSuperAdmin ||
+            (req.user.permissions && req.user.permissions.includes('members:view_sensitive'));
+
+        if (!hasSensitivePermission) {
+            member.email = maskEmail(member.email);
+            member.phoneNumber = maskPhone(member.phoneNumber);
         }
 
         return member;

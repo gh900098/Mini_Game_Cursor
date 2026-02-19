@@ -9,6 +9,8 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VerificationCode } from './entities/verification-code.entity';
 
+import { EncryptionService } from '../encryption/encryption.service';
+
 @Injectable()
 export class AuthService {
     constructor(
@@ -18,6 +20,7 @@ export class AuthService {
         private settingsService: SystemSettingsService,
         @InjectRepository(VerificationCode)
         private codeRepository: Repository<VerificationCode>,
+        private encryptionService: EncryptionService, // Inject EncryptionService
     ) { }
 
     async sendRegistrationCode(email: string) {
@@ -33,9 +36,10 @@ export class AuthService {
         expires.setMinutes(expires.getMinutes() + 15);
 
         // Delete any existing registration codes for this email
-        await this.codeRepository.delete({ email, type: 'registration' });
+        const emailHash = this.encryptionService.hash(email);
+        await this.codeRepository.delete({ emailHash, type: 'registration' });
 
-        // Save new code
+        // Save new code (email will be encrypted by transformer, emailHash by hook)
         const verificationCode = this.codeRepository.create({
             email,
             code,
@@ -54,10 +58,6 @@ export class AuthService {
         // Check if user exists
         const user = await this.usersService.findByEmail(email);
         if (!user) {
-            // For security, don't reveal if user exists or not, 
-            // but in this specific request, the user wants us to verify email.
-            // "update the forget password page to verify the email"
-            // So we'll throw an error if not found.
             throw new BadRequestException('page.login.common.userNotFound');
         }
 
@@ -67,7 +67,8 @@ export class AuthService {
         expires.setMinutes(expires.getMinutes() + 15);
 
         // Delete any existing reset codes for this email
-        await this.codeRepository.delete({ email, type: 'reset_password' });
+        const emailHash = this.encryptionService.hash(email);
+        await this.codeRepository.delete({ emailHash, type: 'reset_password' });
 
         // Save new code
         const verificationCode = this.codeRepository.create({
@@ -78,16 +79,15 @@ export class AuthService {
         });
         await this.codeRepository.save(verificationCode);
 
-        // Send email (we can reuse the same template or create a new one, 
-        // but emailService.sendVerificationCode is general enough)
         await this.emailService.sendVerificationCode(email, code);
 
         return { message: 'Password reset code sent' };
     }
 
     async verifyPasswordResetCode(email: string, code: string) {
+        const emailHash = this.encryptionService.hash(email);
         const storedCode = await this.codeRepository.findOne({
-            where: { email, code, type: 'reset_password' },
+            where: { emailHash, code, type: 'reset_password' },
         });
 
         if (!storedCode || new Date() > storedCode.expiresAt) {
@@ -99,9 +99,10 @@ export class AuthService {
 
     async resetPassword(dto: { email: string; code: string; password: string }) {
         const { email, code, password } = dto;
+        const emailHash = this.encryptionService.hash(email);
 
         const storedCode = await this.codeRepository.findOne({
-            where: { email, code, type: 'reset_password' },
+            where: { emailHash, code, type: 'reset_password' },
         });
 
         if (!storedCode || new Date() > storedCode.expiresAt) {
@@ -156,8 +157,9 @@ export class AuthService {
                 throw new BadRequestException('Verification code is required');
             }
 
+            const emailHash = this.encryptionService.hash(userData.email);
             const storedCode = await this.codeRepository.findOne({
-                where: { email: userData.email, code, type: 'registration' },
+                where: { emailHash, code, type: 'registration' },
             });
 
             if (!storedCode || new Date() > storedCode.expiresAt) {

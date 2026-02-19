@@ -1,20 +1,29 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, BeforeInsert, BeforeUpdate } from 'typeorm';
+import { encryptionServiceInstance } from '../../encryption/encryption.service';
 import { Exclude } from 'class-transformer';
 import { UserCompany } from '../../user-companies/entities/user-company.entity';
+
+import { EncryptionTransformer } from '../../encryption/encryption.transformer';
 
 @Entity('users')
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ unique: true })
+    @Column({ unique: true, transformer: new EncryptionTransformer() })
     email: string;
+
+    @Column({ nullable: true })
+    emailHash: string;
 
     @Column({ nullable: true })
     name: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, transformer: new EncryptionTransformer() })
     mobile: string;
+
+    @Column({ nullable: true })
+    mobileHash: string;
 
     @Column({ nullable: true })
     bio: string;
@@ -49,4 +58,17 @@ export class User {
     // Relations
     @OneToMany(() => UserCompany, (userCompany) => userCompany.user)
     userCompanies: UserCompany[];
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    updateHashes() {
+        if (encryptionServiceInstance) {
+            if (this.email) {
+                this.emailHash = encryptionServiceInstance.hash(this.email);
+            }
+            if (this.mobile) {
+                this.mobileHash = encryptionServiceInstance.hash(this.mobile);
+            }
+        }
+    }
 }

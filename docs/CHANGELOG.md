@@ -4,6 +4,43 @@
  
  ---
 
+## [2026-02-19] PII Protection & Data Privacy
+
+### 🛡️ Security Enhancement
+**Core Requirements:**
+- Implement Role-Based Access Control (RBAC) for sensitive user data (Email, Phone).
+- Mask PII in all list views to prevent mass data leakage.
+- Prevent accidental overwriting of masked data during user editing.
+
+### 📝 Features Implemented
+
+#### 1. PII Masking System
+- **Default Masking**: `email` (u***@domain.com) and `phoneNumber` (*******1234) are masked by default in all API responses.
+- **Conditional Unmasking**: Only users with `members:view_sensitive` permission (or Super Admins) can see full data in Detail views.
+- **Controllers Updated**: 
+    - `MembersController` (Client)
+    - `AdminMembersController` (Admin) (List/Detail)
+    - `AdminScoresController` (Scores/Attempts)
+
+#### 2. Safe Edit Protection
+- **Problem**: Editing a user with masked data could mistakenly save "*******" back to the database.
+- **Solution**: 
+    - **Fresh Fetch**: `operate-drawer.vue` fetches a fresh, unmasked copy of the member data (if authorized) when opening the edit form.
+    - **Submission Guard**: Frontend detects if a field contains "****" and removes it from the update payload, ensuring the backend data remains untouched.
+
+### 📊 Technical Details
+- **Utils**: `apps/api/src/common/utils/masking.utils.ts`
+- **Frontend**: `apps/soybean-admin/src/views/games/members/modules/operate-drawer.vue`
+- **Permissions**: Added `members:view_sensitive` to Seed Service.
+
+### ✅ Deployment
+- ✅ API and Admin services rebuilt.
+- ✅ Verified masking in List Views.
+- ✅ Verified unmasking in Detail View (with permission).
+- ✅ Verified Safe Edit logic (preventing asterisk submission).
+
+---
+
 ## [2026-02-16] Dynamic Sync Scheduler & API Parameter Recovery
 
 ### 🏗️ Architectural Enhancement

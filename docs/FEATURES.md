@@ -621,6 +621,50 @@ Manages all registered members and guests. Supports viewing member details, poin
 
 ---
 
+## 🔒 PII Masking & Privacy System
+
+**Implementation Date:** 2026-02-19  
+**Status:** Live ✅
+
+### 📍 Location
+- **Utils:** `apps/api/src/common/utils/masking.utils.ts`
+- **Backend Controllers:** 
+  - `MembersController` (Client/Public)
+  - `AdminMembersController` (Admin List/Detail)
+  - `AdminScoresController` (Score/Attempt Lists)
+- **Frontend Modules:** `apps/soybean-admin/src/views/games/members/modules/operate-drawer.vue`
+- **Permission:** `members:view_sensitive` (Added via Seed)
+
+### 🎯 Feature Description
+Enhances user data privacy by masking sensitive Personal Identifiable Information (PII) such as email addresses and phone numbers. Masking is applied by default in all list views and is conditionally lifted only for authorized personnel in detail views.
+
+### ⚙️ Core Mechanisms
+
+#### 1. Default Masking Strategy
+- **Email**: `user****@domain.com` (Keeps first 4 chars of local part).
+- **Phone**: `*******1234` (Keeps last 4 digits).
+- **Scope**: Applied to ALL list views (Member List, Score List, Play Attempts) for ALL users.
+
+#### 2. Role-Based Access Control (RBAC)
+- **Permission**: `members:view_sensitive`.
+- **Logic**:
+    - **List Views**: Always masked.
+    - **Detail/Edit Views**: 
+        - If User has `members:view_sensitive` (e.g., Super Admin) → Show **Unmasked** data.
+        - If User lacks permission (e.g., Staff) → Show **Masked** data.
+
+#### 3. Safe Edit Protection
+- **Problem**: If a Staff member edits a user with masked data (e.g., Phone: `*******1234`) and saves, the database might be overwritten with asterisks.
+- **Solution**:
+    1. **Fetch Fresh Data**: The Edit form (`operate-drawer.vue`) fetches a fresh copy of member data upon opening, ensuring it doesn't rely on the potentially masked list row data.
+    2. **Submission Guard**: Before submitting, the frontend checks if the value contains `****`. If so, it **removes** that field from the payload, telling the backend "Do not update this field".
+
+### 🚨 Modification Impact Scope
+- **Export**: Export features must explicitly handle unmasking if full data is required for reports.
+- **Search**: Searching by full phone number might fail if the frontend tries to filter masked data client-side. Server-side search is recommended.
+
+---
+
 ## 🎮 Game Frontend (web-app)
 
 ### 1. Game Iframe Container

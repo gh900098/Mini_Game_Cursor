@@ -3,6 +3,7 @@ import { ScoresService } from './scores.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles, RoleLevel } from '../../common/decorators/roles.decorator';
+import { maskEmail, maskPhone } from '../../common/utils/masking.utils';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Score } from './entities/score.entity';
@@ -46,7 +47,16 @@ export class AdminScoresController {
             query.where('company.id = :companyId', { companyId });
         }
 
-        return query.getMany();
+        const scores = await query.getMany();
+
+        // ALWAYS mask sensitive data in list views
+        return scores.map(s => {
+            if (s.member) {
+                s.member.email = maskEmail(s.member.email);
+                s.member.phoneNumber = maskPhone(s.member.phoneNumber);
+            }
+            return s;
+        });
     }
 
     @Get('play-attempts')
@@ -69,7 +79,16 @@ export class AdminScoresController {
             query.where('company.id = :companyId', { companyId });
         }
 
-        return query.getMany();
+        const attempts = await query.getMany();
+
+        // ALWAYS mask sensitive data in list views
+        return attempts.map(a => {
+            if (a.member) {
+                a.member.email = maskEmail(a.member.email);
+                a.member.phoneNumber = maskPhone(a.member.phoneNumber);
+            }
+            return a;
+        });
     }
 
     @Get('budget-tracking')

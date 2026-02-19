@@ -81,6 +81,20 @@ export class SeedService {
             }
         }
 
+        // Special permissions
+        const specialPermissions = [
+            { slug: 'members:view_sensitive', resource: 'members', action: 'view_sensitive', name: 'View Sensitive Member Data', description: 'View unmasked email and phone number' }
+        ];
+
+        for (const p of specialPermissions) {
+            const existing = await this.permissionRepository.findOne({ where: { slug: p.slug } });
+            if (!existing) {
+                const permission = this.permissionRepository.create(p);
+                await this.permissionRepository.save(permission);
+                this.logger.log(`Created special permission: ${p.slug}`);
+            }
+        }
+
         // CLEANUP: Remove deprecated permissions
         const deprecatedResources = ['email-settings', 'system-settings'];
         for (const resource of deprecatedResources) {

@@ -3,6 +3,7 @@ import { MembersService } from './members.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionsGuard, RequirePermission } from '../../common/guards/permissions.guard';
 import { getClientIp } from '../../common/utils/ip-utils';
+import { maskEmail, maskPhone } from '../../common/utils/masking.utils';
 
 @Controller('members')
 export class MembersController {
@@ -11,23 +12,48 @@ export class MembersController {
     @Get()
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @RequirePermission('members:read')
-    findAll(@Request() req: any, @Query('companyId') companyId?: string) {
+    async findAll(@Request() req: any, @Query('companyId') companyId?: string) {
+        let members;
         if (req.user.isSuperAdmin) {
             if (companyId) {
-                return this.membersService.findAllByCompany(companyId);
+                members = await this.membersService.findAllByCompany(companyId);
+            } else {
+                members = await this.membersService.findAll();
             }
-            return this.membersService.findAll();
+        } else {
+            const targetCompanyId = req.user.currentCompanyId || req.user.companyId;
+            members = await this.membersService.findAllByCompany(targetCompanyId || '');
         }
 
-        const targetCompanyId = req.user.currentCompanyId || req.user.companyId;
-        return this.membersService.findAllByCompany(targetCompanyId || '');
+        // ALWAYS mask in list view
+        return members.map(m => ({
+            ...m,
+            email: maskEmail(m.email),
+            phoneNumber: maskPhone(m.phoneNumber)
+        }));
     }
 
     @Get(':id')
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @RequirePermission('members:read')
-    findOne(@Param('id') id: string) {
-        return this.membersService.findById(id);
+    async findOne(@Param('id') id: string, @Request() req: any) {
+        const member = await this.membersService.findById(id);
+        if (!member) return null;
+
+        // Check for permission to view sensitive data
+        // Assuming req.user has permissions array or we check if they are admin
+        // For now, let's look for the specific permission string in req.user.permissions
+        // OR if they are super admin.
+
+        const hasSensitivePermission = req.user.isSuperAdmin ||
+            (req.user.permissions && req.user.permissions.includes('members:view_sensitive'));
+
+        if (!hasSensitivePermission) {
+            member.email = maskEmail(member.email);
+            member.phoneNumber = maskPhone(member.phoneNumber);
+        }
+
+        return member;
     }
 
     @Post('login')

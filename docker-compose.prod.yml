@@ -27,6 +27,8 @@ services:
     image: redis:7-alpine
     container_name: minigame-redis
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
     networks:
       - minigame-network
     healthcheck:
@@ -56,6 +58,8 @@ services:
       REDIS_PORT: 6379
       JWT_SECRET: ${JWT_SECRET:-change_me_in_production}
       JWT_EXPIRES_IN: 7d
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      HASHING_SECRET: ${HASHING_SECRET}
       CORS_ORIGINS: https://admin.xseo.me,https://game.xseo.me
     volumes:
       - api_uploads:/app/uploads
@@ -85,6 +89,8 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       JK_API_URL: ${JK_API_URL}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      HASHING_SECRET: ${HASHING_SECRET}
     depends_on:
       - postgres
       - redis

@@ -17,6 +17,21 @@
 - Added per-sync-type parameter support (Members, Deposits, Withdrawals).
 - Parameters are now correctly persisted in `jk_config.syncConfigs[type].syncParams`.
 
+### Issue 15: Member PII Data Still Masked for Admins
+**Cause:** The new `members:view_sensitive` permission was added to the code but not yet seeded into the database, or the user's role hasn't been granted this permission.
+
+**Symptoms:**
+- Super Admin or Company Admin sees `*******1234` in the Member Details view.
+- The "Unmask" button (if implemented) is missing or disabled.
+
+**Solution:**
+1. **Re-run Seed Script**: The permission needs to be created in the DB.
+   ```bash
+   curl -X POST http://localhost:3100/api/seed/run
+   ```
+2. **Verify Role Permissions**: Ensure the "Super Admin" or "Company Admin" role has the `members:view_sensitive` permission checked in the Roles Management page.
+3. **Refresh Page**: The frontend needs to reload the user's permission set (often requires a re-login or hard refresh).
+
 ---
 
 ## 🚀 Standard Operating Procedures (SOP)

@@ -2,7 +2,7 @@
 import { computed, reactive, watch } from 'vue';
 import { useBoolean, useLoading } from '@sa/hooks';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
-import { fetchCreateMember, fetchUpdateMember, fetchGetCompanies } from '@/service/api/management';
+import { fetchCreateMember, fetchUpdateMember, fetchGetCompanies, fetchGetAdminMember } from '@/service/api/management';
 import { useAuthStore } from '@/store/modules/auth';
 import { $t } from '@/locales';
 
@@ -92,11 +92,18 @@ const canSelectCompany = computed(() => {
   return authStore.userInfo.roles?.includes('R_SUPER') ?? false;
 });
 
-function handleInitModel() {
+async function handleInitModel() {
   Object.assign(model, createDefaultModel());
 
   if (props.operateType === 'edit' && props.rowData) {
-    Object.assign(model, props.rowData);
+    // Fetch fresh data to get unmasked values if allowed
+    const { data, error } = await fetchGetAdminMember(props.rowData.id);
+    if (!error && data) {
+        Object.assign(model, data);
+    } else {
+        // Fallback to row data if fetch fails
+        Object.assign(model, props.rowData);
+    }
     model.password = ''; // Always clear password on edit init
   } else {
       // If creating and not super admin, pre-fill company
@@ -118,7 +125,6 @@ async function handleSubmit() {
   const data = { ...model };
   
   // Clean up empty strings
-  // Clean up empty strings
   if (!data.externalId) delete data.externalId;
   if (!data.vipTier) delete data.vipTier;
   if (!data.realName) delete data.realName;
@@ -126,13 +132,18 @@ async function handleSubmit() {
   if (!data.email) delete data.email;
   if (!data.address) delete data.address;
 
+  // SAFETY CHECK: Do not submit masked values
+  if (data.email && data.email.includes('****')) {
+      delete data.email;
+  }
+  if (data.phoneNumber && data.phoneNumber.includes('****')) {
+      delete data.phoneNumber;
+  }
+
   // Handle password logic
   if (props.operateType === 'edit') {
       if (!data.password) delete data.password; // Don't update if empty
   }
-  // For add, password is optional/default if not provided, or required validation can handle it.
-  // We should probably enforce required in rules for add, but let's leave it loose for now or rely on backend default?
-  // Actually, let's keep it as is. If empty on add, it will be empty string.
   
   // For update, we need ID
   const args = props.operateType === 'add' ? [data] : [props.rowData!.id, data];

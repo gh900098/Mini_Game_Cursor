@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { EncryptionService } from '../encryption/encryption.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -11,10 +12,13 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private encryptionService: EncryptionService,
   ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const existing = await this.usersRepository.findOne({ where: { email: createUserDto.email } });
+    const emailHash = this.encryptionService.hash(createUserDto.email);
+    const existing = await this.usersRepository.findOne({ where: { emailHash } });
+
     if (existing) {
       throw new ConflictException('Email already exists');
     }
@@ -48,8 +52,9 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<User | null> {
+    const emailHash = this.encryptionService.hash(email);
     return this.usersRepository.findOne({
-      where: { email },
+      where: { emailHash },
       relations: ['userCompanies', 'userCompanies.company', 'userCompanies.role', 'userCompanies.role.permissions'],
     });
   }
