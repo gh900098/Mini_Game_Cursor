@@ -299,6 +299,34 @@ const local: App.I18n.Schema = {
           status: 'Filter Status'
         }
       },
+      themes: {
+        title: 'Themes List',
+        add: 'Add Theme',
+        edit: 'Edit Theme',
+        back: 'Back to List',
+        save: 'Save Theme',
+        name: 'Theme Name',
+        slug: 'Theme Slug',
+        status: 'Status',
+        isPremium: 'Premium Status',
+        price: 'Price',
+        thumbnail: 'Thumbnail',
+        basicInfo: 'Basic Info',
+        visualStyles: 'Visual Styles',
+        vfxAudio: 'VFX & Audio',
+        mainColors: 'Main Colors',
+        bgSettings: 'Background Settings',
+        gameAssets: 'Game Assets',
+        audioAssets: 'Audio Assets',
+        neonEffects: 'Neon Effects',
+        upload: 'Upload'
+      },
+      user: {
+        status: {
+          enable: 'Enable',
+          disable: 'Disable'
+        }
+      },
       prizeTypes: {
         title: 'Prize Type Management',
         name: 'Type Name',
@@ -625,7 +653,7 @@ const local: App.I18n.Schema = {
         },
         tabEmbed: 'Embed Settings',
         iframeCode: 'HTML Iframe Code'
-      }
+      },
     },
     login: {
       common: {

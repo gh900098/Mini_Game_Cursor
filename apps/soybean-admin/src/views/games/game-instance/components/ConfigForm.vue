@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n';
 import { request } from '@/service/request';
 import { fetchDesignGuide } from '@/service/api/management';
 import { fetchGetPrizeTypes } from '@/service/api/prizes';
+import { fetchThemes } from '@/service/api/themes';
 
 // Extend the window object to potentially access parent methods or simply use local logic
 const { t, te, locale, availableLocales } = useI18n();
@@ -128,7 +129,22 @@ onMounted(async () => {
     if (data) {
         prizeTypes.value = data;
     }
+
+    // Fetch dynamic themes across the platform
+    loadThemes();
 });
+
+const dynamicThemes = ref<Record<string, any>>({});
+async function loadThemes() {
+  const { data, error } = await fetchThemes({ size: 100, gameTemplateSlug: 'spin-wheel' }); // Basic hardcoded template filter, can be generalized later by props
+  if (!error && data?.records) {
+    const themesMap: Record<string, any> = {};
+    data.records.forEach(theme => {
+      themesMap[theme.name] = theme.config;
+    });
+    dynamicThemes.value = themesMap;
+  }
+}
 
 const prizeTypeOptions = computed(() => {
     // Default options if fetch fails or loading
@@ -642,120 +658,6 @@ watch(
   { immediate: true, deep: true }
 );
 
-// Full theme presets with all settings (background, colors, effects, BGM, etc.)
-const FULL_THEME_PRESETS: Record<string, any> = {
-  'Cyberpunk Elite': {
-    // 🌃 赛博朋克 - 霓虹科技感
-    bgType: 'gradient', bgGradStart: '#0a0a12', bgGradEnd: '#1a1a2e', bgGradDir: 'to bottom',
-    themeColor: '#00f5ff', secondaryColor: '#ff00ff', 
-    neonCyan: '#00f5ff', neonPink: '#ff00ff', neonPurple: '#9d00ff', neonGold: '#ffd700', neonGreen: '#00ff88', darkBg: '#0a0a12',
-    // Effects - 全开
-    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: true, enableFloatingParticles: true, enableGridFloor: true,
-    // LED - 霓虹三色
-    ledColor1: '#00f5ff', ledColor2: '#ff00ff', ledColor3: '#ffd700', ledCount: 32, ledSpeed: 50,
-    // Confetti - 科技色
-    confettiColors: '#00f5ff,#ff00ff,#ffd700,#00ff88', confettiParticles: 150, confettiSpread: 80,
-    // Spin - 快速
-    spinDuration: 4, spinTurns: 5,
-    // Buttons
-    spinBtnColor: '#ff00ff', spinBtnTextColor: '#ffffff', tokenBarColor: '#00f5ff', tokenBarTextColor: '#000000',
-    // Sounds - 科技电子音效
-    bgmUrl: '/api/uploads/templates/cyberpunk-elite/bgm.mp3',
-    winSound: '/api/uploads/templates/cyberpunk-elite/win.mp3',
-    loseSound: '/api/uploads/templates/cyberpunk-elite/lose.mp3',
-    jackpotSound: '/api/uploads/templates/cyberpunk-elite/jackpot.mp3',
-    tickSoundEnabled: true
-  },
-  'Neon Night': {
-    // 🌌 霓虹之夜 - 复古霓虹风
-    bgType: 'gradient', bgGradStart: '#0d0221', bgGradEnd: '#261447', bgGradDir: '135deg',
-    themeColor: '#f72585', secondaryColor: '#4cc9f0',
-    neonCyan: '#4cc9f0', neonPink: '#f72585', neonPurple: '#7209b7', neonGold: '#ffd60a', neonGreen: '#06ffa5',
-    // Effects - 霓虹感但不要太cyber
-    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: false, enableFloatingParticles: true, enableGridFloor: false,
-    // LED - 粉蓝紫
-    ledColor1: '#f72585', ledColor2: '#4cc9f0', ledColor3: '#7209b7', ledCount: 28, ledSpeed: 60,
-    // Confetti - 霓虹
-    confettiColors: '#f72585,#4cc9f0,#7209b7,#ffd60a', confettiParticles: 120, confettiSpread: 70,
-    // Spin
-    spinDuration: 5, spinTurns: 4,
-    // Buttons - 粉色主调
-    spinBtnColor: '#f72585', spinBtnTextColor: '#ffffff', tokenBarColor: '#4cc9f0', tokenBarTextColor: '#000000',
-    // Sounds - 复古合成器风
-    bgmUrl: '/api/uploads/templates/neon-night/bgm.mp3',
-    winSound: '/api/uploads/templates/neon-night/win.mp3',
-    loseSound: '/api/uploads/templates/neon-night/lose.mp3',
-    jackpotSound: '/api/uploads/templates/neon-night/jackpot.mp3',
-    tickSoundEnabled: true
-  },
-  'Classic Arcade': {
-    // 🕹️ 经典街机 - 复古游戏风
-    bgType: 'gradient', bgGradStart: '#000428', bgGradEnd: '#004e92', bgGradDir: 'to bottom',
-    themeColor: '#ffdd00', secondaryColor: '#ff0055',
-    neonCyan: '#00fff7', neonPink: '#ff0055', neonGold: '#ffdd00', neonGreen: '#39ff14',
-    // Effects - 经典街机感
-    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: false, enableFloatingParticles: true, enableGridFloor: false,
-    // LED - 街机三色（黄红绿）
-    ledColor1: '#ffdd00', ledColor2: '#ff0055', ledColor3: '#39ff14', ledCount: 24, ledSpeed: 40,
-    // Confetti - 鲜艳
-    confettiColors: '#ffdd00,#ff0055,#39ff14,#00fff7', confettiParticles: 200, confettiSpread: 100,
-    // Spin - 中速
-    spinDuration: 4, spinTurns: 5,
-    // Buttons - 黄色街机按钮
-    spinBtnColor: '#ffdd00', spinBtnTextColor: '#000000', tokenBarColor: '#ff0055', tokenBarTextColor: '#ffffff',
-    // Sounds - 8-bit 街机风
-    bgmUrl: '/api/uploads/templates/classic-arcade/bgm.mp3',
-    winSound: '/api/uploads/templates/classic-arcade/win.mp3',
-    loseSound: '/api/uploads/templates/classic-arcade/lose.mp3',
-    jackpotSound: '/api/uploads/templates/classic-arcade/jackpot.mp3',
-    tickSoundEnabled: true
-  },
-  'Christmas Joy': {
-    // 🎄 圣诞欢乐 - 温馨节日风
-    bgType: 'gradient', bgGradStart: '#1a472a', bgGradEnd: '#0f2818', bgGradDir: '180deg',
-    themeColor: '#ff0000', secondaryColor: '#00aa00',
-    neonCyan: '#00ff00', neonPink: '#ff0000', neonGold: '#ffd700', neonGreen: '#00aa00',
-    // Effects - 节日氛围
-    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: false, enableFloatingParticles: true, enableGridFloor: false,
-    // LED - 红绿金（圣诞色）
-    ledColor1: '#ff0000', ledColor2: '#00ff00', ledColor3: '#ffd700', ledCount: 24, ledSpeed: 80,
-    // Confetti - 雪花感
-    confettiColors: '#ff0000,#00ff00,#ffd700,#ffffff', confettiParticles: 180, confettiSpread: 90,
-    // Spin - 欢乐感
-    spinDuration: 5, spinTurns: 4,
-    // Buttons - 红色圣诞
-    spinBtnColor: '#ff0000', spinBtnTextColor: '#ffffff', tokenBarColor: '#00aa00', tokenBarTextColor: '#ffffff',
-    // Sounds - 圣诞铃声风
-    bgmUrl: '/api/uploads/templates/christmas-joy/bgm.mp3',
-    winSound: '/api/uploads/templates/christmas-joy/win.mp3',
-    loseSound: '/api/uploads/templates/christmas-joy/lose.mp3',
-    jackpotSound: '/api/uploads/templates/christmas-joy/jackpot.mp3',
-    tickSoundEnabled: true
-  },
-  'Gold Royale': {
-    // 👑 皇家金殿 - 奢华尊贵风
-    bgType: 'gradient', bgGradStart: '#1a1a0a', bgGradEnd: '#2d2a1a', bgGradDir: 'radial',
-    themeColor: '#ffd700', secondaryColor: '#b8860b',
-    neonCyan: '#ffd700', neonPink: '#daa520', neonGold: '#ffdf00', neonGreen: '#c9b037',
-    // Effects - 奢华但低调
-    enableBGM: true, enableLedRing: true, enableConfetti: true, enableStartScreen: true, enableHexagons: false, enableFloatingParticles: true, enableGridFloor: false,
-    // LED - 全金色系
-    ledColor1: '#ffd700', ledColor2: '#ffdf00', ledColor3: '#daa520', ledCount: 32, ledSpeed: 70,
-    // Confetti - 金色闪耀
-    confettiColors: '#ffd700,#ffdf00,#daa520,#fffacd', confettiParticles: 100, confettiSpread: 60,
-    // Spin - 稳重
-    spinDuration: 6, spinTurns: 3,
-    // Buttons - 金色奢华
-    spinBtnColor: '#ffd700', spinBtnTextColor: '#1a1a0a', tokenBarColor: '#b8860b', tokenBarTextColor: '#ffffff',
-    // Sounds - 奢华赌场风
-    bgmUrl: '/api/uploads/templates/gold-royale/bgm.mp3',
-    winSound: '/api/uploads/templates/gold-royale/win.mp3',
-    loseSound: '/api/uploads/templates/gold-royale/lose.mp3',
-    jackpotSound: '/api/uploads/templates/gold-royale/jackpot.mp3',
-    tickSoundEnabled: true
-  }
-};
-
 watch(() => formModel.value.themePreset, (newVal, oldVal) => {
   // Skip if changing to Custom or no value
   if (!newVal || newVal === 'Custom') return;
@@ -772,14 +674,14 @@ watch(() => formModel.value.themePreset, (newVal, oldVal) => {
     return;
   }
   
-  // Fallback to frontend presets
-  if (FULL_THEME_PRESETS[newVal]) {
-    const preset = FULL_THEME_PRESETS[newVal];
+  // Fallback to dynamic themes database
+  if (dynamicThemes.value[newVal]) {
+    const preset = dynamicThemes.value[newVal];
     // Apply ALL preset values to form
     for (const key in preset) {
       formModel.value[key] = preset[key];
     }
-    console.log(`[ConfigForm] Loaded preset from frontend: ${newVal}`, preset);
+    console.log(`[ConfigForm] Loaded preset from dynamic themes: ${newVal}`, preset);
     
     // Force sync to iframe
     setTimeout(() => {
@@ -940,12 +842,12 @@ function isSectionConfigValid(item: SchemaItem): boolean {
 
 function handleFieldChange(key: string, value: any) {
   console.log('[handleFieldChange] key:', key, 'value:', value);
-  console.log('[handleFieldChange] Available presets:', Object.keys(FULL_THEME_PRESETS));
+  console.log('[handleFieldChange] Available presets:', Object.keys(dynamicThemes.value));
   
   // Check full theme presets first (for themePreset field)
-  if (FULL_THEME_PRESETS[value]) {
-    console.log('[handleFieldChange] Found preset for:', value, FULL_THEME_PRESETS[value]);
-    Object.entries(FULL_THEME_PRESETS[value]).forEach(([targetKey, targetValue]) => {
+  if (dynamicThemes.value[value]) {
+    console.log('[handleFieldChange] Found preset for:', value, dynamicThemes.value[value]);
+    Object.entries(dynamicThemes.value[value]).forEach(([targetKey, targetValue]) => {
       console.log('[handleFieldChange] Setting:', targetKey, '=', targetValue);
       if (Array.isArray(targetValue)) {
         formModel.value[targetKey] = JSON.parse(JSON.stringify(targetValue));
@@ -977,7 +879,17 @@ function handleFieldChange(key: string, value: any) {
   }
 }
 
-function getOptions(options?: string[] | { label: string; value: string }[]) {
+function getOptions(options?: string[] | { label: string; value: string }[], key?: string) {
+  // Inject dynamic themes for the themePreset dropdown
+  if (key === 'themePreset') {
+    const dynamicOptions = Object.keys(dynamicThemes.value).map(themeName => ({
+      label: `✨ ${themeName}`, // Add a little sparkle to dynamic themes
+      value: themeName
+    }));
+    dynamicOptions.push({ label: '✏️ Custom', value: 'Custom' });
+    return dynamicOptions;
+  }
+
   if (!options) return [];
   if (typeof options[0] === 'string') {
     return (options as string[]).map(opt => ({ label: opt, value: opt }));
@@ -1809,7 +1721,7 @@ function editIconText(p: any) {
                                                 
                                                 <NRadioGroup v-if="subItem.type === 'radio'" v-model:value="formModel[subItem.key]" :name="subItem.key">
                                                    <NSpace>
-                                                      <NRadio v-for="opt in getOptions(subItem.options)" :key="opt.value" :value="opt.value" :label="opt.label" />
+                                                      <NRadio v-for="opt in getOptions(subItem.options, subItem.key)" :key="opt.value" :value="opt.value" :label="opt.label" />
                                                    </NSpace>
                                                 </NRadioGroup>
 
@@ -1891,7 +1803,7 @@ function editIconText(p: any) {
                                                 <NSelect 
                                                   v-else-if="subItem.type === 'select'" 
                                                   v-model:value="formModel[subItem.key]" 
-                                                  :options="getOptions(subItem.options)"
+                                                  :options="getOptions(subItem.options, subItem.key)"
                                                   :render-label="isFontSelect(subItem) ? renderFontOption : undefined"
                                                   :render-tag="isFontSelect(subItem) ? renderFontTag : undefined"
                                                 />
@@ -1999,7 +1911,7 @@ function editIconText(p: any) {
                     </template>
                     <NSelect 
                         v-model:value="formModel[item.key]" 
-                        :options="getOptions(item.options)"
+                        :options="getOptions(item.options, item.key)"
                         size="large"
                         :render-label="renderFontOption"
                         :render-tag="renderFontTag"
@@ -2013,7 +1925,7 @@ function editIconText(p: any) {
                     </template>
                     <NRadioGroup v-model:value="formModel[item.key]" :name="item.key">
                        <NSpace>
-                          <NRadio v-for="opt in getOptions(item.options)" :key="opt.value" :value="opt.value" :label="opt.label" />
+                          <NRadio v-for="opt in getOptions(item.options, item.key)" :key="opt.value" :value="opt.value" :label="opt.label" />
                        </NSpace>
                     </NRadioGroup>
                  </NFormItem>
@@ -2122,7 +2034,7 @@ function editIconText(p: any) {
                   <NSelect 
                     v-else-if="item.type === 'select'" 
                     v-model:value="formModel[item.key]" 
-                    :options="getOptions(item.options)" 
+                    :options="getOptions(item.options, item.key)" 
                     @update:value="val => handleFieldChange(item.key, val)" 
                     size="large"
                     :render-label="isFontSelect(item) ? renderFontOption : undefined"

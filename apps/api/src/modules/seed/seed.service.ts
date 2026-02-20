@@ -9,6 +9,7 @@ import { UserCompany } from '../user-companies/entities/user-company.entity';
 import { Game } from '../games/entities/game.entity';
 import { GameInstance } from '../game-instances/entities/game-instance.entity';
 import { PrizesService } from '../prizes/prizes.service';
+import { Theme } from '../themes/entities/theme.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -30,6 +31,8 @@ export class SeedService {
         private readonly gameRepository: Repository<Game>,
         @InjectRepository(GameInstance)
         private readonly instanceRepository: Repository<GameInstance>,
+        @InjectRepository(Theme)
+        private readonly themeRepository: Repository<Theme>,
         private readonly prizesService: PrizesService,
     ) { }
 
@@ -41,6 +44,7 @@ export class SeedService {
         await this.seedDemoCompany();
         await this.prizesService.seedDefaults();
         await this.seedGames();
+        await this.seedThemes();
         await this.seedInstances();
 
         this.logger.log('Database seeding completed!');
@@ -369,9 +373,46 @@ export class SeedService {
         }
     }
 
-    private async seedGames(): Promise<void> {
-        this.logger.log('Seeding Demo Games...');
-        const games = [
+    private async seedThemes(): Promise<void> {
+        this.logger.log('Seeding Global Themes...');
+
+        // Extract the presets we defined in the Spin Wheel game config
+        const gameDefs = await this.getGameDefinitions();
+        const spinWheelDef = gameDefs.find(g => g.slug === 'spin-wheel');
+        if (!spinWheelDef || !spinWheelDef.config || !spinWheelDef.config.templatePresets) {
+            return;
+        }
+
+        const presets = spinWheelDef.config.templatePresets;
+
+        for (const [themeName, config] of Object.entries(presets)) {
+            const slug = themeName.toLowerCase().replace(/\s+/g, '-');
+
+            const existingTheme = await this.themeRepository.findOne({ where: { slug } });
+
+            if (!existingTheme) {
+                const theme = this.themeRepository.create({
+                    name: themeName,
+                    slug,
+                    description: `Built-in global theme: ${themeName}`,
+                    gameTemplateSlug: 'spin-wheel',
+                    config: config as Record<string, any>,
+                    isPremium: false,
+                    isActive: true, // System themes are always active
+                    companyId: null // Global
+                }) as Theme;
+                await this.themeRepository.save(theme);
+                this.logger.log(`Created global theme: ${themeName}`);
+            } else {
+                // Update config in case it changed in the source code
+                existingTheme.config = config as Record<string, any>;
+                await this.themeRepository.save(existingTheme);
+            }
+        }
+    }
+
+    private async getGameDefinitions(): Promise<any[]> {
+        return [
             {
                 name: 'Spin Wheel',
                 slug: 'spin-wheel',
@@ -676,6 +717,7 @@ export class SeedService {
                                     { label: '🕹️ Classic Arcade', value: 'Classic Arcade' },
                                     { label: '🎄 Christmas Joy', value: 'Christmas Joy' },
                                     { label: '👑 Gold Royale', value: 'Gold Royale' },
+                                    { label: '⚡ Zeus Theme', value: 'Zeus Theme' },
                                     { label: '✏️ Custom', value: 'Custom' }
                                 ],
                                 default: 'Cyberpunk Elite',
@@ -1308,27 +1350,30 @@ export class SeedService {
                 ]
             }
         ];
-        console.log('🌱 Seeding Games... Force Update v3');
+    }
 
-        for (const gameData of games) {
+    private async seedGames(): Promise<void> {
+        this.logger.log('Seeding Demo Games...');
+        const gameDefs = await this.getGameDefinitions();
+
+        for (const gameData of gameDefs) {
             const existing = await this.gameRepository.findOne({ where: { slug: gameData.slug } });
             if (!existing) {
-                const game = this.gameRepository.create(gameData);
+                const game = this.gameRepository.create(gameData as any) as any;
                 await this.gameRepository.save(game);
                 this.logger.log(`Created demo game: ${gameData.name}`);
             } else {
                 // Update properties in case they changed
-                Object.assign(existing, gameData);
+                Object.assign(existing, gameData as any);
                 // Explicitly reassigned purely to ensure dirty checking picks it up if it was a deep object issue
-                existing.configSchema = gameData.configSchema;
-                existing.config = gameData.config;
-                existing.imageSpec = gameData.imageSpec;
+                existing.configSchema = gameData.configSchema as any;
+                existing.config = gameData.config as any;
+                existing.imageSpec = gameData.imageSpec as any;
                 await this.gameRepository.save(existing);
                 this.logger.log(`Updated demo game (Forced Schema): ${gameData.name}`);
             }
         }
     }
-
     private async seedInstances(): Promise<void> {
         this.logger.log('Seeding Demo Game Instances...');
         const company = await this.companyRepository.findOne({ where: { slug: 'demo-company' } });

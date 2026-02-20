@@ -24,6 +24,7 @@ import { PrizesModule } from './modules/prizes/prizes.module';
 import { QueueModule } from './common/queues/queue.module';
 import { SyncModule } from './modules/sync/sync.module';
 import { EncryptionModule } from './modules/encryption/encryption.module';
+import { ThemesModule } from './modules/themes/themes.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     SyncModule,
     EncryptionModule,
     EventEmitterModule.forRoot(),
+    ThemesModule,
   ],
   controllers: [AppController],
   providers: [

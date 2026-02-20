@@ -10,11 +10,13 @@ import { UserCompany } from '../user-companies/entities/user-company.entity';
 import { Game } from '../games/entities/game.entity';
 import { GameInstance } from '../game-instances/entities/game-instance.entity';
 import { Score } from '../scores/entities/score.entity';
+import { Theme } from '../themes/entities/theme.entity';
+import { ThemesModule } from '../themes/themes.module';
 import { PrizesModule } from '../prizes/prizes.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Role, Permission, Company, User, UserCompany, Game, GameInstance, Score]),
+    TypeOrmModule.forFeature([Role, Permission, Company, User, UserCompany, Game, GameInstance, Score, Theme]),
     PrizesModule,
   ],
   controllers: [SeedController],

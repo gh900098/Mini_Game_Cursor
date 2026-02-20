@@ -295,6 +295,34 @@ const local: App.I18n.Schema = {
           status: '过滤状态'
         }
       },
+      themes: {
+        title: '主题列表',
+        add: '添加主题',
+        edit: '编辑主题',
+        back: '返回列表',
+        save: '保存主题',
+        name: '主题名称',
+        slug: '主题标识',
+        status: '状态',
+        isPremium: '是否高级',
+        price: '价格',
+        thumbnail: '缩略图',
+        basicInfo: '基本信息',
+        visualStyles: '视觉样式',
+        vfxAudio: '特效与音频',
+        mainColors: '主要颜色',
+        bgSettings: '背景设置',
+        gameAssets: '游戏资源',
+        audioAssets: '音频资源',
+        neonEffects: '霓虹特效',
+        upload: '上传'
+      },
+      user: {
+        status: {
+          enable: '启用',
+          disable: '禁用'
+        }
+      },
       prizeTypes: {
         title: '奖励类型管理',
         name: '类型名称',

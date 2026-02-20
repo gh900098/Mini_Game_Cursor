@@ -575,6 +575,34 @@ declare namespace App {
               status: string;
             };
           };
+          themes: {
+            title: string;
+            add: string;
+            edit: string;
+            back: string;
+            save: string;
+            name: string;
+            slug: string;
+            status: string;
+            isPremium: string;
+            price: string;
+            thumbnail: string;
+            basicInfo: string;
+            visualStyles: string;
+            vfxAudio: string;
+            mainColors: string;
+            bgSettings: string;
+            gameAssets: string;
+            audioAssets: string;
+            neonEffects: string;
+            upload: string;
+          };
+          user: {
+            status: {
+              enable: string;
+              disable: string;
+            };
+          };
           prizeTypes: {
             title: string;
             name: string;

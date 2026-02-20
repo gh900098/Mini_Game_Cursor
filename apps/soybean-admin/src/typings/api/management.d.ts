@@ -242,5 +242,31 @@ declare namespace Api {
             createdAt: string;
             updatedAt: string;
         }
+
+        interface Theme {
+            id: string;
+            name: string;
+            slug: string;
+            description: string | null;
+            thumbnailUrl: string | null;
+            gameTemplateSlug: string;
+            companyId: string | null;
+            config: Record<string, any>;
+            isPremium: boolean;
+            price: number;
+            isActive: boolean;
+            createdAt: string;
+            updatedAt: string;
+        }
+    }
+
+    namespace SystemManage {
+        type Theme = Management.Theme;
+        interface ThemeList {
+            records: Theme[];
+            total: number;
+            size: number;
+            current: number;
+        }
     }
 }
