@@ -3,6 +3,37 @@
  Records all important feature updates, bug fixes, and architectural changes.
  
  
+## [2026-02-20] Strict Impersonation Protection & Environment Isolation
+
+### 🛡️ Security Enhancement
+**Core Requirements:**
+- Allow administrators to safely impersonate users and test games without affecting real balances or statistics.
+- Fix API connection and routing issues that prevented successful impersonation in local environments.
+- Resolve missing image assets caused by docker volume mismatches and aggressive caching.
+
+### 📝 Features Implemented
+
+#### 1. Strict Impersonation Bypass
+- **Game Rules Override**: `ScoresService` and `GameRulesService` now bypass budget, balance, and cooldown checks when `isImpersonated` is true.
+- **No Persistence**: Score submissions during impersonation return a mock ID (`impersonated-test-id`) and do not deduct points or pollute the global history.
+- **UI Warning**: Added a prominent pulsing red "ADMIN IMPERSONATION MODE" banner to the frontend to remind admins of the read-only state.
+
+#### 2. Environment Isolation & Fixes
+- **Test Environment**: Created `docker-compose.test.yml` strictly for `localhost` development with proper volume mounts for uploads.
+- **Route Shadowing Fix**: Reordered endpoints in `MembersController` to ensure `/profile` takes precedence over `/:id`, resolving 403 Forbidden errors during impersonation.
+- **URL Fallback Logic**: Improved `AdminMembersController.impersonate` to dynamically detect ports or fallback appropriately when `VITE_WEBAPP_BASE_URL` is absent.
+
+#### 3. Game Asset Caching Fix
+- **Uploads Volume**: Added the `uploads` volume mount to the test API container so locally seeded assets resolve correctly.
+- **Cache-Control Headers**: Applied `no-store, no-cache` headers to the `/play` endpoints, preventing the browser from caching stale HTML templates containing outdated config UUIDs.
+
+### ✅ Deployment
+- ✅ Verified strict bypass rules via automated scripts.
+- ✅ Rebuilt API and updated test environment configuration.
+- ✅ Fixed missing game assets and 403 errors.
+
+---
+
 ## [2026-02-20] High Performance Data Standards & Global Rollout
 
 ### 🏗️ Architectural Enhancement

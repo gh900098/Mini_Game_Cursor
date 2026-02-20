@@ -14,7 +14,7 @@ Run this workflow whenever you think you are "Done" with a task.
 ## 2. Backend Verification (If Applicable)
 - [ ] **Compile Check:** Run `pnpm --filter api build` to ensure no TS errors.
 - [ ] **Auto-Deploy (Local Docker):**
-    - Run: `docker compose -f docker-compose.prod.yml up -d --build <service_name>`
+    - Run: `docker compose -f docker-compose.test.yml up -d --build <service_name>`
     - Check: `docker ps` to ensure it is healthy.
 - [ ] **Runtime Check:**
     1. Prepare a `curl` command or a minimal `.js` script in `tools/` directory.

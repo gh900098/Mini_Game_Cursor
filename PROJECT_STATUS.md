@@ -5,9 +5,9 @@
 **Server Status:** 🟢 Running. (API:3100, Admin:3101, Web:3102, Worker:3100).
 
 ## 🎯 Current Focus (AI Memory)
-- **Active Mission:** High Performance Rollout (Phase 2: Global Standardization) ✅
+- **Active Mission:** Awaiting next instructions.
 - **Current Branch:** `main`
-- **Status**: 🟢 Live. Standardized "High Performance Data Pattern" (Remote Pagination + Fixed Footers) deployed across all management modules.
+- **Status**: 🟢 Live. Standardized "High Performance Data Pattern" deployed. Impersonation fix and Environment Split (Test/Prod) implemented.
 
 ### Context
 The administrative suite is now fully optimized. Performance bottlenecks in large lists (Users, Roles, Companies, Scores, Prizes) have been resolved via server-side pagination and database indexing.
@@ -15,9 +15,13 @@ The administrative suite is now fully optimized. Performance bottlenecks in larg
 
 ## 🏗️ Architectural Context (The "Must Knows")
 - **Local Testing Environment:**
-  - **Source of Truth:** `.agent/workflows/deploy-to-docker.md`
-  - **Command:** `docker compose -f docker-compose.prod.yml up -d --build` (See workflow)
+  - **Source of Truth:** `.agent/workflows/deploy-to-test.md`
+  - **Command:** `docker compose -f docker-compose.test.yml up -d --build`
   - **Ports:** API(3100), Admin(3101), Web(3102).
+- **Production Environment:**
+  - **Source of Truth:** `.agent/workflows/deploy-to-prod.md`
+  - **Command:** `docker compose -f docker-compose.prod.yml up -d --build` (See workflow)
+  - **Variables:** Uses `ADMIN_URL` and `GAME_URL` for domain mapping.
 - **Server Archi (Reference Only):** 
   - **1Panel OpenResty** handles Port 80/443 (Reverse Proxy).
   - **Docker Containers** (API:3100, Admin:3101, Web:3102) bind to **127.0.0.1** only.
@@ -40,13 +44,15 @@ The administrative suite is now fully optimized. Performance bottlenecks in larg
 
 
 ## ✅ Recently Completed
+- [x] **Strict Impersonation Protection & Environment Split** (Implemented read-only bypasses for admins, fixed 403 profile error, added docker-compose.test.yml, fixed asset caching - 2026-02-20)
+- [x] **User List Duplication Resolution** (Enforced uniqueness on emailHash + Data Merge - 2026-02-20)
 - [x] **Type Error Resolution after Performance Rollout** (Fixed structure mismatch in Audit Log and User management views - 2026-02-20)
 - [x] **High Performance Data Standards Rollout** (Standardized Pagination + Fixed Layout + Database Indexing across all modules - 2026-02-20)
 - [x] **PII Masking & Privacy** (Masked List Views + RBAC for Details + Safe Edit - 2026-02-19)
 - [x] **Dynamic Sync Scheduler Refresh & API Parameter Recovery** (EventEmitter decoupled architecture + Fixed per-type parameter settings - 2026-02-16)
 - [x] **Sync System Optimization & UI Configuration** (Parallel Sync + Incremental Mode + Dynamic Cron + Admin UI - 2026-02-16)
 - [x] **Cron Job Visibility & Monitoring** (BullMQ 4-hour Repeatable Jobs + Concurrency Fix + Deduplication - 2026-02-15)
-- [x] **Impersonation Feature Fix** (Unified JWT Payload fields - 2026-02-15)
+- [x] **Impersonation Feature Fix & Environment Split** (Fixed redirect logic + Created docker-compose.test.yml + Generalized prod config - 2026-02-20)
 - [x] **JK Platform Synchronization System** (BullMQ + Webhook + Admin Integration + Docker Worker - 2026-02-14)
 - [x] **Score History UI Enhancement** (Split columns + Financial Transparency - 2026-02-14)
 - [x] **Budget Tracking & Social Mode** (Budget Ledger + Social Mode Prize Masking - 2026-02-14)

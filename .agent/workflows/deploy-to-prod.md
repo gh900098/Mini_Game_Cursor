@@ -2,7 +2,7 @@
 description: Build and deploy the Mini Game application using Docker Compose (Production Mode)
 ---
 
-# Deploy to Docker (Production)
+# Deploy to Prod (Configurable)
 
 This workflow builds and deploys the full stack (API, Admin, Web App, Postgres, Redis) using the production configuration.
 

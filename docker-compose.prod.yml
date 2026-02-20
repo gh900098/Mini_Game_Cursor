@@ -60,7 +60,8 @@ services:
       JWT_EXPIRES_IN: 7d
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       HASHING_SECRET: ${HASHING_SECRET}
-      CORS_ORIGINS: https://admin.xseo.me,https://game.xseo.me
+      CORS_ORIGINS: ${ADMIN_URL:-https://admin.xseo.me},${GAME_URL:-https://game.xseo.me}
+      VITE_WEBAPP_BASE_URL: ${GAME_URL:-https://game.xseo.me}
     volumes:
       - api_uploads:/app/uploads
     depends_on:
@@ -104,7 +105,7 @@ services:
       dockerfile: Dockerfile.admin
       args:
         VITE_API_URL: /api
-        VITE_WEBAPP_BASE_URL: http://localhost:3102
+        VITE_WEBAPP_BASE_URL: ${GAME_URL:-https://game.xseo.me}
     container_name: minigame-admin
     restart: unless-stopped
     ports:

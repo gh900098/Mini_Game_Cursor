@@ -57,6 +57,7 @@ export class GameInstancesController {
 
     @Get(':slug/play')
     @Header('Content-Type', 'text/html')
+    @Header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
     async play(
         @Param('slug') slug: string,
         @Query('token') token: string,
@@ -69,6 +70,7 @@ export class GameInstancesController {
 
     @Get('c/:companySlug/:gameSlug/play')
     @Header('Content-Type', 'text/html')
+    @Header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
     async playByCompanySlug(
         @Param('companySlug') companySlug: string,
         @Param('gameSlug') gameSlug: string,

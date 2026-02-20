@@ -189,12 +189,15 @@
       <!-- Preview Mode Simulation Banner -->
       <div v-if="isPreview || gameStatus?.isImpersonated" class="absolute top-0 left-0 right-0 z-[60] pointer-events-none">
         <div 
-          :class="isPreview ? 'bg-amber-500/90' : 'bg-red-500/90'"
-          class="backdrop-blur-md text-white text-[10px] font-bold py-1 px-4 text-center tracking-widest shadow-lg border-b border-amber-400/30"
+          :class="isPreview ? 'bg-amber-500/95' : 'bg-red-600/95'"
+          class="backdrop-blur-xl text-white text-[11px] font-black py-2 px-4 text-center tracking-[0.2em] shadow-2xl border-b-2 border-white/20 flex items-center justify-center gap-4"
         >
-          <span class="opacity-80">{{ isPreview ? 'PROTOTYPE SIMULATION' : 'ADMIN TEST MODE' }}</span>
-          <span class="mx-3 opacity-30">|</span>
-          <span>NO TOKENS WILL BE DEDUCTED</span>
+          <div :class="isPreview ? 'i-carbon-warning-filled' : 'i-carbon-security-filled'" class="text-lg animate-pulse"></div>
+          <div class="flex flex-col items-center">
+            <span class="leading-none mb-0.5">{{ isPreview ? 'PROTOTYPE SIMULATION' : 'ADMIN IMPERSONATION MODE' }}</span>
+            <span class="text-[9px] opacity-70 leading-none">STRICTLY NO PERSISTENT CHANGES OR TOKEN DEDUCTION</span>
+          </div>
+          <div :class="isPreview ? 'i-carbon-warning-filled' : 'i-carbon-security-filled'" class="text-lg animate-pulse"></div>
         </div>
       </div>
       

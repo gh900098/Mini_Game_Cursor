@@ -40,7 +40,8 @@ MiniGame/
 │   ├── soybean-admin/    # Admin Panel (Vue 3)
 │   └── web-app/          # Player UI (Vue 3)
 ├── docs/                 # All documentation
-└── docker-compose.prod.yml
+├── docker-compose.prod.yml # Production Environment (Configurable)
+└── docker-compose.test.yml # Local Testing Environment (Localhost Only)
 ```
 
 **Tech Stack:**
@@ -102,6 +103,9 @@ cd apps/web-app && pnpm dev    # Web app
 
 ### Deployment
 ```bash
+# On local machine (Testing)
+docker compose -f docker-compose.test.yml up -d --build
+
 # On production server
 cd /opt/minigame
 git pull origin main

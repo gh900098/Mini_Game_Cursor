@@ -657,6 +657,42 @@ Manages all registered members and guests. Supports viewing member details, poin
 
 ---
 
+## 🎭 Admin Impersonation System
+
+**Implementation Date:** 2026-02-20  
+**Status:** Live ✅
+
+### 📍 Location
+- **Backend Auth:** `apps/api/src/modules/auth/auth.service.ts`
+- **Backend Members:** `apps/api/src/modules/members/admin-members.controller.ts`
+- **Game Rules:** `apps/api/src/modules/scores/game-rules.service.ts`
+- **Scores Service:** `apps/api/src/modules/scores/scores.service.ts`
+- **Frontend UI:** `apps/web-app/src/views/game/index.vue`
+
+### 🎯 Feature Description
+Allows administrators to securely log in as a member to test game functionality and preview configurations. The system enforces strict "read-only" protection to ensure that administrative tests do not pollute production databases or user balances.
+
+### ⚙️ Core Mechanisms
+
+#### 1. Identity Token Generation
+- An administrator triggering the impersonate action generates a special JWT for the member.
+- This JWT includes an `isImpersonated: true` flag in its payload.
+
+#### 2. Strict Bypass Rules
+When the `isImpersonated` flag is detected by the API:
+- **Status Checks**: `GameRulesService.getPlayerStatus` overrides blocks (e.g., `INSUFFICIENT_BALANCE`, `DAILY_LIMIT_REACHED`) to return `canPlay: true`.
+- **Game Validation**: `ScoresService.submit` bypasses standard validation rules, allowing the game to proceed regardless of the member's eligibility.
+- **No Persistence**: Score results are not saved to the database. Instead of a real score ID, the API returns a mock ID (`impersonated-test-id`). Points balances and play history are completely untouched.
+
+#### 3. Visual Warnings
+- The Web App frontend reads the `isImpersonated` flag from the decoded JWT.
+- If true, it displays a highly visible pulsing red banner: **"ADMIN IMPERSONATION MODE: No tokens will be deducted and points will not be saved."**
+
+### 🚨 Modification Impact Scope
+- **Game Logic**: Any new game rules or point deduction logic implemented in `ScoresService` MUST verify the `isImpersonated` flag to prevent accidental alterations to user data during testing.
+
+---
+
 ## 🔒 PII Masking & Privacy System
 
 **Implementation Date:** 2026-02-19  

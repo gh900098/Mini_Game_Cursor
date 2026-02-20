@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # ============ Database ============
+  postgres:
+    image: postgres:15-alpine
+    container_name: minigame-postgres-test
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: minigame
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    networks:
+      - minigame-network-test
+
+  # ============ Redis ============
+  redis:
+    image: redis:7-alpine
+    container_name: minigame-redis-test
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - minigame-network-test
+
+  # ============ Backend API ============
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: minigame-api-test
+    restart: unless-stopped
+    ports:
+      - "3100:3000"
+    environment:
+      NODE_ENV: test
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_DATABASE: minigame
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-test_secret}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-ddb62838e335fc7d20420df053dac2a7de835529a7bf00a92986add7603562f7}
+      HASHING_SECRET: ${HASHING_SECRET:-99a09aa7dad46cac3342aeb21be6c2d436fd1f3b37dbbce100244333171ae6a9}
+      CORS_ORIGINS: http://localhost:3101,http://localhost:3102
+      VITE_WEBAPP_BASE_URL: http://localhost:3102
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./apps/api/uploads:/app/uploads
+    networks:
+      - minigame-network-test
+
+  # ============ Admin Panel ============
+  admin:
+    build:
+      context: .
+      dockerfile: Dockerfile.admin
+      args:
+        VITE_API_URL: http://localhost:3100/api
+        VITE_WEBAPP_BASE_URL: http://localhost:3102
+    container_name: minigame-admin-test
+    restart: unless-stopped
+    ports:
+      - "3101:80"
+    depends_on:
+      - api
+    networks:
+      - minigame-network-test
+
+  # ============ Game Frontend ============
+  web-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.webapp
+      args:
+        VITE_API_URL: http://localhost:3100/api
+    container_name: minigame-webapp-test
+    restart: unless-stopped
+    ports:
+      - "3102:80"
+    depends_on:
+      - api
+    networks:
+      - minigame-network-test
+
+networks:
+  minigame-network-test:
+    driver: bridge
+
+volumes:
+  postgres_data_test:

@@ -9,6 +9,14 @@ import { maskEmail, maskPhone } from '../../common/utils/masking.utils';
 export class MembersController {
     constructor(private readonly membersService: MembersService) { }
 
+    @Get('profile')
+    @UseGuards(JwtAuthGuard)
+    getProfile(@Request() req: any) {
+        // req.user contains the payload from JWT strategy
+        const userId = req.user.userId || req.user.memberId || req.user.sub;
+        return this.membersService.findById(userId);
+    }
+
     @Get()
     @UseGuards(JwtAuthGuard, PermissionsGuard)
     @RequirePermission('members:read')
@@ -70,13 +78,5 @@ export class MembersController {
         const userAgent = req.headers['user-agent'];
         const ipAddress = getClientIp(req);
         return this.membersService.login(member, ipAddress, userAgent);
-    }
-
-    @Get('profile')
-    @UseGuards(JwtAuthGuard)
-    getProfile(@Request() req: any) {
-        // req.user contains the payload from JWT strategy
-        const userId = req.user.userId || req.user.memberId || req.user.sub;
-        return this.membersService.findById(userId);
     }
 }

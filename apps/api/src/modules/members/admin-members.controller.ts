@@ -1,4 +1,6 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, Request, ForbiddenException } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, Request, ForbiddenException, Headers } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles, RoleLevel } from '../../common/decorators/roles.decorator';
@@ -36,6 +38,7 @@ export class AdminMembersController {
         private scoresRepo: Repository<Score>,
         private auditLogService: AuditLogService,
         private membersService: MembersService,
+        private configService: ConfigService,
     ) { }
 
     @Get()
@@ -201,12 +204,45 @@ export class AdminMembersController {
     }
 
     @Post(':id/impersonate')
-    async impersonate(@Param('id') id: string) {
+    async impersonate(@Param('id') id: string, @Headers('referer') referer?: string) {
         // Generate a token for the member without password validation
         const result = await this.membersService.getImpersonationToken(id);
 
         // Return the token and a redirect URL for the frontend to use
-        const webAppUrl = process.env.VITE_WEBAPP_BASE_URL || 'http://localhost:3102';
+        // 1. Try environment variable
+        // 2. Try detection from Referer (Admin URL usually same base as Webapp or at least known)
+        // 3. Fallback to localhost
+        let webAppUrl = this.configService.get<string>('VITE_WEBAPP_BASE_URL');
+
+        if (!webAppUrl && referer) {
+            try {
+                const url = new URL(referer);
+
+                // If on localhost, handle port mapping (3101 -> 3102)
+                if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+                    // Logic: If Admin is on 3101, WebApp is likely 3102
+                    // If Admin is on 9527, WebApp is likely 3102? 
+                    // Let's be smart: usually they are adjacent or in the env.
+                    // For local dev, 3102 is our standard game port.
+                    const port = url.port || '3101';
+                    if (port === '3101' || port === '9527') {
+                        webAppUrl = `${url.protocol}//${url.hostname}:3102`;
+                    } else {
+                        webAppUrl = `${url.protocol}//${url.hostname}:${parseInt(port) + 1}`;
+                    }
+                } else {
+                    // Production mapping logic (admin. -> game.)
+                    webAppUrl = `${url.protocol}//${url.host.replace('admin.', 'game.')}`;
+                }
+            } catch (e) {
+                // Ignore URL parsing errors
+            }
+        }
+
+        if (!webAppUrl) {
+            webAppUrl = 'http://localhost:3102';
+        }
+
         const redirectUrl = `${webAppUrl}/login`;
 
         return {

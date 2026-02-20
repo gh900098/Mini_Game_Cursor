@@ -23,7 +23,10 @@ export class GameRulesService {
   /**
    * 验证所有规则（在玩游戏前调用）
    */
-  async validatePlay(memberId: string, instance: GameInstance): Promise<void> {
+  async validatePlay(memberId: string, instance: GameInstance, isImpersonated: boolean = false): Promise<void> {
+    if (isImpersonated) {
+      return;
+    }
     // 高优先级规则（必须全部通过）
     await this.checkTimeLimit(instance);
     await this.checkOneTimeOnly(memberId, instance);
@@ -632,6 +635,14 @@ export class GameRulesService {
 
     if (blockDetails.cooldownRemaining) {
       result.cooldownRemaining = blockDetails.cooldownRemaining;
+    }
+
+    // Force allow if admin is impersonating
+    if (isImpersonated) {
+      result.canPlay = true;
+      result.blockReason = null;
+      result.blockDetails = {};
+      result.cooldownRemaining = 0;
     }
 
     return result;

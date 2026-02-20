@@ -66,7 +66,7 @@ export class ScoresService {
         }
 
         // 2. Validate Game Rules (Normal Flow)
-        await this.gameRulesService.validatePlay(memberId, instance);
+        await this.gameRulesService.validatePlay(memberId, instance, isImpersonated);
 
         // 6. Apply VIP multiplier to score
         let finalPoints = scoreValue;

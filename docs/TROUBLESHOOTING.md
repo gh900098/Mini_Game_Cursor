@@ -64,6 +64,56 @@ const { items: companies } = await this.companiesService.findAll({ limit: 1000 }
 
 ---
 
+### Issue 18: Impersonation Login Failure (Redirecting to localhost)
+
+**Cause:** The backend's `impersonate` method hardcoded `http://localhost:3102` as a fallback for the `VITE_WEBAPP_BASE_URL` environment variable. In production/Docker environments, if this variable is missing from the API service, administrators are redirected to `localhost` instead of the public game URL.
+
+**Symptoms:**
+- Clicking "Impersonate" opens a blank page or "Connection Refused" in a new tab.
+- The URL in the address bar starts with `http://localhost:3102/login?token=...`.
+
+**Solution (Fixed - 2026-02-20):**
+1.  **Backend Logic Update**: `AdminMembersController.impersonate` now attempts to:
+    -   Read `VITE_WEBAPP_BASE_URL` from configuration.
+    -   Fallback to detecting the host from the `Referer` header (e.g., if on `admin.xseo.me`, it tries `game.xseo.me`).
+    -   Only then fallback to `localhost:3102`.
+2.  **Configuration**: Added `VITE_WEBAPP_BASE_URL` to the `api` service in `docker-compose.prod.yml`.
+
+**Verification:**
+- Ensure `VITE_WEBAPP_BASE_URL` is correctly set in `.env.production` or `docker-compose.prod.yml`.
+- If using custom domains, ensure the Admin and Webapp share a recognizable pattern if relying on automatic detection.
+
+---
+
+### Issue 19: 403 Forbidden when fetching Member Profile 
+
+**Cause:** In `MembersController`, the dynamic route `/:id` was defined before the static route `/profile`. When an impersonated user requests `/profile`, the framework treats "profile" as the `:id` parameter and triggers the `IsCompanyMemberGuard` which attempts to validate the UUID, resulting in a 403 error.
+
+**Symptoms:**
+- Fetching `/api/members/profile` returns `403 Forbidden`.
+- The game web app interface fails to load the user's details and shows token errors.
+
+**Solution (Fixed - 2026-02-20):**
+- Reordered the endpoint methods in `MembersController` to ensure `@Get('profile')` is declared *before* `@Get(':id')`.
+- This ensures the static route takes priority over the dynamic parameter route.
+
+---
+
+### Issue 20: Game Assets (Images) Returning 404 (Not Found)
+
+**Cause:** A combination of a missing volume mount for the uploads directory in the test environment and aggressive browser caching of outdated HTML templates on the `/play` endpoint.
+
+**Symptoms:**
+- Game background, wheel, and pointer images fail to load.
+- Network tab shows 404 errors for URLs like `/api/uploads/default/4c2d99ee-.../branding/bgImage.png`.
+- The UUID in the URL belongs to an older configuration from a previous seed run, but the files no longer exist.
+
+**Solution (Fixed - 2026-02-20):**
+1. **Docker Volume**: Added `- ./apps/api/uploads:/app/uploads` to the API service in `docker-compose.test.yml` to preserve and mount locally seeded asset files.
+2. **Cache Combating**: Added `@Header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')` to the `/play` endpoints in `GameInstancesController` to prevent the browser from caching the base game container HTML, ensuring it always fetches the latest configuration and UUIDs.
+
+---
+
 ## 🚀 Standard Operating Procedures (SOP)
 
 ### When modifying frontend code (`web-app` or `admin`):
