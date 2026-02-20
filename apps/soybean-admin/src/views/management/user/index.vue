@@ -209,16 +209,16 @@ watch(
 
 async function getRoles() {
   const { data, error } = await fetchGetRoles();
-  if (!error) {
-    availableRoles.value = data;
+  if (!error && data) {
+    availableRoles.value = 'items' in data ? data.items : data;
   }
 }
 
 async function getCompanies() {
     if (authStore.isStaticSuper || authStore.userInfo.roles.includes('R_SUPER')) {
         const { data, error } = await fetchGetCompanies();
-        if (!error) {
-            availableCompanies.value = data;
+        if (!error && data) {
+            availableCompanies.value = 'items' in data ? data.items : data;
         }
     } else {
         // For Company Admins, populate from their own authorized companies

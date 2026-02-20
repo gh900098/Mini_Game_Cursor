@@ -137,15 +137,9 @@ async function getAuditLogs() {
   });
   
   if (!error && resData) {
-    if ('items' in resData) {
-      auditLogs.value = resData.items;
-      total.value = resData.total;
-      pagination.itemCount = resData.total;
-    } else if (Array.isArray(resData)) {
-      auditLogs.value = resData;
-      total.value = resData.length;
-      pagination.itemCount = resData.length;
-    }
+    auditLogs.value = resData.items;
+    total.value = resData.total;
+    pagination.itemCount = resData.total;
   }
   endLoading();
 }
