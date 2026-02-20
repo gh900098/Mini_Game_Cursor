@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, watch } from 'vue';
 import { NButton, NCard, NDataTable, NForm, NFormItem, NInput, NSelect, NSpace, NTag, NModal, NScrollbar, NDescriptions, NDescriptionsItem, NSwitch, NEllipsis, NTabs, NTabPane } from 'naive-ui';
 import type { DataTableColumns, DataTableRowKey } from 'naive-ui';
 import { fetchGetAuditLogList, fetchGetAuditLogOptions } from '@/service/api/audit-log';
@@ -98,6 +98,7 @@ const pagination = reactive({
   pageSize: 10,
   showSizePicker: true,
   pageSizes: [10, 20, 50, 100],
+  itemCount: 0,
   onChange: (page: number) => {
     pagination.page = page;
     getAuditLogs();
@@ -125,14 +126,26 @@ async function getOptions() {
 
 async function getAuditLogs() {
   startLoading();
-  const { data, error } = await fetchGetAuditLogList({
+  const currentCompanyId = authStore.userInfo.currentCompanyId;
+  const companyId = currentCompanyId === 'ALL' || !currentCompanyId ? undefined : currentCompanyId;
+
+  const { data: resData, error } = await fetchGetAuditLogList({
     page: pagination.page,
     limit: pagination.pageSize,
+    companyId,
     ...searchParams
   });
-  if (!error) {
-    auditLogs.value = data.items;
-    total.value = data.total;
+  
+  if (!error && resData) {
+    if ('items' in resData) {
+      auditLogs.value = resData.items;
+      total.value = resData.total;
+      pagination.itemCount = resData.total;
+    } else if (Array.isArray(resData)) {
+      auditLogs.value = resData;
+      total.value = resData.length;
+      pagination.itemCount = resData.length;
+    }
   }
   endLoading();
 }
@@ -364,6 +377,13 @@ const columns = computed<DataTableColumns<Api.AuditLog.AuditLog>>(() => {
 const moduleSelectOptions = computed(() => moduleOptions.value.map(v => ({ label: v, value: v })));
 const actionSelectOptions = computed(() => actionOptions.value.map(v => ({ label: v, value: v })));
 
+watch(
+  () => authStore.userInfo.currentCompanyId,
+  () => {
+    getAuditLogs();
+  }
+);
+
 getAuditLogs();
 getOptions();
 </script>
@@ -377,67 +397,61 @@ getOptions();
           <NSwitch :value="devMode" @update:value="toggleDevMode" size="small" />
         </NSpace>
       </template>
-      <NForm inline :model="searchParams" label-placement="left" size="small" class="mb-4">
-        <NFormItem label="Module">
-          <NSelect 
-            v-model:value="searchParams.module" 
-            :options="moduleSelectOptions" 
-            placeholder="Select" 
-            clearable 
-            class="w-160px"
-            @update:value="handleSearch"
-          />
-        </NFormItem>
-        <NFormItem label="Action">
-          <NSelect 
-            v-model:value="searchParams.action" 
-            :options="actionSelectOptions" 
-            placeholder="Select" 
-            clearable 
-            class="w-200px"
-            :consistent-menu-width="false"
-            @update:value="handleSearch"
-          />
-        </NFormItem>
-        <NFormItem label="User">
-          <NInput v-model:value="searchParams.userName" placeholder="Name" clearable class="w-160px" @keypress.enter="handleSearch" />
-        </NFormItem>
-        <NFormItem>
-          <NSpace>
-            <NButton type="primary" size="small" @click="handleSearch">Search</NButton>
-            <NButton size="small" @click="handleReset">Reset</NButton>
-           <NButton v-if="isSuperAdmin" size="small" type="primary" secondary @click="handleOpenSettings">
-             <template #icon>
-               <icon-mdi-cog />
-             </template>
-             Log Settings
-           </NButton>
-          </NSpace>
-        </NFormItem>
-      </NForm>
+      <div class="flex-col h-full">
+        <NForm inline :model="searchParams" label-placement="left" size="small" class="mb-4">
+          <NFormItem label="Module">
+            <NSelect 
+              v-model:value="searchParams.module" 
+              :options="moduleSelectOptions" 
+              placeholder="Select" 
+              clearable 
+              class="w-160px"
+              @update:value="handleSearch"
+            />
+          </NFormItem>
+          <NFormItem label="Action">
+            <NSelect 
+              v-model:value="searchParams.action" 
+              :options="actionSelectOptions" 
+              placeholder="Select" 
+              clearable 
+              class="w-200px"
+              :consistent-menu-width="false"
+              @update:value="handleSearch"
+            />
+          </NFormItem>
+          <NFormItem label="User">
+            <NInput v-model:value="searchParams.userName" placeholder="Name" clearable class="w-160px" @keypress.enter="handleSearch" />
+          </NFormItem>
+          <NFormItem>
+            <NSpace>
+              <NButton type="primary" size="small" @click="handleSearch">Search</NButton>
+              <NButton size="small" @click="handleReset">Reset</NButton>
+             <NButton v-if="isSuperAdmin" size="small" type="primary" secondary @click="handleOpenSettings">
+               <template #icon>
+                 <icon-mdi-cog />
+               </template>
+               Log Settings
+             </NButton>
+            </NSpace>
+          </NFormItem>
+        </NForm>
 
-      <template #header-extra>
-        <NSpace>
-           <NButton v-if="canSeeDevMode" size="small" secondary @click="toggleDevMode">
-             {{ devMode ? 'View Normal' : 'Developer Mode' }}
-           </NButton>
-        </NSpace>
-      </template>
-
-      <NDataTable
-        :columns="columns"
-        :data="auditLogs"
-        :loading="loading"
-        :pagination="pagination"
-        :remote="true"
-        :item-count="total"
-        :row-key="(row) => row.id"
-        :expanded-row-keys="expandedRowKeys"
-        size="small"
-        flex-height
-        class="h-full"
-        @update:expanded-row-keys="handleExpandedUpdate"
-      />
+        <NDataTable
+          :columns="columns"
+          :data="auditLogs"
+          :loading="loading"
+          :pagination="pagination"
+          :remote="true"
+          :item-count="total"
+          :row-key="(row) => row.id"
+          :expanded-row-keys="expandedRowKeys"
+          size="small"
+          flex-height
+          class="flex-1-hidden"
+          @update:expanded-row-keys="handleExpandedUpdate"
+        />
+      </div>
     </NCard>
 
     <NModal v-model:show="settingsVisible" preset="card" title="Audit Log Settings" class="w-600px">

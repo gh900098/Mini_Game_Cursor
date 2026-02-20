@@ -120,7 +120,7 @@ export class SyncProcessor extends WorkerHost {
     }
 
     private async handleHourlySyncOrchestration() {
-        const companies = await this.companiesService.findAll();
+        const { items: companies } = await this.companiesService.findAll({ limit: 1000 });
         const enabledCompanies = companies.filter(c => c.jk_config?.enabled);
 
         this.logger.log(`Starting dynamic sync orchestration for ${enabledCompanies.length} enabled companies...`);

@@ -32,6 +32,21 @@
 2. **Verify Role Permissions**: Ensure the "Super Admin" or "Company Admin" role has the `members:view_sensitive` permission checked in the Roles Management page.
 3. **Refresh Page**: The frontend needs to reload the user's permission set (often requires a re-login or hard refresh).
 
+### Issue 16: TypeScript Error - CompaniesService.findAll() return type mismatch
+
+**Cause:** Refactoring `CompaniesService.findAll()` to support pagination changed its return type from `Company[]` to `{ items: Company[]; total: number; ... }`. This broke background services (`SyncScheduler`, `SyncProcessor`) that were expecting an array.
+
+**Symptoms:**
+- API Docker container fails to build with TypeScript compilation errors.
+- `src/modules/sync/sync.scheduler.ts` or `sync.processor.ts` shows errors like `property 'filter' does not exist on type '{ items: Company[]; ... }'`.
+
+**Solution (Fixed - 2026-02-20):**
+- Updated background services to destructure `items` from the `findAll()` response.
+- Passed an explicit `{ limit: 1000 }` to ensure all companies are fetched for scheduling purposes.
+```typescript
+const { items: companies } = await this.companiesService.findAll({ limit: 1000 });
+```
+
 ---
 
 ## 🚀 Standard Operating Procedures (SOP)

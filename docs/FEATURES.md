@@ -91,6 +91,42 @@ Authorized Super Admins retain the ability to view all data by passing a `compan
 
 ---
 
+## ⚡ High Performance Data Pattern (Standardized Pagination)
+
+**Implementation Date:** 2026-02-20  
+**Status:** Rollout Complete ✅
+
+### 📍 Location
+- **Backend Core:** `CompaniesService`, `RolesService`, `UsersService`, `PermissionsService`, `AdminScoresController`, `AdminPrizesController`
+- **Frontend Core:** `service/api/management.ts`
+- **Views:** `role/index.vue`, `user/index.vue`, `company/index.vue`, `permission/index.vue`, `scores/index.vue`, `prizes/index.vue`
+- **Layout:** `apps/soybean-admin/src/views/management/` (shared flexbox patterns)
+
+### 🎯 Feature Description
+Standardizes all high-volume data lists with server-side pagination, keyword searching, and a robust flexbox-based layout that ensures navigation controls are always visible.
+
+### ⚙️ Core Mechanisms
+
+#### 1. Server-Side Pagination & Search
+- All lists use `remote: true` in `NDataTable`.
+- API calls pass `page`, `limit`, and `keyword` parameters.
+- Backend services use TypeORM `createQueryBuilder` with `.skip()` and `.take()` for optimal SQL execution.
+
+#### 2. Robust Flexbox Layout
+- Uses a `flex-col` container with a `flex-1-hidden` card.
+- `NDataTable` receives `flex-height`, allowing it to scroll internally while keeping the pagination footer fixed at the bottom of the visible area.
+- Prevents the "disappearing pagination" bug on smaller screens or long lists.
+
+#### 3. Database indexing
+- Critical columns like `createdAt`, `companyId`, `emailHash`, and `username` have `@Index()` decorators.
+- Ensures sorting and filtering remains sub-second even with millions of rows.
+
+### 🚨 Modification Impact Scope
+- **API Response Structure**: Most lists now return `{ items: T[], total: number }` instead of a raw array.
+- **Internal Dependencies**: Specialized services (like `SyncScheduler`) that call `findAll()` must destructure the response or pass a high `limit`.
+
+---
+
 ## 📂 Project Structure Overview
 
 ```

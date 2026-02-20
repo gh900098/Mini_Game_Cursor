@@ -28,17 +28,33 @@ const { formRef, validate } = useNaiveForm();
 const authStore = useAuthStore();
 
 const userData = ref<Api.Management.User[]>([]);
+const total = ref(0);
 const availableRoles = ref<Api.Management.Role[]>([]);
 const availableCompanies = ref<Api.Management.Company[]>([]);
 
-const filteredUserData = computed(() => {
-  const currentCompanyId = authStore.userInfo.currentCompanyId;
-  if (!currentCompanyId) {
-    return userData.value;
+const searchParams = reactive({
+  keyword: ''
+});
+
+const pagination = reactive({
+  page: 1,
+  pageSize: 10,
+  showSizePicker: true,
+  pageSizes: [10, 20, 50, 100],
+  itemCount: 0,
+  onChange: (page: number) => {
+    pagination.page = page;
+    getUsers();
+  },
+  onUpdatePageSize: (pageSize: number) => {
+    pagination.pageSize = pageSize;
+    pagination.page = 1;
+    getUsers();
   }
-  return userData.value.filter(user => 
-    user.userCompanies?.some(uc => uc.companyId === currentCompanyId)
-  );
+});
+
+const filteredUserData = computed(() => {
+  return userData.value;
 });
 
 const formModel = reactive({
@@ -150,12 +166,46 @@ function canAssignRole(role: Api.Management.Role) {
 
 async function getUsers() {
   startLoading();
-  const { data, error } = await fetchGetUsers();
-  if (!error) {
-    userData.value = data;
+  const currentCompanyId = authStore.userInfo.currentCompanyId;
+  const companyId = currentCompanyId === 'ALL' || !currentCompanyId ? undefined : currentCompanyId;
+
+  const { data, error } = await fetchGetUsers({
+    page: pagination.page,
+    limit: pagination.pageSize,
+    companyId,
+    keyword: searchParams.keyword || undefined
+  });
+  
+  if (!error && data) {
+    if ('items' in data) {
+      userData.value = data.items;
+      total.value = data.total;
+      pagination.itemCount = data.total;
+    } else {
+      userData.value = data;
+      total.value = data.length;
+      pagination.itemCount = data.length;
+    }
   }
   endLoading();
 }
+
+function handleSearch() {
+  pagination.page = 1;
+  getUsers();
+}
+
+function handleReset() {
+  searchParams.keyword = '';
+  handleSearch();
+}
+
+watch(
+  () => authStore.userInfo.currentCompanyId,
+  () => {
+    handleSearch();
+  }
+);
 
 async function getRoles() {
   const { data, error } = await fetchGetRoles();
@@ -434,13 +484,30 @@ getCompanies();
         </NButton>
       </template>
 
-      <NDataTable
-        :columns="columns"
-        :data="filteredUserData"
-        :loading="loading"
-        flex-height
-        class="h-full"
-      />
+      <div class="flex-col h-full">
+        <NForm inline :model="searchParams" label-placement="left" size="small" class="mb-4">
+          <NFormItem label="Keyword">
+            <NInput v-model:value="searchParams.keyword" placeholder="Search name or email..." clearable class="w-240px" @keypress.enter="handleSearch" />
+          </NFormItem>
+          <NFormItem>
+            <NSpace>
+              <NButton type="primary" size="small" @click="handleSearch">Search</NButton>
+              <NButton size="small" @click="handleReset">Reset</NButton>
+            </NSpace>
+          </NFormItem>
+        </NForm>
+
+        <NDataTable
+          :columns="columns"
+          :data="filteredUserData"
+          :loading="loading"
+          :pagination="pagination"
+          :remote="true"
+          :item-count="total"
+          flex-height
+          class="flex-1-hidden"
+        />
+      </div>
     </NCard>
 
     <NModal v-model:show="visible" preset="card" :title="isEdit ? 'Edit Staff / Assign Company' : 'Add New Staff'" class="w-800px">

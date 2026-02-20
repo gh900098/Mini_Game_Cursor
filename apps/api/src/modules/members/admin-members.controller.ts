@@ -13,6 +13,7 @@ import { MemberPrize } from '../scores/entities/member-prize.entity';
 import { AuditLogService } from '../audit-log/audit-log.service';
 import { MembersService } from './members.service';
 import { maskEmail, maskPhone } from '../../common/utils/masking.utils';
+import { GetMembersDto } from './dto/get-members.dto';
 
 import * as bcrypt from 'bcrypt';
 
@@ -38,31 +39,32 @@ export class AdminMembersController {
     ) { }
 
     @Get()
-    async getMembers(@Request() req: any, @Query('companyId') requestedCompanyId?: string) {
-        const targetCompanyId = req.user.currentCompanyId || req.user.companyId || requestedCompanyId;
+    async getMembers(@Request() req: any, @Query() queryDto: GetMembersDto) {
+        let { page = 1, limit = 10, companyId, username, externalId } = queryDto;
+        page = Number(page);
+        limit = Number(limit);
+        const targetCompanyId = req.user.currentCompanyId || req.user.companyId || companyId;
 
-        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== targetCompanyId) {
+        if (companyId && !req.user.isSuperAdmin && companyId !== targetCompanyId) {
             throw new ForbiddenException('You do not have access to this company');
         }
 
-        const query = this.membersRepo
-            .createQueryBuilder('member')
-            .leftJoinAndSelect('member.company', 'company')
-            .orderBy('member.createdAt', 'DESC')
-            .take(1000);
+        const result = await this.membersService.findAllPaginated({
+            companyId: targetCompanyId,
+            page,
+            limit,
+            username,
+            externalId,
+        });
 
-        if (targetCompanyId) {
-            query.where('member.companyId = :companyId', { companyId: targetCompanyId });
-        }
-
-        const members = await query.getMany();
-
-        // ALWAYS mask in list view
-        return members.map(m => {
+        // Apply masking
+        result.items = result.items.map(m => {
             m.email = maskEmail(m.email);
             m.phoneNumber = maskPhone(m.phoneNumber);
             return m;
         });
+
+        return result;
     }
 
     @Get(':id')

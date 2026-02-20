@@ -40,8 +40,8 @@ export class SyncScheduler implements OnModuleInit {
         // 1. Fetch Global Default Cron
         const globalCron = await this.settingsService.getSetting('sync_hourly_cron') || '0 */4 * * *';
 
-        // 2. Fetch all enabled companies
-        const companies = await this.companiesService.findAll();
+        // 2. Fetch all enabled companies (fetch up to 1000 to ensure we get all for scheduling)
+        const { items: companies } = await this.companiesService.findAll({ limit: 1000 });
         const enabledCompanies = companies.filter(c => c.jk_config?.enabled);
 
         // 3. Clear existing repeatable jobs to ensure clean state

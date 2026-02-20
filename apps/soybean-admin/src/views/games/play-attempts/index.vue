@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { ref } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import { NCard, NDataTable, NTag, NSpace } from 'naive-ui';
 import type { DataTableColumns } from 'naive-ui';
 import { fetchGetPlayAttempts } from '@/service/api/management';
@@ -9,6 +9,23 @@ import { useAuthStore } from '@/store/modules/auth';
 const { loading, startLoading, endLoading } = useLoading();
 const authStore = useAuthStore();
 const playAttempts = ref<Api.Management.PlayAttempt[]>([]);
+const total = ref(0);
+
+const pagination = reactive({
+  page: 1,
+  pageSize: 20,
+  showSizePicker: true,
+  pageSizes: [10, 20, 50, 100],
+  onChange: (page: number) => {
+    pagination.page = page;
+    getPlayAttempts();
+  },
+  onUpdatePageSize: (pageSize: number) => {
+    pagination.pageSize = pageSize;
+    pagination.page = 1;
+    getPlayAttempts();
+  }
+});
 
 const columns: DataTableColumns<Api.Management.PlayAttempt> = [
   {
@@ -63,12 +80,32 @@ const columns: DataTableColumns<Api.Management.PlayAttempt> = [
 async function getPlayAttempts() {
   startLoading();
   const currentCompanyId = authStore.userInfo.currentCompanyId;
-  const { data, error } = await fetchGetPlayAttempts({ companyId: currentCompanyId || undefined });
+  const companyId = currentCompanyId === 'ALL' || !currentCompanyId ? undefined : currentCompanyId;
+
+  const { data: resData, error } = await fetchGetPlayAttempts({ 
+    companyId,
+    page: pagination.page,
+    limit: pagination.pageSize
+  } as any);
+  
   if (!error) {
-    playAttempts.value = data;
+    if (Array.isArray(resData)) {
+      playAttempts.value = resData;
+      total.value = resData.length;
+    } else {
+      playAttempts.value = (resData as any).items || [];
+      total.value = (resData as any).total || 0;
+    }
   }
   endLoading();
 }
+
+watch(
+  () => authStore.userInfo.currentCompanyId,
+  () => {
+    getPlayAttempts();
+  }
+);
 
 getPlayAttempts();
 </script>
@@ -78,17 +115,21 @@ getPlayAttempts();
     <NCard title="Play Attempts (Transaction History)" :bordered="false" class="flex-1-hidden rounded-16px shadow-sm">
       <template #header-extra>
         <NSpace>
-          <span class="text-sm text-gray-500">Total: {{ playAttempts.length }}</span>
+          <span class="text-sm text-gray-500">Total: {{ total }}</span>
         </NSpace>
       </template>
-      <NDataTable
-        :columns="columns"
-        :data="playAttempts"
-        :loading="loading"
-        flex-height
-        class="h-full"
-        :pagination="{ pageSize: 50 }"
-      />
+      <div class="flex-col h-full">
+        <NDataTable
+          :columns="columns"
+          :data="playAttempts"
+          :loading="loading"
+          flex-height
+          class="flex-1-hidden"
+          remote
+          :pagination="pagination"
+          :item-count="total"
+        />
+      </div>
     </NCard>
   </div>
 </template>

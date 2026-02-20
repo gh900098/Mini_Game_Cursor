@@ -5,14 +5,18 @@ import { EncryptionTransformer } from '../../encryption/encryption.transformer';
 
 @Entity('members')
 @Index(['companyId', 'externalId'], { unique: true, where: '"externalId" IS NOT NULL' })
+@Index(['companyId', 'createdAt']) // Optimize default sort
+@Index(['username']) // Optimize search
 export class Member {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column()
+    @Index() // Optimize filtering by company
     companyId: string;
 
     @Column({ nullable: true })
+    @Index() // Optimize search
     externalId: string;
 
     @Column({ nullable: true })

@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex-col-stretch gap-16px overflow-hidden">
+  <div class="h-full flex-col gap-16px">
     <NCard title="Prize Management" :bordered="false" size="small" class="flex-col-stretch sm:flex-1-hidden card-wrapper">
       <template #header-extra>
         <NSpace>
@@ -15,14 +15,18 @@
         </NSpace>
       </template>
 
-      <NDataTable
-        :columns="columns"
-        :data="data"
-        :loading="loading"
-        :pagination="pagination"
-        remote
-        class="flex-1-hidden"
-      />
+      <div class="flex-col h-full">
+        <NDataTable
+          :columns="columns"
+          :data="data"
+          :loading="loading"
+          :pagination="pagination"
+          remote
+          :item-count="total"
+          flex-height
+          class="flex-1-hidden"
+        />
+      </div>
     </NCard>
 
     <NModal v-model:show="showUpdateModal" title="Update Prize Status" preset="card" style="width: 650px">
@@ -159,15 +163,18 @@
 </template>
 
 <script setup lang="tsx">
-import { ref, onMounted, reactive } from 'vue';
+import { ref, reactive, watch, onMounted } from 'vue';
+import { useAuthStore } from '@/store/modules/auth';
 import { NTag, NButton, NSpace, NSelect, NModal, NForm, NFormItem, NInput, NCard, NDataTable, NImage, NUpload } from 'naive-ui';
 import type { DataTableColumns } from 'naive-ui';
 import { useLoading } from '@sa/hooks';
 import { request } from '@/service/request';
 import { $t } from '@/locales';
 
+const authStore = useAuthStore();
 const { loading, startLoading, endLoading } = useLoading();
 const data = ref<any[]>([]);
+const total = ref(0);
 const statusFilter = ref<string | null>(null);
 const showUpdateModal = ref(false);
 const updating = ref(false);
@@ -375,11 +382,26 @@ import { fetchGetPrizeTypes } from '@/service/api/prizes';
 async function loadData() {
   startLoading();
   try {
-    const params: any = {};
+    const currentCompanyId = authStore.userInfo.currentCompanyId;
+    const companyId = currentCompanyId === 'ALL' || !currentCompanyId ? undefined : currentCompanyId;
+
+    const params: any = {
+      page: pagination.page,
+      limit: pagination.pageSize,
+      companyId
+    };
     if (statusFilter.value) params.status = statusFilter.value;
     
     const { data: resData } = await fetchGetPrizes(params);
-    data.value = resData || [];
+    if (resData) {
+      if (Array.isArray(resData)) {
+        data.value = resData;
+        total.value = resData.length;
+      } else {
+        data.value = (resData as any).items || [];
+        total.value = (resData as any).total || 0;
+      }
+    }
   } finally {
     endLoading();
   }
@@ -560,6 +582,14 @@ onMounted(() => {
   loadPrizeTypes();
   loadData();
 });
+
+watch(
+  () => authStore.userInfo.currentCompanyId,
+  () => {
+    loadData();
+  }
+);
 </script>
 
 <style scoped></style>
+```

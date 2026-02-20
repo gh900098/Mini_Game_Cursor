@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
@@ -28,8 +28,8 @@ export class CompaniesController {
   @RequirePermission('companies:read')
   @ApiOperation({ summary: 'Get all companies' })
   @ApiResponse({ status: 200, description: 'Returns all companies' })
-  findAll() {
-    return this.companiesService.findAll();
+  findAll(@Query() query: { page?: number; limit?: number; keyword?: string }) {
+    return this.companiesService.findAll(query);
   }
 
   @Get(':id')

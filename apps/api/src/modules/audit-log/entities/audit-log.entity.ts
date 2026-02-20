@@ -1,6 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, Index } from 'typeorm';
 
 @Entity('audit_logs')
+@Index(['companyId'])
+@Index(['userId'])
+@Index(['module'])
+@Index(['action'])
+@Index(['createdAt'])
 export class AuditLog {
     @PrimaryGeneratedColumn('uuid')
     id: string;

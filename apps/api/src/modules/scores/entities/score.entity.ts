@@ -1,8 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { Member } from '../../members/entities/member.entity';
 import { GameInstance } from '../../game-instances/entities/game-instance.entity';
 
 @Entity('scores')
+@Index(['memberId'])
+@Index(['instanceId'])
+@Index(['createdAt'])
 export class Score {
     @PrimaryGeneratedColumn('uuid')
     id: string;

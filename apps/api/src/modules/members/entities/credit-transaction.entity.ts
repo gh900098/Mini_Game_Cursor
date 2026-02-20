@@ -1,7 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { Member } from './member.entity';
 
 @Entity('credit_transactions')
+@Index(['memberId'])
+@Index(['type'])
+@Index(['createdAt'])
 export class CreditTransaction {
     @PrimaryGeneratedColumn('uuid')
     id: string;

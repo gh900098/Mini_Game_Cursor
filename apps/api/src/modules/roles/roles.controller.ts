@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -27,8 +27,8 @@ export class RolesController {
   @RequirePermission('roles:read')
   @ApiOperation({ summary: 'Get all roles' })
   @ApiResponse({ status: 200, description: 'Returns all roles with permissions' })
-  findAll() {
-    return this.rolesService.findAll();
+  findAll(@Query() query: { page?: number; limit?: number; keyword?: string }) {
+    return this.rolesService.findAll(query);
   }
 
   @Get(':id')

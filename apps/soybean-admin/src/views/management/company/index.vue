@@ -15,12 +15,31 @@ const { bool: visible, setTrue: openModal, setFalse: closeModal } = useBoolean()
 const authStore = useAuthStore();
 
 const companyData = ref<Api.Management.Company[]>([]);
+const total = ref(0);
+
+const searchParams = reactive({
+  keyword: ''
+});
+
+const pagination = reactive({
+  page: 1,
+  pageSize: 10,
+  showSizePicker: true,
+  pageSizes: [10, 20, 50, 100],
+  itemCount: 0,
+  onChange: (page: number) => {
+    pagination.page = page;
+    getCompanies();
+  },
+  onUpdatePageSize: (pageSize: number) => {
+    pagination.pageSize = pageSize;
+    pagination.page = 1;
+    getCompanies();
+  }
+});
 
 const filteredCompanyData = computed(() => {
-  if (authStore.userInfo.isSuperAdmin || authStore.userInfo.roles.includes('R_SUPER')) {
-    return companyData.value;
-  }
-  return companyData.value.filter(c => c.id === authStore.userInfo.currentCompanyId);
+  return companyData.value;
 });
 
 const formModel = reactive({
@@ -102,11 +121,43 @@ const isEdit = ref(false);
 
 async function getCompanies() {
   startLoading();
-  const { data, error } = await fetchGetCompanies();
-  if (!error) {
-    companyData.value = data;
+  const { data, error } = await fetchGetCompanies({
+    page: pagination.page,
+    limit: pagination.pageSize,
+    keyword: searchParams.keyword || undefined
+  });
+  
+  if (!error && data) {
+    if ('items' in data) {
+      // Filter if not super admin (backend handles multi-tenancy usually, but we keep this logic if needed)
+      let items = data.items;
+      if (!(authStore.userInfo.isSuperAdmin || authStore.userInfo.roles.includes('R_SUPER'))) {
+        items = items.filter(c => c.id === authStore.userInfo.currentCompanyId);
+      }
+      companyData.value = items;
+      total.value = data.total;
+      pagination.itemCount = data.total;
+    } else {
+      let items = data;
+      if (!(authStore.userInfo.isSuperAdmin || authStore.userInfo.roles.includes('R_SUPER'))) {
+        items = items.filter(c => c.id === authStore.userInfo.currentCompanyId);
+      }
+      companyData.value = items;
+      total.value = items.length;
+      pagination.itemCount = items.length;
+    }
   }
   endLoading();
+}
+
+function handleSearch() {
+  pagination.page = 1;
+  getCompanies();
+}
+
+function handleReset() {
+  searchParams.keyword = '';
+  handleSearch();
 }
 
 const columns: DataTableColumns<Api.Management.Company> = [
@@ -335,13 +386,30 @@ getCompanies();
         </NButton>
       </template>
 
-      <NDataTable
-        :columns="columns"
-        :data="filteredCompanyData"
-        :loading="loading"
-        flex-height
-        class="h-full"
-      />
+      <div class="flex-col h-full">
+        <NForm inline :model="searchParams" label-placement="left" size="small" class="mb-4">
+          <NFormItem label="Keyword">
+            <NInput v-model:value="searchParams.keyword" placeholder="Search name or slug..." clearable class="w-240px" @keypress.enter="handleSearch" />
+          </NFormItem>
+          <NFormItem>
+            <NSpace>
+              <NButton type="primary" size="small" @click="handleSearch">Search</NButton>
+              <NButton size="small" @click="handleReset">Reset</NButton>
+            </NSpace>
+          </NFormItem>
+        </NForm>
+
+        <NDataTable
+          :columns="columns"
+          :data="filteredCompanyData"
+          :loading="loading"
+          :pagination="pagination"
+          :remote="true"
+          :item-count="total"
+          flex-height
+          class="flex-1-hidden"
+        />
+      </div>
     </NCard>
 
     <NModal v-model:show="visible" preset="card" :title="isEdit ? $t('common.edit') : $t('common.add')" class="w-600px">

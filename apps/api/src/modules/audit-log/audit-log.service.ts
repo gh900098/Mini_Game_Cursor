@@ -17,6 +17,8 @@ export class AuditLogService {
 
     async findAll(query: any) {
         const { page = 1, limit = 10, module, action, userId, userName, companyId, ownUserId } = query;
+        const pageNum = Number(page) || 1;
+        const limitNum = Number(limit) || 10;
         const qb = this.auditLogRepository.createQueryBuilder('auditLog');
 
         if (module) {
@@ -47,16 +49,19 @@ export class AuditLogService {
         }
 
         qb.orderBy('auditLog.createdAt', 'DESC');
-        qb.skip((page - 1) * limit);
-        qb.take(limit);
+        qb.skip((pageNum - 1) * limitNum);
+        qb.take(limitNum);
 
         const [items, total] = await qb.getManyAndCount();
+
+        // DEV LOG: Verify total count
+        console.log(`[AuditLogService] Found ${total} logs for query:`, { pageNum, limitNum, companyId, module, action });
 
         return {
             items,
             total,
-            page: Number(page),
-            limit: Number(limit),
+            page: pageNum,
+            limit: limitNum,
         };
     }
 

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, BeforeInsert, BeforeUpdate } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, BeforeInsert, BeforeUpdate, Index } from 'typeorm';
 import { encryptionServiceInstance } from '../../encryption/encryption.service';
 import { Exclude } from 'class-transformer';
 import { UserCompany } from '../../user-companies/entities/user-company.entity';
@@ -13,15 +13,18 @@ export class User {
     @Column({ unique: true, transformer: new EncryptionTransformer() })
     email: string;
 
+    @Index()
     @Column({ nullable: true })
     emailHash: string;
 
+    @Index()
     @Column({ nullable: true })
     name: string;
 
     @Column({ nullable: true, transformer: new EncryptionTransformer() })
     mobile: string;
 
+    @Index()
     @Column({ nullable: true })
     mobileHash: string;
 
@@ -49,6 +52,7 @@ export class User {
     @Exclude()
     verificationCodeExpires: Date;
 
+    @Index()
     @CreateDateColumn()
     createdAt: Date;
 

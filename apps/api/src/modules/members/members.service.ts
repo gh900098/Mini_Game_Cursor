@@ -169,12 +169,44 @@ export class MembersService {
         });
     }
 
-    async findAllByCompany(companyId: string): Promise<Member[]> {
-        return this.memberRepository.find({
-            where: { companyId },
-            relations: ['company'],
-            order: { pointsBalance: 'DESC' }
-        });
+    async findAllPaginated(params: {
+        companyId: string;
+        page: number;
+        limit: number;
+        username?: string;
+        externalId?: string;
+    }): Promise<{ items: Member[]; meta: { total: number; page: number; limit: number; totalPages: number } }> {
+        const { companyId, page, limit, username, externalId } = params;
+        const query = this.memberRepository.createQueryBuilder('member')
+            .leftJoinAndSelect('member.company', 'company')
+            .orderBy('member.createdAt', 'DESC');
+
+        if (companyId) {
+            query.where('member.companyId = :companyId', { companyId });
+        }
+
+        if (username) {
+            query.andWhere('member.username LIKE :username', { username: `%${username}%` });
+        }
+
+        if (externalId) {
+            query.andWhere('member.externalId LIKE :externalId', { externalId: `%${externalId}%` });
+        }
+
+        const [items, total] = await query
+            .skip((page - 1) * limit)
+            .take(limit)
+            .getManyAndCount();
+
+        return {
+            items,
+            meta: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            }
+        };
     }
 
     async upsertJKMember(

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable, Index } from 'typeorm';
 import { Permission } from '../../permissions/entities/permission.entity';
 
 @Entity('roles')
@@ -21,6 +21,7 @@ export class Role {
     @Column({ default: 1 })
     level: number;
 
+    @Index()
     @CreateDateColumn()
     createdAt: Date;
 

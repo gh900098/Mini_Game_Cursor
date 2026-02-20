@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { ref, type VNode } from 'vue';
+import { ref, reactive, watch, type VNode } from 'vue';
 import { NCard, NDataTable, NSpace, NStatistic, NGrid, NGi, NTag, NTooltip } from 'naive-ui';
 import type { DataTableColumns } from 'naive-ui';
 import { fetchGetScores, fetchGetScoresStats } from '@/service/api/management';
@@ -10,6 +10,23 @@ const { loading, startLoading, endLoading } = useLoading();
 const authStore = useAuthStore();
 const scores = ref<Api.Management.Score[]>([]);
 const stats = ref<any>(null);
+const total = ref(0);
+
+const pagination = reactive({
+  page: 1,
+  pageSize: 20,
+  showSizePicker: true,
+  pageSizes: [10, 20, 50, 100],
+  onChange: (page: number) => {
+    pagination.page = page;
+    getScores();
+  },
+  onUpdatePageSize: (pageSize: number) => {
+    pagination.pageSize = pageSize;
+    pagination.page = 1;
+    getScores();
+  }
+});
 
 const columns: DataTableColumns<Api.Management.Score> = [
   {
@@ -156,19 +173,39 @@ const columns: DataTableColumns<Api.Management.Score> = [
 async function getScores() {
   startLoading();
   const currentCompanyId = authStore.userInfo.currentCompanyId;
+  const companyId = currentCompanyId === 'ALL' || !currentCompanyId ? undefined : currentCompanyId;
+
   const [scoresRes, statsRes] = await Promise.all([
-    fetchGetScores({ companyId: currentCompanyId || undefined }),
-    fetchGetScoresStats({ companyId: currentCompanyId || undefined })
+    fetchGetScores({ 
+      companyId: companyId,
+      page: pagination.page,
+      limit: pagination.pageSize
+    } as any),
+    fetchGetScoresStats({ companyId: companyId })
   ]);
   
   if (!scoresRes.error) {
-    scores.value = scoresRes.data;
+    const data = scoresRes.data as any;
+    if (Array.isArray(data)) {
+      scores.value = data;
+      total.value = data.length;
+    } else {
+      scores.value = data.items || [];
+      total.value = data.total || 0;
+    }
   }
   if (!statsRes.error) {
     stats.value = statsRes.data;
   }
   endLoading();
 }
+
+watch(
+  () => authStore.userInfo.currentCompanyId,
+  () => {
+    getScores();
+  }
+);
 
 getScores();
 </script>
@@ -202,17 +239,21 @@ getScores();
     <NCard title="Score History" :bordered="false" class="flex-1-hidden rounded-16px shadow-sm">
       <template #header-extra>
         <NSpace>
-          <span class="text-sm text-gray-500">Total: {{ scores.length }}</span>
+          <span class="text-sm text-gray-500">Total: {{ total }}</span>
         </NSpace>
       </template>
-      <NDataTable
-        :columns="columns"
-        :data="scores"
-        :loading="loading"
-        flex-height
-        class="h-full"
-        :pagination="{ pageSize: 50 }"
-      />
+      <div class="flex-col h-full">
+        <NDataTable
+          :columns="columns"
+          :data="scores"
+          :loading="loading"
+          flex-height
+          class="flex-1-hidden"
+          :remote="true"
+          :pagination="pagination"
+          :item-count="total"
+        />
+      </div>
     </NCard>
   </div>
 </template>

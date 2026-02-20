@@ -61,7 +61,19 @@ Before writing ANY code, you MUST read these files to understand the current sta
     - `style="{ color: isWarning ? '#facc15' : 'white' }"`
 - **API calls:** Use `src/service/api/*.ts`. Do not use `axios` directly in components.
 
-## 4. Documentation is Code (The "Audit Trail")
+## 6. High Performance Data Pattern (Tables)
+**Goal:** Sub-100ms load times for any dataset size.
+- **Rule:** ANY table with potential > 100 rows MUST use **Server-Side Pagination**.
+- **Backend Requirements:**
+    -   Use `findAndCount` or `createQueryBuilder` with `skip()` and `take()`.
+    -   **Indexing:** ALWAYS index columns used in `where` (e.g., `companyId`) and `orderBy` (e.g., `createdAt`).
+    -   **Search:** Implement search on the backend using `LIKE` or database indexes.
+- **Frontend Requirements:**
+    -   Use `NDataTable` with the `remote` prop.
+    -   Explicitly show pagination controls (`showSizePicker: true`).
+    -   Use a `watch` on filter/search parameters to reset pagination and refresh data.
+
+## 7. Documentation is Code (The "Audit Trail")
 - **If Feature:** Update `docs/FEATURES.md` (How it works - In English).
 - **If Bug:** Update `docs/TROUBLESHOOTING.md` (Issue -> Cause -> Solution - In English).
 - **Always:** Update `docs/CHANGELOG.md` (Summary of changes - In English).

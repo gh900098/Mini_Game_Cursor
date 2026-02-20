@@ -1,18 +1,20 @@
 import { request } from '../request';
 
 /** Get roles */
-export function fetchGetRoles() {
-    return request<Api.Management.Role[]>({
+export function fetchGetRoles(params?: { page?: number; limit?: number; keyword?: string }) {
+    return request<Api.Management.Role[] | { items: Api.Management.Role[]; total: number }>({
         url: '/roles',
-        method: 'get'
+        method: 'get',
+        params
     });
 }
 
 /** Get permissions */
-export function fetchGetPermissions() {
-    return request<Api.Management.Permission[]>({
+export function fetchGetPermissions(params?: { page?: number; limit?: number; keyword?: string }) {
+    return request<Api.Management.Permission[] | { items: Api.Management.Permission[]; total: number }>({
         url: '/permissions',
-        method: 'get'
+        method: 'get',
+        params
     });
 }
 
@@ -51,10 +53,11 @@ export function fetchDeleteRole(id: string) {
 }
 
 /** Get users */
-export function fetchGetUsers() {
-    return request<Api.Management.User[]>({
+export function fetchGetUsers(params?: { page?: number; limit?: number; companyId?: string; keyword?: string }) {
+    return request<Api.Management.User[] | { items: Api.Management.User[]; total: number }>({
         url: '/users',
-        method: 'get'
+        method: 'get',
+        params
     });
 }
 
@@ -118,10 +121,11 @@ export function fetchSetPrimaryCompany(userId: string, companyId: string) {
 }
 
 /** Get companies */
-export function fetchGetCompanies() {
-    return request<Api.Management.Company[]>({
+export function fetchGetCompanies(params?: { page?: number; limit?: number; keyword?: string }) {
+    return request<Api.Management.Company[] | { items: Api.Management.Company[]; total: number }>({
         url: '/companies',
-        method: 'get'
+        method: 'get',
+        params
     });
 }
 
@@ -325,8 +329,14 @@ export function fetchDeleteGame(id: string) {
 }
 
 /** Admin Members APIs */
-export function fetchGetAdminMembers(params?: { companyId?: string }) {
-    return request<Api.Management.Member[]>({
+export function fetchGetAdminMembers(params?: {
+    companyId?: string;
+    page?: number;
+    limit?: number;
+    username?: string;
+    externalId?: string;
+}) {
+    return request<Api.Management.Member[] | { items: Api.Management.Member[]; meta: any }>({
         url: '/admin/members',
         method: 'get',
         params

@@ -16,17 +16,19 @@ export class MembersController {
         let members;
         if (req.user.isSuperAdmin) {
             if (companyId) {
-                members = await this.membersService.findAllByCompany(companyId);
+                const result = await this.membersService.findAllPaginated({ companyId, page: 1, limit: 1000 });
+                members = result.items;
             } else {
                 members = await this.membersService.findAll();
             }
         } else {
             const targetCompanyId = req.user.currentCompanyId || req.user.companyId;
-            members = await this.membersService.findAllByCompany(targetCompanyId || '');
+            const result = await this.membersService.findAllPaginated({ companyId: targetCompanyId || '', page: 1, limit: 1000 });
+            members = result.items;
         }
 
         // ALWAYS mask in list view
-        return members.map(m => ({
+        return members.map((m: any) => ({
             ...m,
             email: maskEmail(m.email),
             phoneNumber: maskPhone(m.phoneNumber)

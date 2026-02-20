@@ -42,11 +42,32 @@ export class RolesService {
     return await this.roleRepository.save(role);
   }
 
-  async findAll(): Promise<Role[]> {
-    return await this.roleRepository.find({
-      relations: ['permissions'],
-      order: { createdAt: 'DESC' },
-    });
+  async findAll(query: { page?: number; limit?: number; keyword?: string } = {}): Promise<{ items: Role[]; total: number; page: number; limit: number }> {
+    const { page = 1, limit = 10, keyword } = query;
+    const pageNum = Number(page) || 1;
+    const limitNum = Number(limit) || 10;
+
+    const qb = this.roleRepository.createQueryBuilder('role')
+      .leftJoinAndSelect('role.permissions', 'permissions');
+
+    if (keyword) {
+      qb.where('(role.name ILIKE :keyword OR role.slug ILIKE :keyword)', {
+        keyword: `%${keyword}%`,
+      });
+    }
+
+    qb.orderBy('role.createdAt', 'DESC')
+      .skip((pageNum - 1) * limitNum)
+      .take(limitNum);
+
+    const [items, total] = await qb.getManyAndCount();
+
+    return {
+      items,
+      total,
+      page: pageNum,
+      limit: limitNum,
+    };
   }
 
   async findOne(id: string): Promise<Role> {

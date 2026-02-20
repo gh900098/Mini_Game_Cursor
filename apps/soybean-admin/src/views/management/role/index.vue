@@ -14,7 +14,29 @@ const { loading, startLoading, endLoading } = useLoading();
 const { bool: visible, setTrue: openModal, setFalse: closeModal } = useBoolean();
 
 const roleData = ref<Api.Management.Role[]>([]);
+const total = ref(0);
 const availablePermissions = ref<Api.Management.Permission[]>([]);
+
+const searchParams = reactive({
+  keyword: ''
+});
+
+const pagination = reactive({
+  page: 1,
+  pageSize: 10,
+  showSizePicker: true,
+  pageSizes: [10, 20, 50, 100],
+  itemCount: 0,
+  onChange: (page: number) => {
+    pagination.page = page;
+    getRoles();
+  },
+  onUpdatePageSize: (pageSize: number) => {
+    pagination.pageSize = pageSize;
+    pagination.page = 1;
+    getRoles();
+  }
+});
 
 const formModel = reactive({
   id: '',
@@ -92,20 +114,43 @@ function getPermissionStatus(resource: string) {
 
 async function getRoles() {
   startLoading();
-  const { data, error } = await fetchGetRoles();
-  if (!error) {
-    // Filter out player role and roles higher than current user's level (unless super admin)
-    roleData.value = data.filter(role => {
-      if (role.slug === 'player') return false;
-      
-      // Super admins see everything
-      if (authStore.isStaticSuper || authStore.userInfo.roles.includes('R_SUPER')) return true;
-
-      // Others see only roles <= their level
-      return role.level <= (authStore.userInfo.currentRoleLevel || 0);
-    });
+  const { data, error } = await fetchGetRoles({
+    page: pagination.page,
+    limit: pagination.pageSize,
+    keyword: searchParams.keyword || undefined
+  });
+  
+  if (!error && data) {
+    if ('items' in data) {
+      // Filter out player role and roles higher than current user's level (unless super admin)
+      roleData.value = data.items.filter(role => {
+        if (role.slug === 'player') return false;
+        if (authStore.isStaticSuper || authStore.userInfo.roles.includes('R_SUPER')) return true;
+        return role.level <= (authStore.userInfo.currentRoleLevel || 0);
+      });
+      total.value = data.total;
+      pagination.itemCount = data.total;
+    } else {
+      roleData.value = data.filter(role => {
+        if (role.slug === 'player') return false;
+        if (authStore.isStaticSuper || authStore.userInfo.roles.includes('R_SUPER')) return true;
+        return role.level <= (authStore.userInfo.currentRoleLevel || 0);
+      });
+      total.value = data.length;
+      pagination.itemCount = data.length;
+    }
   }
   endLoading();
+}
+
+function handleSearch() {
+  pagination.page = 1;
+  getRoles();
+}
+
+function handleReset() {
+  searchParams.keyword = '';
+  handleSearch();
 }
 
 const canViewLevel = computed(() => {
@@ -256,13 +301,30 @@ getPermissions();
         </NButton>
       </template>
 
-      <NDataTable
-        :columns="columns"
-        :data="roleData"
-        :loading="loading"
-        flex-height
-        class="h-full"
-      />
+      <div class="flex-col h-full">
+        <NForm inline :model="searchParams" label-placement="left" size="small" class="mb-4">
+          <NFormItem label="Keyword">
+            <NInput v-model:value="searchParams.keyword" placeholder="Search name or slug..." clearable class="w-240px" @keypress.enter="handleSearch" />
+          </NFormItem>
+          <NFormItem>
+            <NSpace>
+              <NButton type="primary" size="small" @click="handleSearch">Search</NButton>
+              <NButton size="small" @click="handleReset">Reset</NButton>
+            </NSpace>
+          </NFormItem>
+        </NForm>
+
+        <NDataTable
+          :columns="columns"
+          :data="roleData"
+          :loading="loading"
+          :pagination="pagination"
+          :remote="true"
+          :item-count="total"
+          flex-height
+          class="flex-1-hidden"
+        />
+      </div>
     </NCard>
 
     <NModal v-model:show="visible" preset="card" :title="isView ? $t('common.view') : (isEdit ? $t('common.edit') : $t('common.add'))" class="w-800px">

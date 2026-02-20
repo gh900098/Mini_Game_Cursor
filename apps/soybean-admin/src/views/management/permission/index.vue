@@ -12,6 +12,60 @@ const { loading, startLoading, endLoading } = useLoading();
 const { bool: visible, setTrue: openModal, setFalse: closeModal } = useBoolean();
 
 const permissionData = ref<Api.Management.Permission[]>([]);
+const total = ref(0);
+
+const searchParams = reactive({
+  keyword: ''
+});
+
+const pagination = reactive({
+  page: 1,
+  pageSize: 10,
+  showSizePicker: true,
+  pageSizes: [10, 20, 50, 100],
+  itemCount: 0,
+  onChange: (page: number) => {
+    pagination.page = page;
+    getPermissions();
+  },
+  onUpdatePageSize: (pageSize: number) => {
+    pagination.pageSize = pageSize;
+    pagination.page = 1;
+    getPermissions();
+  }
+});
+
+async function getPermissions() {
+  startLoading();
+  const { data, error } = await fetchGetPermissions({
+    page: pagination.page,
+    limit: pagination.pageSize,
+    keyword: searchParams.keyword || undefined
+  });
+  
+  if (!error && data) {
+    if ('items' in data) {
+      permissionData.value = data.items;
+      total.value = data.total;
+      pagination.itemCount = data.total;
+    } else {
+      permissionData.value = data;
+      total.value = data.length;
+      pagination.itemCount = data.length;
+    }
+  }
+  endLoading();
+}
+
+function handleSearch() {
+  pagination.page = 1;
+  getPermissions();
+}
+
+function handleReset() {
+  searchParams.keyword = '';
+  handleSearch();
+}
 
 const formModel = reactive({
   id: '',
@@ -23,15 +77,6 @@ const formModel = reactive({
 });
 
 const isEdit = ref(false);
-
-async function getPermissions() {
-  startLoading();
-  const { data, error } = await fetchGetPermissions();
-  if (!error) {
-    permissionData.value = data;
-  }
-  endLoading();
-}
 
 const columns: DataTableColumns<Api.Management.Permission> = [
   {
@@ -167,13 +212,30 @@ getPermissions();
         </NButton>
       </template>
 
-      <NDataTable
-        :columns="columns"
-        :data="permissionData"
-        :loading="loading"
-        flex-height
-        class="h-full"
-      />
+      <div class="flex-col h-full">
+        <NForm inline :model="searchParams" label-placement="left" size="small" class="mb-4">
+          <NFormItem label="Keyword">
+            <NInput v-model:value="searchParams.keyword" placeholder="Search name, slug, resource..." clearable class="w-240px" @keypress.enter="handleSearch" />
+          </NFormItem>
+          <NFormItem>
+            <NSpace>
+              <NButton type="primary" size="small" @click="handleSearch">Search</NButton>
+              <NButton size="small" @click="handleReset">Reset</NButton>
+            </NSpace>
+          </NFormItem>
+        </NForm>
+
+        <NDataTable
+          :columns="columns"
+          :data="permissionData"
+          :loading="loading"
+          :pagination="pagination"
+          :remote="true"
+          :item-count="total"
+          flex-height
+          class="flex-1-hidden"
+        />
+      </div>
     </NCard>
 
     <NModal v-model:show="visible" preset="card" :title="isEdit ? $t('common.edit') : $t('common.add')" class="w-600px">

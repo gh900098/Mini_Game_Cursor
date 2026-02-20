@@ -1,6 +1,6 @@
 <script setup lang="tsx">
-import { ref, computed } from 'vue';
-import { NCard, NDataTable, NTag, NSpace, NButton, NPopconfirm, NModal } from 'naive-ui';
+import { ref, computed, reactive, watch } from 'vue';
+import { NCard, NDataTable, NTag, NSpace, NButton, NPopconfirm, NModal, NInput } from 'naive-ui';
 import type { DataTableColumns } from 'naive-ui';
 import { fetchGetAdminMembers, fetchToggleMemberStatus, fetchDeleteMember, fetchImpersonateMember, fetchResetMemberPassword, fetchAdjustMemberCredits } from '@/service/api/management';
 import { useLoading, useBoolean } from '@sa/hooks';
@@ -13,8 +13,6 @@ const { loading, startLoading, endLoading } = useLoading();
 const { bool: drawerVisible, setTrue: openDrawer } = useBoolean();
 const authStore = useAuthStore();
 // const router = useRouter(); // No longer needed for details
-const members = ref<Api.Management.Member[]>([]);
-
 const showDetailModal = ref(false);
 const selectedMemberId = ref('');
 
@@ -216,14 +214,76 @@ const columns: DataTableColumns<Api.Management.Member> = [
   }
 ];
 
+const members = ref<Api.Management.Member[]>([]);
+const searchForm = ref({
+  username: '',
+  externalId: ''
+});
+
+const pagination = reactive({
+  page: 1,
+  pageSize: 10,
+  itemCount: 0,
+  showSizePicker: true,
+  pageSizes: [10, 20, 50, 100],
+  prefix: (info: { itemCount: number | undefined }) => `Total ${info.itemCount || 0}`,
+});
+
+watch(
+  () => authStore.userInfo.currentCompanyId,
+  () => {
+    pagination.page = 1;
+    getMembers();
+  }
+);
+
 async function getMembers() {
   startLoading();
   const currentCompanyId = authStore.userInfo.currentCompanyId;
-  const { data, error } = await fetchGetAdminMembers({ companyId: currentCompanyId || undefined });
-  if (!error) {
-    members.value = data;
+  const companyId = (currentCompanyId && currentCompanyId !== 'ALL') ? currentCompanyId : undefined;
+  
+  const { data, error } = await fetchGetAdminMembers({ 
+    companyId,
+    page: pagination.page,
+    limit: pagination.pageSize,
+    username: searchForm.value.username || undefined,
+    externalId: searchForm.value.externalId || undefined
+  });
+  
+  if (!error && data) {
+    if (Array.isArray(data)) {
+        // Fallback for legacy response or flat array
+        members.value = data;
+        pagination.itemCount = data.length;
+    } else {
+        // New paginated response
+        members.value = data.items;
+        pagination.itemCount = data.meta.total;
+    }
   }
   endLoading();
+}
+
+function handlePageChange(page: number) {
+  pagination.page = page;
+  getMembers();
+}
+
+function handlePageSizeChange(pageSize: number) {
+  pagination.pageSize = pageSize;
+  pagination.page = 1;
+  getMembers();
+}
+
+function handleSearch() {
+  pagination.page = 1;
+  getMembers();
+}
+
+function handleResetSearch() {
+  searchForm.value.username = '';
+  searchForm.value.externalId = '';
+  handleSearch();
 }
 
 function handleAdd() {
@@ -394,14 +454,27 @@ getMembers();
           Add Member
         </NButton>
       </template>
-      <NDataTable
-        :columns="columns"
-        :data="members"
-        :loading="loading"
-        :scroll-x="1200"
-        flex-height
-        class="h-full"
-      />
+      <div class="flex-col h-full">
+        <div class="mb-4 flex gap-4">
+          <NInput v-model:value="searchForm.username" placeholder="Search by Username" clearable @keypress.enter="handleSearch" />
+          <NInput v-model:value="searchForm.externalId" placeholder="Search by External ID" clearable @keypress.enter="handleSearch" />
+          <NButton type="primary" @click="handleSearch">Search</NButton>
+          <NButton @click="handleResetSearch">Reset</NButton>
+        </div>
+
+        <NDataTable
+          remote
+          :columns="columns"
+          :data="members"
+          :loading="loading"
+          :pagination="pagination"
+          :scroll-x="1200"
+          flex-height
+          class="flex-1-hidden"
+          @update:page="handlePageChange"
+          @update:page-size="handlePageSizeChange"
+        />
+      </div>
       <OperateDrawer
         v-model:visible="drawerVisible"
         :operate-type="operateType"

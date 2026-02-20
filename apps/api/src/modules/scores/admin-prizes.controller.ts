@@ -20,17 +20,24 @@ export class AdminPrizesController {
     @RequirePermission('manage_games')
     async getAllPrizes(
         @Request() req: any,
-        @Query('status') status?: PrizeStatus,
-        @Query('memberId') memberId?: string,
-        @Query('instanceId') instanceId?: string,
+        @Query() queryDto: {
+            status?: PrizeStatus;
+            memberId?: string;
+            instanceId?: string;
+            page?: number;
+            limit?: number;
+        },
     ) {
+        const { status, memberId, instanceId, page = 1, limit = 10 } = queryDto;
         const companyId = req.user.currentCompanyId;
 
         const query = this.memberPrizeRepo.createQueryBuilder('prize')
             .leftJoinAndSelect('prize.member', 'member')
             .leftJoinAndSelect('prize.instance', 'instance')
             .leftJoinAndSelect('instance.company', 'company')
-            .orderBy('prize.createdAt', 'DESC');
+            .orderBy('prize.createdAt', 'DESC')
+            .skip((Number(page) - 1) * Number(limit))
+            .take(Number(limit));
 
         // Tenant Isolation Check: Only Super Admins see all, others restricted to their company
         if (!req.user.isSuperAdmin) {
@@ -47,7 +54,14 @@ export class AdminPrizesController {
             query.andWhere('prize.instanceId = :instanceId', { instanceId });
         }
 
-        return query.getMany();
+        const [items, total] = await query.getManyAndCount();
+
+        return {
+            items,
+            total,
+            page: Number(page),
+            limit: Number(limit)
+        };
     }
 
     @Patch(':id/status')

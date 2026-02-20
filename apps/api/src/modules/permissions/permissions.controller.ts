@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PermissionsService } from './permissions.service';
 import { CreatePermissionDto } from './dto/create-permission.dto';
@@ -28,15 +28,16 @@ export class PermissionsController {
   @ApiOperation({ summary: 'Get all permissions for options list (accessible with roles:read)' })
   @ApiResponse({ status: 200, description: 'Returns all permissions' })
   findAllOptions() {
-    return this.permissionsService.findAll();
+    // Return all for options list (no pagination)
+    return this.permissionsService.findAll({ page: 1, limit: 1000 });
   }
 
   @Get()
   @RequirePermission('permissions:read')
   @ApiOperation({ summary: 'Get all permissions' })
   @ApiResponse({ status: 200, description: 'Returns all permissions' })
-  findAll() {
-    return this.permissionsService.findAll();
+  findAll(@Query() query: { page?: number; limit?: number; keyword?: string }) {
+    return this.permissionsService.findAll(query);
   }
 
   @Get(':id')

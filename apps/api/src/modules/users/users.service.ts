@@ -34,10 +34,42 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  async findAll(): Promise<User[]> {
-    return this.usersRepository.find({
-      relations: ['userCompanies', 'userCompanies.company', 'userCompanies.role', 'userCompanies.role.permissions'],
-    });
+  async findAll(query: { page?: number; limit?: number; companyId?: string; keyword?: string } = {}): Promise<{ items: User[]; total: number; page: number; limit: number }> {
+    const { page = 1, limit = 10, companyId, keyword } = query;
+    const pageNum = Number(page) || 1;
+    const limitNum = Number(limit) || 10;
+
+    const qb = this.usersRepository.createQueryBuilder('user')
+      .leftJoinAndSelect('user.userCompanies', 'userCompanies')
+      .leftJoinAndSelect('userCompanies.company', 'company')
+      .leftJoinAndSelect('userCompanies.role', 'role')
+      .leftJoinAndSelect('role.permissions', 'permissions');
+
+    if (companyId && companyId !== 'ALL') {
+      qb.where('userCompanies.companyId = :companyId', { companyId });
+    }
+
+    if (keyword) {
+      const keywordCondition = '(user.name ILIKE :keyword OR user.email ILIKE :keyword)';
+      if (companyId && companyId !== 'ALL') {
+        qb.andWhere(keywordCondition, { keyword: `%${keyword}%` });
+      } else {
+        qb.where(keywordCondition, { keyword: `%${keyword}%` });
+      }
+    }
+
+    qb.orderBy('user.createdAt', 'DESC')
+      .skip((pageNum - 1) * limitNum)
+      .take(limitNum);
+
+    const [items, total] = await qb.getManyAndCount();
+
+    return {
+      items,
+      total,
+      page: pageNum,
+      limit: limitNum,
+    };
   }
 
   async findOne(id: string): Promise<User> {

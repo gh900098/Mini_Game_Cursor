@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 
 @Entity('companies')
 export class Company {
@@ -54,6 +54,7 @@ export class Company {
     @Column({ type: 'timestamp', nullable: true })
     inactiveAt: Date | null;
 
+    @Index()
     @CreateDateColumn()
     createdAt: Date;
 

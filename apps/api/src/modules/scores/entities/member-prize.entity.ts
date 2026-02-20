@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { Member } from '../../members/entities/member.entity';
 import { GameInstance } from '../../game-instances/entities/game-instance.entity';
 import { PlayAttempt } from './play-attempt.entity';
@@ -21,6 +21,10 @@ export enum PrizeType {
 */
 
 @Entity('member_prizes')
+@Index(['memberId'])
+@Index(['instanceId'])
+@Index(['status'])
+@Index(['createdAt'])
 export class MemberPrize {
     @PrimaryGeneratedColumn('uuid')
     id: string;

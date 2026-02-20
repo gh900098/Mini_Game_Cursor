@@ -42,10 +42,31 @@ export class CompaniesService {
     }
   }
 
-  async findAll(): Promise<Company[]> {
-    return await this.companyRepository.find({
-      order: { createdAt: 'DESC' },
-    });
+  async findAll(query: { page?: number; limit?: number; keyword?: string } = {}): Promise<{ items: Company[]; total: number; page: number; limit: number }> {
+    const { page = 1, limit = 10, keyword } = query;
+    const pageNum = Number(page) || 1;
+    const limitNum = Number(limit) || 10;
+
+    const qb = this.companyRepository.createQueryBuilder('company');
+
+    if (keyword) {
+      qb.where('(company.name ILIKE :keyword OR company.slug ILIKE :keyword)', {
+        keyword: `%${keyword}%`,
+      });
+    }
+
+    qb.orderBy('company.createdAt', 'DESC')
+      .skip((pageNum - 1) * limitNum)
+      .take(limitNum);
+
+    const [items, total] = await qb.getManyAndCount();
+
+    return {
+      items,
+      total,
+      page: pageNum,
+      limit: limitNum,
+    };
   }
 
   async findOne(id: string): Promise<Company> {

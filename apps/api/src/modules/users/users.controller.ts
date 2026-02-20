@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -23,8 +23,8 @@ export class UsersController {
 
   @Get()
   @RequirePermission('users:read')
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query() query: { page?: number; limit?: number; companyId?: string; keyword?: string }) {
+    return this.usersService.findAll(query);
   }
 
   @Get(':id')

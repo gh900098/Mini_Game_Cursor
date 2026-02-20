@@ -28,7 +28,8 @@ export class AdminScoresController {
     ) { }
 
     @Get('all')
-    async getAllScores(@Request() req: any, @Query('companyId') requestedCompanyId?: string) {
+    async getAllScores(@Request() req: any, @Query() queryDto: { companyId?: string; page?: number; limit?: number }) {
+        const { page = 1, limit = 10, companyId: requestedCompanyId } = queryDto;
         const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
 
         if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
@@ -41,26 +42,35 @@ export class AdminScoresController {
             .leftJoinAndSelect('score.instance', 'instance')
             .leftJoinAndSelect('instance.company', 'company')
             .orderBy('score.createdAt', 'DESC')
-            .take(1000); // Limit for performance
+            .skip((Number(page) - 1) * Number(limit))
+            .take(Number(limit));
 
         if (companyId) {
             query.where('company.id = :companyId', { companyId });
         }
 
-        const scores = await query.getMany();
+        const [items, total] = await query.getManyAndCount();
 
         // ALWAYS mask sensitive data in list views
-        return scores.map(s => {
+        const maskedItems = items.map(s => {
             if (s.member) {
                 s.member.email = maskEmail(s.member.email);
                 s.member.phoneNumber = maskPhone(s.member.phoneNumber);
             }
             return s;
         });
+
+        return {
+            items: maskedItems,
+            total,
+            page: Number(page),
+            limit: Number(limit)
+        };
     }
 
     @Get('play-attempts')
-    async getPlayAttempts(@Request() req: any, @Query('companyId') requestedCompanyId?: string) {
+    async getPlayAttempts(@Request() req: any, @Query() queryDto: { companyId?: string; page?: number; limit?: number }) {
+        const { page = 1, limit = 10, companyId: requestedCompanyId } = queryDto;
         const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
 
         if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
@@ -73,22 +83,30 @@ export class AdminScoresController {
             .leftJoinAndSelect('attempt.instance', 'instance')
             .leftJoinAndSelect('instance.company', 'company')
             .orderBy('attempt.attemptedAt', 'DESC')
-            .take(1000);
+            .skip((Number(page) - 1) * Number(limit))
+            .take(Number(limit));
 
         if (companyId) {
             query.where('company.id = :companyId', { companyId });
         }
 
-        const attempts = await query.getMany();
+        const [items, total] = await query.getManyAndCount();
 
         // ALWAYS mask sensitive data in list views
-        return attempts.map(a => {
+        const maskedItems = items.map(a => {
             if (a.member) {
                 a.member.email = maskEmail(a.member.email);
                 a.member.phoneNumber = maskPhone(a.member.phoneNumber);
             }
             return a;
         });
+
+        return {
+            items: maskedItems,
+            total,
+            page: Number(page),
+            limit: Number(limit)
+        };
     }
 
     @Get('budget-tracking')
