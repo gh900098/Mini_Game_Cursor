@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="160" viewBox="0 0 600 160">
+  <defs>
+    <!-- Gold gradient -->
+    <linearGradient id="goldFill" x1="60" y1="20" x2="540" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFF6C8"/>
+      <stop offset="20%" stop-color="#FFD66E"/>
+      <stop offset="45%" stop-color="#FFB83A"/>
+      <stop offset="70%" stop-color="#FFE6A8"/>
+      <stop offset="100%" stop-color="#C98A1E"/>
+    </linearGradient>
+
+    <!-- Blue lightning rim -->
+    <linearGradient id="blueRim" x1="0" y1="0" x2="600" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6FE7FF" stop-opacity="0.1"/>
+      <stop offset="35%" stop-color="#63B7FF" stop-opacity="0.9"/>
+      <stop offset="65%" stop-color="#2A7BFF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#6FE7FF" stop-opacity="0.1"/>
+    </linearGradient>
+
+    <!-- Shine gradient for moving highlight -->
+    <linearGradient id="shineGrad" x1="-200" y1="0" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="45%" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.85"/>
+      <stop offset="55%" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Outer glow (gold + blue) -->
+    <filter id="outerGlow" x="-40%" y="-80%" width="180%" height="260%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="b1"/>
+      <feColorMatrix in="b1" type="matrix"
+        values="1 0 0 0 0.85
+                0 1 0 0 0.55
+                0 0 1 0 0.10
+                0 0 0 0.85 0" result="goldGlow"/>
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10" result="b2"/>
+      <feColorMatrix in="b2" type="matrix"
+        values="0 0 0 0 0.15
+                0 0 0 0 0.55
+                0 0 0 0 1.00
+                0 0 0 0.75 0" result="blueGlow"/>
+      <feMerge>
+        <feMergeNode in="blueGlow"/>
+        <feMergeNode in="goldGlow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Bevel / depth -->
+    <filter id="bevel" x="-30%" y="-60%" width="160%" height="220%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="sa"/>
+      <feSpecularLighting in="sa" surfaceScale="3" specularConstant="0.7" specularExponent="18" lighting-color="#FFFFFF" result="spec">
+        <fePointLight x="200" y="0" z="80"/>
+      </feSpecularLighting>
+      <feComposite in="spec" in2="SourceAlpha" operator="in" result="specIn"/>
+      <feMerge>
+        <feMergeNode in="specIn"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Mask for shine -->
+    <mask id="shineMask">
+      <rect x="0" y="0" width="600" height="160" fill="black"/>
+      <g>
+        <rect id="shineRect" x="-220" y="-40" width="160" height="260" fill="url(#shineGrad)" transform="rotate(18 300 80)"/>
+        <animate href="#shineRect" attributeName="x" from="-260" to="760" dur="1.6s" repeatCount="indefinite"/>
+      </g>
+    </mask>
+
+    <!-- Small sparkle dots -->
+    <filter id="spark" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="1.4" result="g"/>
+      <feMerge>
+        <feMergeNode in="g"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <style>
+      /* Fallback shine animation for browsers that ignore SMIL */
+      @keyframes shineMove { from { transform: translateX(-260px) rotate(18deg); } to { transform: translateX(760px) rotate(18deg); } }
+      .shineFallback { animation: shineMove 1.6s linear infinite; transform-origin: 300px 80px; }
+      @keyframes flicker { 0%,100%{opacity:.95} 50%{opacity:.65} }
+      .flicker { animation: flicker 1.2s ease-in-out infinite; }
+    </style>
+  </defs>
+
+  <!-- Subtle energy rays behind (transparent-friendly) -->
+  <g opacity="0.55">
+    <path d="M300 10 L318 78 L300 150 L282 78 Z" fill="url(#blueRim)" opacity="0.35"/>
+    <path d="M210 18 L276 80 L210 142 L160 80 Z" fill="url(#blueRim)" opacity="0.22"/>
+    <path d="M390 18 L440 80 L390 142 L324 80 Z" fill="url(#blueRim)" opacity="0.22"/>
+  </g>
+
+  <!-- Sparkles -->
+  <g filter="url(#spark)" opacity="0.9">
+    <circle cx="70" cy="38" r="2.2" fill="#FFFFFF" opacity="0.65"/>
+    <circle cx="520" cy="34" r="2.0" fill="#BFE9FF" opacity="0.7"/>
+    <circle cx="555" cy="118" r="2.1" fill="#FFFFFF" opacity="0.55"/>
+    <circle cx="45" cy="120" r="2.1" fill="#BFE9FF" opacity="0.55"/>
+  </g>
+
+  <!-- Main Title -->
+  <g filter="url(#outerGlow)">
+    <!-- Back stroke (blue electric) -->
+    <text x="300" y="106" text-anchor="middle"
+          font-family="Impact, Haettenschweiler, 'Arial Black', 'Montserrat', system-ui, sans-serif"
+          font-size="112" font-weight="900"
+          fill="none" stroke="url(#blueRim)" stroke-width="10" stroke-linejoin="round"
+          class="flicker">JACKPOT!</text>
+
+    <!-- Mid stroke (deep gold) -->
+    <text x="300" y="106" text-anchor="middle"
+          font-family="Impact, Haettenschweiler, 'Arial Black', 'Montserrat', system-ui, sans-serif"
+          font-size="112" font-weight="900"
+          fill="none" stroke="#6B3A00" stroke-width="7" stroke-linejoin="round">JACKPOT!</text>
+
+    <!-- Gold fill with bevel -->
+    <text x="300" y="106" text-anchor="middle"
+          font-family="Impact, Haettenschweiler, 'Arial Black', 'Montserrat', system-ui, sans-serif"
+          font-size="112" font-weight="900"
+          fill="url(#goldFill)" filter="url(#bevel)">JACKPOT!</text>
+
+    <!-- Moving shine overlay -->
+    <g mask="url(#shineMask)">
+      <text x="300" y="106" text-anchor="middle"
+            font-family="Impact, Haettenschweiler, 'Arial Black', 'Montserrat', system-ui, sans-serif"
+            font-size="112" font-weight="900"
+            fill="#FFFFFF" opacity="0.35">JACKPOT!</text>
+    </g>
+
+    <!-- Small inner glint -->
+    <text x="300" y="106" text-anchor="middle"
+          font-family="Impact, Haettenschweiler, 'Arial Black', 'Montserrat', system-ui, sans-serif"
+          font-size="112" font-weight="900"
+          fill="none" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="2">JACKPOT!</text>
+  </g>
+
+  <!-- Zeus lightning accents -->
+  <g opacity="0.95">
+    <path d="M82 128 L96 92 L86 92 L106 56 L98 92 L110 92 Z" fill="#7FE9FF" opacity="0.55"/>
+    <path d="M518 128 L504 92 L514 92 L494 56 L502 92 L490 92 Z" fill="#7FE9FF" opacity="0.55"/>
+  </g>
+
+  <!-- SMIL shine backup: also include a CSS-driven rect (optional) -->
+  <g mask="url(#shineMask)" opacity="0.0">
+    <rect class="shineFallback" x="-260" y="-40" width="160" height="260" fill="url(#shineGrad)"/>
+  </g>
+</svg>

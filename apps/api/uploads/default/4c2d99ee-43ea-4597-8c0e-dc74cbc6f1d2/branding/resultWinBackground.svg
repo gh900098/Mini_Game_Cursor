@@ -1,0 +1,115 @@
+<svg width="760" height="1000" viewBox="0 0 760 1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Dark Background with Victory Glow -->
+    <radialGradient id="victory-bg" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" style="stop-color:#3a3a42;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#2a2a32;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0a0a12;stop-opacity:1" />
+    </radialGradient>
+
+    <!-- Golden Victory Rays -->
+    <radialGradient id="golden-rays" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.8" />
+      <stop offset="40%" style="stop-color:#FFA500;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:0" />
+    </radialGradient>
+
+    <!-- Bronze Frame -->
+    <linearGradient id="bronze-frame-win" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4af37;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#b8860b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b6914;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Electric Blue Accent -->
+    <radialGradient id="blue-victory" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#0066cc;stop-opacity:0" />
+    </radialGradient>
+
+    <!-- Intense Glow -->
+    <filter id="win-glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- 3D Frame Effect -->
+    <filter id="frame-3d">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+      <feOffset dx="0" dy="5" result="offsetBlur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.7" result="offsetColor"/>
+      <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Dark Background -->
+  <rect width="760" height="1000" fill="url(#victory-bg)"/>
+
+  <!-- Golden Victory Rays (Animated) -->
+  <ellipse cx="380" cy="300" rx="350" ry="400" fill="url(#golden-rays)" opacity="0.6" filter="url(#win-glow)">
+    <animate attributeName="opacity" values="0.4;0.8;0.4" dur="3s" repeatCount="indefinite" />
+  </ellipse>
+
+  <!-- Electric Blue Aura -->
+  <ellipse cx="380" cy="400" rx="300" ry="350" fill="url(#blue-victory)" opacity="0.3" filter="url(#win-glow)">
+    <animate attributeName="opacity" values="0.2;0.5;0.2" dur="2.5s" repeatCount="indefinite" />
+  </ellipse>
+
+  <!-- Main Frame Border -->
+  <rect x="30" y="30" width="700" height="940" rx="30" fill="none" stroke="url(#bronze-frame-win)" stroke-width="12" filter="url(#frame-3d)"/>
+  <rect x="45" y="45" width="670" height="910" rx="25" fill="none" stroke="#d4af37" stroke-width="4" opacity="0.6"/>
+
+  <!-- Top Decorative Arc -->
+  <path d="M150,80 Q380,50 610,80" fill="none" stroke="url(#bronze-frame-win)" stroke-width="8" filter="url(#frame-3d)"/>
+  <path d="M150,80 Q380,50 610,80" fill="none" stroke="#FFD700" stroke-width="2" opacity="0.8"/>
+
+  <!-- Lightning Bolts (Victory Energy) -->
+  <g filter="url(#win-glow)">
+    <!-- Left Lightning -->
+    <path d="M150,200 L165,250 L155,252 L170,300" fill="none" stroke="#FFFF00" stroke-width="8" opacity="0.8"/>
+    <path d="M150,200 L165,250 L155,252 L170,300" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.9"/>
+    
+    <!-- Right Lightning -->
+    <path d="M610,200 L595,250 L605,252 L590,300" fill="none" stroke="#FFFF00" stroke-width="8" opacity="0.8"/>
+    <path d="M610,200 L595,250 L605,252 L590,300" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.9"/>
+  </g>
+
+  <!-- Greek Meander Pattern (Top Corners) -->
+  <g fill="none" stroke="#d4af37" stroke-width="3" opacity="0.6">
+    <path d="M80,80 h30 v-15 h-20 v10 h15 v-7" />
+    <path d="M680,80 h-30 v-15 h20 v10 h-15 v-7" />
+  </g>
+
+  <!-- Greek Meander Pattern (Bottom Corners) -->
+  <g fill="none" stroke="#d4af37" stroke-width="3" opacity="0.6">
+    <path d="M80,920 h30 v15 h-20 v-10 h15 v7" />
+    <path d="M680,920 h-30 v15 h20 v-10 h-15 v7" />
+  </g>
+
+  <!-- Decorative Electric Gems (Corners) -->
+  <g fill="#00d4ff" filter="url(#win-glow)">
+    <circle cx="100" cy="100" r="6" opacity="0.8">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="660" cy="100" r="6" opacity="0.8">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" begin="0.5s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="100" cy="900" r="6" opacity="0.8">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" begin="1s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="660" cy="900" r="6" opacity="0.8">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" begin="1.5s" repeatCount="indefinite" />
+    </circle>
+  </g>
+
+  <!-- Content Area (for prize/text) -->
+  <rect x="150" y="350" width="460" height="300" rx="15" fill="#FFFFFF" opacity="0.03"/>
+
+</svg>

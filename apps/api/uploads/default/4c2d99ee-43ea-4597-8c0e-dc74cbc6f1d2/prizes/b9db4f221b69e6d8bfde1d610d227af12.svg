@@ -1,0 +1,62 @@
+<svg width="600" height="160" viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Golden Victory Gradient -->
+    <linearGradient id="victory-gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFA500;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- White Shine -->
+    <linearGradient id="white-shine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFFACD;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFD700;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Victory Glow -->
+    <filter id="victory-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" 
+        values="1 0 0 0 1
+                1 0 0 0 0.8
+                0 0 0 0 0
+                0 0 0 2 0" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- VICTORY Text -->
+  <text x="300" y="110" 
+        font-family="Impact, Arial Black, sans-serif" 
+        font-size="100" 
+        font-weight="900" 
+        text-anchor="middle" 
+        fill="url(#victory-gold)" 
+        filter="url(#victory-glow)"
+        letter-spacing="8">
+    VICTORY!
+  </text>
+
+  <!-- White Shine Overlay -->
+  <text x="300" y="110" 
+        font-family="Impact, Arial Black, sans-serif" 
+        font-size="100" 
+        font-weight="900" 
+        text-anchor="middle" 
+        fill="url(#white-shine)" 
+        opacity="0.5"
+        letter-spacing="8">
+    VICTORY!
+  </text>
+
+  <!-- Lightning Accents -->
+  <g fill="#FFFF00" filter="url(#victory-glow)">
+    <path d="M50,80 L58,95 L53,95 L61,115" opacity="0.7"/>
+    <path d="M550,80 L542,95 L547,95 L539,115" opacity="0.7"/>
+  </g>
+
+</svg>

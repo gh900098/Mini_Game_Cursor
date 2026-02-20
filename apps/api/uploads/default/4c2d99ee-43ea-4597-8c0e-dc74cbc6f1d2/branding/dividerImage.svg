@@ -1,0 +1,86 @@
+<svg width="64" height="512" viewBox="0 0 64 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Bronze Gradient -->
+    <linearGradient id="bronze-divider" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8b6914;stop-opacity:1" />
+      <stop offset="20%" style="stop-color:#b8860b;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#d4af37;stop-opacity:1" />
+      <stop offset="80%" style="stop-color:#b8860b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b6914;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Stone Texture -->
+    <linearGradient id="stone-texture" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3a3a42;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#5a5a62;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3a3a42;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Electric Blue Accent -->
+    <linearGradient id="blue-accent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#0099ff;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0.8" />
+    </linearGradient>
+
+    <!-- Subtle Glow -->
+    <filter id="divider-glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- 3D Effect -->
+    <filter id="carved-3d">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur"/>
+      <feOffset dx="0" dy="2" result="offsetBlur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.5" result="offsetColor"/>
+      <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Main Column Body (Greek Pillar Style) -->
+  <rect x="18" y="40" width="28" height="432" fill="url(#stone-texture)" filter="url(#carved-3d)"/>
+  
+  <!-- Bronze Trim Lines -->
+  <rect x="16" y="40" width="2" height="432" fill="url(#bronze-divider)" opacity="0.8"/>
+  <rect x="46" y="40" width="2" height="432" fill="url(#bronze-divider)" opacity="0.8"/>
+
+  <!-- Top Capital (Greek Column Top) -->
+  <rect x="12" y="30" width="40" height="10" rx="1" fill="url(#bronze-divider)" filter="url(#carved-3d)"/>
+  <rect x="14" y="35" width="36" height="5" fill="url(#stone-texture)"/>
+
+  <!-- Bottom Base -->
+  <rect x="12" y="472" width="40" height="10" rx="1" fill="url(#bronze-divider)" filter="url(#carved-3d)"/>
+  <rect x="14" y="472" width="36" height="5" fill="url(#stone-texture)"/>
+
+  <!-- Electric Blue Energy Line (Center) -->
+  <rect x="31" y="45" width="2" height="422" fill="url(#blue-accent)" filter="url(#divider-glow)">
+    <animate attributeName="opacity" values="0.3;0.7;0.3" dur="2s" repeatCount="indefinite" />
+  </rect>
+
+  <!-- Greek Meander Pattern (Repeating) -->
+  <g fill="none" stroke="#d4af37" stroke-width="1.5" opacity="0.4">
+    <path d="M22,100 h8 v-5 h-5 v3" />
+    <path d="M22,180 h8 v-5 h-5 v3" />
+    <path d="M22,260 h8 v-5 h-5 v3" />
+    <path d="M22,340 h8 v-5 h-5 v3" />
+    <path d="M22,420 h8 v-5 h-5 v3" />
+  </g>
+
+  <!-- Decorative Gems (Small Electric Points) -->
+  <g fill="#00d4ff" filter="url(#divider-glow)">
+    <circle cx="32" cy="80" r="2" opacity="0.7"/>
+    <circle cx="32" cy="160" r="2" opacity="0.7"/>
+    <circle cx="32" cy="256" r="2.5" opacity="0.8"/>
+    <circle cx="32" cy="352" r="2" opacity="0.7"/>
+    <circle cx="32" cy="432" r="2" opacity="0.7"/>
+  </g>
+
+</svg>

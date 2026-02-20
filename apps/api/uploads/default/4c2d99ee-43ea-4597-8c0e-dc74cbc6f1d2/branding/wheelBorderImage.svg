@@ -1,0 +1,96 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Stone/Bronze Gradient matching background -->
+    <linearGradient id="stone-bronze" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a4a52;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#6b6b73;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8b8b94;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#6b6b73;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3a3a42;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Electric Blue Energy (matching lightning) -->
+    <linearGradient id="electric-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0099ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066cc;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Bronze Accent (warm highlights) -->
+    <linearGradient id="bronze-accent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4af37;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#b8860b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b6914;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Electric Glow -->
+    <filter id="electric-glow">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#00d4ff" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Stone Carving Effect -->
+    <filter id="stone-depth">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
+      <feOffset dx="0" dy="4" result="offsetBlur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.7" result="offsetColor"/>
+      <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Greek Meander Pattern -->
+    <pattern id="meander" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M0,30 h20 v-15 h-10 v10 h5 v-5" fill="none" stroke="#d4af37" stroke-width="2" opacity="0.5"/>
+    </pattern>
+  </defs>
+
+  <!-- Outer Glow Ring (Electric Energy) -->
+  <circle cx="512" cy="512" r="500" fill="none" stroke="url(#electric-blue)" stroke-width="3" opacity="0.3" filter="url(#electric-glow)" />
+
+  <!-- Main Stone Border - Outer Ring -->
+  <circle cx="512" cy="512" r="485" fill="none" stroke="#1a1a22" stroke-width="30" />
+  <circle cx="512" cy="512" r="485" fill="none" stroke="url(#stone-bronze)" stroke-width="24" filter="url(#stone-depth)" />
+  
+  <!-- Greek Meander Decorative Band -->
+  <circle cx="512" cy="512" r="470" fill="none" stroke="url(#meander)" stroke-width="20" />
+  
+  <!-- Bronze Accent Ring -->
+  <circle cx="512" cy="512" r="455" fill="none" stroke="url(#bronze-accent)" stroke-width="6" filter="url(#stone-depth)" />
+  
+  <!-- Inner Stone Ring -->
+  <circle cx="512" cy="512" r="445" fill="none" stroke="#1a1a22" stroke-width="24" />
+  <circle cx="512" cy="512" r="445" fill="none" stroke="url(#stone-bronze)" stroke-width="18" filter="url(#stone-depth)" />
+
+  <!-- Electric Blue Power Nodes (8 cardinal points) -->
+  <g filter="url(#electric-glow)">
+    <circle cx="512" cy="27" r="12" fill="url(#electric-blue)" stroke="#ffffff" stroke-width="2" />
+    <circle cx="512" cy="997" r="12" fill="url(#electric-blue)" stroke="#ffffff" stroke-width="2" />
+    <circle cx="27" cy="512" r="12" fill="url(#electric-blue)" stroke="#ffffff" stroke-width="2" />
+    <circle cx="997" cy="512" r="12" fill="url(#electric-blue)" stroke="#ffffff" stroke-width="2" />
+    
+    <circle cx="174" cy="174" r="10" fill="url(#electric-blue)" stroke="#ffffff" stroke-width="2" />
+    <circle cx="850" cy="174" r="10" fill="url(#electric-blue)" stroke="#ffffff" stroke-width="2" />
+    <circle cx="174" cy="850" r="10" fill="url(#electric-blue)" stroke="#ffffff" stroke-width="2" />
+    <circle cx="850" cy="850" r="10" fill="url(#electric-blue)" stroke="#ffffff" stroke-width="2" />
+  </g>
+
+  <!-- Subtle Lightning Arcs connecting nodes -->
+  <g stroke="url(#electric-blue)" stroke-width="2" fill="none" opacity="0.4" filter="url(#electric-glow)">
+    <path d="M512,27 L520,50 L505,60 L515,80" />
+    <path d="M512,997 L520,974 L505,964 L515,944" />
+    <path d="M27,512 L50,520 L60,505 L80,515" />
+    <path d="M997,512 L974,520 L964,505 L944,515" />
+  </g>
+
+  <!-- Inner Detail Line -->
+  <circle cx="512" cy="512" r="430" fill="none" stroke="#2a2a32" stroke-width="2" opacity="0.6" />
+
+</svg>

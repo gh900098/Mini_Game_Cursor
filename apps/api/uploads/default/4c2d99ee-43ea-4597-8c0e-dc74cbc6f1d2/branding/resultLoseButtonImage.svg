@@ -1,0 +1,39 @@
+<svg width="560" height="140" viewBox="0 0 560 140" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Dark Bronze Button -->
+    <linearGradient id="dark-btn" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b6914;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#6b5416;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4a3c11;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Dim Shadow -->
+    <filter id="dim-shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+      <feOffset dx="0" dy="3" result="offsetBlur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.7" result="offsetColor"/>
+      <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Button Body -->
+  <rect x="10" y="10" width="540" height="120" rx="18" fill="url(#dark-btn)" filter="url(#dim-shadow)"/>
+  <rect x="15" y="15" width="530" height="110" rx="15" fill="none" stroke="#6b5416" stroke-width="2" opacity="0.5"/>
+
+  <!-- TRY AGAIN Text -->
+  <text x="280" y="90" 
+        font-family="Impact, Arial Black, sans-serif" 
+        font-size="60" 
+        font-weight="900" 
+        text-anchor="middle" 
+        fill="#d4af37" 
+        opacity="0.8"
+        letter-spacing="4">
+    TRY AGAIN
+  </text>
+
+</svg>

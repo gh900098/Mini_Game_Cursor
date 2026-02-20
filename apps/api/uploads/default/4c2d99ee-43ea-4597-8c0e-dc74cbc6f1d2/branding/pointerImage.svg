@@ -1,0 +1,123 @@
+<svg width="128" height="256" viewBox="0 0 128 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Yellow/Gold Lightning Gradient -->
+    <linearGradient id="yellow-lightning" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#FFA500;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- White Hot Core -->
+    <linearGradient id="white-core" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFFACD;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFD700;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Intense Yellow Glow -->
+    <filter id="yellow-glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="8" result="blur1"/>
+      <feColorMatrix in="blur1" type="matrix" 
+        values="1 0 0 0 1
+                1 0 0 0 0.8
+                0 0 0 0 0
+                0 0 0 2 0" result="yellow-glow"/>
+      
+      <feGaussianBlur stdDeviation="4" result="blur2"/>
+      <feColorMatrix in="blur2" type="matrix" 
+        values="1 0 0 0 1
+                1 0 0 0 1
+                1 0 0 0 1
+                0 0 0 1.5 0" result="white-glow"/>
+      
+      <feMerge>
+        <feMergeNode in="yellow-glow"/>
+        <feMergeNode in="white-glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- YELLOW THUNDER BOLT POINTING DOWN -->
+  <g filter="url(#yellow-glow)">
+    <!-- Main Lightning Strike (Jagged, pointing DOWN) -->
+    <path d="M64,10 L75,50 L68,52 L80,90 L72,93 L85,130 L75,133 L88,170 L78,173 L92,210 L82,213 L95,245" 
+          fill="none" 
+          stroke="url(#yellow-lightning)" 
+          stroke-width="14" 
+          stroke-linecap="round"
+          stroke-linejoin="miter"/>
+    
+    <!-- White Hot Core -->
+    <path d="M64,10 L75,50 L68,52 L80,90 L72,93 L85,130 L75,133 L88,170 L78,173 L92,210 L82,213 L95,245" 
+          fill="none" 
+          stroke="url(#white-core)" 
+          stroke-width="7" 
+          stroke-linecap="round"/>
+
+    <!-- Brightest Center Line -->
+    <path d="M64,10 L75,50 L68,52 L80,90 L72,93 L85,130 L75,133 L88,170 L78,173 L92,210 L82,213 L95,245" 
+          fill="none" 
+          stroke="#FFFFFF" 
+          stroke-width="2" 
+          stroke-linecap="round"
+          opacity="0.9"/>
+
+    <!-- Left Branch (Top) -->
+    <path d="M68,52 L50,40 L55,60" 
+          fill="none" 
+          stroke="url(#yellow-lightning)" 
+          stroke-width="10" 
+          stroke-linecap="round"/>
+    <path d="M68,52 L50,40 L55,60" 
+          fill="none" 
+          stroke="#FFFFFF" 
+          stroke-width="3" 
+          stroke-linecap="round"
+          opacity="0.8"/>
+
+    <!-- Right Branch (Middle) -->
+    <path d="M85,130 L105,120 L100,140" 
+          fill="none" 
+          stroke="url(#yellow-lightning)" 
+          stroke-width="9" 
+          stroke-linecap="round"/>
+    <path d="M85,130 L105,120 L100,140" 
+          fill="none" 
+          stroke="#FFFACD" 
+          stroke-width="3" 
+          stroke-linecap="round"
+          opacity="0.8"/>
+
+    <!-- Left Branch (Lower) -->
+    <path d="M78,173 L58,165 L63,185" 
+          fill="none" 
+          stroke="url(#yellow-lightning)" 
+          stroke-width="8" 
+          stroke-linecap="round"/>
+    <path d="M78,173 L58,165 L63,185" 
+          fill="none" 
+          stroke="#FFD700" 
+          stroke-width="2.5" 
+          stroke-linecap="round"
+          opacity="0.8"/>
+  </g>
+
+  <!-- Energy Sparks -->
+  <g fill="#FFFF00" filter="url(#yellow-glow)">
+    <circle cx="45" cy="30" r="2.5">
+      <animate attributeName="opacity" values="0;1;0" dur="0.7s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="95" cy="100" r="2">
+      <animate attributeName="opacity" values="0;1;0" dur="0.9s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="55" cy="150" r="2.5">
+      <animate attributeName="opacity" values="0;1;0" dur="0.6s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="105" cy="200" r="2">
+      <animate attributeName="opacity" values="0;1;0" dur="0.8s" repeatCount="indefinite" />
+    </circle>
+  </g>
+
+</svg>
