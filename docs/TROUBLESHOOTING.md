@@ -110,6 +110,7 @@ const { items: companies } = await this.companiesService.findAll({ limit: 1000 }
 
 **Solution (Fixed - 2026-02-20):**
 1. **Docker Volume**: Added `- ./apps/api/uploads:/app/uploads` to the API service in `docker-compose.test.yml` to preserve and mount locally seeded asset files.
+   *(Note: If images are missing after switching environments, you may need to copy them from the old named volume to the host directory: `docker run --rm -v mini_game_api_uploads:/mnt/api_uploads -v [host_path]:/mnt/host_uploads alpine cp -R /mnt/api_uploads/. /mnt/host_uploads/`)*
 2. **Cache Combating**: Added `@Header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')` to the `/play` endpoints in `GameInstancesController` to prevent the browser from caching the base game container HTML, ensuring it always fetches the latest configuration and UUIDs.
 
 ---

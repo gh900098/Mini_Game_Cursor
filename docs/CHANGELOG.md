@@ -25,6 +25,7 @@
 
 #### 3. Game Asset Caching Fix
 - **Uploads Volume**: Added the `uploads` volume mount to the test API container so locally seeded assets resolve correctly.
+- **Data Migration**: Successfully migrated persistent image uploads from the production Docker named volume (`mini_game_api_uploads`) to the local host bind mount to restore broken images in the test environment.
 - **Cache-Control Headers**: Applied `no-store, no-cache` headers to the `/play` endpoints, preventing the browser from caching stale HTML templates containing outdated config UUIDs.
 
 ### ✅ Deployment
