@@ -49,6 +49,21 @@ const { items: companies } = await this.companiesService.findAll({ limit: 1000 }
 
 ---
 
+### Issue 17: User List Displays Duplicate Entries
+
+**Cause:** The `emailHash` and `mobileHash` columns in the `users` table were missing unique constraints. Since the primary `email` and `mobile` fields are encrypted with a dynamic IV, identical raw values result in different ciphertexts, allowing the DB uniqueness to be bypassed.
+
+**Symptoms:**
+- Admin User list shows the same person multiple times.
+- Multiple UUIDs exist for what should be a single user account.
+
+**Solution (Fixed - 2026-02-20):**
+1. **Schema Update**: Added `unique: true` to the `@Index()` decorators for `emailHash` and `mobileHash` in `user.entity.ts`.
+2. **Data Merge**: Consolidated existing duplicate records into primary accounts and merged their `user_companies` assignments.
+3. **Redeploy**: Rebuilt the API service to enforce the new unique indexes.
+
+---
+
 ## 🚀 Standard Operating Procedures (SOP)
 
 ### When modifying frontend code (`web-app` or `admin`):

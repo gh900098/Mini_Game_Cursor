@@ -13,7 +13,7 @@ export class User {
     @Column({ unique: true, transformer: new EncryptionTransformer() })
     email: string;
 
-    @Index()
+    @Index({ unique: true })
     @Column({ nullable: true })
     emailHash: string;
 
@@ -24,7 +24,7 @@ export class User {
     @Column({ nullable: true, transformer: new EncryptionTransformer() })
     mobile: string;
 
-    @Index()
+    @Index({ unique: true })
     @Column({ nullable: true })
     mobileHash: string;
 

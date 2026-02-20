@@ -35,6 +35,9 @@
 - ✅ Verified pagination UX across all modules.
 - ✅ Verified background sync scheduling remains functional.
 
+### 🐞 Bug Fixes
+- **Duplicate User Resolution**: Resolved issue where multiple user records could be created for the same email due to missing unique constraints on deterministic hashes (`emailHash`). Enforced uniqueness at the entity level and merged existing duplicates.
+
 ---
 
 ## [2026-02-19] PII Protection & Data Privacy

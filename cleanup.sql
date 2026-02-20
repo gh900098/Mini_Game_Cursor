@@ -1,0 +1,4 @@
+UPDATE user_companies SET "userId" = '4b6fa1c6-ef9c-4f23-be8d-2e59e9baa816' WHERE "userId" = 'dd67f705-e68a-4a1d-bea8-12cd6c1e49cb' AND NOT EXISTS (SELECT 1 FROM user_companies uc2 WHERE uc2."userId" = '4b6fa1c6-ef9c-4f23-be8d-2e59e9baa816' AND uc2."companyId" = user_companies."companyId");
+UPDATE user_companies SET "userId" = '8fa34fab-8770-4930-af25-e45633b47949' WHERE "userId" = 'f408d193-a754-41d2-950b-ab0fe38919b0' AND NOT EXISTS (SELECT 1 FROM user_companies uc2 WHERE uc2."userId" = '8fa34fab-8770-4930-af25-e45633b47949' AND uc2."companyId" = user_companies."companyId");
+DELETE FROM user_companies WHERE "userId" IN ('dd67f705-e68a-4a1d-bea8-12cd6c1e49cb', 'f408d193-a754-41d2-950b-ab0fe38919b0');
+DELETE FROM users WHERE id IN ('dd67f705-e68a-4a1d-bea8-12cd6c1e49cb', 'f408d193-a754-41d2-950b-ab0fe38919b0');
