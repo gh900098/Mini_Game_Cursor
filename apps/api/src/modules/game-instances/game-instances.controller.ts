@@ -64,6 +64,17 @@ export class GameInstancesController {
         @Query('isPreview') isPreview?: string,
         @Query('v') version?: string
     ) {
+        // Handle live theme preview from admin panel which uses template slug instead of instance slug
+        if (isPreview && slug === 'spin-wheel') {
+            const mockInstance = {
+                id: 'preview',
+                name: 'Theme Preview',
+                gameTemplate: { slug: 'spin-wheel' },
+                config: {},
+            } as any;
+            return this.handlePlay(mockInstance, isPreview, version);
+        }
+
         const instance = await this.instancesService.findBySlug(slug);
         return this.handlePlay(instance, isPreview, version);
     }

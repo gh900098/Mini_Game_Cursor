@@ -265,7 +265,16 @@ const local: App.I18n.Schema = {
     games_scores: '分数记录',
     'games_budget-tracking': '预算追踪',
     games_prizes: '奖品台账',
-    'games_prize-types': '奖励类型'
+    'games_prize-types': '奖励类型',
+    games_themes: '主题管理',
+    'games_theme-detail': '主题编辑',
+    // Compatibility keys
+    games_member_detail: '会员详情',
+    games_game_instance: '游戏实例',
+    games_play_attempts: '游戏记录',
+    games_budget_tracking: '预算追踪',
+    games_prize_types: '奖励类型',
+    games_theme_detail: '主题编辑'
   },
   page: {
     manage: {

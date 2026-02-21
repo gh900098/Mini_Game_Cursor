@@ -93,6 +93,11 @@ export function createStaticRoutes() {
           r.meta.permission = 'themes:read';
           r.meta.icon = 'ic:outline-color-lens';
           r.meta.order = 11;
+        } else if (r.name === 'games_theme-detail') {
+          r.meta.roles = ['R_SUPER', 'R_ADMIN'];
+          r.meta.permission = 'themes:read';
+          r.meta.hideInMenu = true;
+          r.meta.activeMenu = 'games_themes';
         }
       }
       if (r.children) {

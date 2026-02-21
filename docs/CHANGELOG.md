@@ -3,6 +3,36 @@
  Records all important feature updates, bug fixes, and architectural changes.
  
  
+## [2026-02-21] Theme Editor Visuals Alignment
+
+### 🎨 Customization Enhancement
+**Core Requirements:**
+- Make the Theme Editor visual styles match the Game Instance configuration.
+- Add missing game assets (Result prompts, center hubs, dividers, token bars) to the Theme schema.
+- Standardize the upload interface for game assets and audio in the Theme Editor.
+
+### 📝 Features Implemented
+
+#### 1. Standardized Asset Upload Pattern
+- **UI Refactoring**: Replaced legacy upload fields across `theme-detail/index.vue` with a consistent `readonly string + 📁 Upload` pattern.
+- **Suffix Interactions**: Added standard `Preview (👁️)`, `Clear (🗑️)`, and `Upload (📁)` actions to all visual and audio properties, mimicking `ConfigForm.vue`.
+- **Gradient Standardization**: Replaced explicit degree string inputs (`135deg`) with a user-friendly dropdown (`NSelect`) matching the Game Instance UI (Top to Bottom, Radial Center, etc.).
+
+#### 2. Expanded Visual Schema
+- **Game Assets Added**: Included `tokenBarImage`, `centerImage`, and `dividerImage` configurations directly into Theme presets.
+- **Result Prompts Added**: Grouped and added the 3 distinct multi-image grids for **Win**, **Lose**, and **Jackpot** visual outcomes.
+- **Audio Added**: `bgmUrl`, `winSound`, `loseSound`, and `jackpotSound` are now first-class configurable properties.
+
+### 📊 Technical Details
+- **Backend**: Flattened `config.visuals` schema in `seed.service.ts` to accommodate the unified assets.
+- **Frontend**: Expanded `ThemeConfig` interface and default `formData` inside `apps/soybean-admin/src/views/games/theme-detail/index.vue`.
+
+### ✅ Deployment
+- ✅ Admin container rebuilt and visually verified.
+- ✅ Upload functionality tested and standardized.
+
+---
+
 ## [2026-02-20] Strict Impersonation Protection & Environment Isolation
 
 ### 🛡️ Security Enhancement

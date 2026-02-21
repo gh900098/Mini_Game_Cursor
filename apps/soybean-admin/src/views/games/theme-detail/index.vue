@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { ref, onMounted, computed, nextTick, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { NCard, NForm, NFormItem, NInput, NInputNumber, NSwitch, NButton, NSpace, NColorPicker, NGrid, NGridItem, NScrollbar, NTabs, NTabPane, NTag, NTooltip, NRadioGroup, NRadio } from 'naive-ui';
+import { NCard, NForm, NFormItem, NInput, NInputNumber, NSwitch, NButton, NSpace, NColorPicker, NGrid, NGridItem, NScrollbar, NTabs, NTabPane, NTag, NTooltip, NRadioGroup, NRadio, NModal, NSelect } from 'naive-ui';
 import { fetchThemeDetail, createTheme, updateTheme } from '@/service/api/themes';
 import { useRouterPush } from '@/hooks/common/router';
 import { $t } from '@/locales';
@@ -41,6 +41,23 @@ interface ThemeConfig {
   enableLedRing: boolean;
   enableHexagons: boolean;
   enableGridFloor: boolean;
+  dividerImage: string;
+  tokenBarImage: string;
+  resultWinBackground: string;
+  resultWinTitleImage: string;
+  resultWinButtonImage: string;
+  resultLoseBackground: string;
+  resultLoseTitleImage: string;
+  resultLoseButtonImage: string;
+  jackpotResultBackground: string;
+  jackpotResultTitleImage: string;
+  jackpotResultButtonImage: string;
+  loseSound?: string;
+  jackpotSound?: string;
+  tickSoundEnabled?: boolean;
+  tickVolume?: number;
+  bgmVolume?: number;
+  bgmLoop?: boolean;
   [key: string]: any;
 }
 
@@ -84,7 +101,24 @@ const formData = ref<{
     neonGold: '#ffd700',
     enableLedRing: true,
     enableHexagons: true,
-    enableGridFloor: true
+    enableGridFloor: true,
+    dividerImage: '',
+    tokenBarImage: '',
+    resultWinBackground: '',
+    resultWinTitleImage: '',
+    resultWinButtonImage: '',
+    resultLoseBackground: '',
+    resultLoseTitleImage: '',
+    resultLoseButtonImage: '',
+    jackpotResultBackground: '',
+    jackpotResultTitleImage: '',
+    jackpotResultButtonImage: '',
+    loseSound: '',
+    jackpotSound: '',
+    tickSoundEnabled: true,
+    tickVolume: 30,
+    bgmVolume: 40,
+    bgmLoop: true
   }
 });
 
@@ -128,6 +162,35 @@ async function handleFileChange(event: Event) {
     formData.value.config[currentUploadTarget.value.key] = data.url;
     window.$message?.success($t('common.updateSuccess'));
   }
+}
+
+function clearAsset(key: string) {
+  formData.value.config[key] = '';
+  if (key === 'bgImage') {
+    formData.value.config.bgType = 'gradient';
+  }
+}
+
+function getAssetFilename(url: any): string {
+  if (!url || typeof url !== 'string') return '';
+  if (url.startsWith('data:')) return 'Base64 Image';
+  try {
+    const cleanUrl = url.split('?')[0];
+    const parts = cleanUrl.split('/');
+    return decodeURIComponent(parts[parts.length - 1]);
+  } catch (e) {
+    return url;
+  }
+}
+
+const showAssetPreviewModal = ref(false);
+const assetPreviewUrl = ref('');
+const assetPreviewTitle = ref('');
+
+function openAssetPreview(url: string, title: string) {
+  assetPreviewUrl.value = url;
+  assetPreviewTitle.value = title;
+  showAssetPreviewModal.value = true;
 }
 
 // --- Data Loading ---
@@ -299,7 +362,13 @@ onMounted(() => {
                     </NGridItem>
                     <NGridItem v-if="formData.config.bgType === 'gradient'">
                       <NFormItem :label="$t('page.manage.game.visuals.bgGradDir')">
-                        <NInput v-model:value="formData.config.bgGradDir" placeholder="135deg or radial" />
+                        <NSelect v-model:value="formData.config.bgGradDir" :options="[
+                          { label: 'Top to Bottom', value: 'to bottom' },
+                          { label: 'Left to Right', value: 'to right' },
+                          { label: 'Bottom Left to Top Right', value: '135deg' },
+                          { label: 'Top Left to Bottom Right', value: '45deg' },
+                          { label: 'Radial (Center)', value: 'radial' }
+                        ]" />
                       </NFormItem>
                     </NGridItem>
                     
@@ -316,10 +385,15 @@ onMounted(() => {
 
                     <NGridItem v-if="formData.config.bgType === 'image'" :span="2">
                       <NFormItem :label="$t('page.manage.game.visuals.bgImage')">
-                        <div class="flex-1 flex gap-8px">
-                          <NInput v-model:value="formData.config.bgImage" placeholder="Upload or enter URL" />
-                          <NButton @click="triggerUpload('bgImage', 'backgrounds')">{{ $t('page.manage.themes.upload') }}</NButton>
-                        </div>
+                        <NInput :value="getAssetFilename(formData.config.bgImage)" size="small" readonly>
+                          <template #suffix>
+                            <NSpace size="small">
+                              <NButton v-if="formData.config.bgImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.bgImage, $t('page.manage.game.visuals.bgImage'))">👁️</NButton>
+                              <NButton v-if="formData.config.bgImage" size="tiny" quaternary type="error" @click="clearAsset('bgImage')">🗑️</NButton>
+                              <NButton size="tiny" quaternary @click="triggerUpload('bgImage', 'backgrounds')">📁</NButton>
+                            </NSpace>
+                          </template>
+                        </NInput>
                       </NFormItem>
                     </NGridItem>
 
@@ -328,34 +402,219 @@ onMounted(() => {
                     </NGridItem>
                     <NGridItem>
                       <NFormItem :label="$t('page.manage.game.visuals.brandLogo')">
-                        <div class="flex-1 flex gap-4px">
-                          <NInput v-model:value="formData.config.titleImage" size="small" />
-                          <NButton size="small" @click="triggerUpload('titleImage', 'logos')">{{ $t('page.manage.themes.upload') }}</NButton>
-                        </div>
+                        <NInput :value="getAssetFilename(formData.config.titleImage)" size="small" readonly>
+                          <template #suffix>
+                            <NSpace size="small">
+                              <NButton v-if="formData.config.titleImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.titleImage, $t('page.manage.game.visuals.brandLogo'))">👁️</NButton>
+                              <NButton v-if="formData.config.titleImage" size="tiny" quaternary type="error" @click="clearAsset('titleImage')">🗑️</NButton>
+                              <NButton size="tiny" quaternary @click="triggerUpload('titleImage', 'logos')">📁</NButton>
+                            </NSpace>
+                          </template>
+                        </NInput>
                       </NFormItem>
                     </NGridItem>
                     <NGridItem>
                       <NFormItem :label="$t('page.manage.game.visuals.pointer')">
-                        <div class="flex-1 flex gap-4px">
-                          <NInput v-model:value="formData.config.pointerImage" size="small" />
-                          <NButton size="small" @click="triggerUpload('pointerImage', 'pointers')">{{ $t('page.manage.themes.upload') }}</NButton>
-                        </div>
+                        <NInput :value="getAssetFilename(formData.config.pointerImage)" size="small" readonly>
+                          <template #suffix>
+                            <NSpace size="small">
+                              <NButton v-if="formData.config.pointerImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.pointerImage, $t('page.manage.game.visuals.pointer'))">👁️</NButton>
+                              <NButton v-if="formData.config.pointerImage" size="tiny" quaternary type="error" @click="clearAsset('pointerImage')">🗑️</NButton>
+                              <NButton size="tiny" quaternary @click="triggerUpload('pointerImage', 'pointers')">📁</NButton>
+                            </NSpace>
+                          </template>
+                        </NInput>
                       </NFormItem>
                     </NGridItem>
                     <NGridItem>
                       <NFormItem :label="$t('page.manage.game.visuals.wheelBorder')">
-                        <div class="flex-1 flex gap-4px">
-                          <NInput v-model:value="formData.config.wheelBorderImage" size="small" />
-                          <NButton size="small" @click="triggerUpload('wheelBorderImage', 'borders')">{{ $t('page.manage.themes.upload') }}</NButton>
-                        </div>
+                        <NInput :value="getAssetFilename(formData.config.wheelBorderImage)" size="small" readonly>
+                          <template #suffix>
+                            <NSpace size="small">
+                              <NButton v-if="formData.config.wheelBorderImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.wheelBorderImage, $t('page.manage.game.visuals.wheelBorder'))">👁️</NButton>
+                              <NButton v-if="formData.config.wheelBorderImage" size="tiny" quaternary type="error" @click="clearAsset('wheelBorderImage')">🗑️</NButton>
+                              <NButton size="tiny" quaternary @click="triggerUpload('wheelBorderImage', 'borders')">📁</NButton>
+                            </NSpace>
+                          </template>
+                        </NInput>
                       </NFormItem>
                     </NGridItem>
                     <NGridItem>
                       <NFormItem :label="$t('page.manage.game.visuals.spinButton')">
-                        <div class="flex-1 flex gap-4px">
-                          <NInput v-model:value="formData.config.spinBtnImage" size="small" />
-                          <NButton size="small" @click="triggerUpload('spinBtnImage', 'buttons')">{{ $t('page.manage.themes.upload') }}</NButton>
-                        </div>
+                        <NInput :value="getAssetFilename(formData.config.spinBtnImage)" size="small" readonly>
+                          <template #suffix>
+                            <NSpace size="small">
+                              <NButton v-if="formData.config.spinBtnImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.spinBtnImage, $t('page.manage.game.visuals.spinButton'))">👁️</NButton>
+                              <NButton v-if="formData.config.spinBtnImage" size="tiny" quaternary type="error" @click="clearAsset('spinBtnImage')">🗑️</NButton>
+                              <NButton size="tiny" quaternary @click="triggerUpload('spinBtnImage', 'buttons')">📁</NButton>
+                            </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.visuals.tokenBarSection')">
+                        <NInput :value="getAssetFilename(formData.config.tokenBarImage)" size="small" readonly>
+                          <template #suffix>
+                            <NSpace size="small">
+                              <NButton v-if="formData.config.tokenBarImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.tokenBarImage, $t('page.manage.game.visuals.tokenBarSection'))">👁️</NButton>
+                              <NButton v-if="formData.config.tokenBarImage" size="tiny" quaternary type="error" @click="clearAsset('tokenBarImage')">🗑️</NButton>
+                              <NButton size="tiny" quaternary @click="triggerUpload('tokenBarImage', 'ui')">📁</NButton>
+                            </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.visuals.centerHubSection')">
+                        <NInput :value="getAssetFilename(formData.config.centerImage)" size="small" readonly>
+                          <template #suffix>
+                            <NSpace size="small">
+                              <NButton v-if="formData.config.centerImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.centerImage, $t('page.manage.game.visuals.centerHubSection'))">👁️</NButton>
+                              <NButton v-if="formData.config.centerImage" size="tiny" quaternary type="error" @click="clearAsset('centerImage')">🗑️</NButton>
+                              <NButton size="tiny" quaternary @click="triggerUpload('centerImage', 'hubs')">📁</NButton>
+                            </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.visuals.sliceDividers')">
+                        <NInput :value="getAssetFilename(formData.config.dividerImage)" size="small" readonly>
+                          <template #suffix>
+                            <NSpace size="small">
+                              <NButton v-if="formData.config.dividerImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.dividerImage, $t('page.manage.game.visuals.sliceDividers'))">👁️</NButton>
+                              <NButton v-if="formData.config.dividerImage" size="tiny" quaternary type="error" @click="clearAsset('dividerImage')">🗑️</NButton>
+                              <NButton size="tiny" quaternary @click="triggerUpload('dividerImage', 'dividers')">📁</NButton>
+                            </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem :span="2">
+                      <div class="font-bold mb-8px border-b pb-4px mb-16px text-primary mt-8px">{{ $t('page.manage.game.visuals.resultPrompts') }}</div>
+                    </NGridItem>
+                    
+                    <NGridItem :span="2"><div class="text-sm text-gray-400 mt-2 mb-1">- {{ $t('page.manage.game.visuals.winOutcome') }} -</div></NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.visuals.winBackground')">
+                        <NInput :value="getAssetFilename(formData.config.resultWinBackground)" size="small" readonly>
+                          <template #suffix>
+                             <NSpace size="small">
+                               <NButton v-if="formData.config.resultWinBackground" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.resultWinBackground, $t('page.manage.game.visuals.winBackground'))">👁️</NButton>
+                               <NButton v-if="formData.config.resultWinBackground" size="tiny" quaternary type="error" @click="clearAsset('resultWinBackground')">🗑️</NButton>
+                               <NButton size="tiny" quaternary @click="triggerUpload('resultWinBackground', 'prompts')">📁</NButton>
+                             </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.visuals.winTitleImage')">
+                        <NInput :value="getAssetFilename(formData.config.resultWinTitleImage)" size="small" readonly>
+                          <template #suffix>
+                             <NSpace size="small">
+                               <NButton v-if="formData.config.resultWinTitleImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.resultWinTitleImage, $t('page.manage.game.visuals.winTitleImage'))">👁️</NButton>
+                               <NButton v-if="formData.config.resultWinTitleImage" size="tiny" quaternary type="error" @click="clearAsset('resultWinTitleImage')">🗑️</NButton>
+                               <NButton size="tiny" quaternary @click="triggerUpload('resultWinTitleImage', 'prompts')">📁</NButton>
+                             </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.visuals.winButtonImage')">
+                        <NInput :value="getAssetFilename(formData.config.resultWinButtonImage)" size="small" readonly>
+                          <template #suffix>
+                             <NSpace size="small">
+                               <NButton v-if="formData.config.resultWinButtonImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.resultWinButtonImage, $t('page.manage.game.visuals.winButtonImage'))">👁️</NButton>
+                               <NButton v-if="formData.config.resultWinButtonImage" size="tiny" quaternary type="error" @click="clearAsset('resultWinButtonImage')">🗑️</NButton>
+                               <NButton size="tiny" quaternary @click="triggerUpload('resultWinButtonImage', 'prompts')">📁</NButton>
+                             </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+
+                    <NGridItem :span="2"><div class="text-sm text-gray-400 mt-2 mb-1">- {{ $t('page.manage.game.visuals.loseOutcome') }} -</div></NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.visuals.loseBackground')">
+                        <NInput :value="getAssetFilename(formData.config.resultLoseBackground)" size="small" readonly>
+                          <template #suffix>
+                             <NSpace size="small">
+                               <NButton v-if="formData.config.resultLoseBackground" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.resultLoseBackground, $t('page.manage.game.visuals.loseBackground'))">👁️</NButton>
+                               <NButton v-if="formData.config.resultLoseBackground" size="tiny" quaternary type="error" @click="clearAsset('resultLoseBackground')">🗑️</NButton>
+                               <NButton size="tiny" quaternary @click="triggerUpload('resultLoseBackground', 'prompts')">📁</NButton>
+                             </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.visuals.loseTitleImage')">
+                        <NInput :value="getAssetFilename(formData.config.resultLoseTitleImage)" size="small" readonly>
+                          <template #suffix>
+                             <NSpace size="small">
+                               <NButton v-if="formData.config.resultLoseTitleImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.resultLoseTitleImage, $t('page.manage.game.visuals.loseTitleImage'))">👁️</NButton>
+                               <NButton v-if="formData.config.resultLoseTitleImage" size="tiny" quaternary type="error" @click="clearAsset('resultLoseTitleImage')">🗑️</NButton>
+                               <NButton size="tiny" quaternary @click="triggerUpload('resultLoseTitleImage', 'prompts')">📁</NButton>
+                             </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.visuals.loseButtonImage')">
+                        <NInput :value="getAssetFilename(formData.config.resultLoseButtonImage)" size="small" readonly>
+                          <template #suffix>
+                             <NSpace size="small">
+                               <NButton v-if="formData.config.resultLoseButtonImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.resultLoseButtonImage, $t('page.manage.game.visuals.loseButtonImage'))">👁️</NButton>
+                               <NButton v-if="formData.config.resultLoseButtonImage" size="tiny" quaternary type="error" @click="clearAsset('resultLoseButtonImage')">🗑️</NButton>
+                               <NButton size="tiny" quaternary @click="triggerUpload('resultLoseButtonImage', 'prompts')">📁</NButton>
+                             </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+
+                    <NGridItem :span="2"><div class="text-sm text-gray-400 mt-2 mb-1">- {{ $t('page.manage.game.visuals.jackpotOutcome') }} -</div></NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.visuals.jackpotBackground')">
+                        <NInput :value="getAssetFilename(formData.config.jackpotResultBackground)" size="small" readonly>
+                          <template #suffix>
+                             <NSpace size="small">
+                               <NButton v-if="formData.config.jackpotResultBackground" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.jackpotResultBackground, $t('page.manage.game.visuals.jackpotBackground'))">👁️</NButton>
+                               <NButton v-if="formData.config.jackpotResultBackground" size="tiny" quaternary type="error" @click="clearAsset('jackpotResultBackground')">🗑️</NButton>
+                               <NButton size="tiny" quaternary @click="triggerUpload('jackpotResultBackground', 'prompts')">📁</NButton>
+                             </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.visuals.jackpotTitleImage')">
+                        <NInput :value="getAssetFilename(formData.config.jackpotResultTitleImage)" size="small" readonly>
+                          <template #suffix>
+                             <NSpace size="small">
+                               <NButton v-if="formData.config.jackpotResultTitleImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.jackpotResultTitleImage, $t('page.manage.game.visuals.jackpotTitleImage'))">👁️</NButton>
+                               <NButton v-if="formData.config.jackpotResultTitleImage" size="tiny" quaternary type="error" @click="clearAsset('jackpotResultTitleImage')">🗑️</NButton>
+                               <NButton size="tiny" quaternary @click="triggerUpload('jackpotResultTitleImage', 'prompts')">📁</NButton>
+                             </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.visuals.jackpotButtonImage')">
+                        <NInput :value="getAssetFilename(formData.config.jackpotResultButtonImage)" size="small" readonly>
+                          <template #suffix>
+                             <NSpace size="small">
+                               <NButton v-if="formData.config.jackpotResultButtonImage" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.jackpotResultButtonImage, $t('page.manage.game.visuals.jackpotButtonImage'))">👁️</NButton>
+                               <NButton v-if="formData.config.jackpotResultButtonImage" size="tiny" quaternary type="error" @click="clearAsset('jackpotResultButtonImage')">🗑️</NButton>
+                               <NButton size="tiny" quaternary @click="triggerUpload('jackpotResultButtonImage', 'prompts')">📁</NButton>
+                             </NSpace>
+                          </template>
+                        </NInput>
                       </NFormItem>
                     </NGridItem>
                   </NGrid>
@@ -368,17 +627,86 @@ onMounted(() => {
                     </NGridItem>
                     <NGridItem>
                       <NFormItem :label="$t('page.manage.game.effects.bgmUrl')">
-                        <div class="flex-1 flex gap-4px">
-                          <NInput v-model:value="formData.config.bgmUrl" size="small" placeholder=".mp3 URL" />
-                          <NButton size="small" @click="triggerUpload('bgmUrl', 'audio')">{{ $t('page.manage.themes.upload') }}</NButton>
+                        <NInput :value="getAssetFilename(formData.config.bgmUrl)" size="small" readonly placeholder=".mp3 URL">
+                          <template #suffix>
+                            <NSpace size="small">
+                              <NButton v-if="formData.config.bgmUrl" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.bgmUrl, $t('page.manage.game.effects.bgmUrl'))">👁️</NButton>
+                              <NButton v-if="formData.config.bgmUrl" size="tiny" quaternary type="error" @click="clearAsset('bgmUrl')">🗑️</NButton>
+                              <NButton size="tiny" quaternary @click="triggerUpload('bgmUrl', 'audio')">📁</NButton>
+                            </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem v-if="formData.config.bgmUrl">
+                      <NFormItem :label="$t('page.manage.game.effects.bgmVolume')">
+                        <div class="flex items-center gap-4 w-full">
+                          <NSlider v-model:value="formData.config.bgmVolume" :min="0" :max="100" :step="5" class="flex-1" />
+                          <NInputNumber v-model:value="formData.config.bgmVolume" size="small" class="w-20" :show-button="false">
+                            <template #suffix>%</template>
+                          </NInputNumber>
                         </div>
                       </NFormItem>
                     </NGridItem>
+                    <NGridItem v-if="formData.config.bgmUrl">
+                      <NFormItem :label="$t('page.manage.game.effects.bgmLoop')">
+                        <NSwitch v-model:value="formData.config.bgmLoop" />
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem :span="2">
+                      <div class="font-bold mb-8px border-b pb-4px mb-16px text-primary mt-8px">{{ $t('page.manage.game.effects.resultSounds') }}</div>
+                    </NGridItem>
                     <NGridItem>
                       <NFormItem :label="$t('page.manage.game.effects.winSound')">
-                        <div class="flex-1 flex gap-4px">
-                          <NInput v-model:value="formData.config.winSound" size="small" />
-                          <NButton size="small" @click="triggerUpload('winSound', 'audio')">{{ $t('page.manage.themes.upload') }}</NButton>
+                        <NInput :value="getAssetFilename(formData.config.winSound)" size="small" readonly>
+                          <template #suffix>
+                            <NSpace size="small">
+                              <NButton v-if="formData.config.winSound" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.winSound, $t('page.manage.game.effects.winSound'))">👁️</NButton>
+                              <NButton v-if="formData.config.winSound" size="tiny" quaternary type="error" @click="clearAsset('winSound')">🗑️</NButton>
+                              <NButton size="tiny" quaternary @click="triggerUpload('winSound', 'audio')">📁</NButton>
+                            </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.effects.loseSound')">
+                        <NInput :value="getAssetFilename(formData.config.loseSound)" size="small" readonly>
+                          <template #suffix>
+                            <NSpace size="small">
+                              <NButton v-if="formData.config.loseSound" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.loseSound, $t('page.manage.game.effects.loseSound'))">👁️</NButton>
+                              <NButton v-if="formData.config.loseSound" size="tiny" quaternary type="error" @click="clearAsset('loseSound')">🗑️</NButton>
+                              <NButton size="tiny" quaternary @click="triggerUpload('loseSound', 'audio')">📁</NButton>
+                            </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.effects.jackpotSoundFile')">
+                        <NInput :value="getAssetFilename(formData.config.jackpotSound)" size="small" readonly>
+                          <template #suffix>
+                            <NSpace size="small">
+                              <NButton v-if="formData.config.jackpotSound" size="tiny" quaternary type="primary" @click="openAssetPreview(formData.config.jackpotSound, $t('page.manage.game.effects.jackpotSoundFile'))">👁️</NButton>
+                              <NButton v-if="formData.config.jackpotSound" size="tiny" quaternary type="error" @click="clearAsset('jackpotSound')">🗑️</NButton>
+                              <NButton size="tiny" quaternary @click="triggerUpload('jackpotSound', 'audio')">📁</NButton>
+                            </NSpace>
+                          </template>
+                        </NInput>
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem>
+                      <NFormItem :label="$t('page.manage.game.effects.tickSound')">
+                        <NSwitch v-model:value="formData.config.tickSoundEnabled" />
+                      </NFormItem>
+                    </NGridItem>
+                    <NGridItem v-if="formData.config.tickSoundEnabled">
+                      <NFormItem :label="$t('page.manage.game.effects.tickVolume')">
+                        <div class="flex items-center gap-4 w-full">
+                          <NSlider v-model:value="formData.config.tickVolume" :min="0" :max="100" :step="5" class="flex-1" />
+                          <NInputNumber v-model:value="formData.config.tickVolume" size="small" class="w-20" :show-button="false">
+                            <template #suffix>%</template>
+                          </NInputNumber>
                         </div>
                       </NFormItem>
                     </NGridItem>

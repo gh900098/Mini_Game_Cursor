@@ -1,13 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, Request, Query, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Request, Query, UnauthorizedException, SetMetadata } from '@nestjs/common';
 import { MembersService } from './members.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionsGuard, RequirePermission } from '../../common/guards/permissions.guard';
 import { getClientIp } from '../../common/utils/ip-utils';
 import { maskEmail, maskPhone } from '../../common/utils/masking.utils';
 
+export const Public = () => SetMetadata('isPublic', true);
+
 @Controller('members')
 export class MembersController {
-    constructor(private readonly membersService: MembersService) { }
+    constructor(
+        private readonly membersService: MembersService
+    ) { }
+
 
     @Get('profile')
     @UseGuards(JwtAuthGuard)

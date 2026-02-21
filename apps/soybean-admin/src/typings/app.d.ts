@@ -302,7 +302,7 @@ declare namespace App {
       key: LangType;
     };
 
-    type I18nRouteKey = Exclude<RouteKey, 'root' | 'not-found'>;
+    type I18nRouteKey = Exclude<RouteKey, 'root' | 'not-found'> | 'games_member_detail' | 'games_game_instance' | 'games_play_attempts' | 'games_budget_tracking' | 'games_prize_types' | 'games_themes' | 'games_theme_detail' | 'games_member-detail' | 'games_game-instance' | 'games_play-attempts' | 'games_budget-tracking' | 'games_prize-types' | 'games_theme-detail';
 
     type FormMsg = {
       required: string;

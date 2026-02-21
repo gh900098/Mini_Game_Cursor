@@ -21,5 +21,6 @@ import { PrizesModule } from '../prizes/prizes.module';
   ],
   controllers: [SeedController],
   providers: [SeedService],
+  exports: [SeedService],
 })
 export class SeedModule { }

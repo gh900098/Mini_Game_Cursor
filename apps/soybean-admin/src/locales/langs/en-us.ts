@@ -269,7 +269,16 @@ const local: App.I18n.Schema = {
     games_scores: 'Score Records',
     'games_budget-tracking': 'Budget Tracking',
     games_prizes: 'Prize Ledger',
-    'games_prize-types': 'Prize Types'
+    'games_prize-types': 'Prize Types',
+    games_themes: 'Themes',
+    'games_theme-detail': 'Theme Editor',
+    // Compatibility keys
+    games_member_detail: 'Member Detail',
+    games_game_instance: 'Game Instances',
+    games_play_attempts: 'Play History',
+    games_budget_tracking: 'Budget Tracking',
+    games_prize_types: 'Prize Types',
+    games_theme_detail: 'Theme Editor'
   },
   page: {
     manage: {

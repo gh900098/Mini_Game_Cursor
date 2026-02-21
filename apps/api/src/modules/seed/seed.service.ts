@@ -10,6 +10,7 @@ import { Game } from '../games/entities/game.entity';
 import { GameInstance } from '../game-instances/entities/game-instance.entity';
 import { PrizesService } from '../prizes/prizes.service';
 import { Theme } from '../themes/entities/theme.entity';
+import { encryptionServiceInstance } from '../encryption/encryption.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -276,7 +277,10 @@ export class SeedService {
             this.logger.error('Failed to manually ensure User columns: ' + e.message);
         }
 
-        let adminUser = await this.userRepository.findOne({ where: { email: adminEmail } });
+        const adminEmailHash = encryptionServiceInstance ? encryptionServiceInstance.hash(adminEmail) : undefined;
+        let adminUser = adminEmailHash
+            ? await this.userRepository.findOne({ where: { emailHash: adminEmailHash } })
+            : await this.userRepository.findOne({ where: { email: adminEmail } });
 
         if (!adminUser) {
             const hashedPassword = await bcrypt.hash('Demo@12345', 10);
@@ -332,7 +336,11 @@ export class SeedService {
 
         // --- SEED SUPER ADMIN ---
         const superEmail = 'super@admin.com';
-        let superUser = await this.userRepository.findOne({ where: { email: superEmail } });
+        const superEmailHash = encryptionServiceInstance ? encryptionServiceInstance.hash(superEmail) : undefined;
+        let superUser = superEmailHash
+            ? await this.userRepository.findOne({ where: { emailHash: superEmailHash } })
+            : await this.userRepository.findOne({ where: { email: superEmail } });
+
         const hashedSuperPassword = await bcrypt.hash('Demo@12345', 10);
 
         if (!superUser) {
@@ -635,19 +643,89 @@ export class SeedService {
                             tokenBarColor: '#00aa00',
                             tokenBarTextColor: '#ffffff'
                         },
-                        'Gold Royale': {
-                            bgmUrl: '/api/uploads/templates/gold-royale/bgm.mp3',
-                            bgGradStart: '#1a1a0f',
-                            bgGradEnd: '#3d3d1f',
-                            neonCyan: '#ffd700',
-                            neonPink: '#daa520',
-                            neonGold: '#ffdf00',
+                        'Zen Oasis': {
+                            thumbnailUrl: 'https://images.unsplash.com/photo-1518005020250-675cf8943f01?w=400&h=250&fit=crop',
+                            bgmUrl: '/api/uploads/templates/zen-oasis/bgm.mp3',
+                            bgGradStart: '#f8fafc',
+                            bgGradEnd: '#e2e8f0',
+                            bgType: 'gradient',
+                            themeColor: '#64748b',
+                            secondaryColor: '#94a3b8',
                             enableHexagons: false,
                             enableGridFloor: false,
                             enableLedRing: true,
-                            ledColor1: '#ffd700',
-                            ledColor2: '#daa520',
-                            ledColor3: '#ffdf00'
+                            ledColor1: '#cbd5e1',
+                            ledColor2: '#94a3b8',
+                            ledColor3: '#64748b',
+                            spinBtnColor: '#64748b',
+                            spinBtnTextColor: '#ffffff',
+                            fontWeight: '300',
+                            fontPreset: 'Righteous'
+                        },
+                        'Retro Pixels': {
+                            thumbnailUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=250&fit=crop',
+                            bgmUrl: '/api/uploads/templates/retro-pixels/bgm.mp3',
+                            bgType: 'color',
+                            bgColor: '#000000',
+                            themeColor: '#39ff14',
+                            secondaryColor: '#ff00ff',
+                            fontPreset: 'Press Start 2P',
+                            enableHexagons: false,
+                            enableGridFloor: true,
+                            enableLedRing: true,
+                            ledColor1: '#39ff14',
+                            ledColor2: '#ff00ff',
+                            ledColor3: '#00ffff',
+                            spinBtnColor: '#39ff14',
+                            spinBtnTextColor: '#000000'
+                        },
+                        'Candy Kingdom': {
+                            thumbnailUrl: 'https://images.unsplash.com/photo-1533910534207-90f31029a78e?w=400&h=250&fit=crop',
+                            bgmUrl: '/api/uploads/templates/candy-kingdom/bgm.mp3',
+                            bgGradStart: '#fae8ff',
+                            bgGradEnd: '#f5d0fe',
+                            bgType: 'gradient',
+                            themeColor: '#db2777',
+                            secondaryColor: '#9333ea',
+                            enableConfetti: true,
+                            confettiParticles: 300,
+                            confettiColors: '#ff007f,#ff00ff,#7f00ff,#00ffff',
+                            ledColor1: '#db2777',
+                            ledColor2: '#9333ea',
+                            ledColor3: '#f472b6',
+                            fontPreset: 'Lobster'
+                        },
+                        'Deep Space': {
+                            thumbnailUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400&h=250&fit=crop',
+                            bgmUrl: '/api/uploads/templates/deep-space/bgm.mp3',
+                            bgGradStart: '#020617',
+                            bgGradEnd: '#0f172a',
+                            bgType: 'gradient',
+                            neonCyan: '#06b6d4',
+                            neonPink: '#3b82f6',
+                            enableHexagons: true,
+                            enableGridFloor: true,
+                            enableLedRing: true,
+                            ledColor1: '#06b6d4',
+                            ledColor2: '#3b82f6',
+                            ledColor3: '#1e40af',
+                            fontPreset: 'Orbitron'
+                        },
+                        'Sunset Blvd': {
+                            thumbnailUrl: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=400&h=250&fit=crop',
+                            bgmUrl: '/api/uploads/templates/sunset-blvd/bgm.mp3',
+                            bgGradStart: '#2e1065',
+                            bgGradEnd: '#831843',
+                            bgType: 'gradient',
+                            neonCyan: '#fb923c',
+                            neonPink: '#db2777',
+                            enableHexagons: false,
+                            enableGridFloor: true,
+                            enableLedRing: true,
+                            ledColor1: '#fb923c',
+                            ledColor2: '#db2777',
+                            ledColor3: '#7c3aed',
+                            fontPreset: 'Permanent Marker'
                         }
                     }
                 },
@@ -718,6 +796,11 @@ export class SeedService {
                                     { label: '🎄 Christmas Joy', value: 'Christmas Joy' },
                                     { label: '👑 Gold Royale', value: 'Gold Royale' },
                                     { label: '⚡ Zeus Theme', value: 'Zeus Theme' },
+                                    { label: '🍵 Zen Oasis', value: 'Zen Oasis' },
+                                    { label: '👾 Retro Pixels', value: 'Retro Pixels' },
+                                    { label: '🍭 Candy Kingdom', value: 'Candy Kingdom' },
+                                    { label: '🚀 Deep Space', value: 'Deep Space' },
+                                    { label: '🌅 Sunset Blvd', value: 'Sunset Blvd' },
                                     { label: '✏️ Custom', value: 'Custom' }
                                 ],
                                 default: 'Cyberpunk Elite',
@@ -1009,6 +1092,40 @@ export class SeedService {
                                     { key: 'jackpotResultSubtitle', type: 'text', label: 'page.manage.game.visuals.jackpotSubtitle', default: 'INCREDIBLE WIN!', span: 12 },
                                     { key: 'jackpotResultButtonImage', type: 'image', label: 'page.manage.game.visuals.jackpotButtonImage', span: 24 }
                                 ]
+                            },
+                            {
+                                key: 'bgm_section',
+                                type: 'collapse-group',
+                                label: 'page.manage.game.effects.bgmSettings',
+                                span: 24,
+                                items: [
+                                    { key: 'bgmUrl', type: 'file', label: 'page.manage.game.effects.bgmUrl', span: 24 },
+                                    { key: 'bgmVolume', type: 'slider', label: 'page.manage.game.effects.bgmVolume', min: 0, max: 100, step: 5, suffix: '%', default: 40, span: 12, condition: { key: 'bgmUrl', value: '', operator: 'neq' } },
+                                    { key: 'bgmLoop', type: 'switch', label: 'page.manage.game.effects.bgmLoop', default: true, span: 12, condition: { key: 'bgmUrl', value: '', operator: 'neq' } }
+                                ]
+                            },
+                            {
+                                key: 'result_sounds',
+                                type: 'collapse-group',
+                                label: 'page.manage.game.effects.resultSounds',
+                                span: 24,
+                                items: [
+                                    { key: 'winSound', type: 'file', label: 'page.manage.game.effects.winSound', span: 24 },
+                                    { key: 'loseSound', type: 'file', label: 'page.manage.game.effects.loseSound', span: 24 },
+                                    { key: 'jackpotSound', type: 'file', label: 'page.manage.game.effects.jackpotSoundFile', span: 24 },
+                                    { key: 'tickSoundEnabled', type: 'switch', label: 'page.manage.game.effects.tickSound', default: true, span: 12 },
+                                    { key: 'tickVolume', type: 'slider', label: 'page.manage.game.effects.tickVolume', min: 0, max: 100, step: 5, suffix: '%', default: 30, span: 12 }
+                                ]
+                            },
+                            {
+                                key: 'sound_button_section',
+                                type: 'collapse-group',
+                                label: 'page.manage.game.effects.soundButtonSettings',
+                                span: 24,
+                                items: [
+                                    { key: 'showSoundButton', type: 'switch', label: 'page.manage.game.effects.showSoundButton', default: true, span: 12 },
+                                    { key: 'soundButtonOpacity', type: 'slider', label: 'page.manage.game.effects.soundButtonOpacity', min: 0, max: 100, step: 5, suffix: '%', default: 80, span: 12 }
+                                ]
                             }
                         ]
                     },
@@ -1036,16 +1153,6 @@ export class SeedService {
                                 ]
                             },
                             {
-                                key: 'bgm_section',
-                                type: 'collapse-group',
-                                label: 'page.manage.game.effects.bgmSettings',
-                                items: [
-                                    { key: 'bgmUrl', type: 'file', label: 'page.manage.game.effects.bgmUrl', span: 24 },
-                                    { key: 'bgmVolume', type: 'slider', label: 'page.manage.game.effects.bgmVolume', min: 0, max: 100, step: 5, suffix: '%', default: 40, span: 12, condition: { key: 'bgmUrl', value: '', operator: 'neq' } },
-                                    { key: 'bgmLoop', type: 'switch', label: 'page.manage.game.effects.bgmLoop', default: true, span: 12, condition: { key: 'bgmUrl', value: '', operator: 'neq' } }
-                                ]
-                            },
-                            {
                                 key: 'led_section',
                                 type: 'collapse-group',
                                 label: 'page.manage.game.effects.ledSettings',
@@ -1055,27 +1162,6 @@ export class SeedService {
                                     { key: 'ledColor1', type: 'color', label: 'page.manage.game.effects.ledColor1', default: '#00f5ff', span: 8 },
                                     { key: 'ledColor2', type: 'color', label: 'page.manage.game.effects.ledColor2', default: '#ff00ff', span: 8 },
                                     { key: 'ledColor3', type: 'color', label: 'page.manage.game.effects.ledColor3', default: '#ffd700', span: 8 }
-                                ]
-                            },
-                            {
-                                key: 'result_sounds',
-                                type: 'collapse-group',
-                                label: 'page.manage.game.effects.resultSounds',
-                                items: [
-                                    { key: 'winSound', type: 'file', label: 'page.manage.game.effects.winSound', span: 24 },
-                                    { key: 'loseSound', type: 'file', label: 'page.manage.game.effects.loseSound', span: 24 },
-                                    { key: 'jackpotSound', type: 'file', label: 'page.manage.game.effects.jackpotSoundFile', span: 24 },
-                                    { key: 'tickSoundEnabled', type: 'switch', label: 'page.manage.game.effects.tickSound', default: true, span: 12 },
-                                    { key: 'tickVolume', type: 'slider', label: 'page.manage.game.effects.tickVolume', min: 0, max: 100, step: 5, suffix: '%', default: 30, span: 12 }
-                                ]
-                            },
-                            {
-                                key: 'sound_button_section',
-                                type: 'collapse-group',
-                                label: 'page.manage.game.effects.soundButtonSettings',
-                                items: [
-                                    { key: 'showSoundButton', type: 'switch', label: 'page.manage.game.effects.showSoundButton', default: true, span: 12 },
-                                    { key: 'soundButtonOpacity', type: 'slider', label: 'page.manage.game.effects.soundButtonOpacity', min: 0, max: 100, step: 5, suffix: '%', default: 80, span: 12 }
                                 ]
                             },
                             {
@@ -1363,12 +1449,20 @@ export class SeedService {
                 await this.gameRepository.save(game);
                 this.logger.log(`Created demo game: ${gameData.name}`);
             } else {
-                // Update properties in case they changed
+                // Update properties in case they changed.
+                // For simple scalar/string properties, Object.assign is fine.
                 Object.assign(existing, gameData as any);
-                // Explicitly reassigned purely to ensure dirty checking picks it up if it was a deep object issue
-                existing.configSchema = gameData.configSchema as any;
-                existing.config = gameData.config as any;
-                existing.imageSpec = gameData.imageSpec as any;
+
+                // CRITICAL FIX: TypeORM often fails to detect deep changes in JSONB columns
+                // if we only mutate or shallow-copy the object. We MUST provide a brand new 
+                // object reference (deep clone) to force the UPDATE statement to run.
+                existing.configSchema = JSON.parse(JSON.stringify(gameData.configSchema));
+                existing.config = JSON.parse(JSON.stringify(gameData.config));
+
+                if (gameData.imageSpec) {
+                    existing.imageSpec = JSON.parse(JSON.stringify(gameData.imageSpec));
+                }
+
                 await this.gameRepository.save(existing);
                 this.logger.log(`Updated demo game (Forced Schema): ${gameData.name}`);
             }

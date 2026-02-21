@@ -798,6 +798,40 @@ Route (/game/:id)
    **Solution:** Edit game instance in Admin Panel → Effects tab → Enable audio button
 
 #### 🚨 Modification Impact Scope
+- **Route Access**: Affects any page relying on Game Instance or Admin features logic.
+- **Component Styling**: Any future global style changes might affect iframe boundary rules.
+
+---
+
+## 🎨 Theme Editor Visuals Alignment
+
+**Implementation Date:** 2026-02-21  
+**Status:** Live ✅
+
+### 📍 Location
+- **Frontend Editor:** `apps/soybean-admin/src/views/games/theme-detail/index.vue`
+- **Backend Schema:** `apps/api/src/modules/seed/seed.service.ts`
+
+### 🎯 Feature Description
+Aligns the Theme Editor's visual styling capabilities with the deeper Game Instance configuration, allowing themes to fully bundle core structural visual assets and sound effects.
+
+### ⚙️ Core Mechanisms
+
+#### 1. Standardized Upload Patterns
+All image and audio inputs within `theme-detail/index.vue` have been refactored to utilize a consistent readonly input display. This pattern extracts the filename using `getAssetFilename` and offers explicit suffix buttons:
+- 👁️ **Preview**: Opens the asset in `NModal`.
+- 🗑️ **Clear**: Removes the asset from `formData.config`.
+- 📁 **Upload**: Triggers the `triggerUpload` native file selector.
+
+#### 2. Expanded Schema Properties
+The `visuals` tab schema within the backend (`seed.service.ts`) was flattened to include standard sound effects alongside new properties, which the Theme Editor (`ThemeConfig`) now explicitly mirrors:
+- **Audio**: `bgmUrl`, `winSound`, `loseSound`, `jackpotSound`
+- **Structure**: `dividerImage`, `centerImage`, `tokenBarImage`
+- **Result Prompts (Win/Lose/Jackpot)**: Backgrounds, title images, and button images.
+- **Gradient Direction**: Standardized from manual degrees to strict semantic dropdown options.
+
+### 🚨 Modification Impact Scope
+- **Theme Data**: Themes can now independently supply comprehensive 'reskins', including unique outcome sounds and modal backgrounds, reducing the configuration burden on individual Game Instances.
 **Modifying this file affects:**
 - ✅ Game loading flow
 - ✅ Audio control UI

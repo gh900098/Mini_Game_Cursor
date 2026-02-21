@@ -880,25 +880,49 @@ function handleFieldChange(key: string, value: any) {
 }
 
 function getOptions(options?: string[] | { label: string; value: string }[], key?: string) {
+  let processedOptions: { label: string; value: string }[] = [];
+
+  if (!options) {
+    processedOptions = [];
+  } else if (typeof options[0] === 'string') {
+    processedOptions = (options as string[]).map(opt => ({ label: opt, value: opt }));
+  } else {
+    // Translate label if it looks like an i18n key
+    processedOptions = (options as { label: string; value: string }[]).map(opt => ({
+      label: opt.label.includes('.') ? t(opt.label) : opt.label,
+      value: opt.value
+    }));
+  }
+
   // Inject dynamic themes for the themePreset dropdown
   if (key === 'themePreset') {
     const dynamicOptions = Object.keys(dynamicThemes.value).map(themeName => ({
       label: `✨ ${themeName}`, // Add a little sparkle to dynamic themes
       value: themeName
     }));
-    dynamicOptions.push({ label: '✏️ Custom', value: 'Custom' });
-    return dynamicOptions;
+    
+    // Filter out dynamic options that might already exist in the static schema
+    // to prevent duplicates
+    const existingValues = new Set(processedOptions.map(o => o.value));
+    const uniqueDynamicOptions = dynamicOptions.filter(o => !existingValues.has(o.value));
+    
+    // Append the unique dynamic options before 'Custom' if 'Custom' exists
+    const customOptionIndex = processedOptions.findIndex(o => o.value === 'Custom');
+    
+    if (customOptionIndex !== -1) {
+      const customOption = processedOptions.splice(customOptionIndex, 1)[0];
+      processedOptions.push(...uniqueDynamicOptions);
+      processedOptions.push(customOption);
+    } else {
+      processedOptions.push(...uniqueDynamicOptions);
+      // Ensure 'Custom' is always available as a fallback
+      if (!existingValues.has('Custom')) {
+          processedOptions.push({ label: '✏️ Custom', value: 'Custom' });
+      }
+    }
   }
 
-  if (!options) return [];
-  if (typeof options[0] === 'string') {
-    return (options as string[]).map(opt => ({ label: opt, value: opt }));
-  }
-  // Translate label if it looks like an i18n key
-  return (options as { label: string; value: string }[]).map(opt => ({
-    label: opt.label.includes('.') ? t(opt.label) : opt.label,
-    value: opt.value
-  }));
+  return processedOptions;
 }
 
 function moveItem(key: string, index: number | string, direction: 'up' | 'down') {
