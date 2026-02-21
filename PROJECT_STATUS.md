@@ -1,17 +1,17 @@
 # Project Status & Current Context
 
-**Last Updated:** 2026-02-20 09:15
-**Current Mission:** Theme Editor Visuals Alignment ✅
+**Last Updated:** 2026-02-21 16:10
+**Current Mission:** Upload System Bugfixes & Server-Side File Deletion ✅
 **Server Status:** 🟢 Running. (API:3100, Admin:3101, Web:3102, Worker:3100).
 
 ## 🎯 Current Focus (AI Memory)
 - **Active Mission:** Awaiting next instructions.
 - **Current Branch:** `main`
-- **Status**: 🟢 Live. Theme Editor visual styles have been aligned with Game Instances, standardizing background gradients, game assets (center hubs, token bars), and result configurations.
+- **Status**: 🟢 Live. Fixed UUID filenames on upload, added server-side file deletion endpoint, and added cache-busting to prevent stale data after deletions.
 
 ### Context
-The application now supports fully encapsulated standalone themes with bundled visual assets. Themes no longer need configuring per instance for audio or core interface borders.
-- **Goal:** Completed Theme Editor visual parity. Waiting for next instruction.
+The upload system is now fully standardized. Deleting assets from the Theme Editor or Game Instance configurator now physically removes the file from disk via `DELETE /api/game-instances/upload`. Cache-busting ensures stale configs are never served from browser cache.
+- **Goal:** Completed. Waiting for next instruction.
 
 ## 🏗️ Architectural Context (The "Must Knows")
 - **Local Testing Environment:**
@@ -44,6 +44,7 @@ The application now supports fully encapsulated standalone themes with bundled v
 
 
 ## ✅ Recently Completed
+- [x] **Upload System Bugfixes & Server-Side File Deletion** (Fixed UUID filenames, added `DELETE /game-instances/upload` physical file removal, added cache-busting to GET endpoints - 2026-02-21)
 - [x] **Theme Editor Visuals Alignment and Layout Overflow Fix** (Standardized upload UI, expanded schema to match Game Instances, added dropdowns for Gradients, fixed NaiveUI tab layout overflow mapping to ensure Live Preview remains on-screen and form panels get independent scrollbars - 2026-02-21)
 - [x] **Test Environment Game Assets Fix** (Restored missing uploaded images from production Docker named volume to the local host directory - 2026-02-20)
 - [x] **Strict Impersonation Protection & Environment Split** (Implemented read-only bypasses for admins, fixed 403 profile error, added docker-compose.test.yml, fixed asset caching - 2026-02-20)
