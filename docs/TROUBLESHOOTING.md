@@ -4,6 +4,32 @@
 
 ---
 
+### Issue 18: Theme Upload Files Get Random UUID Filenames
+
+**Cause:** `FormData` fields were appended in the wrong order. The `file` binary was appended **before** `customName`, so Multer processed the file before it knew what name to give it and fell back to generating a random 32-character hex string.
+
+**Symptoms:**
+- After uploading a background image or audio file in the Theme Editor, the input box shows a name like `af0bbd24af25a1da1a7e6a20eac186910.png` instead of `bgImage.png`.
+
+**Solution (Fixed - 2026-02-21):**
+- Reordered `FormData.append()` calls in `theme-detail/index.vue`: all text fields (`instanceId`, `category`, `customName`) are appended **before** `.append('file', file)`.
+
+---
+
+### Issue 19: Deleting a Theme/Game Asset Does Not Remove the Physical File
+
+**Cause:** The `clearAsset()` function in the frontend only cleared the URL string from the in-memory form config object. It did not call any backend endpoint, so the actual file remained in the `uploads/` directory on the server.
+
+**Symptoms:**
+- Clicking 🗑️ removes the URL from the input box and saves successfully.
+- Checking the `uploads/common-themes/[slug]/...` folder on the server still shows the file.
+
+**Solution (Fixed - 2026-02-21):**
+1. **Backend:** Added `DELETE /api/game-instances/upload` to `game-instances.controller.ts`. It accepts `{ url: "/api/uploads/..." }`, resolves the physical path (with path-traversal protection), and calls `fs.unlinkSync()`.
+2. **Frontend:** Made `clearAsset()` async in both `theme-detail/index.vue` and `ConfigForm.vue`. Before clearing the form reference, it now calls `DELETE /game-instances/upload` with the current URL.
+
+---
+
 ### Issue 14: Sync Parameters Missing from Admin UI
 
 **Cause:** Omitted during the refactor of the Company edit form into a tabbed interface.

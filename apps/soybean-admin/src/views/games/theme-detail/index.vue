@@ -146,10 +146,10 @@ async function handleFileChange(event: Event) {
   if (!file || !currentUploadTarget.value) return;
 
   const body = new FormData();
-  body.append('instanceId', 'common-themes');
+  body.append('instanceId', `common-themes/${formData.value.slug || 'theme'}`);
   body.append('category', currentUploadTarget.value.category);
+  body.append('customName', currentUploadTarget.value.key);
   body.append('file', file);
-  body.append('customName', `${formData.value.slug || 'theme'}-${currentUploadTarget.value.key}`);
 
   const { data, error } = await request<{ url: string }>({
     url: '/game-instances/upload',
@@ -164,7 +164,18 @@ async function handleFileChange(event: Event) {
   }
 }
 
-function clearAsset(key: string) {
+async function clearAsset(key: string) {
+  const currentUrl = formData.value.config[key];
+  if (currentUrl) {
+    // Physically delete the file from the server
+    await request({
+      url: '/game-instances/upload',
+      method: 'delete',
+      data: { url: currentUrl }
+    }).catch(() => {
+      // Silently ignore deletion errors (file may already be gone)
+    });
+  }
   formData.value.config[key] = '';
   if (key === 'bgImage') {
     formData.value.config.bgType = 'gradient';

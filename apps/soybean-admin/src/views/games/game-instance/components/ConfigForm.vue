@@ -92,7 +92,17 @@ async function handleFileChange(event: Event) {
   }
 }
 
-function clearAsset(key: string, item?: any) {
+async function clearAsset(key: string, item?: any) {
+  const currentUrl = item ? item.icon : formModel.value[key];
+  if (currentUrl) {
+    await request({
+      url: '/game-instances/upload',
+      method: 'delete',
+      data: { url: currentUrl }
+    }).catch(() => {
+      // Silently ignore — file may already be gone
+    });
+  }
   if (item) {
     item.icon = '';
   } else {

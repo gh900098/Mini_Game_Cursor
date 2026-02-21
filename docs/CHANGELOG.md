@@ -3,6 +3,31 @@
  Records all important feature updates, bug fixes, and architectural changes.
  
  
+## [2026-02-21] Theme Upload Bugfixes & Server-Side File Deletion
+
+### 🐛 Bug Fixes
+
+#### 1. Fixed UUID Filenames on Upload
+- **Problem:** Files uploaded from the Theme Editor always got random UUID names (e.g. `af0bbd24...png`) instead of descriptive names like `resultLoseBackground.png`.
+- **Root Cause:** `FormData` fields were appended in the wrong order — the `file` chunk was sent to Multer **before** the `customName` field, so Multer fell back to UUID generation.
+- **Fix:** Reordered `FormData.append()` calls in `theme-detail/index.vue` so that all text fields (including `customName`) are appended **before** the file binary.
+
+#### 2. Server-Side File Deletion
+- **Problem:** The 🗑️ (trash) button only cleared the URL reference in the config form — it did **not** remove the physical file from the server's `uploads/` directory.
+- **Fix:**
+  - **Backend:** Added `DELETE /api/game-instances/upload` endpoint in `game-instances.controller.ts`. Accepts a `{ url }` body, strips the `/api/uploads/` prefix, resolves the physical path with path-traversal protection, and calls `fs.unlinkSync()`.
+  - **Frontend:** Updated `clearAsset()` in both `theme-detail/index.vue` and `ConfigForm.vue` to call the DELETE endpoint before clearing the local config reference.
+
+#### 3. Added Cache-Busting to GET Endpoints
+- **Problem:** Browsers cached theme/game-instance GET API responses, causing deleted images to reappear after page navigation.
+- **Fix:** Added `_t: Date.now()` timestamp parameter to `fetchThemes()`, `fetchThemeDetail()`, and `fetchGetGameInstances()`.
+
+### ✅ Deployment
+- ✅ API and Admin containers rebuilt and verified.
+- ✅ DELETE endpoint tested and confirmed working.
+
+---
+
 ## [2026-02-21] Theme Editor Visuals Alignment
 
 ### 🎨 Customization Enhancement
@@ -14,7 +39,8 @@
 ### 📝 Features Implemented
 
 #### 1. Standardized Asset Upload Pattern
-- **UI Refactoring**: Replaced legacy upload fields across `theme-detail/index.vue` with a consistent `readonly string + 📁 Upload` pattern.
+- **Path Standardization**: Rewrote the upload API (`game-instances.controller.ts`) to treat `common-themes` as a core globals directory. Theme assets are now consistently placed in `uploads/common-themes/[themeSlug]/[category]/[customName.ext]` avoiding company ID tangling.
+- **UI Refactoring**: Replaced legacy upload fields across `theme-detail/index.vue` with a consistent `readonly string + 📁 Upload` pattern, submitting the properly namespaced `instanceId` and structured `customName`.
 - **Suffix Interactions**: Added standard `Preview (👁️)`, `Clear (🗑️)`, and `Upload (📁)` actions to all visual and audio properties, mimicking `ConfigForm.vue`.
 - **Gradient Standardization**: Replaced explicit degree string inputs (`135deg`) with a user-friendly dropdown (`NSelect`) matching the Game Instance UI (Top to Bottom, Radial Center, etc.).
 

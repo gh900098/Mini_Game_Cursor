@@ -6,6 +6,45 @@ This document records all major features of the MiniGame project, including code
 
 ---
 
+## 📁 Standardized Asset Upload System
+
+**Last Updated:** 2026-02-21
+**Status:** Implementation Complete ✅
+
+### 📍 Location
+- **Upload Endpoint:** `apps/api/src/modules/game-instances/game-instances.controller.ts` — `POST /game-instances/upload`, `DELETE /game-instances/upload`
+- **Theme Uploader:** `apps/soybean-admin/src/views/games/theme-detail/index.vue`
+- **Instance Uploader:** `apps/soybean-admin/src/views/games/game-instance/components/ConfigForm.vue`
+- **API Clients:** `apps/soybean-admin/src/service/api/themes.ts`, `management.ts`
+
+### 🎯 Feature Description
+A unified, consistent file upload and deletion pattern for all game assets (images, audio, fonts) across both the Theme Editor and Game Instance configuration panels.
+
+### ⚙️ Core Mechanisms
+
+#### 1. Namespaced Upload Paths
+Files are stored in a predictable, structured directory hierarchy:
+- **Common Themes:** `uploads/common-themes/[themeSlug]/[category]/[customName.ext]`
+  - Example: `uploads/common-themes/candy-kingdom/backgrounds/bgImage.png`
+- **Game Instances:** `uploads/[companyId]/[instanceId]/[category]/[customName.ext]`
+
+The backend detects `common-themes` in the `instanceId` field and bypasses company-ID partitioning.
+
+#### 2. Deterministic Filenames
+The `customName` field in the upload `FormData` must be appended **before** the `file` field. Multer processes multipart form data sequentially, so sending the file binary first causes it to fall back to a random 32-hex-character UUID.
+
+#### 3. Server-Side File Deletion
+`DELETE /game-instances/upload` accepts `{ url }`, resolves the physical path from `/api/uploads/...`, applies path-traversal protection (`path.resolve()` + `startsWith(uploadsRoot)`), and deletes the file via `fs.unlinkSync()`.
+
+#### 4. Cache-Busting
+All GET endpoints for themes and game instances include `_t: Date.now()` to prevent browser XHR cache from surfacing stale config data (e.g., after clearing an image).
+
+### 🚨 Modification Impact Scope
+- **Adding new upload categories:** Add new `category` values to the frontend `triggerUpload()` calls. The backend creates directories dynamically.
+- **Changing the path prefix:** The `/api/uploads/` constant is used by both the `DELETE` endpoint and all static asset serving. Changing it requires updating both `main.ts` (`useStaticAssets`) and the delete endpoint.
+
+---
+
 ## 🔄 JK Synchronization System
 
 **Last Updated:** 2026-02-16  

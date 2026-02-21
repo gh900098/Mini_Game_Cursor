@@ -4,14 +4,15 @@ export function fetchThemes(params?: Record<string, any>) {
     return request<Api.SystemManage.ThemeList>({
         url: '/themes',
         method: 'get',
-        params
+        params: { ...params, _t: Date.now() }
     });
 }
 
 export function fetchThemeDetail(id: string) {
     return request<Api.SystemManage.Theme>({
         url: `/themes/${id}`,
-        method: 'get'
+        method: 'get',
+        params: { _t: Date.now() }
     });
 }
 

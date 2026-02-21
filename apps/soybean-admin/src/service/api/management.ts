@@ -195,7 +195,7 @@ export function fetchGetGameInstances(params?: { companyId?: string }) {
     return request<Api.Management.GameInstance[]>({
         url: '/game-instances',
         method: 'get',
-        params
+        params: { ...params, _t: Date.now() }
     });
 }
 

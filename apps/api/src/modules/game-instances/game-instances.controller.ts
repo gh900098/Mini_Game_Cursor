@@ -985,7 +985,11 @@ export class GameInstancesController {
                 const companyId = req.user?.currentCompanyId || 'default';
                 const instanceId = req.body.instanceId || 'common';
                 const category = req.body.category || 'misc';
-                const uploadPath = `./uploads/${companyId}/${instanceId}/${category}`;
+
+                // Common themes are global, so they don't use companyId partitioning
+                const uploadPath = instanceId.startsWith('common-themes')
+                    ? `./uploads/${instanceId}/${category}`
+                    : `./uploads/${companyId}/${instanceId}/${category}`;
 
                 const fs = require('fs');
                 if (!fs.existsSync(uploadPath)) {
@@ -1041,6 +1045,10 @@ export class GameInstancesController {
         const instanceId = req.body.instanceId || 'common';
         const category = req.body.category || 'misc';
 
+        const urlPrefix = instanceId.startsWith('common-themes')
+            ? `/api/uploads/${instanceId}/${category}`
+            : `/api/uploads/${companyId}/${instanceId}/${category}`;
+
         // Audio file size validation - max 4MB
         const isAudioFile = file.originalname.match(/\.(mp3|wav|ogg|m4a|aac)$/i);
         if (isAudioFile && file.size > 4 * 1024 * 1024) {
@@ -1051,8 +1059,44 @@ export class GameInstancesController {
         }
 
         return {
-            url: `/api/uploads/${companyId}/${instanceId}/${category}/${file.filename}`
+            url: `${urlPrefix}/${file.filename}`
         };
+    }
+
+    @Delete('upload')
+    @UseGuards(JwtAuthGuard)
+    async deleteUploadedFile(@Request() req: any, @Body() body: { url: string }) {
+        const fileUrl: string = body?.url;
+        if (!fileUrl) {
+            throw new BadRequestException('No file URL provided');
+        }
+
+        // Strip the /api/uploads/ prefix to get the relative path
+        const prefix = '/api/uploads/';
+        if (!fileUrl.startsWith(prefix)) {
+            throw new BadRequestException('Invalid file URL');
+        }
+
+        // Remove query string (e.g. ?t=123456)
+        const relativePath = fileUrl.split('?')[0].slice(prefix.length);
+
+        // Security: prevent path traversal
+        const fs = require('fs');
+        const path = require('path');
+        const uploadsRoot = path.resolve('./uploads');
+        const filePath = path.resolve(uploadsRoot, relativePath);
+
+        if (!filePath.startsWith(uploadsRoot)) {
+            throw new BadRequestException('Invalid file path');
+        }
+
+        if (!fs.existsSync(filePath)) {
+            // File already gone — treat as success
+            return { success: true, message: 'File not found (already deleted)' };
+        }
+
+        fs.unlinkSync(filePath);
+        return { success: true, message: 'File deleted' };
     }
 
     @Post('validate-slug')

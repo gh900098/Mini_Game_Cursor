@@ -44,7 +44,7 @@ The application now supports fully encapsulated standalone themes with bundled v
 
 
 ## ✅ Recently Completed
-- [x] **Theme Editor Visuals Alignment** (Added dropdowns for Gradient, standard string upload for Audio & Game Assets, schema parity with full game instance configs - 2026-02-21)
+- [x] **Theme Editor Visuals Alignment and Layout Overflow Fix** (Standardized upload UI, expanded schema to match Game Instances, added dropdowns for Gradients, fixed NaiveUI tab layout overflow mapping to ensure Live Preview remains on-screen and form panels get independent scrollbars - 2026-02-21)
 - [x] **Test Environment Game Assets Fix** (Restored missing uploaded images from production Docker named volume to the local host directory - 2026-02-20)
 - [x] **Strict Impersonation Protection & Environment Split** (Implemented read-only bypasses for admins, fixed 403 profile error, added docker-compose.test.yml, fixed asset caching - 2026-02-20)
 - [x] **User List Duplication Resolution** (Enforced uniqueness on emailHash + Data Merge - 2026-02-20)
