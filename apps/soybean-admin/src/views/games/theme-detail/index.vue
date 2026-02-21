@@ -278,16 +278,18 @@ onMounted(() => {
       <div class="flex h-full gap-16px overflow-hidden">
         <!-- Editor Side -->
         <div class="flex-1 overflow-hidden h-full">
-          <NScrollbar class="pr-12px">
+          <div class="flex-1 overflow-hidden h-full">
             <NForm
               ref="formRef"
               :model="formData"
               :rules="rules"
               label-placement="top"
               require-mark-placement="right-hanging"
+              class="h-full flex flex-col"
             >
-              <NTabs type="line" animated>
+              <NTabs type="line" animated class="flex-1 overflow-hidden flex flex-col" pane-class="flex-1 overflow-hidden">
                 <NTabPane name="basic" :tab="$t('page.manage.themes.basicInfo')">
+                  <NScrollbar class="pr-12px max-h-full">
                   <NGrid :cols="2" :x-gap="16">
                     <NGridItem>
                       <NFormItem :label="$t('page.manage.themes.name')" path="name">
@@ -328,9 +330,11 @@ onMounted(() => {
                       </NFormItem>
                     </NGridItem>
                   </NGrid>
+                  </NScrollbar>
                 </NTabPane>
 
                 <NTabPane name="visuals" :tab="$t('page.manage.themes.visualStyles')">
+                   <NScrollbar class="pr-12px max-h-full">
                   <NGrid :cols="2" :x-gap="16">
                     <NGridItem :span="2">
                       <div class="font-bold mb-8px border-b pb-4px mb-16px text-primary">{{ $t('page.manage.themes.mainColors') }}</div>
@@ -618,9 +622,11 @@ onMounted(() => {
                       </NFormItem>
                     </NGridItem>
                   </NGrid>
+                  </NScrollbar>
                 </NTabPane>
 
                 <NTabPane name="effects" :tab="$t('page.manage.themes.vfxAudio')">
+                   <NScrollbar class="pr-12px max-h-full">
                   <NGrid :cols="2" :x-gap="16">
                     <NGridItem :span="2">
                       <div class="font-bold mb-8px border-b pb-4px mb-16px text-primary">{{ $t('page.manage.themes.audioAssets') }}</div>
@@ -746,10 +752,11 @@ onMounted(() => {
                       </NFormItem>
                     </NGridItem>
                   </NGrid>
+                  </NScrollbar>
                 </NTabPane>
               </NTabs>
             </NForm>
-          </NScrollbar>
+          </div>
         </div>
 
         <!-- Preview Side -->
