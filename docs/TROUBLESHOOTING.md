@@ -115,6 +115,22 @@ const { items: companies } = await this.companiesService.findAll({ limit: 1000 }
 
 ---
 
+### Issue 21: Theme Editor Layout Overflow (Missing Scrollbars)
+
+**Cause:** The Naive UI `NTabs` component and its internal wrappers (`.n-tabs-pane-wrapper`, `.n-tab-pane`) did not automatically inherit flexbox properties (`flex: 1`, `min-height: 0`, `overflow: hidden`) from parent containers. As long configuration forms (Visual Styles, VFX & Audio) expanded, they pushed the container height beyond the `100vh` viewport constraint instead of generating an internal scrollbar, pushing the "LIVE PREVIEW" container off-screen.
+
+**Symptoms:**
+- The Theme Editor page extends infinitely downwards.
+- The "Sync Preview" button at the bottom of the Live Preview column is not visible without scrolling the whole browser window.
+- The left-side configuration panels do not have independent scrollbars.
+
+**Solution (Fixed - 2026-02-21):**
+1. **Flex Constraints:** Applied `flex-1 flex-col overflow-hidden min-h-0` to the wrapping `NCard` and its content style.
+2. **Tab Pane Wrapping:** Used CSS scoped classes to explicitly force `.n-tabs-pane-wrapper` and `.n-tab-pane` to respect `flex: 1`, `min-height: 0`, and `overflow: hidden`.
+3. **Internal Scrollbars:** Wrapped the content inside each `NTabPane` with an `NScrollbar` configured with `max-h-full`.
+
+---
+
 ## 🚀 Standard Operating Procedures (SOP)
 
 ### When modifying frontend code (`web-app` or `admin`):

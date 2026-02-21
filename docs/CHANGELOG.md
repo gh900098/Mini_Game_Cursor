@@ -26,6 +26,7 @@
 ### 📊 Technical Details
 - **Backend**: Flattened `config.visuals` schema in `seed.service.ts` to accommodate the unified assets.
 - **Frontend**: Expanded `ThemeConfig` interface and default `formData` inside `apps/soybean-admin/src/views/games/theme-detail/index.vue`.
+- **Layout Repair**: Restructured the flexbox hierarchy of the `NTabs` and `NCard` components to guarantee that long configuration forms scrolling independently does not force the "LIVE PREVIEW" container off-screen. Fixed missing scrollbars on form panels.
 
 ### ✅ Deployment
 - ✅ Admin container rebuilt and visually verified.

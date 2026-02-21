@@ -264,7 +264,13 @@ onMounted(() => {
 
 <template>
   <div class="h-full flex-col-stretch gap-16px overflow-hidden p-16px">
-    <NCard :title="action === 'create' ? $t('page.manage.themes.add') : `${$t('page.manage.themes.edit')}: ${formData.name}`" :bordered="false" size="small" class="h-full card-wrapper">
+    <NCard 
+      :title="action === 'create' ? $t('page.manage.themes.add') : `${$t('page.manage.themes.edit')}: ${formData.name}`" 
+      :bordered="false" 
+      size="small" 
+      class="h-full card-wrapper flex-col-stretch min-h-0 max-h-[calc(100vh-100px)]"
+      content-style="flex: 1; display: flex; flex-direction: column; overflow: hidden; padding-bottom: 0; min-height: 0;"
+    >
       <template #header-extra>
         <NSpace>
           <NButton @click="handleBack">{{ $t('page.manage.themes.back') }}</NButton>
@@ -275,10 +281,10 @@ onMounted(() => {
         </NSpace>
       </template>
 
-      <div class="flex h-full gap-16px overflow-hidden">
+      <div class="flex h-full gap-16px overflow-hidden min-h-0">
         <!-- Editor Side -->
-        <div class="flex-1 overflow-hidden h-full">
-          <div class="flex-1 overflow-hidden h-full">
+        <div class="flex-1 overflow-hidden h-full flex flex-col min-h-0">
+          <div class="flex-1 overflow-hidden h-full flex flex-col min-h-0">
             <NForm
               ref="formRef"
               :model="formData"
@@ -760,7 +766,7 @@ onMounted(() => {
         </div>
 
         <!-- Preview Side -->
-        <div class="w-380px bg-gray-100 rounded-12px overflow-hidden border-4 border-gray-800 flex flex-col relative">
+        <div class="w-380px bg-gray-100 rounded-12px overflow-hidden border-4 border-gray-800 flex flex-col relative min-h-0">
           <div class="bg-gray-800 text-white p-8px text-center font-bold text-12px tracking-wider">LIVE PREVIEW</div>
           <div class="flex-1 relative bg-black">
             <iframe
@@ -798,11 +804,26 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
 }
-:deep(.n-card-content) {
+:deep(.n-card__content) {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   padding-bottom: 0 !important;
+  min-height: 0;
+}
+:deep(.n-tabs-pane-wrapper) {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+:deep(.n-tab-pane) {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 </style>
-
-<style scoped></style>
