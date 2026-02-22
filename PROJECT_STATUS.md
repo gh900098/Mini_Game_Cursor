@@ -1,13 +1,13 @@
 # Project Status & Current Context
 
-**Last Updated:** 2026-02-21 16:10
-**Current Mission:** Upload System Bugfixes & Server-Side File Deletion ✅
+**Last Updated:** 2026-02-22 08:05
+**Current Mission:** BullMQ Stale Job 404 Loop Fix ✅
 **Server Status:** 🟢 Running. (API:3100, Admin:3101, Web:3102, Worker:3100).
 
 ## 🎯 Current Focus (AI Memory)
 - **Active Mission:** Awaiting next instructions.
 - **Current Branch:** `main`
-- **Status**: 🟢 Live. Fixed UUID filenames on upload, added server-side file deletion endpoint, and added cache-busting to prevent stale data after deletions.
+- **Status**: 🟢 Live. Fixed BullMQ stale repeatable job causing Bull Board infinite 404 loop. Scheduler now purges legacy Redis entries on every startup.
 
 ### Context
 The upload system is now fully standardized. Deleting assets from the Theme Editor or Game Instance configurator now physically removes the file from disk via `DELETE /api/game-instances/upload`. Cache-busting ensures stale configs are never served from browser cache.
