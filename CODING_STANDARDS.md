@@ -9,8 +9,9 @@ Before writing ANY code, you MUST read these files to understand the current sta
 2.  **`MEMORY_BANK.md`**: Proven reusable patterns. Check here BEFORE writing any service/controller/component.
 3.  **`docs/CODEMAP.md`**: Where all files live. Check here BEFORE creating any new file.
 4.  **`docs/ARCHITECTURE_DECISIONS.md`**: WHY key decisions were made. Check here BEFORE changing anything structural.
-5.  **`docs/FEATURES.md`**: The detailed logic of existing features.
-6.  **`AGENTS.md`**: The behavior rules and pre-flight checklist (Section 0 is critical).
+5.  **`docs/SECURITY_STANDARDS.md`**: Security rules and mandatory checklist. Check here BEFORE writing any endpoint, DTO, or file handler.
+6.  **`docs/FEATURES.md`**: The detailed logic of existing features.
+7.  **`AGENTS.md`**: The behavior rules and pre-flight checklist (Section 0 is critical).
 
 ## 2. Git Workflow (Strict)
 **Rule: NO DIRECT COMMITS TO MAIN.**
@@ -33,19 +34,17 @@ Before writing ANY code, you MUST read these files to understand the current sta
 
 ## 4. Security First (🛡️ NO EXCEPTIONS)
 **Goal:** Prevent backdoors, leaks, and exploits.
-- **Input Validation:**
-    - **Back:** Trust NOBODY. Use `class-validator` DTOs for EVERYTHING.
-    - **Front:** Validate forms, but assume the user can bypass it.
-- **Authentication & AuthZ:**
-    - **Never** roll your own crypto. Use standard libraries.
-    - **RBAC:** Use `@RequirePermission()` or `@Roles()`.
-    - **Isolation:** Always verify `companyId` matches the token.
-- **Data Safety & Integrity:**
-    -   **SQL Injection:** NEVER use string concatenation in queries. Use TypeORM parameters.
-    -   **Transactions:** ALWAYS use `runner.manager.transaction` for multi-step writes (e.g., deducting credit + awarding prize).
-    -   **Foreign Keys:** NEVER rely on code to maintain relations. Use DB constraints (`onDelete: 'CASCADE'`).
-    -   **Secrets:** NEVER hardcode secrets. Use `ConfigService`.
-    -   **Logs:** NEVER log passwords, tokens, or PII.
+**Full Reference:** `docs/SECURITY_STANDARDS.md` — read it before writing any endpoint, DTO, or file handler.
+
+- **Input Validation:** Trust NOBODY. Use `class-validator` DTOs for EVERYTHING on the backend.
+- **Authentication:** Every endpoint needs `@UseGuards(JwtAuthGuard)` unless explicitly public.
+- **Authorization:** Use `@RequirePermission()` or `@Roles()`. NEVER roll your own crypto.
+- **Isolation:** ALWAYS verify `companyId` from the JWT token matches the resource.
+- **PII:** Encrypt at rest with `EncryptionTransformer`. Never log raw emails, phones, or names.
+- **SQL Injection:** NEVER string-concatenate in queries. Use TypeORM parameterized queries always.
+- **Secrets:** NEVER hardcode. Use `ConfigService`. Never commit `.env` files with real values.
+- **Files:** Validate MIME type. Server-generate filenames (UUID). Guard against path traversal.
+- **Logs:** NEVER log passwords, tokens, or PII.
 
 ## 5. Reusable Skills & Patterns (The "Muscle Memory")
 

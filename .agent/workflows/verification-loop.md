@@ -61,20 +61,47 @@ Based on the **Impact Analysis** done in `/start-feature`, explicitly verify eac
 | i18n key updates | Missing translation | Check both `zh-cn` and `en-us` |
 | `ConfigForm.vue` watchers | Auto-switch side effects | Test preset apply then manual edit |
 
-## 6. Side-Effect Audit (🚨 CRITICAL)
+## 6. Security Gate (🔐 MANDATORY — Run on Every Feature)
+
+Read `docs/SECURITY_STANDARDS.md` Section 4 for the full checklist. Minimum checks for every feature:
+
+**Backend:**
+- [ ] All new endpoints have `@UseGuards(JwtAuthGuard)` (unless explicitly public, must state why)
+- [ ] All DB queries on tenant-scoped entities include `where: { companyId }`
+- [ ] All new POST/PATCH routes have a DTO with `class-validator` — no raw `req.body`
+- [ ] No secrets, API keys, or URLs hardcoded — all from `ConfigService`
+- [ ] No PII (email, phone, name) appears in any `logger.log()` or `console.log()` call
+- [ ] File uploads: MIME type validated, filename server-generated (UUID), path traversal guarded
+
+**Frontend:**
+- [ ] No `v-html` with dynamic user data (XSS risk)
+- [ ] JWT stored in Pinia store memory, **not** `localStorage`
+- [ ] `postMessage` listeners validate `event.origin` before processing
+
+**Infrastructure:**
+- [ ] Run `git diff` — confirm no `.env` secrets or credentials in the commit
+- [ ] New env vars added to `.env.example` with placeholder values (not real values)
+
+> [!CAUTION]
+> If ANY of these checks fails, the feature is NOT done. Fix the security issue first, then re-run verification.
+
+---
+
+## 7. Side-Effect Audit (🚨 CRITICAL)
 - [ ] **Review Git Diff:** Run `git diff` and review EVERY single line changed.
 - [ ] **Unintended Deletions?** Did you accidentally delete an unrelated function or import?
 - [ ] **Unintended Logic Changes?** Did you accidentally modify code outside the feature scope?
 - [ ] **Revert Cleanup:** If ANY unrelated code was changed, revert those specific lines before committing.
 
-## 7. Artifact Update
+## 8. Artifact Update
 - [ ] Have you updated `PROJECT_STATUS.md` with the outcome?
 - [ ] Is this fix **permanent or temporary**? State it explicitly in your summary.
   - If temporary: Log the permanent fix needed in `PROJECT_STATUS.md` backlog.
 
-## 8. Cleanup & Retention (The "Educational" Step)
+## 9. Cleanup & Retention (The "Educational" Step)
 - [ ] **Disposable Scripts:** Remove one-off `curl` commands or temp `.txt` files.
 - [ ] **Meaningful Reproductions:** Did you write a script to prove the bug?
     - **Action:** Move it to `tools/repro/` (e.g., `tools/repro/fix-BUG-002-isolation.js`).
     - **Why?** So we can "read back" how we solved it in the future.
 - [ ] **Useful Tools:** If it's a permanent diagnostic tool, move it to `tools/`.
+

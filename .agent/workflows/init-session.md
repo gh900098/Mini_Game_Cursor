@@ -67,3 +67,4 @@ Before touching a single file, confirm:
 - [ ] Did you check `MEMORY_BANK.md` for an existing pattern?
 - [ ] Did you check `CODEMAP.md` for the correct file location?
 - [ ] Did you check `docs/ARCHITECTURE_DECISIONS.md` to avoid reverting deliberate decisions?
+- [ ] Did you check `docs/SECURITY_STANDARDS.md` for the mandatory security checklist for this type of change?
