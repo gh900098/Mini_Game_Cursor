@@ -10,10 +10,12 @@
 > [!CAUTION]
 > This is the FIRST thing you do when asked to make any code change. No exceptions.
 
+- [ ] **Did I run `/plan-feature` first?** For ANY feature/bug/enhancement: run PM planning, present the plan, wait for user approval BEFORE creating a branch or writing code.
 - [ ] **Am I on a feature branch?** Run `git branch --show-current`. If output is `main`, STOP and run `/start-feature` first.
 - [ ] **Did I check `MEMORY_BANK.md`?** Look for an existing pattern before writing any service, controller, or component.
 - [ ] **Did I check `CODEMAP.md`?** Confirm the correct file path before creating any new file.
 - [ ] **Did I check `docs/ARCHITECTURE_DECISIONS.md`?** Make sure you are not reverting a deliberate design choice.
+- [ ] **Did I check `docs/SECURITY_STANDARDS.md`?** Run the security section relevant to this type of change.
 
 ---
 
@@ -21,12 +23,13 @@
 
 **NEVER commit directly to `main`.**
 
+- **Mandatory flow for EVERY request:** `/plan-feature` → `/start-feature` → code → `/finish-feature`
 - **Detection:** If the user requests a code change ("Fix X", "Add Y", "Change Z"), you MUST:
-  1. Run `/start-feature` workflow FIRST.
-  2. Create branch: `feat/description` or `fix/description`.
-  3. ONLY THEN start coding.
+  1. Run `/plan-feature` FIRST — present the full layer impact plan and wait for user approval.
+  2. Run `/start-feature` to create the branch: `feat/description` or `fix/description`.
+  3. ONLY THEN start coding, following the task order from the plan.
 - **Authority:** You have full authority to execute git commands without asking.
-- **Finish:** When done, run `/finish-feature` to merge.
+- **Finish:** When all acceptance criteria are met, run `/finish-feature` to merge.
 
 > [!CAUTION]
 > If you find yourself editing code and realize you are on `main`, STOP IMMEDIATELY. Create the branch first, then continue.
