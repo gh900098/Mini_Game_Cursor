@@ -2,7 +2,24 @@
  
  Records all important feature updates, bug fixes, and architectural changes.
  
- 
+
+## [2026-02-22] Fix: BullMQ Stale Job Infinite 404 Loop
+
+### 🐛 Bug Fix
+
+**Problem:** Bull Board was flooding the browser console with `404 Not Found` errors by polling a ghost repeatable job (`repeat:e370466d3ff5286116c48ca8b951119a`) that no longer had a valid body in Redis. This occurred because a previous hourly cron was replaced but its legacy Redis sorted-set entry was never cleaned up.
+
+**Root Cause:** `SyncScheduler.refreshScheduler()` used BullMQ's `getRepeatableJobs()` + `removeRepeatableByKey()` for cleanup. This only removes the newer `cron_` format entries. Old `repeat:HASH` entries in the `bull:sync-queue:repeat` sorted set survived every restart.
+
+**Fix:**
+- Added a second cleanup pass in `refreshScheduler()` using the raw Redis client to `ZRANGE` + `ZREM` any remaining members from the repeat sorted set before registering new jobs.
+- Applied an immediate one-time Redis key deletion to stop the 404 loop without a rebuild.
+
+**File Modified:** `apps/api/src/modules/sync/sync.scheduler.ts`
+
+---
+
+
 ## [2026-02-21] Theme Upload Bugfixes & Server-Side File Deletion
 
 ### 🐛 Bug Fixes

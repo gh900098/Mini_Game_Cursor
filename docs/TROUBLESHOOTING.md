@@ -4,6 +4,31 @@
 
 ---
 
+### Issue 22: Bull Board Infinite 404 Loop on Sync Job
+
+**Cause:** A legacy-format BullMQ repeatable job entry (`repeat:HASH:TIMESTAMP`) remained in the `bull:sync-queue:repeat` Redis sorted set after a scheduler cron schedule change. The old job hash had no corresponding body data. Bull Board polls all repeat entries on a timer, attempting `GET /api/queues/sync-queue/repeat:HASH:TIMESTAMP` repeatedly — getting 404 each time, looping forever.
+
+**Symptoms:**
+- Browser console floods with `GET .../api/queues/sync-queue/repeat%3Ae370...%3A177...00 404` every few seconds.
+- The Admin panel `/admin/queues` page is unusable due to console noise.
+- The actual sync jobs continue running correctly — this is a Bull Board display issue only.
+
+**Root Cause Detail:**
+`SyncScheduler.refreshScheduler()` calls `getRepeatableJobs()` + `removeRepeatableByKey()` to clean up on restart. However, this BullMQ API only removes `cron_` format entries (the newer format). Old `repeat:HASH` entries in the sorted set survive undetected.
+
+**Solution (Fixed - 2026-02-22):**
+1. **Immediate:** Manually delete the stale Redis keys:
+   ```bash
+   docker exec minigame-redis-test redis-cli ZREM "bull:sync-queue:repeat" "e370466d3ff5286116c48ca8b951119a"
+   docker exec minigame-redis-test redis-cli DEL "bull:sync-queue:repeat:e370466d3ff5286116c48ca8b951119a"
+   ```
+2. **Permanent:** Added a second-pass cleanup in `SyncScheduler.refreshScheduler()` that reads all remaining entries from the `repeat` sorted set via the raw Redis client and deletes them before registering new jobs. This runs on every API startup.
+
+**File Modified:** `apps/api/src/modules/sync/sync.scheduler.ts`
+
+---
+
+
 ### Issue 18: Theme Upload Files Get Random UUID Filenames
 
 **Cause:** `FormData` fields were appended in the wrong order. The `file` binary was appended **before** `customName`, so Multer processed the file before it knew what name to give it and fell back to generating a random 32-character hex string.
