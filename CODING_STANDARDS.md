@@ -6,9 +6,11 @@
 ## 1. The "Read-First" Protocol
 Before writing ANY code, you MUST read these files to understand the current state:
 1.  **`PROJECT_STATUS.md`**: The current mission and server state.
-2.  **`docs/FEATURES.md`**: The detailed logic of existing features.
-3.  **`docs/CODEMAP.md`**: Where things are located.
-4.  **`AGENTS.md`**: The behavior rules (verification, logging).
+2.  **`MEMORY_BANK.md`**: Proven reusable patterns. Check here BEFORE writing any service/controller/component.
+3.  **`docs/CODEMAP.md`**: Where all files live. Check here BEFORE creating any new file.
+4.  **`docs/ARCHITECTURE_DECISIONS.md`**: WHY key decisions were made. Check here BEFORE changing anything structural.
+5.  **`docs/FEATURES.md`**: The detailed logic of existing features.
+6.  **`AGENTS.md`**: The behavior rules and pre-flight checklist (Section 0 is critical).
 
 ## 2. Git Workflow (Strict)
 **Rule: NO DIRECT COMMITS TO MAIN.**

@@ -1,6 +1,6 @@
 # MiniGame Code Map
 
-**Last Updated:** 2026-02-01
+**Last Updated:** 2026-02-22
 
 A reference guide for quickly finding code locations.
 
@@ -50,6 +50,8 @@ A reference guide for quickly finding code locations.
 **Game Management**
 - Game List: `apps/soybean-admin/src/views/management/game-instance/index.vue`
 - Config Form: `apps/soybean-admin/src/views/management/game-instance/components/ConfigForm.vue`
+- Game Form: `apps/soybean-admin/src/views/management/games/components/GameForm.vue`
+- Games List: `apps/soybean-admin/src/views/management/games/index.vue`
 
 **Member Management**
 - Member List: `apps/soybean-admin/src/views/management/member/index.vue`
@@ -57,10 +59,22 @@ A reference guide for quickly finding code locations.
 - API Service: `apps/soybean-admin/src/service/api/management.ts`
 
 **User Management**
-- User List: `apps/soybean-admin/src/views/management/user/`
+- User List: `apps/soybean-admin/src/views/management/user/index.vue`
 
 **Company Management**
-- Company List: `apps/soybean-admin/src/views/management/company/`
+- Company List: `apps/soybean-admin/src/views/management/company/index.vue`
+
+**Sync Settings**
+- Sync Config UI: `apps/soybean-admin/src/views/management/sync-settings/index.vue`
+  - Controls: cron expression, incremental mode, per-type parameters
+
+**Audit & Permissions**
+- Audit Log: `apps/soybean-admin/src/views/management/audit-log/index.vue`
+- Permissions: `apps/soybean-admin/src/views/management/permission/index.vue`
+- Roles: `apps/soybean-admin/src/views/management/role/index.vue`
+
+**Email Settings**
+- Email Config: `apps/soybean-admin/src/views/management/email-settings/index.vue`
 
 **Translation System**
 - i18n Configuration: `apps/soybean-admin/src/locales/index.ts`
@@ -128,6 +142,35 @@ A reference guide for quickly finding code locations.
 
 **Game History/Statistics**
 - Scores Module: `apps/api/src/modules/scores/`
+  - `admin-scores.controller.ts` — Admin score list (uses `createQueryBuilder` for performance)
+  - `admin-prizes.controller.ts` — Admin prize ledger view
+  - `scores.controller.ts` — Member-facing score submission
+  - `game-rules.service.ts` — Validation engine (daily limit, cooldown, one-time-only)
+
+**Prizes & Prize Types**
+- Prizes Module: `apps/api/src/modules/prizes/`
+  - `prizes.controller.ts` — CRUD for prize instances
+  - `prizes.service.ts`
+  - `prize-strategy.service.ts` — Prize fulfillment strategies (cash, physical, e-gift, points)
+- Prize Types: `apps/api/src/modules/prize-types/` (separate module)
+- Prize Ledger: managed via `admin-prizes.controller.ts` in scores module
+
+**Sync / JK Platform Integration**
+- Sync Module: `apps/api/src/modules/sync/`
+  - `sync.scheduler.ts` — BullMQ repeatable job scheduler (dynamic cron, EventEmitter-decoupled)
+  - `sync.processor.ts` — BullMQ processor that runs the actual sync
+  - `sync.controller.ts` — Admin API for triggering manual sync & reading settings
+  - `jk-backend.service.ts` — HTTP client for JK Platform external API
+  - `sync.module.ts`
+
+**Themes**
+- Theme config is part of Game Instances module
+  - Upload endpoint: `DELETE /api/game-instances/upload` (physical file delete)
+  - Config stored in `game-instance.entity.ts` as JSON config blob
+  - Config Form: `ConfigForm.vue` (includes `isApplyingPreset` flag — see AD-002)
+
+**System Settings**
+- System Settings Module: `apps/api/src/modules/system-settings/`
 
 ---
 
@@ -140,11 +183,12 @@ A reference guide for quickly finding code locations.
 - `.env.production` - Production environment
 
 **Docker**
-- `docker-compose.yml` - Local development
-- `docker-compose.prod.yml` - Production environment
+- `docker-compose.test.yml` - Local test environment (ports 3100/3101/3102, localhost only)
+- `docker-compose.prod.yml` - Production environment (uses `ADMIN_URL`/`GAME_URL`, 127.0.0.1 binding)
 - `Dockerfile.api` - API image
 - `Dockerfile.admin` - Admin image
 - `Dockerfile.web-app` - Web App image
+- `Dockerfile.worker` - BullMQ worker image (separate container — see AD-010)
 
 **TypeScript Configuration**
 - `tsconfig.json` - Root configuration
