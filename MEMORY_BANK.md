@@ -188,3 +188,131 @@ $t('page.game.error.tryAgain')
 ```
 
 Both `zh-cn.ts` and `en-us.ts` must always be updated together.
+
+---
+
+## 11. Strategy Pattern for Multi-Tenant Integrations
+
+**Use when:** You need different behavior per tenant, integration type, or external platform.
+**Rule:** NEVER use `if (companyId === 'X')` or `if (syncType === 'JK')` in service logic. Use a strategy factory instead.
+
+```typescript
+// Define the interface
+interface SyncStrategy {
+  execute(payload: SyncPayload): Promise<SyncResult>;
+}
+
+// Implement per integration
+@Injectable()
+class JKSyncStrategy implements SyncStrategy { ... }
+
+@Injectable()
+class XXXSyncStrategy implements SyncStrategy { ... }
+
+// Factory resolves the right one from config
+@Injectable()
+export class SyncStrategyFactory {
+  getStrategy(syncType: string): SyncStrategy {
+    const map = { 'JK': this.jkStrategy, 'XXX': this.xxxStrategy };
+    const strategy = map[syncType];
+    if (!strategy) throw new BadRequestException({ code: 'UNKNOWN_SYNC_TYPE' });
+    return strategy;
+  }
+}
+
+// Caller — zero conditionals, fully extensible
+const strategy = this.syncStrategyFactory.getStrategy(company.syncType);
+await strategy.execute(payload);
+```
+
+**Adding a new integration** = add a new Strategy class + register in factory. Zero changes to existing code.
+
+---
+
+## 12. Dynamic Configuration via ConfigService
+
+**Rule:** NEVER hardcode URLs, limits, secrets, or feature values. Always use `ConfigService`.
+
+```typescript
+// ✅ backend — import ConfigModule in module, inject ConfigService
+constructor(private readonly config: ConfigService) {}
+
+const apiUrl = this.config.get<string>('EXTERNAL_API_URL');
+const uploadDir = this.config.get<string>('UPLOAD_DIR', 'uploads'); // with default
+const maxFileSize = this.config.get<number>('MAX_FILE_SIZE_MB', 5) * 1024 * 1024;
+```
+
+```typescript
+// ✅ frontend env vars — use import.meta.env (Vite)
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+const appName = import.meta.env.VITE_APP_NAME;
+```
+
+**Never do:**
+```typescript
+// ❌ Hardcoded URL
+const res = await fetch('http://localhost:3100/api/sync');
+
+// ❌ Hardcoded limit
+if (files.length > 5) { throw error; }
+
+// ❌ Tenant-specific flag in code
+if (companyId === 'abc-123') { showSpecialFeature(); }
+```
+
+---
+
+## 13. Vue Enterprise UI Pattern (Loading + Empty + Error + Confirm)
+
+**Use for:** EVERY admin table or form page. A complete page must handle all 4 states.
+
+```vue
+<template>
+  <!-- Loading state -->
+  <NSpin v-if="loading" />
+
+  <!-- Error state -->
+  <NAlert v-else-if="error" type="error">{{ $t('common.loadFailed') }}</NAlert>
+
+  <!-- Empty state -->
+  <NEmpty v-else-if="!data?.length" :description="$t('common.noData')" />
+
+  <!-- Data state -->
+  <NDataTable v-else :columns="columns" :data="data" :remote="true" :pagination="pagination" />
+
+  <!-- Destructive action — always confirm -->
+  <NPopconfirm @positive-click="handleDelete(row.id)">
+    <template #trigger>
+      <NButton type="error" size="small">{{ $t('common.delete') }}</NButton>
+    </template>
+    {{ $t('common.deleteConfirm') }}
+  </NPopconfirm>
+</template>
+
+<script setup lang="ts">
+const loading = ref(false);
+const error = ref<string | null>(null);
+
+async function loadData() {
+  loading.value = true;
+  error.value = null;
+  try {
+    const res = await fetchApi();
+    data.value = res.data;
+    pagination.itemCount = res.total;
+  } catch (e) {
+    error.value = 'Load failed';
+  } finally {
+    loading.value = false;
+  }
+}
+</script>
+```
+
+**Enterprise checklist for every page:**
+- [ ] Loading spinner while fetching
+- [ ] Error message if fetch fails  
+- [ ] Empty state with helpful message
+- [ ] Submit button disabled during request (`loading` bound to `:disabled`)
+- [ ] Delete/reset uses `NPopconfirm` (never a direct action)
+- [ ] Success toast after save via `window.$message.success()`

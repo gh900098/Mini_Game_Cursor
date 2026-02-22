@@ -75,7 +75,89 @@ Before writing ANY code, you MUST read these files to understand the current sta
     -   Explicitly show pagination controls (`showSizePicker: true`).
     -   Use a `watch` on filter/search parameters to reset pagination and refresh data.
 
-## 7. Documentation is Code (The "Audit Trail")
+## 7. Anti-Hardcode & Dynamic Design (🚨 Multi-Tenant Non-Negotiable)
+
+**Goal:** Every value that might differ between tenants, environments, or integrations MUST be configurable — not hardcoded.
+
+> [!CAUTION]
+> This project is multi-tenant and will have many future integrations. Hardcoding ANYTHING that a tenant or admin might need to change is a form of technical debt. Think: "If Tenant B needs a different value here, can they configure it without a code deploy?"
+
+### What is NEVER allowed to be hardcoded:
+| ❌ Hardcoded | ✅ Dynamic Alternative |
+|---|---|
+| URLs (`http://localhost:3100`, `https://api.xseo.me`) | `ConfigService.get('API_URL')` or env var |
+| Tenant-specific IDs or slugs | `companyId` from JWT token |
+| Color values in logic (only in CSS/config) | Theme config from `game_instance.config` |
+| Limits (`if (count > 10)`) | Config from `system_settings` table or game instance config |
+| Integration API keys or secrets | `.env` + `ConfigService` — never in code |
+| Feature flags (`if (companyId === 'abc')`) | Role/permission system or per-tenant settings |
+| Text strings in backend responses | i18n error codes only |
+| File paths with env-specific segments | `path.join(process.cwd(), configuredUploadDir)` |
+
+### Dynamic Design Checklist (run before writing any service or component):
+- [ ] Can a **different tenant** use this with zero code changes?
+- [ ] Can a **new integration** plug in without touching existing code? (Use strategy pattern, not `if/else` chains)
+- [ ] Are all **limits, thresholds, and toggles** driven by database config or env vars?
+- [ ] Are all **external URLs and API endpoints** driven by env vars or `ConfigService`?
+- [ ] If this feature has **webhooks or callbacks**, are the URLs configurable per tenant?
+
+### The Strategy Pattern (for integrations — ALWAYS use this over if/else):
+```typescript
+// ❌ Wrong — adding Tenant C requires code change:
+if (tenant === 'A') { syncWithJK(); }
+else if (tenant === 'B') { syncWithXXX(); }
+
+// ✅ Right — adding Tenant C is config only:
+const strategy = this.syncStrategyFactory.getStrategy(tenant.syncType);
+await strategy.execute(payload);
+```
+
+---
+
+## 8. Feature Definition of Done (Enterprise Standard)
+
+**Goal:** A feature is NOT done until it passes ALL of the following.  
+"It works when I try it" is not done.
+
+### Backend Layer ✅
+- [ ] All endpoints have proper **DTO validation** (`class-validator`)
+- [ ] All endpoints enforce **`companyId` isolation** (no cross-tenant data leakage)
+- [ ] All multi-step writes use **transactions** (no partial state on failure)
+- [ ] Errors return **i18n error codes**, not raw English strings
+- [ ] New columns/tables have **DB indexes** on query/sort columns
+- [ ] **Edge cases handled:** What if the record doesn't exist? What if the list is empty? What if a required foreign key is null?
+
+### Frontend Layer ✅
+- [ ] **Loading state:** Does the UI show a skeleton/spinner while data loads?
+- [ ] **Empty state:** Does the table/list show a clear "No data" message?
+- [ ] **Error state:** Does the UI show a user-friendly message if the API call fails?
+- [ ] **Form validation:** Are required fields validated before submission? Is the submit button disabled during the request?
+- [ ] **Success feedback:** Does the user get confirmation after a save/delete?
+- [ ] **Responsive/Mobile:** Does the UI render correctly on small screens (test at 375px width)?
+
+### UI/UX Quality Check ✅
+- [ ] Run the `ui-ux-pro-max` skill mental checklist:
+  - Consistent with existing page layouts and color system?
+  - No raw UUIDs or technical keys exposed to the user?
+  - Destructive actions (delete, reset) have a **confirmation dialog**?
+  - Status indicators use **color + icon** (not just text alone)?
+  - Tables with >5 columns consider **column priority** (most important leftmost)?
+- [ ] Does the feature feel **complete**, not like a placeholder?
+
+### Integration & Multi-Tenancy Check ✅
+- [ ] Would a **second tenant** with completely different data get the correct results?
+- [ ] Are all values that might vary by tenant driven by **config, not code**?
+- [ ] If this feature talks to an **external API**, is the integration isolated behind a service class (not inline in a controller)?
+
+### Documentation ✅
+- [ ] `FEATURES.md` updated with how the feature works
+- [ ] `CHANGELOG.md` updated with what changed
+- [ ] `ARCHITECTURE_DECISIONS.md` updated if a significant design choice was made
+- [ ] `MEMORY_BANK.md` updated if a new reusable pattern was created
+
+---
+
+## 9. Documentation is Code (The "Audit Trail")
 - **If Feature:** Update `docs/FEATURES.md` (How it works - In English).
 - **If Bug:** Update `docs/TROUBLESHOOTING.md` (Issue -> Cause -> Solution - In English).
 - **Always:** Update `docs/CHANGELOG.md` (Summary of changes - In English).
