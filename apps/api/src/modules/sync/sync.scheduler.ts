@@ -51,6 +51,22 @@ export class SyncScheduler implements OnModuleInit {
             this.logger.debug(`Removed old repeatable job: ${job.key}`);
         }
 
+        // 3b. Purge any legacy-format repeat entries that getRepeatableJobs() misses.
+        // These are old `repeat:HASH` keys left in the sorted set from previous BullMQ
+        // scheduler versions. Bull Board polls them and gets an infinite 404 loop.
+        const queueName = this.syncQueue.name;
+        const redisKey = `bull:${queueName}:repeat`;
+        const client = await this.syncQueue.client;
+        const legacyMembers = await client.zrange(redisKey, 0, -1);
+        if (legacyMembers.length > 0) {
+            this.logger.warn(`Found ${legacyMembers.length} legacy repeat entry(ies) in Redis. Cleaning up...`);
+            for (const member of legacyMembers) {
+                await client.zrem(redisKey, member);
+                await client.del(`bull:${queueName}:repeat:${member}`);
+                this.logger.debug(`Cleaned up legacy repeat key: ${member}`);
+            }
+        }
+
         // 4. Register individual jobs for each company and EACH supported sync type
         const SYNC_TYPES = ['member', 'deposit', 'withdraw'];
 
