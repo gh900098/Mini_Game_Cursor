@@ -41,6 +41,36 @@ Map EVERY layer that this request touches. Check each one:
 
 ---
 
+## Step 2b: Load Specialist Skills for Affected Layers
+
+> [!IMPORTANT]
+> For each layer marked **"Yes"** above, you MUST read the corresponding skill file BEFORE writing the task breakdown in Step 3. These skills contain project-specific patterns, known pitfalls, and standards that a generic analysis will miss.
+
+| Layer Affected | Skill to Load |
+|---|---|
+| Database (schema, migration, indexes) | `.agent/skills/postgresql-database-developer/SKILL.md` |
+| Backend API (NestJS controller/service/DTO) | `.agent/skills/nestjs-backend-developer/SKILL.md` |
+| Admin Panel (Vue pages, tables, forms) | `.agent/skills/vue-frontend-developer/SKILL.md` + `soybean-admin-developer/SKILL.md` |
+| Web App (member-facing game UI) | `.agent/skills/mobile-pwa-developer/SKILL.md` |
+| Game Engine (canvas, wheel, prizes) | `.agent/skills/game-designer/SKILL.md` |
+| Worker / Queue (BullMQ, scheduling) | `.agent/skills/nestjs-backend-developer/SKILL.md` |
+| Permissions / Multi-tenancy | `.agent/skills/multi-tenancy-architect/SKILL.md` |
+| External Integration (webhook, 3rd-party API) | `.agent/skills/api-integration-developer/SKILL.md` |
+| Security concern identified | `.agent/skills/security-consultant/SKILL.md` |
+| UI/UX quality or new page design | `.agent/skills/ui-ux-pro-max/SKILL.md` |
+| Docker / Infra / Deployment | `.agent/skills/devops-engineer/SKILL.md` |
+| Prize types / Fulfillment logic | `.agent/skills/enterprise-prize-architecture/SKILL.md` |
+
+**How to use:**
+1. Use `view_file` to read each relevant `SKILL.md`.
+2. Extract patterns and anti-patterns specific to this project.
+3. Apply them in the Step 3 task breakdown.
+4. If a skill reveals a constraint or risk, add it to Step 4 Risks.
+
+> **Note:** During Step 6 (execution), the implementing agent must re-read the same skill files to follow the documented patterns during actual coding — not just at planning time.
+
+---
+
 ## Step 3: Dependency Order & Task Breakdown
 
 List the sub-tasks in the order they MUST be done (dependencies first):
