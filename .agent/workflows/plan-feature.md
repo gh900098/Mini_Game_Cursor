@@ -46,26 +46,34 @@ Map EVERY layer that this request touches. Check each one:
 > [!IMPORTANT]
 > For each layer marked **"Yes"** above, you MUST read the corresponding skill file BEFORE writing the task breakdown in Step 3. These skills contain project-specific patterns, known pitfalls, and standards that a generic analysis will miss.
 
-| Layer Affected | Skill to Load |
+| Layer / Concern | Skill to Load |
 |---|---|
 | Database (schema, migration, indexes) | `.agent/skills/postgresql-database-developer/SKILL.md` |
 | Backend API (NestJS controller/service/DTO) | `.agent/skills/nestjs-backend-developer/SKILL.md` |
-| Admin Panel (Vue pages, tables, forms) | `.agent/skills/vue-frontend-developer/SKILL.md` + `soybean-admin-developer/SKILL.md` |
+| Admin Panel (Vue pages, tables, forms) | `.agent/skills/vue-frontend-developer/SKILL.md` + `.agent/skills/soybean-admin-developer/SKILL.md` |
 | Web App (member-facing game UI) | `.agent/skills/mobile-pwa-developer/SKILL.md` |
-| Game Engine (canvas, wheel, prizes) | `.agent/skills/game-designer/SKILL.md` |
+| Game Engine (canvas, wheel, prizes, templates) | `.agent/skills/game-designer/SKILL.md` |
+| Full platform feature (touches all layers) | `.agent/skills/full-stack-game-developer/SKILL.md` |
 | Worker / Queue (BullMQ, scheduling) | `.agent/skills/nestjs-backend-developer/SKILL.md` |
-| Permissions / Multi-tenancy | `.agent/skills/multi-tenancy-architect/SKILL.md` |
+| Permissions / Multi-tenancy isolation | `.agent/skills/multi-tenancy-architect/SKILL.md` |
 | External Integration (webhook, 3rd-party API) | `.agent/skills/api-integration-developer/SKILL.md` |
 | Security concern identified | `.agent/skills/security-consultant/SKILL.md` |
 | UI/UX quality or new page design | `.agent/skills/ui-ux-pro-max/SKILL.md` |
-| Docker / Infra / Deployment | `.agent/skills/devops-engineer/SKILL.md` |
+| Docker / Infra / Deployment / CI-CD | `.agent/skills/devops-engineer/SKILL.md` |
 | Prize types / Fulfillment logic | `.agent/skills/enterprise-prize-architecture/SKILL.md` |
+| i18n / Multi-language / RTL support | `.agent/skills/localization-specialist/SKILL.md` |
+| Performance (slow queries, caching, CDN) | `.agent/skills/performance-engineer/SKILL.md` |
+| Testing / QA / Automation | `.agent/skills/qa-specialist/SKILL.md` |
+| Documentation / API docs / Guides | `.agent/skills/technical-writer/SKILL.md` |
+| Skill gap detected (no existing skill covers it) | Run `/request-new-skill` workflow → propose new skill to user |
+| Skill content seems outdated or wrong | `.agent/skills/skills-maintainer/SKILL.md` → run audit |
 
 **How to use:**
-1. Use `view_file` to read each relevant `SKILL.md`.
-2. Extract patterns and anti-patterns specific to this project.
+1. Use `view_file` to read each relevant `SKILL.md` in parallel.
+2. Extract patterns, anti-patterns, and known pitfalls specific to this project.
 3. Apply them in the Step 3 task breakdown.
 4. If a skill reveals a constraint or risk, add it to Step 4 Risks.
+5. If **no skill exists** for the area you need → run `/request-new-skill` before proceeding.
 
 > **Note:** During Step 6 (execution), the implementing agent must re-read the same skill files to follow the documented patterns during actual coding — not just at planning time.
 
