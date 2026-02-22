@@ -304,6 +304,9 @@ function getThemeAudioUrl(key: string): string {
 let currentAudio: HTMLAudioElement | null = null;
 const audioPlayingStates = ref<Record<string, boolean>>({});
 
+// Flag to suppress auto-switch-to-Custom while a preset is being bulk-applied
+const isApplyingPreset = ref(false);
+
 function toggleAudioPreview(key: string, url: string) {
   // If this audio is playing, stop it
   if (audioPlayingStates.value[key]) {
@@ -671,7 +674,10 @@ watch(
 watch(() => formModel.value.themePreset, (newVal, oldVal) => {
   // Skip if changing to Custom or no value
   if (!newVal || newVal === 'Custom') return;
-  
+
+  // Raise flag so the deep watcher doesn't switch back to Custom during bulk apply
+  isApplyingPreset.value = true;
+
   // First check if config has templatePresets from backend (priority)
   const backendPresets = formModel.value.templatePresets;
   if (backendPresets && backendPresets[newVal]) {
@@ -681,9 +687,10 @@ watch(() => formModel.value.themePreset, (newVal, oldVal) => {
       formModel.value[key] = preset[key];
     }
     console.log(`[ConfigForm] Loaded preset from backend: ${newVal}`, preset);
+    setTimeout(() => { isApplyingPreset.value = false; }, 300);
     return;
   }
-  
+
   // Fallback to dynamic themes database
   if (dynamicThemes.value[newVal]) {
     const preset = dynamicThemes.value[newVal];
@@ -692,17 +699,26 @@ watch(() => formModel.value.themePreset, (newVal, oldVal) => {
       formModel.value[key] = preset[key];
     }
     console.log(`[ConfigForm] Loaded preset from dynamic themes: ${newVal}`, preset);
-    
+
     // Force sync to iframe
     setTimeout(() => {
       window.postMessage({ type: 'sync-config', config: JSON.parse(JSON.stringify(formModel.value)) }, '*');
     }, 100);
   }
+
+  setTimeout(() => { isApplyingPreset.value = false; }, 300);
 });
 
 watch(formModel, (newVal) => {
     // Send to parent so it can forward to iframe if needed
     window.postMessage({ type: 'sync-config', config: JSON.parse(JSON.stringify(newVal)) }, '*');
+
+    // Auto-switch to Custom: if the user manually edits any field while a named theme is
+    // selected, automatically reset the theme selector to 'Custom' so the label is honest.
+    // The isApplyingPreset flag prevents this from firing during bulk preset application.
+    if (!isApplyingPreset.value && formModel.value.themePreset && formModel.value.themePreset !== 'Custom') {
+        formModel.value.themePreset = 'Custom';
+    }
 }, { deep: true });
 
 const isTabbed = computed(() => {
@@ -853,9 +869,10 @@ function isSectionConfigValid(item: SchemaItem): boolean {
 function handleFieldChange(key: string, value: any) {
   console.log('[handleFieldChange] key:', key, 'value:', value);
   console.log('[handleFieldChange] Available presets:', Object.keys(dynamicThemes.value));
-  
+
   // Check full theme presets first (for themePreset field)
   if (dynamicThemes.value[value]) {
+    isApplyingPreset.value = true;
     console.log('[handleFieldChange] Found preset for:', value, dynamicThemes.value[value]);
     Object.entries(dynamicThemes.value[value]).forEach(([targetKey, targetValue]) => {
       console.log('[handleFieldChange] Setting:', targetKey, '=', targetValue);
@@ -866,9 +883,11 @@ function handleFieldChange(key: string, value: any) {
       }
     });
     console.log('[handleFieldChange] Preset applied!');
+    setTimeout(() => { isApplyingPreset.value = false; }, 300);
   }
   // Also check legacy PRESETS for backwards compatibility
   else if (PRESETS[value]) {
+    isApplyingPreset.value = true;
     Object.entries(PRESETS[value]).forEach(([targetKey, targetValue]) => {
       if (Array.isArray(targetValue)) {
         formModel.value[targetKey] = JSON.parse(JSON.stringify(targetValue));
@@ -876,16 +895,19 @@ function handleFieldChange(key: string, value: any) {
         formModel.value[targetKey] = targetValue;
       }
     });
+    setTimeout(() => { isApplyingPreset.value = false; }, 300);
   } else {
     console.log('[handleFieldChange] No preset found for value:', value);
   }
-  
+
   // Also check if the 'key' itself has specific presets defined in schema
   const item = allItems.value.find(i => i.key === key);
   if (item?.presets && item.presets[value]) {
-     Object.entries(item.presets[value]).forEach(([targetKey, targetValue]) => {
-        formModel.value[targetKey] = targetValue;
-     });
+    isApplyingPreset.value = true;
+    Object.entries(item.presets[value]).forEach(([targetKey, targetValue]) => {
+      formModel.value[targetKey] = targetValue;
+    });
+    setTimeout(() => { isApplyingPreset.value = false; }, 300);
   }
 }
 

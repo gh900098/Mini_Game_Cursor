@@ -3,6 +3,27 @@
  Records all important feature updates, bug fixes, and architectural changes.
  
 
+## [2026-02-22] UX Fix: Theme Preset Auto-Switch to Custom
+
+### 🎨 UX Improvement
+
+**Problem:** When a user selected a theme preset (e.g., "Christmas Joy") in the Game Instance Config, all theme settings were applied instantly. However, if the user then manually edited any field (e.g., changed a color, uploaded a new image), the Theme Preset dropdown still showed the original theme name — misleading the admin into thinking the full theme was still active.
+
+**Fix:** Added logic in `ConfigForm.vue` to automatically reset the `themePreset` dropdown to `"Custom"` whenever the user manually edits any setting after a theme is applied.
+
+**Implementation Details:**
+- Added `const isApplyingPreset = ref(false)` flag.
+- The `themePreset` watcher now sets this flag `true` before bulk-applying fields and resets it after 300ms via `setTimeout()`.
+- The existing `formModel` deep watcher now checks `isApplyingPreset` before switching to Custom, ensuring theme bulk-apply itself does not accidentally retrigger the switch.
+- The `handleFieldChange()` function was also updated with the same guard for legacy presets and schema-defined presets.
+
+**File Modified:** `apps/soybean-admin/src/views/games/game-instance/components/ConfigForm.vue`
+
+### ✅ Deployment
+- ✅ Admin container rebuilt and verified on port 3101.
+
+---
+
 ## [2026-02-22] Fix: BullMQ Stale Job Infinite 404 Loop
 
 ### 🐛 Bug Fix

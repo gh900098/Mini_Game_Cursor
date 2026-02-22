@@ -1,8 +1,50 @@
 # MiniGame Feature Catalog
 
-**Last Updated:** 2026-02-14
+**Last Updated:** 2026-02-22
 
 This document records all major features of the MiniGame project, including code locations, working principles, dependencies, and modification impact scope.
+
+---
+
+## 🎨 Game Instance Theme Preset System
+
+**Last Updated:** 2026-02-22
+**Status:** Live ✅
+
+### 📍 Location
+- **Config Form:** `apps/soybean-admin/src/views/games/game-instance/components/ConfigForm.vue`
+- **Theme API:** `apps/soybean-admin/src/service/api/themes.ts` (`fetchThemes`)
+- **Theme Storage:** Database `themes` table; loaded at mount via `loadThemes()`
+
+### 🎯 Feature Description
+Allows administrators to apply full visual preset packages (themes) to a Game Instance from a dropdown selector inside the Config panel. A selected theme instantly applies all its stored config keys to the form in real-time and syncs the live preview iframe. Any subsequent manual edit by the admin auto-resets the selector to "Custom" to prevent confusion.
+
+### ⚙️ Core Mechanisms
+
+#### 1. Theme Preset Application (Instant, Real-Time)
+- Themes are fetched from the database on mount (`loadThemes()`) and stored in `dynamicThemes`.
+- When `formModel.themePreset` changes (user picks a theme), a Vue `watch` fires **immediately**, iterating over all keys in `theme.config` and assigning them directly to `formModel`.
+- A `postMessage({ type: 'sync-config' })` is sent to the preview iframe so the live preview updates instantly.
+- **No save is required for the preview.** The settings are only persisted to the database when the admin clicks "Apply Changes".
+
+#### 2. Priority Order for Presets
+1. `formModel.templatePresets[themeName]` — Backend-injected presets embedded in the game template schema (highest priority).
+2. `dynamicThemes[themeName]` — Themes fetched from the `themes` DB table.
+3. `PRESETS[themeName]` — Legacy hardcoded presets (backwards compatibility fallback).
+
+#### 3. Auto-Switch to Custom on Manual Edit
+- An `isApplyingPreset` ref flag is raised to `true` before bulk-applying theme fields and lowered after 300ms.
+- The `formModel` deep watcher checks this flag. If `false` and `themePreset !== 'Custom'`, it automatically sets `themePreset = 'Custom'`.
+- This ensures the dropdown label is always honest — if the user has deviated from the theme, the selector shows "Custom" not the original theme name.
+
+#### 4. Prize List Templates (Separate)
+- `PRIZE_TEMPLATES` is a separate, hardcoded set of prize-list presets (Balanced, High Stakes, Everyone Wins, etc.).
+- Selecting a prize template replaces only the `prizeList` array. It does not affect theme/visual settings.
+
+### 🚨 Modification Impact Scope
+- **Adding new theme fields**: New keys in a theme's `config` JSONB will be applied automatically. No frontend code change needed.
+- **The 300ms guard**: If a preset bulk-applies many fields asynchronously, increase the timeout to prevent premature "Custom" switching.
+- **Legacy PRESETS object**: The small hardcoded `PRESETS` map (`Neon Night`, `Gold Royale`, etc.) only sets 4 fields. Prefer using the DB themes system for full preset coverage.
 
 ---
 
