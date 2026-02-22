@@ -1,13 +1,13 @@
 # Project Status & Current Context
 
-**Last Updated:** 2026-02-22 08:05
-**Current Mission:** BullMQ Stale Job 404 Loop Fix ✅
+**Last Updated:** 2026-02-22 21:10
+**Current Mission:** Theme Preset Auto-Switch to Custom ✅
 **Server Status:** 🟢 Running. (API:3100, Admin:3101, Web:3102, Worker:3100).
 
 ## 🎯 Current Focus (AI Memory)
 - **Active Mission:** Awaiting next instructions.
 - **Current Branch:** `main`
-- **Status**: 🟢 Live. Fixed BullMQ stale repeatable job causing Bull Board infinite 404 loop. Scheduler now purges legacy Redis entries on every startup.
+- **Status**: 🟢 Live. Auto-switch themePreset to Custom when user manually edits any field after applying a theme preset. isApplyingPreset flag prevents the bulk-apply itself from triggering the switch.
 
 ### Context
 The upload system is now fully standardized. Deleting assets from the Theme Editor or Game Instance configurator now physically removes the file from disk via `DELETE /api/game-instances/upload`. Cache-busting ensures stale configs are never served from browser cache.
@@ -44,6 +44,7 @@ The upload system is now fully standardized. Deleting assets from the Theme Edit
 
 
 ## ✅ Recently Completed
+- [x] **Theme Preset UX Fix — Auto-Switch to Custom** (ConfigForm.vue: isApplyingPreset flag + deep watcher auto-reset - 2026-02-22)
 - [x] **Upload System Bugfixes & Server-Side File Deletion** (Fixed UUID filenames, added `DELETE /game-instances/upload` physical file removal, added cache-busting to GET endpoints - 2026-02-21)
 - [x] **Theme Editor Visuals Alignment and Layout Overflow Fix** (Standardized upload UI, expanded schema to match Game Instances, added dropdowns for Gradients, fixed NaiveUI tab layout overflow mapping to ensure Live Preview remains on-screen and form panels get independent scrollbars - 2026-02-21)
 - [x] **Test Environment Game Assets Fix** (Restored missing uploaded images from production Docker named volume to the local host directory - 2026-02-20)
