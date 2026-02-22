@@ -18,32 +18,63 @@ Run this workflow whenever you think you are "Done" with a task.
     - Check: `docker ps` to ensure it is healthy.
 - [ ] **Runtime Check:**
     1. Prepare a `curl` command or a minimal `.js` script in `tools/` directory.
-    2. Run the script against the *Dockerized* API (`http://localhost:3000`).
+    2. Run the script against the *Dockerized* API (`http://localhost:3100`).
     3. **CRITICAL:** Do NOT assume it works just because the code looks right.
 
 ## 3. Frontend Verification (If Applicable)
 - [ ] **Type Check:** Run `pnpm --filter soybean-admin type:check` (or build).
 - [ ] **Browser Simulation:**
     1. If simple logic: Use `browser_subagent` to click through the flow.
-    2. If complex visual: Review `PROJECT-MAP.md` to ensure you didn't break related components.
+    2. If complex visual: Review `docs/CODEMAP.md` to ensure you didn't break related components.
 
 ## 4. Database Verification (If Applicable)
 - [ ] **Migration Check:** Did you generate a migration?
 - [ ] **Seed Check:** Did you update `seed.service.ts` if you added new config?
 
-## 5. Side-Effect Audit (🚨 CRITICAL)
+## 5. Regression Check (🚨 CRITICAL — Check Related Modules)
+
+This step answers: *"Did I break something I wasn't looking at?"*
+
+Based on the **Impact Analysis** done in `/start-feature`, explicitly verify each identified risk:
+
+**If you changed a shared service (e.g., `members.service.ts`, `scores.service.ts`):**
+- [ ] Test ALL endpoints that call that service, not just the one you fixed.
+
+**If you changed a shared entity or database column:**
+- [ ] Verify that all other modules that `JOIN` or `SELECT` that column still work.
+- [ ] Check that existing data in the database is not corrupted.
+
+**If you changed an API endpoint's request/response shape:**
+- [ ] Verify the corresponding frontend caller (`service/api/management.ts` or similar) still matches.
+- [ ] Check that any other frontend pages using that endpoint are not broken.
+
+**If you changed a Vue component used in multiple places:**
+- [ ] Test the component in EVERY view where it appears, not just the one you edited.
+
+**Common High-Risk Areas in This Project (always double-check these):**
+| Area | Risk | What to verify |
+|---|---|---|
+| `companyId` in queries | Tenant data leakage | Other admin endpoints with same service |
+| Pagination params (`skip`/`take`) | Data silently missing | Try page 2+ in the UI |
+| BullMQ queue names | Job deduplication failure | Check Bull Board for ghost jobs |
+| File upload paths | Wrong file overwritten | Test with two different tenants |
+| i18n key updates | Missing translation | Check both `zh-cn` and `en-us` |
+| `ConfigForm.vue` watchers | Auto-switch side effects | Test preset apply then manual edit |
+
+## 6. Side-Effect Audit (🚨 CRITICAL)
 - [ ] **Review Git Diff:** Run `git diff` and review EVERY single line changed.
 - [ ] **Unintended Deletions?** Did you accidentally delete an unrelated function or import?
 - [ ] **Unintended Logic Changes?** Did you accidentally modify code outside the feature scope?
 - [ ] **Revert Cleanup:** If ANY unrelated code was changed, revert those specific lines before committing.
 
-## 6. Artifact Update
+## 7. Artifact Update
 - [ ] Have you updated `PROJECT_STATUS.md` with the outcome?
-- [ ] Have you updated `task.md`?
+- [ ] Is this fix **permanent or temporary**? State it explicitly in your summary.
+  - If temporary: Log the permanent fix needed in `PROJECT_STATUS.md` backlog.
 
-## 7. Cleanup & Retention (The "Educational" Step)
+## 8. Cleanup & Retention (The "Educational" Step)
 - [ ] **Disposable Scripts:** Remove one-off `curl` commands or temp `.txt` files.
-- [ ] **Meaningful Reproductions:** Did you write a script to prove the bug? 
+- [ ] **Meaningful Reproductions:** Did you write a script to prove the bug?
     - **Action:** Move it to `tools/repro/` (e.g., `tools/repro/fix-BUG-002-isolation.js`).
     - **Why?** So we can "read back" how we solved it in the future.
 - [ ] **Useful Tools:** If it's a permanent diagnostic tool, move it to `tools/`.

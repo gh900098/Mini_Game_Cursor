@@ -4,6 +4,33 @@
 
 ---
 
+## 📋 Issue Recording Template
+
+> [!IMPORTANT]
+> Every new issue MUST use this template. Do not skip `Fix Type` or `Affected Modules` — these fields exist to prevent the same fix from breaking related code.
+
+```
+### Issue N: [Short title]
+
+**Symptoms:** What the user sees.
+
+**Root Cause:** The actual underlying reason (not just "it was broken").
+
+**Fix Type:** 
+- ✅ PERMANENT — Root cause eliminated. No follow-up needed.
+- ⚠️ TEMPORARY WORKAROUND — Full fix requires: [describe what else needs to be done]. Logged in PROJECT_STATUS.md backlog as [ID].
+
+**Affected Modules:** List every file/module that was checked or changed.
+- Changed: `file.ts` (what was changed)
+- Verified OK: `other-file.ts` (why this was checked)
+
+**Solution:** Step-by-step fix.
+
+**What Was Verified:** How was the fix confirmed to work AND not break related code?
+```
+
+---
+
 ### Issue 22: Bull Board Infinite 404 Loop on Sync Job
 
 **Cause:** A legacy-format BullMQ repeatable job entry (`repeat:HASH:TIMESTAMP`) remained in the `bull:sync-queue:repeat` Redis sorted set after a scheduler cron schedule change. The old job hash had no corresponding body data. Bull Board polls all repeat entries on a timer, attempting `GET /api/queues/sync-queue/repeat:HASH:TIMESTAMP` repeatedly — getting 404 each time, looping forever.
