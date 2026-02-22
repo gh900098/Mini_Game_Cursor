@@ -3,6 +3,26 @@
  Records all important feature updates, bug fixes, and architectural changes.
  
 
+## [2026-02-22] Generic Integration Architecture & Strategy Pattern Refactor
+
+### 🏗️ Architectural Enhancement
+
+**Problem:** The synchronization system was hardcoded for the "JK Platform", making it impossible to add new third-party integrations (like Shopify, WooCommerce, or custom Webhooks).
+**Fix:** Refactored the internal entity properties and standard Sync engine to use the **Strategy Pattern**.
+
+**Implementation Details:**
+- **Database:** Renamed the `jk_config` JSONB column on the `Company` entity to `integration_config`, decoupling the schema from a specific vendor. Added `provider` field.
+- **Backend:** Created `SyncStrategy` interface and `SyncStrategyFactory` to dynamically resolve integration handlers (e.g., `JkSyncStrategy`).
+- **Admin UI:** Migrated `sync-settings` views and routing to generic `integration-settings`. Modal includes a "Provider" dropdown.
+- **Migration:** Schema synchronization handles the column renaming locally.
+
+**File Modified:** `apps/api/src/modules/sync/*`, `apps/soybean-admin/src/views/management/company/index.vue`
+
+### ✅ Deployment
+- ✅ API, Admin, and WebApp containers rebuilt and deployed to test environment.
+
+---
+
 ## [2026-02-22] UX Fix: Theme Preset Auto-Switch to Custom
 
 ### 🎨 UX Improvement

@@ -42,7 +42,7 @@ export class SyncScheduler implements OnModuleInit {
 
         // 2. Fetch all enabled companies (fetch up to 1000 to ensure we get all for scheduling)
         const { items: companies } = await this.companiesService.findAll({ limit: 1000 });
-        const enabledCompanies = companies.filter(c => c.jk_config?.enabled);
+        const enabledCompanies = companies.filter(c => c.integration_config?.enabled && c.integration_config?.provider);
 
         // 3. Clear existing repeatable jobs to ensure clean state
         const repeatableJobs = await this.syncQueue.getRepeatableJobs();
@@ -71,7 +71,7 @@ export class SyncScheduler implements OnModuleInit {
         const SYNC_TYPES = ['member', 'deposit', 'withdraw'];
 
         for (const company of enabledCompanies) {
-            const configs = company.jk_config?.syncConfigs || {};
+            const configs = company.integration_config?.syncConfigs || {};
 
             for (const type of SYNC_TYPES) {
                 // Determine if this specific type is enabled, fallback to global company "enabled" if config missing
@@ -80,9 +80,9 @@ export class SyncScheduler implements OnModuleInit {
 
                 if (!isTypeEnabled) continue;
 
-                const typeCron = typeConfig?.syncCron || company.jk_config?.syncCron || globalCron;
+                const typeCron = typeConfig?.syncCron || company.integration_config?.syncCron || globalCron;
 
-                this.logger.log(`Registering ${type} sync for company ${company.id} (${company.name}) with schedule: ${typeCron}`);
+                this.logger.log(`Registering ${type} sync for company ${company.id} (${company.name}) [Provider: ${company.integration_config.provider}] with schedule: ${typeCron}`);
 
                 await this.syncQueue.add(
                     'sync-company-batch',

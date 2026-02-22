@@ -155,11 +155,13 @@ A reference guide for quickly finding code locations.
 - Prize Types: `apps/api/src/modules/prize-types/` (separate module)
 - Prize Ledger: managed via `admin-prizes.controller.ts` in scores module
 
-**Sync / JK Platform Integration**
+**Sync / Generic Integration Platform**
 - Sync Module: `apps/api/src/modules/sync/`
   - `sync.scheduler.ts` — BullMQ repeatable job scheduler (dynamic cron, EventEmitter-decoupled)
   - `sync.processor.ts` — BullMQ processor that runs the actual sync
   - `sync.controller.ts` — Admin API for triggering manual sync & reading settings
+  - `sync-strategy.factory.ts` — Factory resolving correct integration strategy
+  - `strategies/jk.strategy.ts` — Implementation of syncing logic for JK Platform
   - `jk-backend.service.ts` — HTTP client for JK Platform external API
   - `sync.module.ts`
 

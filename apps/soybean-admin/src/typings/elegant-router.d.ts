@@ -30,6 +30,8 @@ declare module "@elegant-router/types" {
     "games_prize-types": "/games/prize-types";
     "games_prizes": "/games/prizes";
     "games_scores": "/games/scores";
+    "games_theme-detail": "/games/theme-detail";
+    "games_themes": "/games/themes";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
@@ -38,10 +40,10 @@ declare module "@elegant-router/types" {
     "management_company": "/management/company";
     "management_email-settings": "/management/email-settings";
     "management_games": "/management/games";
+    "management_integration-settings": "/management/integration-settings";
     "management_permission": "/management/permission";
     "management_role": "/management/role";
     "management_user": "/management/user";
-    "management_sync-settings": "/management/sync-settings";
     "user-center": "/user-center";
   };
 
@@ -113,16 +115,17 @@ declare module "@elegant-router/types" {
     | "games_prize-types"
     | "games_prizes"
     | "games_scores"
+    | "games_theme-detail"
+    | "games_themes"
     | "home"
-
     | "management_audit-log"
     | "management_company"
     | "management_email-settings"
     | "management_games"
+    | "management_integration-settings"
     | "management_permission"
     | "management_role"
     | "management_user"
-    | "management_sync-settings"
     | "user-center"
   >;
 
@@ -170,8 +173,8 @@ declare module "@elegant-router/types" {
    */
   type GetChildRouteKey<K extends RouteKey, T extends RouteKey = RouteKey> = T extends `${K}_${infer R}`
     ? R extends `${string}_${string}`
-    ? never
-    : T
+      ? never
+      : T
     : never;
 
   /**
@@ -179,10 +182,10 @@ declare module "@elegant-router/types" {
    */
   type SingleLevelRoute<K extends SingleLevelRouteKey = SingleLevelRouteKey> = K extends string
     ? Omit<ElegantConstRoute, 'children'> & {
-      name: K;
-      path: RouteMap[K];
-      component: `layout.${RouteLayout}$view.${K}`;
-    }
+        name: K;
+        path: RouteMap[K];
+        component: `layout.${RouteLayout}$view.${K}`;
+      }
     : never;
 
   /**
@@ -190,21 +193,21 @@ declare module "@elegant-router/types" {
    */
   type LastLevelRoute<K extends GeneratedRouteKey> = K extends LastLevelRouteKey
     ? Omit<ElegantConstRoute, 'children'> & {
-      name: K;
-      path: RouteMap[K];
-      component: `view.${K}`;
-    }
+        name: K;
+        path: RouteMap[K];
+        component: `view.${K}`;
+      }
     : never;
-
+  
   /**
    * the center level route
    */
   type CenterLevelRoute<K extends GeneratedRouteKey> = K extends CenterLevelRouteKey
     ? Omit<ElegantConstRoute, 'component'> & {
-      name: K;
-      path: RouteMap[K];
-      children: (CenterLevelRoute<GetChildRouteKey<K>> | LastLevelRoute<GetChildRouteKey<K>>)[];
-    }
+        name: K;
+        path: RouteMap[K];
+        children: (CenterLevelRoute<GetChildRouteKey<K>> | LastLevelRoute<GetChildRouteKey<K>>)[];
+      }
     : never;
 
   /**
@@ -212,22 +215,22 @@ declare module "@elegant-router/types" {
    */
   type MultiLevelRoute<K extends FirstLevelRouteNotSingleKey = FirstLevelRouteNotSingleKey> = K extends string
     ? ElegantConstRoute & {
-      name: K;
-      path: RouteMap[K];
-      component: `layout.${RouteLayout}`;
-      children: (CenterLevelRoute<GetChildRouteKey<K>> | LastLevelRoute<GetChildRouteKey<K>>)[];
-    }
+        name: K;
+        path: RouteMap[K];
+        component: `layout.${RouteLayout}`;
+        children: (CenterLevelRoute<GetChildRouteKey<K>> | LastLevelRoute<GetChildRouteKey<K>>)[];
+      }
     : never;
-
+  
   /**
    * the custom first level route
    */
   type CustomSingleLevelRoute<K extends CustomFirstLevelRouteKey = CustomFirstLevelRouteKey> = K extends string
     ? Omit<ElegantConstRoute, 'children'> & {
-      name: K;
-      path: RouteMap[K];
-      component?: `layout.${RouteLayout}$view.${LastLevelRouteKey}`;
-    }
+        name: K;
+        path: RouteMap[K];
+        component?: `layout.${RouteLayout}$view.${LastLevelRouteKey}`;
+      }
     : never;
 
   /**
@@ -235,10 +238,10 @@ declare module "@elegant-router/types" {
    */
   type CustomLastLevelRoute<K extends CustomRouteKey> = K extends CustomLastLevelRouteKey
     ? Omit<ElegantConstRoute, 'children'> & {
-      name: K;
-      path: RouteMap[K];
-      component?: `view.${LastLevelRouteKey}`;
-    }
+        name: K;
+        path: RouteMap[K];
+        component?: `view.${LastLevelRouteKey}`;
+      }
     : never;
 
   /**
@@ -246,10 +249,10 @@ declare module "@elegant-router/types" {
    */
   type CustomCenterLevelRoute<K extends CustomRouteKey> = K extends CustomCenterLevelRouteKey
     ? Omit<ElegantConstRoute, 'component'> & {
-      name: K;
-      path: RouteMap[K];
-      children: (CustomCenterLevelRoute<GetChildRouteKey<K>> | CustomLastLevelRoute<GetChildRouteKey<K>>)[];
-    }
+        name: K;
+        path: RouteMap[K];
+        children: (CustomCenterLevelRoute<GetChildRouteKey<K>> | CustomLastLevelRoute<GetChildRouteKey<K>>)[];
+      }
     : never;
 
   /**
@@ -257,13 +260,13 @@ declare module "@elegant-router/types" {
    */
   type CustomMultiLevelRoute<K extends CustomFirstLevelRouteNotSingleKey = CustomFirstLevelRouteNotSingleKey> =
     K extends string
-    ? ElegantConstRoute & {
-      name: K;
-      path: RouteMap[K];
-      component: `layout.${RouteLayout}`;
-      children: (CustomCenterLevelRoute<GetChildRouteKey<K>> | CustomLastLevelRoute<GetChildRouteKey<K>>)[];
-    }
-    : never;
+      ? ElegantConstRoute & {
+          name: K;
+          path: RouteMap[K];
+          component: `layout.${RouteLayout}`;
+          children: (CustomCenterLevelRoute<GetChildRouteKey<K>> | CustomLastLevelRoute<GetChildRouteKey<K>>)[];
+        }
+      : never;
 
   /**
    * the custom route

@@ -20,9 +20,9 @@ export class CreateCompanyDto {
     @IsOptional()
     settings?: Record<string, any>;
 
-    @ApiProperty({ description: 'JK integration configuration', required: false })
+    @ApiProperty({ description: 'Integration configuration (JK, etc.)', required: false })
     @IsOptional()
-    jk_config?: Record<string, any>;
+    integration_config?: Record<string, any>;
 
     @ApiProperty({ description: 'Whether the company is active', default: true, required: false })
     @IsOptional()

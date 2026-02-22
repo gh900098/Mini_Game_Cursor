@@ -108,8 +108,8 @@ export class CompaniesService {
     Object.assign(company, updateCompanyDto);
     const updated = await this.companyRepository.save(company);
 
-    // If jk_config was updated, notify listeners (e.g. SyncScheduler)
-    if (updateCompanyDto.jk_config) {
+    // If integration_config was updated, notify listeners (e.g. SyncScheduler)
+    if (updateCompanyDto.integration_config) {
       this.eventEmitter.emit('sync.refresh');
     }
 

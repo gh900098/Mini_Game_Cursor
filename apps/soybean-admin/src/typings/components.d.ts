@@ -7,7 +7,7 @@
 // Read more: https://github.com/vuejs/core/pull/3399
 import { GlobalComponents } from 'vue'
 
-export { }
+export {}
 
 /* prettier-ignore */
 declare module 'vue' {
@@ -30,7 +30,6 @@ declare module 'vue' {
     'IconIc:baselineAdd': typeof import('~icons/ic/baseline-add')['default']
     IconIcRoundPlus: typeof import('~icons/ic/round-plus')['default']
     IconLocalBanner: typeof import('~icons/local/banner')['default']
-    IconLocalEmptyData: typeof import('~icons/local/empty-data')['default']
     IconMdiAccountCheck: typeof import('~icons/mdi/account-check')['default']
     IconMdiAccountOff: typeof import('~icons/mdi/account-off')['default']
     IconMdiAccountSwitch: typeof import('~icons/mdi/account-switch')['default']
@@ -96,6 +95,7 @@ declare module 'vue' {
     NPopover: typeof import('naive-ui')['NPopover']
     NScrollbar: typeof import('naive-ui')['NScrollbar']
     NSelect: typeof import('naive-ui')['NSelect']
+    NSlider: typeof import('naive-ui')['NSlider']
     NSpace: typeof import('naive-ui')['NSpace']
     NStatistic: typeof import('naive-ui')['NStatistic']
     NSwitch: typeof import('naive-ui')['NSwitch']
@@ -137,10 +137,9 @@ declare global {
   const IconCarbonView: typeof import('~icons/carbon/view')['default']
   const IconGridiconsFullscreen: typeof import('~icons/gridicons/fullscreen')['default']
   const IconGridiconsFullscreenExit: typeof import('~icons/gridicons/fullscreen-exit')['default']
-
+  const 'IconIc:baselineAdd': typeof import('~icons/ic/baseline-add')['default']
   const IconIcRoundPlus: typeof import('~icons/ic/round-plus')['default']
   const IconLocalBanner: typeof import('~icons/local/banner')['default']
-  const IconLocalEmptyData: typeof import('~icons/local/empty-data')['default']
   const IconMdiAccountCheck: typeof import('~icons/mdi/account-check')['default']
   const IconMdiAccountOff: typeof import('~icons/mdi/account-off')['default']
   const IconMdiAccountSwitch: typeof import('~icons/mdi/account-switch')['default']
@@ -206,6 +205,7 @@ declare global {
   const NPopover: typeof import('naive-ui')['NPopover']
   const NScrollbar: typeof import('naive-ui')['NScrollbar']
   const NSelect: typeof import('naive-ui')['NSelect']
+  const NSlider: typeof import('naive-ui')['NSlider']
   const NSpace: typeof import('naive-ui')['NSpace']
   const NStatistic: typeof import('naive-ui')['NStatistic']
   const NSwitch: typeof import('naive-ui')['NSwitch']

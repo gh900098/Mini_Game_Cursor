@@ -50,8 +50,9 @@ const formModel = reactive({
   inactiveAt: null as number | null,
   apiSecret: '',
   defaultTokenCost: 10,
-  jk_config: {
+  integration_config: {
     enabled: false,
+    provider: 'JK',
     apiUrl: '',
     accessId: '',
     accessToken: '',
@@ -80,22 +81,22 @@ const syncTypes = [
 ];
 
 function addNewParam(type: string) {
-  if (!formModel.jk_config.syncConfigs[type].syncParams) {
-    formModel.jk_config.syncConfigs[type].syncParams = {};
+  if (!formModel.integration_config.syncConfigs[type].syncParams) {
+    formModel.integration_config.syncConfigs[type].syncParams = {};
   }
   const id = Math.random().toString(36).substring(7);
-  formModel.jk_config.syncConfigs[type].syncParams[`param_${id}`] = '';
+  formModel.integration_config.syncConfigs[type].syncParams[`param_${id}`] = '';
 }
 
 function deleteParam(type: string, key: string) {
-  delete formModel.jk_config.syncConfigs[type].syncParams[key];
+  delete formModel.integration_config.syncConfigs[type].syncParams[key];
 }
 
 function renameParam(type: string, oldKey: string, newKey: string) {
   if (!newKey || oldKey === newKey) return;
-  const val = formModel.jk_config.syncConfigs[type].syncParams[oldKey];
-  delete formModel.jk_config.syncConfigs[type].syncParams[oldKey];
-  formModel.jk_config.syncConfigs[type].syncParams[newKey] = val;
+  const val = formModel.integration_config.syncConfigs[type].syncParams[oldKey];
+  delete formModel.integration_config.syncConfigs[type].syncParams[oldKey];
+  formModel.integration_config.syncConfigs[type].syncParams[newKey] = val;
 }
 
 const slugValidationStatus = ref<'success' | 'warning' | 'error' | undefined>(undefined);
@@ -245,8 +246,9 @@ function handleAdd() {
     isActive: true,
     apiSecret: '',
     defaultTokenCost: 10,
-    jk_config: { 
+    integration_config: { 
       enabled: false, 
+      provider: 'JK',
       apiUrl: '', 
       accessId: '', 
       accessToken: '', 
@@ -281,25 +283,26 @@ function handleEdit(row: Api.Management.Company) {
     apiSecret: row.apiSecret || '',
     inactiveAt: row.inactiveAt ? new Date(row.inactiveAt).getTime() : null,
     defaultTokenCost: row.settings?.defaultTokenCost ?? 10,
-    jk_config: {
-        enabled: row.jk_config?.enabled ?? false,
-        apiUrl: row.jk_config?.apiUrl ?? '',
-        accessId: row.jk_config?.accessId ?? '',
-        accessToken: row.jk_config?.accessToken ?? '',
-        ipWhitelistEnabled: row.jk_config?.ipWhitelistEnabled ?? false,
-        ipWhitelist: row.jk_config?.ipWhitelist ?? '',
+    integration_config: {
+        enabled: row.integration_config?.enabled ?? false,
+        provider: row.integration_config?.provider ?? 'JK',
+        apiUrl: row.integration_config?.apiUrl ?? '',
+        accessId: row.integration_config?.accessId ?? '',
+        accessToken: row.integration_config?.accessToken ?? '',
+        ipWhitelistEnabled: row.integration_config?.ipWhitelistEnabled ?? false,
+        ipWhitelist: row.integration_config?.ipWhitelist ?? '',
         proxy: {
-            enabled: row.jk_config?.proxy?.enabled ?? false,
-            protocol: row.jk_config?.proxy?.protocol ?? 'http',
-            host: row.jk_config?.proxy?.host ?? '',
-            port: row.jk_config?.proxy?.port ?? 8080,
-            username: row.jk_config?.proxy?.username ?? '',
-            password: row.jk_config?.proxy?.password ?? ''
+            enabled: row.integration_config?.proxy?.enabled ?? false,
+            protocol: row.integration_config?.proxy?.protocol ?? 'http',
+            host: row.integration_config?.proxy?.host ?? '',
+            port: row.integration_config?.proxy?.port ?? 8080,
+            username: row.integration_config?.proxy?.username ?? '',
+            password: row.integration_config?.proxy?.password ?? ''
         },
         syncConfigs: {
-            member: row.jk_config?.syncConfigs?.member ?? { enabled: true, syncMode: row.jk_config?.syncMode ?? 'incremental', maxPages: row.jk_config?.maxPages ?? 200, syncCron: row.jk_config?.syncCron ?? '', syncParams: row.jk_config?.syncParams ?? {} },
-            deposit: row.jk_config?.syncConfigs?.deposit ?? { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
-            withdraw: row.jk_config?.syncConfigs?.withdraw ?? { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} }
+            member: row.integration_config?.syncConfigs?.member ?? { enabled: true, syncMode: row.integration_config?.syncMode ?? 'incremental', maxPages: row.integration_config?.maxPages ?? 200, syncCron: row.integration_config?.syncCron ?? '', syncParams: row.integration_config?.syncParams ?? {} },
+            deposit: row.integration_config?.syncConfigs?.deposit ?? { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
+            withdraw: row.integration_config?.syncConfigs?.withdraw ?? { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} }
         }
     }
   });
@@ -332,7 +335,7 @@ async function handleSubmit() {
     settings: {
       defaultTokenCost: formModel.defaultTokenCost
     },
-    jk_config: formModel.jk_config 
+    integration_config: formModel.integration_config 
   };
 
   let error;
@@ -440,44 +443,47 @@ getCompanies();
           </NForm>
         </NTabPane>
 
-        <NTabPane name="platform" tab="JK Integration">
+        <NTabPane name="platform" tab="Integration">
           <NForm :model="formModel" label-placement="left" label-width="120" class="pt-4">
-             <NFormItem label="Enable Sync" path="jk_config.enabled">
-               <NSwitch v-model:value="formModel.jk_config.enabled" />
+             <NFormItem label="Enable Sync" path="integration_config.enabled">
+               <NSwitch v-model:value="formModel.integration_config.enabled" />
              </NFormItem>
-             <template v-if="formModel.jk_config.enabled">
-               <NFormItem label="API URL" path="jk_config.apiUrl">
-                  <NInput v-model:value="formModel.jk_config.apiUrl" placeholder="https://api.jk-backend.com" />
+             <template v-if="formModel.integration_config.enabled">
+               <NFormItem label="Provider" path="integration_config.provider">
+                 <NSelect v-model:value="formModel.integration_config.provider" :options="[{ label: 'JK Platform (Legacy)', value: 'JK' }, { label: 'Generic Webhook', value: 'GENERIC' }]" />
                </NFormItem>
-               <NFormItem label="Access ID" path="jk_config.accessId">
-                  <NInput v-model:value="formModel.jk_config.accessId" placeholder="Numeric Access ID" />
+               <NFormItem label="API URL" path="integration_config.apiUrl">
+                  <NInput v-model:value="formModel.integration_config.apiUrl" placeholder="https://api.jk-backend.com" />
                </NFormItem>
-               <NFormItem label="Access Token" path="jk_config.accessToken">
-                  <NInput v-model:value="formModel.jk_config.accessToken" type="password" show-password-on="click" placeholder="Secret Token" />
+               <NFormItem label="Access ID" path="integration_config.accessId">
+                  <NInput v-model:value="formModel.integration_config.accessId" placeholder="Numeric Access ID" />
+               </NFormItem>
+               <NFormItem label="Access Token" path="integration_config.accessToken">
+                  <NInput v-model:value="formModel.integration_config.accessToken" type="password" show-password-on="click" placeholder="Secret Token" />
                </NFormItem>
                
                <NDivider title-placement="left" dashed>Proxy Settings (Shared)</NDivider>
-               <NFormItem label="Enable Proxy" path="jk_config.proxy.enabled">
-                 <NSwitch v-model:value="formModel.jk_config.proxy.enabled" />
+               <NFormItem label="Enable Proxy" path="integration_config.proxy.enabled">
+                 <NSwitch v-model:value="formModel.integration_config.proxy.enabled" />
                </NFormItem>
-               <template v-if="formModel.jk_config.proxy.enabled">
-                 <NFormItem label="Protocol" path="jk_config.proxy.protocol">
-                   <NSelect v-model:value="formModel.jk_config.proxy.protocol" :options="[{ label: 'HTTP / HTTPS', value: 'http' }, { label: 'SOCKS5', value: 'socks5' }]" />
+               <template v-if="formModel.integration_config.proxy.enabled">
+                 <NFormItem label="Protocol" path="integration_config.proxy.protocol">
+                   <NSelect v-model:value="formModel.integration_config.proxy.protocol" :options="[{ label: 'HTTP / HTTPS', value: 'http' }, { label: 'SOCKS5', value: 'socks5' }]" />
                  </NFormItem>
                  <NSpace>
-                   <NFormItem label="Host" path="jk_config.proxy.host">
-                     <NInput v-model:value="formModel.jk_config.proxy.host" placeholder="e.g. 85.28.61.160" />
+                   <NFormItem label="Host" path="integration_config.proxy.host">
+                     <NInput v-model:value="formModel.integration_config.proxy.host" placeholder="e.g. 85.28.61.160" />
                    </NFormItem>
-                   <NFormItem label="Port" path="jk_config.proxy.port">
-                     <NInputNumber v-model:value="formModel.jk_config.proxy.port" :min="1" :max="65535" placeholder="8080" />
+                   <NFormItem label="Port" path="integration_config.proxy.port">
+                     <NInputNumber v-model:value="formModel.integration_config.proxy.port" :min="1" :max="65535" placeholder="8080" />
                    </NFormItem>
                  </NSpace>
                  <NSpace>
-                   <NFormItem label="Username" path="jk_config.proxy.username">
-                     <NInput v-model:value="formModel.jk_config.proxy.username" placeholder="Optional" />
+                   <NFormItem label="Username" path="integration_config.proxy.username">
+                     <NInput v-model:value="formModel.integration_config.proxy.username" placeholder="Optional" />
                    </NFormItem>
-                   <NFormItem label="Password" path="jk_config.proxy.password">
-                     <NInput v-model:value="formModel.jk_config.proxy.password" type="password" show-password-on="click" placeholder="Optional" />
+                   <NFormItem label="Password" path="integration_config.proxy.password">
+                     <NInput v-model:value="formModel.integration_config.proxy.password" type="password" show-password-on="click" placeholder="Optional" />
                    </NFormItem>
                  </NSpace>
                </template>
@@ -485,34 +491,34 @@ getCompanies();
           </NForm>
         </NTabPane>
 
-        <NTabPane name="sync" tab="Sync Settings" :disabled="!formModel.jk_config.enabled">
+        <NTabPane name="sync" tab="Sync Settings" :disabled="!formModel.integration_config.enabled">
           <NTabs type="segment" animated class="mt-2">
             <NTabPane v-for="type in syncTypes" :key="type.key" :name="type.key" :tab="type.label">
-              <NForm :model="formModel.jk_config.syncConfigs[type.key]" label-placement="left" label-width="120" class="pt-4">
+              <NForm :model="formModel.integration_config.syncConfigs[type.key]" label-placement="left" label-width="120" class="pt-4">
                 <NFormItem label="Type Status">
-                  <NSwitch v-model:value="formModel.jk_config.syncConfigs[type.key].enabled" />
+                  <NSwitch v-model:value="formModel.integration_config.syncConfigs[type.key].enabled" />
                   <span class="ml-2 text-xs text-gray-500">Enable automatic {{ type.label.toLowerCase() }} sync</span>
                 </NFormItem>
                 
-                <template v-if="formModel.jk_config.syncConfigs[type.key].enabled">
+                <template v-if="formModel.integration_config.syncConfigs[type.key].enabled">
                   <NFormItem label="Sync Mode">
                     <NSelect 
-                      v-model:value="formModel.jk_config.syncConfigs[type.key].syncMode" 
+                      v-model:value="formModel.integration_config.syncConfigs[type.key].syncMode" 
                       :options="[{ label: 'Incremental (Fast)', value: 'incremental' }, { label: 'Full Sync', value: 'full' }]" 
                     />
                   </NFormItem>
-                  <NFormItem v-if="formModel.jk_config.syncConfigs[type.key].syncMode === 'incremental'" label="Max Pages">
-                     <NInputNumber v-model:value="formModel.jk_config.syncConfigs[type.key].maxPages" :min="1" class="w-full" />
+                  <NFormItem v-if="formModel.integration_config.syncConfigs[type.key].syncMode === 'incremental'" label="Max Pages">
+                     <NInputNumber v-model:value="formModel.integration_config.syncConfigs[type.key].maxPages" :min="1" class="w-full" />
                   </NFormItem>
                   <NFormItem label="Schedule (Cron)">
-                    <NInput v-model:value="formModel.jk_config.syncConfigs[type.key].syncCron" placeholder="e.g. 0 */4 * * * (Optional)" />
+                    <NInput v-model:value="formModel.integration_config.syncConfigs[type.key].syncCron" placeholder="e.g. 0 */4 * * * (Optional)" />
                   </NFormItem>
 
                   <NDivider title-placement="left" dashed>Custom API Parameters</NDivider>
                   <NSpace vertical>
-                    <NSpace v-for="(val, key) in formModel.jk_config.syncConfigs[type.key].syncParams" :key="key" align="center">
+                    <NSpace v-for="(val, key) in formModel.integration_config.syncConfigs[type.key].syncParams" :key="key" align="center">
                       <NInput :value="String(key)" @update:value="(newKey) => renameParam(type.key, String(key), newKey)" placeholder="Key" style="width: 150px" />
-                      <NInput v-model:value="formModel.jk_config.syncConfigs[type.key].syncParams[key]" placeholder="Value" style="width: 250px" />
+                      <NInput v-model:value="formModel.integration_config.syncConfigs[type.key].syncParams[key]" placeholder="Value" style="width: 250px" />
                       <NButton quaternary circle type="error" @click="deleteParam(type.key, String(key))">
                         <template #icon><icon-carbon-trash-can /></template>
                       </NButton>

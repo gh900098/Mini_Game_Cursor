@@ -137,6 +137,24 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'games_scores',
           i18nKey: 'route.games_scores'
         }
+      },
+      {
+        name: 'games_theme-detail',
+        path: '/games/theme-detail',
+        component: 'view.games_theme-detail',
+        meta: {
+          title: 'games_theme-detail',
+          i18nKey: 'route.games_theme-detail'
+        }
+      },
+      {
+        name: 'games_themes',
+        path: '/games/themes',
+        component: 'view.games_themes',
+        meta: {
+          title: 'games_themes',
+          i18nKey: 'route.games_themes'
+        }
       }
     ]
   },
@@ -233,6 +251,15 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
+        name: 'management_integration-settings',
+        path: '/management/integration-settings',
+        component: 'view.management_integration-settings',
+        meta: {
+          title: 'management_integration-settings',
+          i18nKey: 'route.management_integration-settings'
+        }
+      },
+      {
         name: 'management_permission',
         path: '/management/permission',
         component: 'view.management_permission',
@@ -266,18 +293,6 @@ export const generatedRoutes: GeneratedRoute[] = [
           roles: ['R_SUPER', 'R_ADMIN'],
           icon: 'ph:users',
           order: 3
-        }
-      },
-      {
-        name: 'management_sync-settings',
-        path: '/management/sync-settings',
-        component: 'view.management_sync-settings',
-        meta: {
-          title: 'management_sync-settings',
-          i18nKey: 'route.management_sync-settings',
-          roles: ['R_SUPER'],
-          icon: 'carbon:settings-adjust',
-          order: 4
         }
       }
     ]

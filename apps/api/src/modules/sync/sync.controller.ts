@@ -29,9 +29,9 @@ export class SyncController {
         }
 
         // IP Whitelisting check
-        if (company.jk_config?.enabled && company.jk_config?.ipWhitelistEnabled) {
+        if (company.integration_config?.enabled && company.integration_config?.ipWhitelistEnabled) {
             const clientIp = req.ip || (req as any).socket?.remoteAddress || (req as any).connection?.remoteAddress || '';
-            const whitelistedIps = (company.jk_config.ipWhitelist || '').split(',').map(ip => ip.trim());
+            const whitelistedIps = (company.integration_config.ipWhitelist || '').split(',').map(ip => ip.trim());
 
             if (!this.isIpWhitelisted(clientIp, whitelistedIps)) {
                 this.logger.warn(`Rejected webhook from non-whitelisted IP: ${clientIp} for company ${companyId}`);

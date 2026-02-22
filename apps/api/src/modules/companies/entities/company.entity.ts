@@ -15,11 +15,12 @@ export class Company {
     settings: Record<string, any>;
 
     @Column({ type: 'jsonb', nullable: true })
-    jk_config: {
+    integration_config: {
+        provider: string; // 'JK', etc.
         enabled: boolean;
         apiUrl: string;
-        accessId: number;
-        accessToken: string;
+        accessId?: number;     // Optional depending on provider
+        accessToken?: string;  // Optional depending on provider
         ipWhitelistEnabled?: boolean;
         ipWhitelist?: string; // Comma separated IPs
         proxy?: {

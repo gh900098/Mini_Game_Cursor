@@ -11,6 +11,8 @@ import { BullBoardModule } from '@bull-board/nestjs';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { SyncScheduler } from './sync.scheduler';
 import { SystemSettingsModule } from '../system-settings/system-settings.module';
+import { SyncStrategyFactory } from './strategies/sync-strategy.factory';
+import { JkSyncStrategy } from './strategies/jk.strategy';
 
 @Module({
     imports: [
@@ -37,7 +39,13 @@ import { SystemSettingsModule } from '../system-settings/system-settings.module'
         }),
     ],
     controllers: [SyncController],
-    providers: [SyncProcessor, JKBackendService, SyncScheduler],
+    providers: [
+        SyncProcessor,
+        JKBackendService,
+        SyncScheduler,
+        SyncStrategyFactory,
+        JkSyncStrategy
+    ],
     exports: [BullModule, JKBackendService, SyncScheduler],
 })
 export class SyncModule { }

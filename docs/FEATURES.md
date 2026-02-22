@@ -87,20 +87,22 @@ All GET endpoints for themes and game instances include `_t: Date.now()` to prev
 
 ---
 
-## 🔄 JK Synchronization System
+## 🔄 Generic Integration & Synchronization System
 
-**Last Updated:** 2026-02-16  
-**Status:** Optimization Complete ✅
+**Last Updated:** 2026-02-22  
+**Status:** Refactored to Strategy Pattern ✅
 
 ### 📍 Location
 - **Scheduler:** `apps/api/src/modules/sync/sync.scheduler.ts`
 - **Processor:** `apps/api/src/modules/sync/sync.processor.ts`
 - **Controller:** `apps/api/src/modules/sync/sync.controller.ts`
+- **Strategy Factory:** `apps/api/src/modules/sync/sync-strategy.factory.ts`
+- **JK Strategy:** `apps/api/src/modules/sync/strategies/jk.strategy.ts`
 - **Admin UI:** `apps/soybean-admin/src/views/management/company/index.vue`
 - **Events:** `apps/api/src/app.module.ts` (EventEmitter config)
 
 ### 🎯 Feature Description
-A robust, multi-tenant background synchronization system designed to keep player data, deposits, and withdrawals in sync with the JK Platform.
+A robust, multi-tenant background synchronization system designed to keep player data, deposits, and withdrawals in sync with external platforms using the Strategy Pattern.
 
 ### ⚙️ Core Mechanisms
 

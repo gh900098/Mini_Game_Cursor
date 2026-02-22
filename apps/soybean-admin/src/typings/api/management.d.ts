@@ -66,8 +66,9 @@ declare namespace Api {
             isActive: boolean;
             inactiveAt?: string | null;
             settings?: Record<string, any>;
-            jk_config?: {
+            integration_config?: {
                 enabled: boolean;
+                provider?: string;
                 apiUrl: string;
                 accessId: string;
                 accessToken: string;
