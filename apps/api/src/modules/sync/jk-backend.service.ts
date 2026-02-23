@@ -141,14 +141,20 @@ export class JKBackendService {
         const syncDays = Math.min(Math.max(Number(config.syncConfigs?.['deposit']?.syncDays || 2), 1), 30);
         sDate.setDate(sDate.getDate() - syncDays);
 
+        // Format date to exactly YYYY-MM-DD HH:mm:ss
+        const formatDateTime = (d: Date) => {
+            const pad = (n: number) => n.toString().padStart(2, '0');
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        };
+
         return this.request(`${apiUrl}//api/v1/index.php`, {
             module: '/transactions/getAllTransactions', // User said it must be exactly this
             accessId,
             accessToken,
             pageIndex,
             type: 'DEPOSIT', // Only fetch deposits
-            sDate: sDate.toISOString().split('.')[0] + 'Z', // e.g. 2021-02-22T00:00:00Z
-            eDate: eDate.toISOString().split('.')[0] + 'Z',
+            sDate: formatDateTime(sDate),
+            eDate: formatDateTime(eDate),
             ...filters, // Pass explicit filters like id or userId for webhook validation
             ...extraParams,
         }, config);

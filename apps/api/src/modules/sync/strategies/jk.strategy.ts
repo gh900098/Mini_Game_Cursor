@@ -194,15 +194,16 @@ export class JkSyncStrategy implements SyncStrategy {
     private async syncBatchDeposits(companyId: string, config: any): Promise<number> {
         this.logger.log(`Queueing batch deposit sync jobs for company ${companyId}`);
 
-        let page = 0;
+        // Default pagination: Assume API starts at page 1.
+        let page = 1;
         let hasMore = true;
         let queuedCount = 0;
 
         const depositConfig = config.syncConfigs?.['deposit'] || {};
-        const maxPages = depositConfig.maxPages || 10; // Default to 10 pages for deposit sync
         const params = depositConfig.syncParams || {};
 
-        while (hasMore && page < maxPages) {
+        // Hard cap at 500 pages to avoid infinite loops if totalPage is corrupted
+        while (hasMore && page <= 500) {
             try {
                 this.logger.debug(`Fetching deposit page ${page} for company ${companyId}...`);
 
@@ -210,7 +211,7 @@ export class JkSyncStrategy implements SyncStrategy {
 
                 const data = response.data || {};
                 const transactions = data.transactions || data.list || data.data || (Array.isArray(data) ? data : []);
-                const totalPage = data.totalPage || data.totalPages || 1;
+                const totalPage = parseInt(data.totalPage || data.totalPages || 1);
 
                 if (response.status === 'SUCCESS' && Array.isArray(transactions) && transactions.length > 0) {
                     const jobs = transactions.map((txn: any) => ({
@@ -233,14 +234,14 @@ export class JkSyncStrategy implements SyncStrategy {
                     queuedCount += jobs.length;
 
                     page++;
-                    if (page >= totalPage || page >= maxPages) {
+                    // If the page we just fetched is greater than or equal to totalPage, we are done
+                    if (page > totalPage) {
                         hasMore = false;
-                        if (page >= maxPages) {
-                            this.logger.log(`Company ${companyId} deposit sync limit reached at page ${page}`);
-                        }
+                        this.logger.log(`Company ${companyId} deposit sync finished at page ${page - 1}/${totalPage}`);
                     }
                 } else {
                     hasMore = false;
+                    this.logger.log(`Company ${companyId} deposit sync received empty or invalid items at page ${page}`);
                 }
             } catch (error) {
                 this.logger.error(`Error in batch deposit sync for company ${companyId}, page ${page}: ${error.message}`);
