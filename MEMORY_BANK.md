@@ -195,6 +195,7 @@ Both `zh-cn.ts` and `en-us.ts` must always be updated together.
 
 **Use when:** You need different behavior per tenant, integration type, or external platform.
 **Rule:** NEVER use `if (companyId === 'X')` or `if (syncType === 'JK')` in service logic. Use a strategy factory instead.
+**Guide:** Whenever a new integration is needed, follow the steps in [docs/HOWTO_ADD_SYNC_PROVIDER.md](file:///d:/Google_Antigravity_project/Mini_Game/Mini_Game/docs/HOWTO_ADD_SYNC_PROVIDER.md).
 
 ```typescript
 // Define the interface

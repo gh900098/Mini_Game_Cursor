@@ -39,8 +39,7 @@ export class CompaniesController {
   getIntegrationProviders() {
     // These reflect the currently implemented SyncStrategy classes
     return [
-      { label: 'JK Platform (Legacy)', value: 'JK' },
-      { label: 'Generic Webhook', value: 'GENERIC' }
+      { label: 'JK Platform', value: 'JK' }
     ];
   }
 
