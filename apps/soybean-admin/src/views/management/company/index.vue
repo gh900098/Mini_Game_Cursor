@@ -514,15 +514,17 @@ getCompanies();
                 </NFormItem>
                 
                 <template v-if="formModel.integration_config.syncConfigs[type.key].enabled">
-                  <NFormItem label="Sync Mode">
-                    <NSelect 
-                      v-model:value="formModel.integration_config.syncConfigs[type.key].syncMode" 
-                      :options="[{ label: 'Incremental (Fast)', value: 'incremental' }, { label: 'Full Sync', value: 'full' }]" 
-                    />
-                  </NFormItem>
-                  <NFormItem v-if="formModel.integration_config.syncConfigs[type.key].syncMode === 'incremental'" label="Max Pages">
-                     <NInputNumber v-model:value="formModel.integration_config.syncConfigs[type.key].maxPages" :min="1" class="w-full" />
-                  </NFormItem>
+                  <template v-if="type.key === 'member'">
+                    <NFormItem label="Sync Mode">
+                      <NSelect 
+                        v-model:value="formModel.integration_config.syncConfigs[type.key].syncMode" 
+                        :options="[{ label: 'Incremental (Fast)', value: 'incremental' }, { label: 'Full Sync', value: 'full' }]" 
+                      />
+                    </NFormItem>
+                    <NFormItem v-if="formModel.integration_config.syncConfigs[type.key].syncMode === 'incremental'" label="Max Pages">
+                       <NInputNumber v-model:value="formModel.integration_config.syncConfigs[type.key].maxPages" :min="1" class="w-full" />
+                    </NFormItem>
+                  </template>
                   <NFormItem label="Schedule (Cron)">
                     <NInput v-model:value="formModel.integration_config.syncConfigs[type.key].syncCron" placeholder="e.g. 0 */4 * * * (Optional)" />
                   </NFormItem>
