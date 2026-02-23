@@ -194,8 +194,8 @@ export class JkSyncStrategy implements SyncStrategy {
     private async syncBatchDeposits(companyId: string, config: any): Promise<number> {
         this.logger.log(`Queueing batch deposit sync jobs for company ${companyId}`);
 
-        // Default pagination: Assume API starts at page 1.
-        let page = 1;
+        // JK Platform uses 0-based pagination: Assume API starts at page 0.
+        let page = 0;
         let hasMore = true;
         let queuedCount = 0;
 
@@ -234,8 +234,9 @@ export class JkSyncStrategy implements SyncStrategy {
                     queuedCount += jobs.length;
 
                     page++;
-                    // If the page we just fetched is greater than or equal to totalPage, we are done
-                    if (page > totalPage) {
+                    // If the NEXT page index we are about to fetch is greater than or equal to totalPage, we are done
+                    // e.g., if totalPage is 11, valid pages are 0 through 10. When page becomes 11, we stop.
+                    if (page >= totalPage) {
                         hasMore = false;
                         this.logger.log(`Company ${companyId} deposit sync finished at page ${page - 1}/${totalPage}`);
                     }
