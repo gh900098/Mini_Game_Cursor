@@ -3,6 +3,15 @@
  Records all important feature updates, bug fixes, and architectural changes.
  
 
+## [2026-02-23] UX Fix: Sync Settings Menu Restoration & Dynamic Providers
+
+### 🎨 UX Improvement
+
+**Problem:** Following the Strategy Pattern refactor, the admin panel menu was altered to a generic "Integration Settings," causing user confusion. Additionally, the Integration Providers dropdown was hardcoded in the frontend.
+**Fix:** Restored the "Sync Settings" menu name, routing, and localization keys. Created a new backend endpoint `GET /api/companies/integration-providers` to dynamically supply the supported Sync Strategies (e.g. `JK`, `GENERIC`) to the frontend dropdown.
+
+---
+
 ## [2026-02-22] Generic Integration Architecture & Strategy Pattern Refactor
 
 ### 🏗️ Architectural Enhancement

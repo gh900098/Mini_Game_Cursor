@@ -44,7 +44,7 @@ function transformElegantRouteToVueRoute(
   function getLayoutName(component: string) {
     const layout = component.replace(LAYOUT_PREFIX, '');
 
-    if(!layouts[layout]) {
+    if (!layouts[layout]) {
       throw new Error(`Layout component "${layout}" not found`);
     }
 
@@ -58,7 +58,7 @@ function transformElegantRouteToVueRoute(
   function getViewName(component: string) {
     const view = component.replace(VIEW_PREFIX, '');
 
-    if(!views[view]) {
+    if (!views[view]) {
       throw new Error(`View component "${view}" not found`);
     }
 
@@ -145,7 +145,7 @@ function transformElegantRouteToVueRoute(
   if (children?.length) {
     const childRoutes = children.flatMap(child => transformElegantRouteToVueRoute(child, layouts, views));
 
-    if(isFirstLevelRoute(route)) {
+    if (isFirstLevelRoute(route)) {
       vueRoute.children = childRoutes;
     } else {
       vueRoutes.push(...childRoutes);
@@ -186,7 +186,7 @@ const routeMap: RouteMap = {
   "management_company": "/management/company",
   "management_email-settings": "/management/email-settings",
   "management_games": "/management/games",
-  "management_integration-settings": "/management/integration-settings",
+  "management_sync-settings": "/management/sync-settings",
   "management_permission": "/management/permission",
   "management_role": "/management/role",
   "management_user": "/management/user",

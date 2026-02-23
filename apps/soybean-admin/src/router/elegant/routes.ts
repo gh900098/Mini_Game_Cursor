@@ -251,12 +251,12 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
-        name: 'management_integration-settings',
-        path: '/management/integration-settings',
-        component: 'view.management_integration-settings',
+        name: 'management_sync-settings',
+        path: '/management/sync-settings',
+        component: 'view.management_sync-settings',
         meta: {
-          title: 'management_integration-settings',
-          i18nKey: 'route.management_integration-settings'
+          title: 'management_sync-settings',
+          i18nKey: 'route.management_sync-settings'
         }
       },
       {

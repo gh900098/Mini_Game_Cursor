@@ -129,6 +129,14 @@ export function fetchGetCompanies(params?: { page?: number; limit?: number; keyw
     });
 }
 
+/** Get integration providers */
+export function fetchIntegrationProviders() {
+    return request<{ label: string; value: string }[]>({
+        url: '/companies/integration-providers',
+        method: 'get'
+    });
+}
+
 /** Create company */
 export function fetchCreateCompany(data: Partial<Api.Management.Company>) {
     return request<Api.Management.Company>({

@@ -32,6 +32,18 @@ export class CompaniesController {
     return this.companiesService.findAll(query);
   }
 
+  @Get('integration-providers')
+  @RequirePermission('companies:read')
+  @ApiOperation({ summary: 'Get available integration providers' })
+  @ApiResponse({ status: 200, description: 'Returns all available integration providers' })
+  getIntegrationProviders() {
+    // These reflect the currently implemented SyncStrategy classes
+    return [
+      { label: 'JK Platform (Legacy)', value: 'JK' },
+      { label: 'Generic Webhook', value: 'GENERIC' }
+    ];
+  }
+
   @Get(':id')
   @RequirePermission('companies:read')
   @ApiOperation({ summary: 'Get a company by ID' })

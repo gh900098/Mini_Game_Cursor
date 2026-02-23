@@ -251,7 +251,7 @@ const local: App.I18n.Schema = {
     'user-center': '个人中心',
     management_company: '公司管理',
     'management_email-settings': '邮件设置',
-    'management_integration-settings': '集成设置',
+    'management_sync-settings': '同步设置',
     management_games: '游戏模板',
     management_permission: '权限管理',
 

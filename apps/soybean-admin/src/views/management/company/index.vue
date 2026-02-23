@@ -1,8 +1,8 @@
 <script setup lang="tsx">
-import { ref, reactive, watch, computed } from 'vue';
+import { ref, reactive, watch, computed, onMounted } from 'vue';
 import { NButton, NTag, NSpace, NPopconfirm, NCard, NDataTable, NModal, NForm, NFormItem, NInput, NSwitch, NDatePicker, NDivider, NInputNumber, NSelect, NTabs, NTabPane, NTooltip } from 'naive-ui';
 import type { DataTableColumns } from 'naive-ui';
-import { fetchGetCompanies, fetchCreateCompany, fetchUpdateCompany, fetchDeleteCompany } from '@/service/api/management';
+import { fetchGetCompanies, fetchCreateCompany, fetchUpdateCompany, fetchDeleteCompany, fetchIntegrationProviders } from '@/service/api/management';
 import { useAuthStore } from '@/store/modules/auth';
 import { useAuth } from '@/hooks/business/auth';
 import { useBoolean, useLoading } from '@sa/hooks';
@@ -16,6 +16,19 @@ const authStore = useAuthStore();
 
 const companyData = ref<Api.Management.Company[]>([]);
 const total = ref(0);
+
+const integrationProviderOptions = ref<{ label: string; value: string }[]>([]);
+
+async function initIntegrationProviders() {
+  const { data, error } = await fetchIntegrationProviders();
+  if (!error && data) {
+    integrationProviderOptions.value = data;
+  }
+}
+
+onMounted(() => {
+  initIntegrationProviders();
+});
 
 const searchParams = reactive({
   keyword: ''
@@ -450,7 +463,7 @@ getCompanies();
              </NFormItem>
              <template v-if="formModel.integration_config.enabled">
                <NFormItem label="Provider" path="integration_config.provider">
-                 <NSelect v-model:value="formModel.integration_config.provider" :options="[{ label: 'JK Platform (Legacy)', value: 'JK' }, { label: 'Generic Webhook', value: 'GENERIC' }]" />
+                 <NSelect v-model:value="formModel.integration_config.provider" :options="integrationProviderOptions" />
                </NFormItem>
                <NFormItem label="API URL" path="integration_config.apiUrl">
                   <NInput v-model:value="formModel.integration_config.apiUrl" placeholder="https://api.jk-backend.com" />

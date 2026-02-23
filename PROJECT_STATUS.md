@@ -44,6 +44,7 @@ The synchronization system has been successfully decoupled from the hardcoded JK
 
 
 ## ✅ Recently Completed
+- [x] **UX Fix: Sync Settings Menu & Dynamic Providers** (Restored Sync Settings menu routing and added GET /integration-providers endpoint for dynamic configuration - 2026-02-23)
 - [x] **Generic Integration Architecture** (Refactored JK sync to use Strategy Pattern, renamed variables to integration_config - 2026-02-22)
 - [x] **Theme Preset UX Fix — Auto-Switch to Custom** (ConfigForm.vue: isApplyingPreset flag + deep watcher auto-reset - 2026-02-22)
 - [x] **Upload System Bugfixes & Server-Side File Deletion** (Fixed UUID filenames, added `DELETE /game-instances/upload` physical file removal, added cache-busting to GET endpoints - 2026-02-21)

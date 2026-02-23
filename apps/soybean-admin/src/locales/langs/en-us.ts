@@ -255,7 +255,7 @@ const local: App.I18n.Schema = {
     'user-center': 'User Center',
     management_company: 'Company',
     'management_email-settings': 'Email Settings',
-    'management_integration-settings': 'Integration Settings',
+    'management_sync-settings': 'Sync Settings',
     management_games: 'Game Templates',
     management_permission: 'Permission',
 
