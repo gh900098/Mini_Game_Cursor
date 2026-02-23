@@ -15,7 +15,7 @@ export class SyncScheduler implements OnModuleInit {
     private readonly companiesService: CompaniesService,
     private readonly jkService: JKBackendService,
     private readonly settingsService: SystemSettingsService,
-  ) {}
+  ) { }
 
   async onModuleInit() {
     await this.refreshScheduler();
@@ -109,8 +109,8 @@ export class SyncScheduler implements OnModuleInit {
           {
             repeat: {
               pattern: typeCron,
+              jobId: `sync_${type}_${company.id}`,
             },
-            jobId: `sync_${type}_${company.id}`,
             removeOnComplete: 100,
           },
         );
