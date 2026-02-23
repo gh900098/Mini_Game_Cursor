@@ -22,6 +22,8 @@
 | AD-008 | Multi-tenancy | `companyId` is required on nearly every entity | This is the primary isolation boundary. Every query MUST include `where: { companyId }`. Super Admins are the only exception (they bypass via `isSuperAdmin` check). Never remove `companyId` from an entity without explicit discussion. | 2026-02-01 |
 | AD-009 | Scores | `AdminScoresController` uses `createQueryBuilder` not `find()` | The scores table joins multiple relations (`member`, `gameInstance`, `prize`) and needs complex filtering. TypeORM `find()` with many relations causes N+1 queries. `createQueryBuilder` with explicit `leftJoinAndSelect` is required for performance. | 2026-02-08 |
 | AD-010 | Worker | `minigame-worker` is a separate Docker container from `minigame-api-test` | The BullMQ worker processes sync jobs in the background. Running it in the same process as the API caused job processing to block API request handling under load. They share the same Redis instance. | 2026-02-14 |
+| AD-011 | Queue | BullMQ repeatable `jobId` MUST be inside the `repeat` object | BullMQ generates its deduplication hash from `name + repeat.pattern + repeat.jobId`. Placing `jobId` at the root `opts` level prevents it from being included in the hash, causing every `refreshScheduler()` call to create a new repeat entry instead of replacing the existing one. Always use `{ repeat: { pattern, jobId } }`. | 2026-02-23 |
+| AD-012 | Admin Frontend | Integration Sync Settings and Webhooks tabs are disabled until `apiUrl` is provided | Enabling the integration toggle without API credentials causes the scheduler to register broken cron jobs after save. The `isIntegrationConfigured` computed property gates both tabs so misconfiguration is impossible. | 2026-02-23 |
 
 ---
 

@@ -1,6 +1,6 @@
 # AI Memory Bank: Reusable Patterns 🧠
 
-**Last Updated:** 2026-02-22
+**Last Updated:** 2026-02-23
 **Goal:** Stop rewriting the wheel. Copy-paste these proven patterns before writing any new service/controller/component.
 
 > [!IMPORTANT]
@@ -345,3 +345,114 @@ async function loadData() {
 - [ ] Submit button disabled during request (`loading` bound to `:disabled`)
 - [ ] Delete/reset uses `NPopconfirm` (never a direct action)
 - [ ] Success toast after save via `window.$message.success()`
+
+---
+
+## 15. BullMQ — Repeatable Job Deduplication (CRITICAL)
+
+**Use for:** Any scheduler that registers repeatable cron jobs in BullMQ.
+
+**Rule:** `jobId` MUST be nested inside the `repeat` object, NOT at the root opts level. BullMQ hashes `name + repeat.pattern + repeat.jobId` to deduplicate. A root-level `jobId` is ignored during this check.
+
+```typescript
+// ❌ WRONG — creates a new entry every time refreshScheduler() runs
+await this.syncQueue.add('sync-company-batch', payload, {
+  jobId: `sync_${type}_${companyId}`,
+  repeat: { pattern: cronExpression },
+  removeOnComplete: 100,
+});
+
+// ✅ CORRECT — overwrites the existing repeat entry
+await this.syncQueue.add('sync-company-batch', payload, {
+  repeat: {
+    pattern: cronExpression,
+    jobId: `sync_${type}_${companyId}`,  // <-- here, inside repeat
+  },
+  removeOnComplete: 100,
+});
+```
+
+**Cleanup Before Re-registering:**
+```typescript
+// Always purge before re-registering to avoid stale keys
+const existing = await this.syncQueue.getRepeatableJobs();
+for (const job of existing) {
+  await this.syncQueue.removeRepeatableByKey(job.key);
+}
+// Then re-add with correct format
+```
+
+**File reference:** `apps/api/src/modules/sync/sync.scheduler.ts`
+
+---
+
+## 16. Deposit Point Rules Engine (Per-Period Point Caps)
+
+**Use for:** Any feature that needs to cap user earnings per day/month or by total count.
+
+**Pattern (TypeORM SUM queries for time-bounded limits):**
+```typescript
+// Check how many points a member already earned today
+const todayStart = new Date();
+todayStart.setHours(0, 0, 0, 0);
+
+const { pointsToday } = await this.creditTxRepo
+  .createQueryBuilder('tx')
+  .select('SUM(tx.amount)', 'pointsToday')
+  .where('tx.memberId = :memberId', { memberId })
+  .andWhere('tx.companyId = :companyId', { companyId })
+  .andWhere('tx.type = :type', { type: 'DEPOSIT' })
+  .andWhere('tx.createdAt >= :todayStart', { todayStart })
+  .getRawOne();
+
+const alreadyEarnedToday = parseInt(pointsToday ?? '0', 10);
+
+// Truncate points to not exceed the daily cap
+const remainingAllowance = maxPointsPerDay - alreadyEarnedToday;
+if (pointsToAdd > remainingAllowance) {
+  pointsToAdd = Math.max(0, remainingAllowance);
+  eligibilityReason = 'DAILY_LIMIT_TRUNCATED';
+}
+```
+
+**EligibilityReason enum values used:**
+| Value | Meaning |
+|---|---|
+| `ELIGIBLE` | Full points awarded |
+| `DAILY_LIMIT_TRUNCATED` | Partial award — daily cap reached |
+| `MONTHLY_LIMIT_TRUNCATED` | Partial award — monthly cap reached |
+| `MAX_ELIGIBLE_DEPOSITS_EXCEEDED` | Zero awarded — lifetime deposit count exceeded |
+
+**File reference:** `apps/api/src/modules/members/members.service.ts` (`processDeposit` method)
+
+---
+
+## 17. Vue — Conditional Tab Gating via Computed Property
+
+**Use for:** Any admin form where certain tabs must be locked until prerequisites are met.
+
+```typescript
+// In script setup
+const isIntegrationConfigured = computed(() =>
+  formModel.integration_config.enabled && !!formModel.integration_config.apiUrl
+);
+```
+
+```html
+<!-- In template -->
+<NTabPane name="sync" tab="Sync Settings" :disabled="!isIntegrationConfigured">
+  <div v-if="!isIntegrationConfigured" class="py-10 text-center text-gray-400">
+    Please configure the Integration Provider and API URL first.
+  </div>
+  <div v-else>
+    <!-- Actual tab content -->
+  </div>
+</NTabPane>
+```
+
+**Why this pattern:**
+- Prevents saving incomplete configurations that cause backend errors.
+- Provides UX feedback without a modal or error notice.
+- Works reactively — unlocks instantly when the prerequisite field is filled.
+
+**File reference:** `apps/soybean-admin/src/views/management/company/index.vue`

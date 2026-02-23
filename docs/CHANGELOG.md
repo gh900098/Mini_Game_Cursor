@@ -68,6 +68,17 @@
 
 ---
 
+## [2026-02-23] Bug Fix: BullMQ Infinite Duplicate Jobs
+
+### 🐛 Backend Integrity
+
+**Problem:** Whenever an Administrator saved the "Company" settings pane, the backend recreated duplicate cron jobs in Redis instead of overwriting the previous schedule, leading to massive memory bloat and runaway sync procedures.
+**Fix:** Refactored `sync.scheduler.ts`. The third parameter `opts` in `bullmq`'s `this.syncQueue.add()` was incorrectly formatting custom IDs at the root level instead of identically nested within the `repeat` block. Passing `repeat: { pattern, jobId }` enforces correct unique hashing updates.
+
+**File Modified:** `apps/api/src/modules/sync/sync.scheduler.ts`
+
+---
+
 ## [2026-02-22] Generic Integration Architecture & Strategy Pattern Refactor
 
 ### 🏗️ Architectural Enhancement

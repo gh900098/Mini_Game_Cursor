@@ -55,6 +55,65 @@
 
 ---
 
+### Issue 23: BullMQ Creates Duplicate Repeatable Jobs on Every Scheduler Refresh
+
+**Symptoms:**
+- Bull Board shows 4, 8, 12 ... (growing) delayed `sync-company-batch` entries after saving Company sync settings.
+- Each company × syncType combination accumulates extra copies instead of replacing the existing schedule.
+
+**Root Cause:**
+When calling `this.syncQueue.add('name', data, opts)`, BullMQ generates a unique repeat job hash from the **combination** of `name`, `repeat.pattern`, and `repeat.jobId`. If `jobId` is placed **outside** the `repeat` block (at the root `opts` level), BullMQ ignores it when checking for existing repeatable keys — causing it to create a brand-new entry instead of updating the existing one.
+
+```typescript
+// ❌ WRONG — jobId is not included in the dedupe hash
+await queue.add('job-name', data, {
+  jobId: 'my-id',   // ignored for deduplication
+  repeat: { pattern: cron }
+});
+
+// ✅ CORRECT — jobId nested inside repeat block
+await queue.add('job-name', data, {
+  repeat: {
+    pattern: cron,
+    jobId: 'my-id'  // used in hash = proper deduplication
+  }
+});
+```
+
+**Fix Type:** ✅ PERMANENT
+
+**Affected Modules:**
+- Changed: `apps/api/src/modules/sync/sync.scheduler.ts` (moved `jobId` inside `repeat` block)
+
+---
+
+### Issue 24: Sync Settings + Webhook Tabs Accessible Without API Credentials Configured
+
+**Symptoms:**
+- A company with Integration enabled but no API URL still shows active Sync Settings and Webhooks tabs.
+- Saving sync settings while API URL is empty causes the scheduler to create broken cron jobs that loop with `ETIMEDOUT` errors.
+
+**Root Cause:**
+The tab `:disabled` binding only checked `formModel.integration_config.enabled`, not whether the API URL credential was actually filled in.
+
+**Fix Type:** ✅ PERMANENT
+
+**Affected Modules:**
+- Changed: `apps/soybean-admin/src/views/management/company/index.vue`
+  - Added `isIntegrationConfigured` computed property.
+  - Gated both the `Sync Settings` and `Webhooks` tab panes behind this computed value.
+
+**Solution:**
+```typescript
+// computed property in company/index.vue
+const isIntegrationConfigured = computed(() =>
+  formModel.integration_config.enabled && !!formModel.integration_config.apiUrl
+);
+// Template usage:
+// :disabled="!isIntegrationConfigured"
+```
+
+---
 
 ### Issue 18: Theme Upload Files Get Random UUID Filenames
 

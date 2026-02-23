@@ -11,6 +11,10 @@
     "build:api": "pnpm --filter api build"
   },
   "devDependencies": {
+    "@types/connect": "^3.4.38",
+    "@types/http-errors": "^2.0.5",
+    "@types/range-parser": "^1.2.7",
+    "@types/send": "^1.2.1",
     "typescript": "^5.0.0"
   },
   "dependencies": {
