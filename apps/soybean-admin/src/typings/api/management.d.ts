@@ -58,6 +58,19 @@ declare namespace Api {
             };
         }
 
+        interface CompanySyncSettings {
+            enabled: boolean;
+            syncMode?: 'full' | 'incremental';
+            maxPages?: number;
+            syncCron?: string;
+            syncParams?: Record<string, any>;
+            syncDays?: number;
+            depositConversionRate?: number;
+            maxPointsPerDay?: number | null;
+            maxPointsPerMonth?: number | null;
+            maxEligibleDeposits?: number | null;
+        }
+
         interface Company {
             id: string;
             name: string;
