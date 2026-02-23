@@ -234,9 +234,9 @@ export class JkSyncStrategy implements SyncStrategy {
                     queuedCount += jobs.length;
 
                     page++;
-                    // If the NEXT page index we are about to fetch is greater than or equal to totalPage, we are done
-                    // e.g., if totalPage is 11, valid pages are 0 through 10. When page becomes 11, we stop.
-                    if (page >= totalPage) {
+                    // If the NEXT page index we are about to fetch exceeds totalPage, we are done.
+                    // JK API pages start at 0 and can include the totalPage index itself.
+                    if (page > totalPage) {
                         hasMore = false;
                         this.logger.log(`Company ${companyId} deposit sync finished at page ${page - 1}/${totalPage}`);
                     }
