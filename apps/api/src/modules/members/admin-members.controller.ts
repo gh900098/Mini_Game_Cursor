@@ -29,6 +29,7 @@ import { AuditLogService } from '../audit-log/audit-log.service';
 import { MembersService } from './members.service';
 import { maskEmail, maskPhone } from '../../common/utils/masking.utils';
 import { GetMembersDto } from './dto/get-members.dto';
+import { GetCreditTransactionsDto } from './dto/get-credit-transactions.dto';
 
 import * as bcrypt from 'bcrypt';
 
@@ -52,7 +53,7 @@ export class AdminMembersController {
     private auditLogService: AuditLogService,
     private membersService: MembersService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   @Get()
   async getMembers(@Request() req: any, @Query() queryDto: GetMembersDto) {
@@ -82,6 +83,39 @@ export class AdminMembersController {
     });
 
     return result;
+  }
+
+  @Get('credit-history-all')
+  async getAllCreditHistory(
+    @Request() req: any,
+    @Query() queryDto: GetCreditTransactionsDto,
+  ) {
+    const {
+      page = 1,
+      limit = 10,
+      companyId: requestedCompanyId,
+      memberId,
+      type,
+    } = queryDto;
+    const companyId = req.user.isSuperAdmin
+      ? requestedCompanyId
+      : req.user.currentCompanyId;
+
+    if (
+      requestedCompanyId &&
+      !req.user.isSuperAdmin &&
+      requestedCompanyId !== req.user.currentCompanyId
+    ) {
+      throw new ForbiddenException('You do not have access to this company');
+    }
+
+    return this.membersService.findTransactionsPaginated({
+      companyId,
+      memberId,
+      type,
+      page: Number(page),
+      limit: Number(limit),
+    });
   }
 
   @Get(':id')

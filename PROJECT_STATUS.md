@@ -1,6 +1,6 @@
 # Project Status & Current Context
 
-**Last Updated:** 2026-02-23 11:25
+**Last Updated:** 2026-02-23 16:45
 **Current Mission:** Deposit Integration ✅
 **Server Status:** 🟢 Running. (API:3100, Admin:3101, Web:3102, Worker:3100).
 
@@ -40,10 +40,12 @@ The synchronization system now handles real-time deposits from third-party webho
 | :--- | :--- | :--- | :--- |
 | BUG-001 | 🔴 Bug | Agent Amnesia (Need to load context) | 🚧 In Progress |
 | BUG-002 | 🟢 Bug | Tenant Isolation (Admin/Member endpoints) | ✅ Fixed |
+| FEAT-002 | 🟢 Feat | Credit Transaction Ledger | ✅ Fixed |
 | FEAT-001 | 🟢 Feat | Dynamic Probabilities (Phase 4) | ⏳ Pending |
 
 
 ## ✅ Recently Completed
+- [x] **Feat: Credit Transaction Ledger** (Full stack implementation of a global credit transaction history view with pagination, filters, and i18n - 2026-02-23)
 - [x] **Bug Fix: BullMQ Infinite Duplicate Jobs** (Corrected `jobId` syntax location inside `.add({ repeat: {} })` options to ensure Redis hashing properly replaces old schedules - 2026-02-23)
 - [x] **UX Fix: Conditional Integration Guard** (Disabled company admin Integration Sync and Webhook tabs until an API URL is configured - 2026-02-23)
 - [x] **Deposit Point Rules Engine Architecture** (Applied truncation limits to MembersService mapping to DAILY_LIMIT_TRUNCATED, MAX_ELIGIBLE_DEPOSITS_EXCEEDED - 2026-02-23)

@@ -92,6 +92,11 @@ export function createStaticRoutes() {
           r.meta.permission = 'budget-tracking:read'; // Assuming permission key
           r.meta.icon = 'carbon:money';
           r.meta.order = 10;
+        } else if (r.name === 'games_credit-transactions') {
+          r.meta.roles = ['R_SUPER', 'R_ADMIN'];
+          r.meta.permission = 'members:read';
+          r.meta.icon = 'carbon:money';
+          r.meta.order = 11;
         } else if (r.name === 'games_themes') {
           r.meta.roles = ['R_SUPER', 'R_ADMIN'];
           r.meta.permission = 'themes:read';

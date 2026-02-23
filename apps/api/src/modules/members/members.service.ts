@@ -32,7 +32,7 @@ export class MembersService {
     private readonly companiesService: CompaniesService,
     private readonly auditLogService: AuditLogService,
     private readonly dataSource: DataSource,
-  ) {}
+  ) { }
 
   async validateMember(username: string, pass: string): Promise<any> {
     const member = await this.memberRepository.findOne({
@@ -502,5 +502,59 @@ export class MembersService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async findTransactionsPaginated(params: {
+    companyId?: string;
+    memberId?: string;
+    type?: string;
+    page: number;
+    limit: number;
+  }): Promise<{
+    items: CreditTransaction[];
+    meta: { total: number; page: number; limit: number; totalPages: number };
+  }> {
+    const { companyId, memberId, type, page, limit } = params;
+    const query = this.transactionRepository
+      .createQueryBuilder('tx')
+      .leftJoinAndSelect('tx.member', 'member')
+      .orderBy('tx.createdAt', 'DESC');
+
+    if (companyId) {
+      query.andWhere('member.companyId = :companyId', { companyId });
+    }
+
+    if (memberId) {
+      const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+        memberId,
+      );
+      if (isUuid) {
+        query.andWhere('tx.memberId = :memberId', { memberId });
+      } else {
+        query.andWhere(
+          '(member.username = :memberId OR member.externalId = :memberId)',
+          { memberId },
+        );
+      }
+    }
+
+    if (type) {
+      query.andWhere('tx.type = :type', { type });
+    }
+
+    const [items, total] = await query
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      items,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 }

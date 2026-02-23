@@ -168,6 +168,7 @@ const routeMap: RouteMap = {
   "500": "/500",
   "games": "/games",
   "games_budget-tracking": "/games/budget-tracking",
+  "games_credit-transactions": "/games/credit-transactions",
   "games_game-instance": "/games/game-instance",
   "games_list": "/games/list",
   "games_member-detail": "/games/member-detail/:id",

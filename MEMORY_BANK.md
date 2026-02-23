@@ -8,6 +8,96 @@
 
 ---
 
+## 0. ⚠️ CRITICAL: Adding a New Admin Menu Page (Elegant Router Pattern)
+
+> [!CAUTION]
+> **NEVER rename routes to use underscores between words (e.g. `games_credit_transactions`). The Elegant Router uses `_` as the HIERARCHY SEPARATOR. `games_credit_transactions` creates a phantom parent group `games_credit` with a child `transactions`, breaking the flat menu structure. ALWAYS use hyphens for multi-word segments (e.g. `games_credit-transactions`).**
+
+### The 6-File Checklist — touch ALL of them or the route breaks
+
+When adding a new page under `games/` or `management/`, update **every** file below. Missing any one causes: no icon, no i18n, broken menu, or a submenu being created.
+
+| # | File | What to add |
+|---|------|-------------|
+| 1 | `src/router/elegant/routes.ts` | Route object inside the parent `children` array |
+| 2 | `src/router/elegant/imports.ts` | Lazy import entry in the `views` record |
+| 3 | `src/router/elegant/transform.ts` | Entry in the `routeMap` const |
+| 4 | `src/typings/elegant-router.d.ts` | Entry in `RouteMap` type AND in `LastLevelRouteKey` union |
+| 5 | `src/router/routes/index.ts` | `overrideRoles` branch — sets `roles`, `permission`, `icon`, `order` |
+| 6 | `src/locales/langs/zh-cn.ts` + `en-us.ts` | i18n key under `route:` section |
+
+### Canonical Example — copy `games_budget-tracking` exactly
+
+**Step 1: `elegant/routes.ts`** — add inside `games` children array (NO icon here, it comes from step 5)
+```typescript
+{
+  name: 'games_budget-tracking',
+  path: '/games/budget-tracking',
+  component: 'view.games_budget-tracking',
+  meta: {
+    title: 'games_budget-tracking',
+    i18nKey: 'route.games_budget-tracking'
+    // ← NO icon/order here. Set them in routes/index.ts overrideRoles instead.
+  }
+},
+```
+
+**Step 2: `elegant/imports.ts`** — add to `views` record
+```typescript
+"games_budget-tracking": () => import("@/views/games/budget-tracking/index.vue"),
+```
+
+**Step 3: `elegant/transform.ts`** — add to `routeMap`
+```typescript
+"games_budget-tracking": "/games/budget-tracking",
+```
+
+**Step 4: `elegant-router.d.ts`** — two places
+```typescript
+// In RouteMap:
+"games_budget-tracking": "/games/budget-tracking";
+
+// In LastLevelRouteKey union:
+| "games_budget-tracking"
+```
+
+**Step 5: `routes/index.ts`** — add branch inside `overrideRoles`
+```typescript
+} else if (r.name === 'games_budget-tracking') {
+  r.meta.roles = ['R_SUPER', 'R_ADMIN'];
+  r.meta.permission = 'budget-tracking:read';
+  r.meta.icon = 'carbon:money';   // ← icon goes HERE
+  r.meta.order = 10;              // ← order goes HERE
+}
+```
+
+**Step 6: `locales/langs/zh-cn.ts` AND `en-us.ts`** — add under `route:` key (use HYPHEN, wrapped in quotes)
+```typescript
+// zh-cn.ts
+'games_budget-tracking': '预算追踪',
+
+// en-us.ts
+'games_budget-tracking': 'Budget Tracking',
+```
+
+### View Folder Naming
+- Folder name: `apps/soybean-admin/src/views/games/budget-tracking/index.vue`
+- Folder name uses **hyphens** to match the route segment after `games_` prefix.
+
+### Icon Source — confirmed working icons
+```
+carbon:money        ← Budget Tracking
+carbon:activity     ← Play History
+carbon:trophy       ← Score Records
+mdi:clipboard-text-outline  ← Prize Ledger
+mdi:gift            ← Prize Types
+material-symbols:person-pin-rounded  ← Members
+material-symbols:qr-code-2-rounded   ← Game Instances
+ic:outline-color-lens  ← Themes
+```
+
+---
+
 ## 1. Multi-Tenancy (NestJS)
 
 **Pattern:** Controller — Inject Tenant ID
@@ -456,3 +546,37 @@ const isIntegrationConfigured = computed(() =>
 - Works reactively — unlocks instantly when the prerequisite field is filled.
 
 **File reference:** `apps/soybean-admin/src/views/management/company/index.vue`
+---
+
+## 18. NestJS Route Precedence (UUID Collision Pattern)
+
+**Use for:** Any controller that has both static sub-routes (e.g., `credit-history-all`) and generic ID routes (e.g., `:id`) under the same prefix.
+
+**The Problem:** NestJS matches routes in order. If a generic `:id` route with a UUID validation check is placed before a static route, accessing the static route will fail with a 500 error because the string (e.g., "credit-history-all") is not a valid UUID.
+
+**Pattern:** Always place static endpoints ABOVE generic param endpoints.
+
+```typescript
+@Controller('admin/members')
+export class AdminMembersController {
+  
+  // ✅ 1. Static route first
+  @Get('credit-history-all')
+  async getAllCreditHistory(@Query() dto: GetCreditTransactionsDto) {
+    return this.service.findAllTransactions(dto);
+  }
+
+  // ✅ 2. Generic param route last
+  @Get(':id')
+  async getMember(@Param('id') id: string) {
+    return this.service.findOne(id);
+  }
+}
+```
+
+**Why this pattern:**
+- Prevents "Invalid input syntax for type uuid" database errors.
+- Ensures clean URL structure without redundant prefixes like `/all/history`.
+- Follows standard REST routing best practices in NestJS.
+
+**File reference:** `apps/api/src/modules/members/admin-members.controller.ts`

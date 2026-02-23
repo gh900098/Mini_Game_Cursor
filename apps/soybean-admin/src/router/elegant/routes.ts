@@ -148,6 +148,15 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
+        name: 'games_credit-transactions',
+        path: '/games/credit-transactions',
+        component: 'view.games_credit-transactions',
+        meta: {
+          title: 'games_credit-transactions',
+          i18nKey: 'route.games_credit-transactions'
+        }
+      },
+      {
         name: 'games_themes',
         path: '/games/themes',
         component: 'view.games_themes',

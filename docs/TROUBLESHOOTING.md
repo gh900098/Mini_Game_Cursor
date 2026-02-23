@@ -31,6 +31,55 @@
 
 ---
 
+### Issue 25: 500 Internal Server Error when searching with non-UUID Member IDs
+
+**Symptoms:**
+- Searching for a member using a Username or External ID (e.g., `A698221`) triggers a `500 Internal Server Error`.
+- Backend logs show: `QueryFailedError: invalid input syntax for type uuid: "A698221"`.
+- Searching with a valid UUID works correctly.
+
+**Root Cause:**
+The `memberId` parameter was being passed directly into a TypeORM query comparing it against a UUID column. PostreSQL (or MySQL with strict types) throws an error when a non-UUID string is compared to a UUID type field.
+
+**Fix Type:** ✅ PERMANENT
+
+**Affected Modules:**
+- Changed: `apps/api/src/modules/members/members.service.ts`
+  - Added a regex check to determine if the input is a valid UUID.
+  - If not a UUID, the query falls back to searching by `member.username` or `member.externalId`.
+
+**Solution:**
+```typescript
+const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(memberId);
+if (isUuid) {
+  query.andWhere('tx.memberId = :id', { id: memberId });
+} else {
+  query.andWhere('(member.username = :id OR member.externalId = :id)', { id: memberId });
+}
+```
+
+---
+
+### Issue 26: Route Shadowing - String Endpoint matched as UUID Parameter
+
+**Symptoms:**
+- Fetching a specific static endpoint (e.g., `GET /admin/members/credit-history-all`) returns a `500 Internal Server Error` or a `404`.
+- Logs indicate that the string `credit-history-all` is being passed as a `:id` parameter to a different method.
+
+**Root Cause:**
+In NestJS (and Express), routes are matched in the order they are defined. If a parameterized route like `/:id` is defined above a static route like `/credit-history-all`, the framework will capture the static path as the `:id` parameter.
+
+**Fix Type:** ✅ PERMANENT
+
+**Affected Modules:**
+- Changed: `apps/api/src/modules/members/admin-members.controller.ts`
+- Verified OK: `apps/api/src/modules/members/members.controller.ts` (Already reordered profile route)
+
+**Solution:**
+Always place static endpoints (`@Get('all')`) ABOVE dynamic parameterized endpoints (`@Get(':id')`) within the same controller.
+
+---
+
 ### Issue 22: Bull Board Infinite 404 Loop on Sync Job
 
 **Cause:** A legacy-format BullMQ repeatable job entry (`repeat:HASH:TIMESTAMP`) remained in the `bull:sync-queue:repeat` Redis sorted set after a scheduler cron schedule change. The old job hash had no corresponding body data. Bull Board polls all repeat entries on a timer, attempting `GET /api/queues/sync-queue/repeat:HASH:TIMESTAMP` repeatedly — getting 404 each time, looping forever.

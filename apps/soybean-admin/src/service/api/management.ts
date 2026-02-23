@@ -486,3 +486,17 @@ export function fetchResetMemberPassword(id: string, data: { password: string })
     });
 }
 
+export function fetchGetCreditTransactions(params?: {
+    companyId?: string;
+    memberId?: string;
+    type?: string;
+    page?: number;
+    limit?: number;
+}) {
+    return request<Api.Management.CreditTransaction[] | { items: Api.Management.CreditTransaction[]; meta: any }>({
+        url: '/admin/members/credit-history-all',
+        method: 'get',
+        params
+    });
+}
+

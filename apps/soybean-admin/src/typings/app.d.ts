@@ -637,6 +637,19 @@ declare namespace App {
               audit: string;
             };
           };
+          creditTransactions: {
+            title: string;
+            member: string;
+            type: string;
+            amount: string;
+            balanceBefore: string;
+            balanceAfter: string;
+            reason: string;
+            time: string;
+            searchByMember: string;
+            searchPlaceholder: string;
+            filterByType: string;
+          };
           game: {
             common: {
               [key: string]: string;

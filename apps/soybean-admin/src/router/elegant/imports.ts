@@ -21,6 +21,7 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   "iframe-page": () => import("@/views/_builtin/iframe-page/[url].vue"),
   login: () => import("@/views/_builtin/login/index.vue"),
   "games_budget-tracking": () => import("@/views/games/budget-tracking/index.vue"),
+  "games_credit-transactions": () => import("@/views/games/credit-transactions/index.vue"),
   "games_game-instance": () => import("@/views/games/game-instance/index.vue"),
   games_list: () => import("@/views/games/list/index.vue"),
   "games_member-detail": () => import("@/views/games/member-detail/[id].vue"),

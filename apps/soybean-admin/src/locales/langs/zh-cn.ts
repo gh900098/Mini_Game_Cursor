@@ -266,6 +266,7 @@ const local: App.I18n.Schema = {
     'games_budget-tracking': '预算追踪',
     games_prizes: '奖品台账',
     'games_prize-types': '奖励类型',
+    'games_credit-transactions': '额度流水',
     games_themes: '主题管理',
     'games_theme-detail': '主题编辑',
     // Compatibility keys
@@ -278,6 +279,19 @@ const local: App.I18n.Schema = {
   },
   page: {
     manage: {
+      creditTransactions: {
+        title: '额度流水',
+        member: '会员',
+        type: '类型',
+        amount: '金额',
+        balanceBefore: '账前余额',
+        balanceAfter: '账后余额',
+        reason: '备注',
+        time: '时间',
+        searchByMember: '搜索会员',
+        searchPlaceholder: '用户名 / ID / 外部ID',
+        filterByType: '过滤类型'
+      },
       prizes: {
         title: '奖品台账',
         time: '时间',
@@ -801,7 +815,7 @@ const local: App.I18n.Schema = {
     depositConversionRate: '兑换汇率',
     depositConversionRateHint: '1 单位充值金额可兑换多少站内积分？建议设置为 0 关闭自动汇率兑换，手动处理或者独立接口充值。',
     depositSyncDays: '同步时间窗口 (天)',
-    depositSyncDaysHint: '定时同步计划将往回抓取多少天的数据？(默认：2天，最高限制：30天)',
+    depositSyncDaysHint: '定时同步计划将往回抓取多少天的数据？(默认：2天，最高限制：30天)'
   }
 };
 

@@ -174,6 +174,45 @@ Authorized Super Admins retain the ability to view all data by passing a `compan
 
 ---
 
+## 📓 Credit Transaction Ledger & Flexible Search
+
+**Last Updated:** 2026-02-23
+**Status:** Live ✅
+
+### 📍 Location
+- **Backend Service:** `apps/api/src/modules/members/members.service.ts` (`findTransactionsPaginated`)
+- **Backend Controller:** `apps/api/src/modules/members/admin-members.controller.ts` (`GET /credit-history-all`)
+- **Frontend View:** `apps/soybean-admin/src/views/games/credit-transactions/index.vue`
+- **Frontend API:** `apps/soybean-admin/src/service/api/management.ts` (`fetchGetCreditTransactions`)
+
+### 🎯 Feature Description
+Provides administrators with a comprehensive, filterable audit trail of all financial movements on the platform, including deposits, game costs, game wins, and manual adjustments. Features a "Smart Search" that handles multiple member identifiers.
+
+### ⚙️ Core Mechanisms
+
+#### 1. Flexible Identifier Search
+The system automatically detects the type of identifier provided in the search box:
+- **UUID**: Matches directly against `tx.memberId`.
+- **Username / External ID**: If the input is not a valid UUID, the query filters using `(member.username = :id OR member.externalId = :id)`.
+- This provides a user-friendly experience where admins don't need to know technical IDs.
+
+#### 2. Advanced Data Visualization (High Performance)
+- Uses the **High Performance Data Pattern** with server-side pagination.
+- **Color-Coded Amounts**: Credits (Wins/Deposits) are shown in green (`+25.00`); Debits (Costs) are shown in red (`-20.00`).
+- **Transaction Tags**: Categorizes transactions (e.g., `Deposit`, `Game Cost`, `Game Reward`, `Manual`) using NTag with distinct colors.
+- **Balance Tracking**: Displays both "Balance Before" and "Balance After" for precise auditability.
+
+#### 3. Company & Permission Isolation
+- **Multi-Tenancy**: Records are strictly filtered by the authenticated administrator's `currentCompanyId`.
+- **Auth Guard**: Requires proper administrative permissions to access the global history view.
+
+### 🚨 Modification Impact Scope
+- **Route Precedence**: New global routes in `AdminMembersController` must be placed ABOVE parameterized routes (like `/:id`) to avoid being shadowed by UUID patterns.
+- **Search Logic**: Modifications to the `isUuid` regex in `MembersService` may affect identifier resolution.
+- **Pagination Contracts**: The frontend expects a standardized `{ items, total }` response.
+
+---
+
 ## ⚡ High Performance Data Pattern (Standardized Pagination)
 
 **Implementation Date:** 2026-02-20  

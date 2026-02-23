@@ -270,6 +270,7 @@ const local: App.I18n.Schema = {
     'games_budget-tracking': 'Budget Tracking',
     games_prizes: 'Prize Ledger',
     'games_prize-types': 'Prize Types',
+    'games_credit-transactions': 'Credit Transactions',
     games_themes: 'Themes',
     'games_theme-detail': 'Theme Editor',
     // Compatibility keys
@@ -282,6 +283,19 @@ const local: App.I18n.Schema = {
   },
   page: {
     manage: {
+      creditTransactions: {
+        title: 'Credit Transactions',
+        member: 'Member',
+        type: 'Type',
+        amount: 'Amount',
+        balanceBefore: 'Balance Before',
+        balanceAfter: 'Balance After',
+        reason: 'Reason',
+        time: 'Time',
+        searchByMember: 'Search by Member',
+        searchPlaceholder: 'Username / ID / ExternalID',
+        filterByType: 'Filter by Type'
+      },
       prizes: {
         title: 'Prize Ledger',
         time: 'Time',
@@ -804,7 +818,7 @@ const local: App.I18n.Schema = {
     depositConversionRate: 'Conversion Rate',
     depositConversionRateHint: 'How many points is 1 deposit currency worth? Set to 0 to disable automated conversion.',
     depositSyncDays: 'Sync Window (Days)',
-    depositSyncDaysHint: 'How many days back should the scheduled sync fetch? (Default: 2, Max: 30)',
+    depositSyncDaysHint: 'How many days back should the scheduled sync fetch? (Default: 2, Max: 30)'
   }
 };
 

@@ -2,6 +2,32 @@
  
  Records all important feature updates, bug fixes, and architectural changes.
  
+## [2026-02-23] Credit Transaction Ledger & Flexible Search
+
+### 💰 Feature Addition
+
+**Problem:** Administrators lacked a global view of all member credit transactions, making it difficult to audit manual adjustments, game wins, and costs across the entire platform.
+**Fix:** Implemented a high-performance "Credit Transaction Ledger" providing a centralized audit trail for all financial movements.
+
+**Implementation Details:**
+- **Backend**: Added `GET /api/admin/members/credit-history-all` with paginated and isolated results.
+- **Frontend**: Created the ledger view in the Admin Panel under "Game Center" using the High Performance Data Pattern.
+- **Search**: Built a smart search engine that automatically resolves **Username**, **External ID**, or **UUID** identifiers to find members.
+- **UI**: Added color-coded transaction tags, amount highlighting (Credit vs Debit), and balance tracking.
+
+**Bug Fixes:**
+- **Route Precedence**: Resolved a 500 error where string-based routes were being incorrectly matched against UUID patterns in `AdminMembersController`.
+- **Search Robustness**: Optimized the backend to handle non-UUID searches in the `memberId` parameter to prevent database query failures.
+- **Layout Repair**: Fixed `flex-height` collapse issues ensuring the pagination bar remains visible on all resolutions.
+
+**File Modified:** `apps/api/src/modules/members/*`, `apps/soybean-admin/src/views/games/credit-transactions/*`, `apps/soybean-admin/src/locales/langs/*`
+
+**Follow-up Fixes:**
+- **Menu Icon**: Resolved a missing icon for the "Credit Transactions" sidebar item by correctly registering the route in all 6 required Elegant Router files (`elegant/routes.ts`, `elegant/imports.ts`, `elegant/transform.ts`, `elegant-router.d.ts`, `routes/index.ts`, locale files).
+- **MEMORY_BANK.md**: Documented the Elegant Router 6-file pattern with a canonical example and critical warning about underscore vs. hyphen naming rules.
+
+---
+
 ## [2026-02-23] Enterprise Deposit Integration Feature
 
 ### 💰 Feature Addition
