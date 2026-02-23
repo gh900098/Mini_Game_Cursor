@@ -802,7 +802,9 @@ const local: App.I18n.Schema = {
   company: {
     depositConfigTitle: 'Deposit Configuration',
     depositConversionRate: 'Conversion Rate',
-    depositConversionRateHint: 'How many points is 1 deposit currency worth? Set to 0 to disable automated conversion.'
+    depositConversionRateHint: 'How many points is 1 deposit currency worth? Set to 0 to disable automated conversion.',
+    depositSyncDays: 'Sync Window (Days)',
+    depositSyncDaysHint: 'How many days back should the scheduled sync fetch? (Default: 2, Max: 30)',
   }
 };
 

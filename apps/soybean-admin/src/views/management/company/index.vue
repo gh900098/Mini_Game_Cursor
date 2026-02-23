@@ -540,6 +540,18 @@ getCompanies();
                          {{ $t('company.depositConversionRateHint') || 'How many points is 1 deposit currency worth? Set to 0 to disable automated conversion.' }}
                       </template>
                     </NFormItem>
+                    
+                    <NFormItem :label="$t('company.depositSyncDays') || 'Sync Window (Days)'">
+                      <NInputNumber 
+                        v-model:value="formModel.integration_config.syncConfigs[type.key].syncDays" 
+                        :min="1"
+                        :max="30"
+                        class="w-full"
+                        placeholder="Default: 2" />
+                      <template #feedback>
+                         {{ $t('company.depositSyncDaysHint') || 'How many days back should the scheduled sync fetch? (Default: 2, Max: 30)' }}
+                      </template>
+                    </NFormItem>
                   </template>
 
                   <NDivider title-placement="left" dashed>Custom API Parameters</NDivider>

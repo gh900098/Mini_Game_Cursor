@@ -135,10 +135,11 @@ export class JKBackendService {
 
         const extraParams = config.syncParams || {};
 
-        // Calculate date range (up to 30 days as requested)
+        // Calculate date range (configurable up to 30 days max, default 2)
         const eDate = new Date();
         const sDate = new Date();
-        sDate.setDate(sDate.getDate() - 30); // 30 days ago
+        const syncDays = Math.min(Math.max(Number(config.syncConfigs?.['deposit']?.syncDays || 2), 1), 30);
+        sDate.setDate(sDate.getDate() - syncDays);
 
         return this.request(`${apiUrl}//api/v1/index.php`, {
             module: '/transactions/getAllTransactions', // User said it must be exactly this

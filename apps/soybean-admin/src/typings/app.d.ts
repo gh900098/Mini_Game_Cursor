@@ -502,6 +502,8 @@ declare namespace App {
         depositConfigTitle: string;
         depositConversionRate: string;
         depositConversionRateHint: string;
+        depositSyncDays: string;
+        depositSyncDaysHint: string;
       };
       page: {
         login: {
