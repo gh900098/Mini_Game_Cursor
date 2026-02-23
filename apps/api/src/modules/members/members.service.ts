@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException, Logger, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In, Between } from 'typeorm';
+import { Repository, In, Between, DataSource } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Member } from './entities/member.entity';
@@ -24,6 +24,7 @@ export class MembersService {
         @Inject(forwardRef(() => CompaniesService))
         private readonly companiesService: CompaniesService,
         private readonly auditLogService: AuditLogService,
+        private readonly dataSource: DataSource,
     ) { }
 
     async validateMember(username: string, pass: string): Promise<any> {
@@ -274,5 +275,84 @@ export class MembersService {
             await this.memberRepository.save(member);
         }
         return member;
+    }
+
+    async processDeposit(
+        companyId: string,
+        externalUserId: string,
+        depositAmount: number,
+        exchangeRate: number,
+        referenceId: string,
+        metadata?: any
+    ): Promise<{ success: boolean; pointsAdded: number; message?: string }> {
+
+        if (exchangeRate <= 0) {
+            this.logger.warn(`Skipping deposit for ${externalUserId} (Company: ${companyId}): depositConversionRate is 0 or invalid.`);
+            return { success: false, pointsAdded: 0, message: 'Deposit conversion is not correctly configured.' };
+        }
+
+        const member = await this.memberRepository.findOne({
+            where: { companyId, externalId: externalUserId }
+        });
+
+        if (!member) {
+            this.logger.error(`Cannot process deposit: Member ${externalUserId} not found in company ${companyId}.`);
+            throw new NotFoundException(`Member ${externalUserId} not found.`);
+        }
+
+        const pointsToAdd = Math.floor(depositAmount * exchangeRate);
+
+        if (pointsToAdd <= 0) {
+            return { success: true, pointsAdded: 0, message: 'Calculated points is 0.' };
+        }
+
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            const newBalanceAfter = member.pointsBalance + pointsToAdd;
+
+            const transactionLog = this.transactionRepository.create({
+                memberId: member.id,
+                amount: pointsToAdd,
+                balanceBefore: member.pointsBalance,
+                balanceAfter: newBalanceAfter,
+                type: 'DEPOSIT_CONVERSION',
+                reason: `Converted deposit of ${depositAmount} (Rate: ${exchangeRate})`,
+                referenceId,
+                metadata: {
+                    ...metadata,
+                    depositAmount,
+                    exchangeRate
+                }
+            });
+
+            await queryRunner.manager.save(CreditTransaction, transactionLog);
+
+            await queryRunner.manager.update(Member, member.id, {
+                pointsBalance: newBalanceAfter
+            });
+
+            await queryRunner.commitTransaction();
+
+            this.logger.log(`Deposit processed: ${pointsToAdd} points added to member ${member.id} (Company: ${companyId}) from deposit amount ${depositAmount}. Ref: ${referenceId}`);
+            return { success: true, pointsAdded: pointsToAdd };
+
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+
+            // Handle unique constraint violation gracefully (Postgres code 23505)
+            if (error.code === '23505' && error.message.includes('UQ_credit_transactions_referenceId')) {
+                this.logger.log(`Idempotency skip: Deposit with referenceId ${referenceId} already processed for member ${member.id}.`);
+                return { success: true, pointsAdded: 0, message: 'Already processed (Idempotency)' };
+            }
+
+            this.logger.error(`Failed to process deposit for member ${member.id} (Ref: ${referenceId}): ${error.message}`, error.stack);
+            throw error;
+
+        } finally {
+            await queryRunner.release();
+        }
     }
 }

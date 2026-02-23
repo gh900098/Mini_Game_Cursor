@@ -7,7 +7,7 @@
 // Read more: https://github.com/vuejs/core/pull/3399
 import { GlobalComponents } from 'vue'
 
-export {}
+export { }
 
 /* prettier-ignore */
 declare module 'vue' {
@@ -137,7 +137,7 @@ declare global {
   const IconCarbonView: typeof import('~icons/carbon/view')['default']
   const IconGridiconsFullscreen: typeof import('~icons/gridicons/fullscreen')['default']
   const IconGridiconsFullscreenExit: typeof import('~icons/gridicons/fullscreen-exit')['default']
-  const 'IconIc:baselineAdd': typeof import('~icons/ic/baseline-add')['default']
+  const IconIcBaselineAdd: typeof import('~icons/ic/baseline-add')['default']
   const IconIcRoundPlus: typeof import('~icons/ic/round-plus')['default']
   const IconLocalBanner: typeof import('~icons/local/banner')['default']
   const IconMdiAccountCheck: typeof import('~icons/mdi/account-check')['default']

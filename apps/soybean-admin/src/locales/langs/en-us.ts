@@ -798,6 +798,11 @@ const local: App.I18n.Schema = {
       right: 'Right Fixed',
       unFixed: 'Unfixed'
     }
+  },
+  company: {
+    depositConfigTitle: 'Deposit Configuration',
+    depositConversionRate: 'Conversion Rate',
+    depositConversionRateHint: 'How many points is 1 deposit currency worth? Set to 0 to disable automated conversion.'
   }
 };
 

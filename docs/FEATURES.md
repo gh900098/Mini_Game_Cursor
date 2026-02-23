@@ -210,6 +210,32 @@ Standardizes all high-volume data lists with server-side pagination, keyword sea
 
 ---
 
+## 💰 Deposit Integration System
+
+**Implementation Date:** 2026-02-23
+**Implementation Phase:** Core Infrastructure Expansion
+
+### 📍 Location
+- **Service:** `apps/api/src/modules/members/members.service.ts`
+- **Entity:** `apps/api/src/modules/members/entities/credit-transaction.entity.ts`
+- **Controller:** Synchronizer generic endpoint via Strategy Pattern
+- **Admin App:** `apps/soybean-admin/src/views/management/company/index.vue`
+
+### 🎯 Feature Description
+Provides an end-to-end flow for integrating deposits from external platform wallets into the in-game token economy. 
+
+### ⚙️ Implementation Strategies
+
+#### 1. Native Idempotency
+- Uses a `referenceId` strictly typed as `@Column({ unique: true })` on the MySQL constraints level.
+- Wrapping the `processDeposit` sequence within a transactional query runner catches duplicate inserts and abandons silently, solving race conditions seen in standard node processes.
+
+#### 2. Tenant-Specific Conversion Rates
+- Administrators dictate exactly how many points an external flat-currency is worth in the admin panel.
+- This is stored under `integration_config.syncConfigs.deposit.depositConversionRate` inside the `Company` entity schema json attribute.
+
+---
+
 ## 📂 Project Structure Overview
 
 ```

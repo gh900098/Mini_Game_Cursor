@@ -81,7 +81,7 @@ const formModel = reactive({
     },
     syncConfigs: {
       member: { enabled: true, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
-      deposit: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
+      deposit: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {}, depositConversionRate: 0 },
       withdraw: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} }
     } as Record<string, any>
   }
@@ -277,7 +277,7 @@ function handleAdd() {
       },
       syncConfigs: {
         member: { enabled: true, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
-        deposit: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
+        deposit: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {}, depositConversionRate: 0 },
         withdraw: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} }
       }
     }
@@ -314,7 +314,7 @@ function handleEdit(row: Api.Management.Company) {
         },
         syncConfigs: {
             member: row.integration_config?.syncConfigs?.member ?? { enabled: true, syncMode: row.integration_config?.syncMode ?? 'incremental', maxPages: row.integration_config?.maxPages ?? 200, syncCron: row.integration_config?.syncCron ?? '', syncParams: row.integration_config?.syncParams ?? {} },
-            deposit: row.integration_config?.syncConfigs?.deposit ?? { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
+            deposit: row.integration_config?.syncConfigs?.deposit ?? { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {}, depositConversionRate: 0 },
             withdraw: row.integration_config?.syncConfigs?.withdraw ?? { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} }
         }
     }
@@ -526,6 +526,21 @@ getCompanies();
                   <NFormItem label="Schedule (Cron)">
                     <NInput v-model:value="formModel.integration_config.syncConfigs[type.key].syncCron" placeholder="e.g. 0 */4 * * * (Optional)" />
                   </NFormItem>
+
+                  <template v-if="type.key === 'deposit'">
+                    <NDivider title-placement="left" dashed>{{ $t('company.depositConfigTitle') || 'Deposit Configuration' }}</NDivider>
+                    <NFormItem :label="$t('company.depositConversionRate') || 'Conversion Rate'">
+                      <NInputNumber 
+                        v-model:value="formModel.integration_config.syncConfigs[type.key].depositConversionRate" 
+                        :min="0"
+                        :precision="2"
+                        class="w-full"
+                        placeholder="e.g 100" />
+                      <template #feedback>
+                         {{ $t('company.depositConversionRateHint') || 'How many points is 1 deposit currency worth? Set to 0 to disable automated conversion.' }}
+                      </template>
+                    </NFormItem>
+                  </template>
 
                   <NDivider title-placement="left" dashed>Custom API Parameters</NDivider>
                   <NSpace vertical>

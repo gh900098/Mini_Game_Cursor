@@ -38,6 +38,7 @@ export class Company {
             maxPages: number;
             syncCron?: string;
             syncParams?: Record<string, any>;
+            depositConversionRate?: number; // Rate for deposits (e.g. 1 USD = 100 Points)
         }>;
         // Legacy / Root fallback fields (for migration)
         syncParams?: Record<string, any>;

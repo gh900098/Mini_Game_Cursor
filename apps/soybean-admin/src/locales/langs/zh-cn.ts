@@ -795,6 +795,11 @@ const local: App.I18n.Schema = {
       right: '右固定',
       unFixed: '取消固定'
     }
+  },
+  company: {
+    depositConfigTitle: '充值配置',
+    depositConversionRate: '兑换汇率',
+    depositConversionRateHint: '1 单位充值金额可兑换多少站内积分？建议设置为 0 关闭自动汇率兑换，手动处理或者独立接口充值。'
   }
 };
 

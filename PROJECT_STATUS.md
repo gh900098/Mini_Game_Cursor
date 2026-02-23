@@ -1,16 +1,16 @@
 # Project Status & Current Context
 
-**Last Updated:** 2026-02-22 21:10
-**Current Mission:** Theme Preset Auto-Switch to Custom ✅
+**Last Updated:** 2026-02-23 11:25
+**Current Mission:** Deposit Integration ✅
 **Server Status:** 🟢 Running. (API:3100, Admin:3101, Web:3102, Worker:3100).
 
 ## 🎯 Current Focus (AI Memory)
 - **Active Mission:** Awaiting next instructions.
 - **Current Branch:** `main`
-- **Status**: 🟢 Live. Auto-switch themePreset to Custom when user manually edits any field after applying a theme preset. isApplyingPreset flag prevents the bulk-apply itself from triggering the switch.
+- **Status**: 🟢 Live. Deposit integration is fully implemented with idempotency checks, admin UI configuration, and i18n support.
 
 ### Context
-The synchronization system has been successfully decoupled from the hardcoded JK Platform. It now uses a generic `integration_config` and the Strategy Pattern, allowing future vendors to plug into the engine seamlessly via the `SyncStrategyFactory`.
+The synchronization system now handles real-time deposits from third-party webhook integrations natively. A unique constraint on `CreditTransaction.referenceId` ensures idempotency to prevent duplicate operations and points double-crediting.
 - **Goal:** Completed. Waiting for next instruction.
 
 ## 🏗️ Architectural Context (The "Must Knows")
@@ -44,6 +44,7 @@ The synchronization system has been successfully decoupled from the hardcoded JK
 
 
 ## ✅ Recently Completed
+- [x] **Enterprise Deposit Integration** (Webhook strategy, conversion rate math, UI settings, idempotency DB constraints - 2026-02-23)
 - [x] **UX Fix: Sync Settings Menu & Dynamic Providers** (Restored Sync Settings menu routing and added GET /integration-providers endpoint for dynamic configuration - 2026-02-23)
 - [x] **Generic Integration Architecture** (Refactored JK sync to use Strategy Pattern, renamed variables to integration_config - 2026-02-22)
 - [x] **Theme Preset UX Fix — Auto-Switch to Custom** (ConfigForm.vue: isApplyingPreset flag + deep watcher auto-reset - 2026-02-22)

@@ -33,6 +33,9 @@ export class CreditTransaction {
     @Column({ type: 'jsonb', nullable: true })
     metadata: Record<string, any>;
 
+    @Column({ nullable: true, unique: true })
+    referenceId: string; // Used for idempotency from external deposit webhooks
+
     @CreateDateColumn()
     createdAt: Date;
 

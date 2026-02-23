@@ -78,6 +78,34 @@ await this.dataSource.transaction(async (manager) => {
 });
 ```
 
+**Pattern:** Idempotent Transaction (Webhook Integration)
+**Use for:** Handling external webhooks to ensure operations (like deposits) aren't processed twice.
+```typescript
+const queryRunner = this.dataSource.createQueryRunner();
+await queryRunner.connect();
+await queryRunner.startTransaction();
+
+try {
+  // 1. Save reference log (requires @Column({ unique: true }) referenceId)
+  await queryRunner.manager.save(CreditTransaction, { referenceId, amount });
+  
+  // 2. Perform business logic
+  await queryRunner.manager.update(Member, member.id, { balance: newBalance });
+  
+  await queryRunner.commitTransaction();
+} catch (error) {
+  await queryRunner.rollbackTransaction();
+  
+  // Handle unique constraint violation gracefully (Postgres code 23505)
+  if (error.code === '23505') {
+    return { success: true, message: 'Already processed (Idempotency)' };
+  }
+  throw error;
+} finally {
+  await queryRunner.release();
+}
+```
+
 ---
 
 ## 4. Dynamic Colors (Vue 3)

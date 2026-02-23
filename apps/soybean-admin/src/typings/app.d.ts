@@ -498,6 +498,11 @@ declare namespace App {
         };
       };
       route: Record<I18nRouteKey, string> & Record<string, string>;
+      company: {
+        depositConfigTitle: string;
+        depositConversionRate: string;
+        depositConversionRateHint: string;
+      };
       page: {
         login: {
           common: {

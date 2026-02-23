@@ -26,10 +26,37 @@ export class JkSyncStrategy implements SyncStrategy {
                 } else {
                     return this.syncBatchMembers(companyId, config);
                 }
-            case 'deposit':
-                this.logger.log(`Received deposit webhook for company ${companyId}: ${JSON.stringify(syncParams?.payload)}`);
-                // Implementation for deposit
-                return { success: true, processed: 'deposit' };
+            case 'deposit': {
+                try {
+                    const payload = syncParams?.payload || {};
+                    const externalUserId = payload.uid || payload.userId;
+                    const depositAmount = parseFloat(payload.amount);
+                    const referenceId = payload.orderId || payload.transactionId || syncParams?.opts?.jobId;
+
+                    if (!externalUserId || isNaN(depositAmount) || depositAmount <= 0 || !referenceId) {
+                        this.logger.warn(`Invalid deposit payload for company ${companyId}: ${JSON.stringify(payload)}`);
+                        return { success: false, reason: 'Invalid payload' };
+                    }
+
+                    const depositConfig = config.syncConfigs?.['deposit'] || {};
+                    const conversionRate = parseFloat(depositConfig.depositConversionRate || '0');
+
+                    const result = await this.membersService.processDeposit(
+                        companyId,
+                        externalUserId,
+                        depositAmount,
+                        conversionRate,
+                        referenceId,
+                        payload
+                    );
+
+                    return result;
+
+                } catch (error) {
+                    this.logger.error(`Error processing deposit for company ${companyId}: ${error.message}`);
+                    return { success: false, reason: error.message };
+                }
+            }
             case 'withdraw':
                 this.logger.log(`Received withdraw webhook for company ${companyId}: ${JSON.stringify(syncParams?.payload)}`);
                 // Implementation for withdraw

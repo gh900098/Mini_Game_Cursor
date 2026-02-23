@@ -2,6 +2,22 @@
  
  Records all important feature updates, bug fixes, and architectural changes.
  
+## [2026-02-23] Enterprise Deposit Integration Feature
+
+### 💰 Feature Addition
+
+**Problem:** The platform lacked a built-in method to handle game token deposits natively via the user balance without risking idempotency issues or missing currency conversion multipliers.
+**Fix:** Added an end-to-end deposit flow from the third-party provider to the platform user balance. 
+
+**Implementation Details:**
+- **Database:** Added `referenceId` unique constraint to `credit_transactions` to natively enforce transactional idempotency on incoming webhooks to prevent double-crediting.
+- **Backend:** Created `processDeposit` inside `MembersService` wrapped in a TypeORM query runner.
+- **Sync System:** Implemented `case 'deposit'` under the integration strategy handler.
+- **Admin UI:** Added a "Deposit Conversion Rate" configuration block on the tenant Sync Settings modal. 
+
+**File Modified:** `api/src/modules/members/*`, `api/src/modules/sync/strategies/*`, `soybean-admin/src/views/management/company/index.vue`
+
+---
 
 ## [2026-02-23] UX Fix: Sync Settings Menu Restoration & Dynamic Providers
 
