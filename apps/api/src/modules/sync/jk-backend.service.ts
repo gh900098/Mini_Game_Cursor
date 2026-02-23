@@ -135,11 +135,19 @@ export class JKBackendService {
 
         const extraParams = config.syncParams || {};
 
+        // Calculate date range (up to 30 days as requested)
+        const eDate = new Date();
+        const sDate = new Date();
+        sDate.setDate(sDate.getDate() - 30); // 30 days ago
+
         return this.request(`${apiUrl}//api/v1/index.php`, {
-            module: '/users/getAllTransaction',
+            module: '/transactions/getAllTransactions', // User said it must be exactly this
             accessId,
             accessToken,
             pageIndex,
+            type: 'DEPOSIT', // Only fetch deposits
+            sDate: sDate.toISOString().split('.')[0] + 'Z', // e.g. 2021-02-22T00:00:00Z
+            eDate: eDate.toISOString().split('.')[0] + 'Z',
             ...extraParams,
         }, config);
     }

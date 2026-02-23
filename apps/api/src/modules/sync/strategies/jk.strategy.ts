@@ -30,9 +30,12 @@ export class JkSyncStrategy implements SyncStrategy {
                 if (syncParams?.payload) {
                     try {
                         const payload = syncParams?.payload || {};
-                        const externalUserId = payload.uid || payload.userId || payload.member_id;
-                        const depositAmount = parseFloat(payload.amount);
-                        const referenceId = payload.orderId || payload.transactionId || payload.id || syncParams?.opts?.jobId;
+                        // Handle both webhook ("userId") and getAllTransaction API ("user.id" or "userId")
+                        const externalUserId = payload.userId || payload.member_id || payload.user?.id || payload.uid;
+                        // Handle money ("amount" vs "cash")
+                        const depositAmount = parseFloat(payload.amount || payload.cash);
+                        // Handle reference ("id" in both webhook and API usually)
+                        const referenceId = payload.id || payload.orderId || payload.transactionId || syncParams?.opts?.jobId;
 
                         if (!externalUserId || isNaN(depositAmount) || depositAmount <= 0 || !referenceId) {
                             this.logger.warn(`Invalid deposit payload for company ${companyId}: ${JSON.stringify(payload)}`);
@@ -183,7 +186,6 @@ export class JkSyncStrategy implements SyncStrategy {
                 const response = await this.jkService.getAllTransactions({ ...config, syncParams: params }, page);
 
                 const data = response.data || {};
-                // Assuming data could be under data.transactions, data.list, etc.
                 const transactions = data.transactions || data.list || data.data || (Array.isArray(data) ? data : []);
                 const totalPage = data.totalPage || data.totalPages || 1;
 
@@ -193,13 +195,13 @@ export class JkSyncStrategy implements SyncStrategy {
                         data: {
                             type: 'deposit',
                             companyId: companyId,
-                            externalUserId: txn.uid || txn.userId || txn.member_id,
+                            externalUserId: txn.userId || txn.user?.id || txn.uid || txn.member_id,
                             payload: txn,
                             source: 'cron_hourly',
                             timestamp: Date.now(),
                         },
                         opts: {
-                            jobId: `cron_dep_${companyId}_${txn.orderId || txn.transactionId || txn.id}`,
+                            jobId: `cron_dep_${companyId}_${txn.id || txn.orderId || txn.transactionId}`,
                             removeOnComplete: 500,
                         }
                     }));
