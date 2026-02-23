@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { Member } from './member.entity';
 
 @Entity('credit_transactions')
@@ -6,40 +14,43 @@ import { Member } from './member.entity';
 @Index(['type'])
 @Index(['createdAt'])
 export class CreditTransaction {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    memberId: string;
+  @Column()
+  memberId: string;
 
-    @Column({ type: 'integer' })
-    amount: number; // Positive for credits, negative for debits
+  @Column({ type: 'integer' })
+  amount: number; // Positive for credits, negative for debits
 
-    @Column({ type: 'integer' })
-    balanceBefore: number;
+  @Column({ type: 'integer' })
+  balanceBefore: number;
 
-    @Column({ type: 'integer' })
-    balanceAfter: number;
+  @Column({ type: 'integer' })
+  balanceAfter: number;
 
-    @Column()
-    type: string; // 'MANUAL_ADJUSTMENT', 'GAME_WIN', 'GAME_COST', 'ADMIN_BONUS', etc.
+  @Column()
+  type: string; // 'MANUAL_ADJUSTMENT', 'GAME_WIN', 'GAME_COST', 'ADMIN_BONUS', etc.
 
-    @Column({ nullable: true })
-    reason: string;
+  @Column({ nullable: true })
+  reason: string;
 
-    @Column({ nullable: true })
-    adminUserId: string; // Who made the change (for manual adjustments)
+  @Column({ nullable: true })
+  eligibilityReason: string; // Explains why pointsAdded might be 0 due to engine limits
 
-    @Column({ type: 'jsonb', nullable: true })
-    metadata: Record<string, any>;
+  @Column({ nullable: true })
+  adminUserId: string; // Who made the change (for manual adjustments)
 
-    @Column({ nullable: true, unique: true })
-    referenceId: string; // Used for idempotency from external deposit webhooks
+  @Column({ type: 'jsonb', nullable: true })
+  metadata: Record<string, any>;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @Column({ nullable: true, unique: true })
+  referenceId: string; // Used for idempotency from external deposit webhooks
 
-    @ManyToOne(() => Member)
-    @JoinColumn({ name: 'memberId' })
-    member: Member;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @ManyToOne(() => Member)
+  @JoinColumn({ name: 'memberId' })
+  member: Member;
 }

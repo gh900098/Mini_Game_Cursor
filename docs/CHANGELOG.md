@@ -19,7 +19,19 @@
 
 ---
 
-## [2026-02-23] Scheduled Deposit Synchronization
+## [2026-02-23] Deposit Point Rules Engine Architecture
+
+### 🛡️ Economy Security
+
+**Problem:** Standard deposits blindly apply conversion rates leading to severe inflation vulnerabilities or unlimited promotional farming by isolated users.
+**Fix:** Created an internal rule verification layer that intercepts deposit math truncating awards when daily, monthly, or structural ceilings are hit.
+
+**Implementation Details:**
+- **Database:** Added `eligibilityReason` to `credit_transactions` mapping point rejections.
+- **Backend:** Rewrote `processDeposit` mathematics applying `SUM(amount)` bounded checking.
+- **UI Exposure:** Admin Panel now tracks `maxPointsPerDay`, `maxPointsPerMonth`, and `maxEligibleDeposits`.
+
+**File Modified:** `api/src/modules/members/*`, `soybean-admin/src/views/management/company/index.vue`, `api/src/modules/companies/entities/company.entity.ts`
 
 ### 🔄 Reliability Fallback
 

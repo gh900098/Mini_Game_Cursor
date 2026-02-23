@@ -10,32 +10,38 @@ import { Game } from './entities/game.entity';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(RoleLevel.STAFF)
 export class AdminGamesController {
-    constructor(
-        @InjectRepository(Game)
-        private gamesRepo: Repository<Game>,
-    ) { }
+  constructor(
+    @InjectRepository(Game)
+    private gamesRepo: Repository<Game>,
+  ) {}
 
-    @Get('all')
-    async getAllGames() {
-        return this.gamesRepo.createQueryBuilder('game')
-            .loadRelationCountAndMap('game.usageCount', 'game.instances', 'instances', (qb) => qb.where('instances.isActive = :isActive', { isActive: true }))
-            .orderBy('game.createdAt', 'DESC')
-            .getMany();
-    }
+  @Get('all')
+  async getAllGames() {
+    return this.gamesRepo
+      .createQueryBuilder('game')
+      .loadRelationCountAndMap(
+        'game.usageCount',
+        'game.instances',
+        'instances',
+        (qb) => qb.where('instances.isActive = :isActive', { isActive: true }),
+      )
+      .orderBy('game.createdAt', 'DESC')
+      .getMany();
+  }
 
-    @Get('stats')
-    async getGamesStats() {
-        const total = await this.gamesRepo.count();
-        const byType = await this.gamesRepo
-            .createQueryBuilder('game')
-            .select('game.type', 'type')
-            .addSelect('COUNT(*)', 'count')
-            .groupBy('game.type')
-            .getRawMany();
+  @Get('stats')
+  async getGamesStats() {
+    const total = await this.gamesRepo.count();
+    const byType = await this.gamesRepo
+      .createQueryBuilder('game')
+      .select('game.type', 'type')
+      .addSelect('COUNT(*)', 'count')
+      .groupBy('game.type')
+      .getRawMany();
 
-        return {
-            total,
-            byType,
-        };
-    }
+    return {
+      total,
+      byType,
+    };
+  }
 }

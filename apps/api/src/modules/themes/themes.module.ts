@@ -10,4 +10,4 @@ import { Theme } from './entities/theme.entity';
   providers: [ThemesService],
   exports: [ThemesService, TypeOrmModule],
 })
-export class ThemesModule { }
+export class ThemesModule {}

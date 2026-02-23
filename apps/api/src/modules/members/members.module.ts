@@ -17,23 +17,35 @@ import { PlayAttempt } from '../scores/entities/play-attempt.entity';
 import { Score } from '../scores/entities/score.entity';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Member, CreditTransaction, LoginHistory, PlayAttempt, Score, MemberPrize]),
-        CompaniesModule,
-        AuditLogModule,
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: (configService: ConfigService) => ({
-                secret: configService.get<string>('JWT_SECRET') || 'secret',
-                signOptions: {
-                    expiresIn: (configService.get<string>('JWT_EXPIRES_IN') || '7d') as any
-                },
-            }),
-        }),
-    ],
-    controllers: [ExternalAuthController, MembersController, AdminMembersController],
-    providers: [MembersService, ExternalAuthService],
-    exports: [MembersService, ExternalAuthService],
+  imports: [
+    TypeOrmModule.forFeature([
+      Member,
+      CreditTransaction,
+      LoginHistory,
+      PlayAttempt,
+      Score,
+      MemberPrize,
+    ]),
+    CompaniesModule,
+    AuditLogModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET') || 'secret',
+        signOptions: {
+          expiresIn: (configService.get<string>('JWT_EXPIRES_IN') ||
+            '7d') as any,
+        },
+      }),
+    }),
+  ],
+  controllers: [
+    ExternalAuthController,
+    MembersController,
+    AdminMembersController,
+  ],
+  providers: [MembersService, ExternalAuthService],
+  exports: [MembersService, ExternalAuthService],
 })
-export class MembersModule { }
+export class MembersModule {}

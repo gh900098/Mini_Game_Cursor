@@ -12,137 +12,157 @@
  */
 
 export interface SpinWheelConfig {
-    instanceName: string;
-    prizeList: Array<{ icon: string; label: string; weight: number; color?: string }>;
-    themeColor: string;
-    secondaryColor: string;
-    spinDuration: number;
-    spinTurns: number;
-    costPerSpin: number;
+  instanceName: string;
+  prizeList: Array<{
+    icon: string;
+    label: string;
+    weight: number;
+    color?: string;
+  }>;
+  themeColor: string;
+  secondaryColor: string;
+  spinDuration: number;
+  spinTurns: number;
+  costPerSpin: number;
 
-    // Background
-    bgType: 'color' | 'gradient' | 'image';
-    bgColor: string;
-    bgGradient: string;
-    bgImage: string;
-    bgFit: string;
-    bgBlur: number;
-    bgOpacity: number;
+  // Background
+  bgType: 'color' | 'gradient' | 'image';
+  bgColor: string;
+  bgGradient: string;
+  bgImage: string;
+  bgFit: string;
+  bgBlur: number;
+  bgOpacity: number;
 
-    // Branding
-    titleImage: string;
-    logoWidth: number;
-    logoTopMargin: number;
-    logoOpacity: number;
-    logoShadow: string;
+  // Branding
+  titleImage: string;
+  logoWidth: number;
+  logoTopMargin: number;
+  logoOpacity: number;
+  logoShadow: string;
 
-    // Wheel
-    wheelBorderImage: string;
-    wheelBorderSize?: number;
-    wheelBorderOpacity?: number;
-    wheelBorderTop?: number;
-    wheelBorderRotation?: number;
-    wheelBorderLayer?: 'front' | 'behind';
+  // Wheel
+  wheelBorderImage: string;
+  wheelBorderSize?: number;
+  wheelBorderOpacity?: number;
+  wheelBorderTop?: number;
+  wheelBorderRotation?: number;
+  wheelBorderLayer?: 'front' | 'behind';
 
-    dividerType: 'line' | 'image';
-    dividerColor: string;
-    dividerStroke: number;
-    dividerImage: string;
-    dividerWidth: number;
-    dividerHeight: number;
-    dividerTop: number;
+  dividerType: 'line' | 'image';
+  dividerColor: string;
+  dividerStroke: number;
+  dividerImage: string;
+  dividerWidth: number;
+  dividerHeight: number;
+  dividerTop: number;
 
-    // Pointer
-    pointerImage: string;
-    pointerSize: number;
-    pointerTop: number;
-    pointerShadow: boolean;
-    pointerDirection: string;
-    pointerRotation: number;
+  // Pointer
+  pointerImage: string;
+  pointerSize: number;
+  pointerTop: number;
+  pointerShadow: boolean;
+  pointerDirection: string;
+  pointerRotation: number;
 
-    // Center
-    centerImage: string;
-    centerType: 'emoji' | 'image';
-    centerEmoji: string;
-    centerSize: number;
-    centerBorder: boolean;
-    centerShadow: boolean;
+  // Center
+  centerImage: string;
+  centerType: 'emoji' | 'image';
+  centerEmoji: string;
+  centerSize: number;
+  centerBorder: boolean;
+  centerShadow: boolean;
 
-    // Button
-    spinBtnImage: string;
-    spinBtnText: string;
-    spinBtnSubtext: string;
-    spinBtnColor: string;
-    spinBtnTextColor: string;
-    spinBtnShadow: boolean;
-    spinBtnWidth: number;
-    spinBtnHeight: number;
+  // Button
+  spinBtnImage: string;
+  spinBtnText: string;
+  spinBtnSubtext: string;
+  spinBtnColor: string;
+  spinBtnTextColor: string;
+  spinBtnShadow: boolean;
+  spinBtnWidth: number;
+  spinBtnHeight: number;
 
-    // Token Bar
-    tokenBarImage: string;
-    tokenBarColor: string;
-    tokenBarTextColor: string;
-    tokenBarShadow: boolean;
+  // Token Bar
+  tokenBarImage: string;
+  tokenBarColor: string;
+  tokenBarTextColor: string;
+  tokenBarShadow: boolean;
 
-    // Result Popup
-    resultWinBackground?: string;
-    resultLoseBackground?: string;
-    resultWinTitleImage?: string;
-    resultLoseTitleImage?: string;
-    resultWinButtonImage?: string;
-    resultLoseButtonImage?: string;
+  // Result Popup
+  resultWinBackground?: string;
+  resultLoseBackground?: string;
+  resultWinTitleImage?: string;
+  resultLoseTitleImage?: string;
+  resultWinButtonImage?: string;
+  resultLoseButtonImage?: string;
 
-    // Jackpot Popup
-    jackpotResultBackground?: string;
-    jackpotResultTitleImage?: string;
-    jackpotResultButtonImage?: string;
+  // Jackpot Popup
+  jackpotResultBackground?: string;
+  jackpotResultTitleImage?: string;
+  jackpotResultButtonImage?: string;
 
-    // Font
-    gameFont: string;
+  // Font
+  gameFont: string;
 
-    // Sound (new)
-    enableSound: boolean;
+  // Sound (new)
+  enableSound: boolean;
 
-    // Confetti effects
-    enableConfetti: boolean;
-    confettiParticles: number;
-    confettiSpread: number;
-    confettiColors: string;
-    confettiShapeType: 'default' | 'emoji';
-    confettiEmojis: string;
+  // Confetti effects
+  enableConfetti: boolean;
+  confettiParticles: number;
+  confettiSpread: number;
+  confettiColors: string;
+  confettiShapeType: 'default' | 'emoji';
+  confettiEmojis: string;
 
-    // Preview mode
-    isPreview: boolean;
+  // Preview mode
+  isPreview: boolean;
 
-    // Raw config for sync
-    rawConfig: Record<string, any>;
+  // Raw config for sync
+  rawConfig: Record<string, any>;
 
-    // LED Colors (for visual templates like Christmas Joy)
-    ledColor1: string;
-    ledColor2: string;
-    ledColor3: string;
+  // LED Colors (for visual templates like Christmas Joy)
+  ledColor1: string;
+  ledColor2: string;
+  ledColor3: string;
 
-    // Background Gradient (alternative to bgGradient)
-    bgGradStart: string;
-    bgGradEnd: string;
+  // Background Gradient (alternative to bgGradient)
+  bgGradStart: string;
+  bgGradEnd: string;
 }
 
 export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
-    // Font preset handling
-    const fontPreset = (cfg.rawConfig?.fontPreset as string) || 'default';
-    const googleFonts = ['Press Start 2P', 'Bangers', 'Bungee', 'Russo One', 'Black Ops One', 'Righteous', 'Permanent Marker', 'Creepster', 'Lobster'];
-    const isGoogleFont = googleFonts.includes(fontPreset);
-    const isCustomFont = fontPreset === 'custom' && cfg.gameFont;
+  // Font preset handling
+  const fontPreset = (cfg.rawConfig?.fontPreset as string) || 'default';
+  const googleFonts = [
+    'Press Start 2P',
+    'Bangers',
+    'Bungee',
+    'Russo One',
+    'Black Ops One',
+    'Righteous',
+    'Permanent Marker',
+    'Creepster',
+    'Lobster',
+  ];
+  const isGoogleFont = googleFonts.includes(fontPreset);
+  const isCustomFont = fontPreset === 'custom' && cfg.gameFont;
 
-    // Google Fonts URL
-    const googleFontUrl = isGoogleFont
-        ? `https://fonts.googleapis.com/css2?family=${fontPreset.replace(/ /g, '+')}:wght@400;700;900&display=swap`
-        : '';
+  // Google Fonts URL
+  const googleFontUrl = isGoogleFont
+    ? `https://fonts.googleapis.com/css2?family=${fontPreset.replace(/ /g, '+')}:wght@400;700;900&display=swap`
+    : '';
 
-    // Font family to use
-    const selectedFont = isGoogleFont ? `'${fontPreset}'` : (isCustomFont ? "'CustomGameFont'" : "'Orbitron'");
+  // Font family to use
+  const selectedFont = isGoogleFont
+    ? `'${fontPreset}'`
+    : isCustomFont
+      ? "'CustomGameFont'"
+      : "'Orbitron'";
 
-    const fontCss = isCustomFont ? `
+  const fontCss = isCustomFont
+    ? `
         @font-face {
             font-family: 'CustomGameFont';
             src: url('${cfg.gameFont}');
@@ -152,60 +172,84 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         :root, body, button, input, .token-bar, .default-title, .prize-text {
             font-family: 'CustomGameFont', 'Orbitron', 'Inter', sans-serif !important;
         }
-    ` : (isGoogleFont ? `
+    `
+    : isGoogleFont
+      ? `
         :root, body, button, input, .token-bar, .default-title, .prize-text {
             font-family: ${selectedFont}, 'Orbitron', 'Inter', sans-serif !important;
         }
-    ` : '');
+    `
+      : '';
 
-    // Get theme template slug for default audio
-    const visualTemplate = (cfg.rawConfig?.visualTemplate as string) || 'Cyberpunk Elite';
-    const themeSlugMap: Record<string, string> = {
-        'Cyberpunk Elite': 'cyberpunk-elite',
-        'Neon Night': 'neon-night',
-        'Classic Arcade': 'classic-arcade',
-        'Christmas Joy': 'christmas-joy',
-        'Gold Royale': 'gold-royale'
-    };
-    const themeSlug = themeSlugMap[visualTemplate] || 'cyberpunk-elite';
+  // Get theme template slug for default audio
+  const visualTemplate =
+    (cfg.rawConfig?.visualTemplate as string) || 'Cyberpunk Elite';
+  const themeSlugMap: Record<string, string> = {
+    'Cyberpunk Elite': 'cyberpunk-elite',
+    'Neon Night': 'neon-night',
+    'Classic Arcade': 'classic-arcade',
+    'Christmas Joy': 'christmas-joy',
+    'Gold Royale': 'gold-royale',
+  };
+  const themeSlug = themeSlugMap[visualTemplate] || 'cyberpunk-elite';
 
-    // Audio URL resolver - Handle three modes properly
-    function resolveAudioUrl(audioUrl: string | undefined, themeSlug: string, audioType: string): string {
-        // Mode 1: Explicitly empty string = User chose "none" - no audio
-        if (audioUrl === '') {
-            return '';
-        }
-
-        // Mode 2: __CUSTOM_PENDING__ = User chose custom but hasn't uploaded yet - no audio
-        if (audioUrl === '__CUSTOM_PENDING__') {
-            return '';
-        }
-
-        // Mode 3: __THEME_DEFAULT__ or undefined = Use theme default
-        if (!audioUrl || audioUrl === '__THEME_DEFAULT__') {
-            return `/api/uploads/templates/${themeSlug}/${audioType}`;
-        }
-
-        // Mode 4: Has URL = User uploaded custom audio
-        return audioUrl;
+  // Audio URL resolver - Handle three modes properly
+  function resolveAudioUrl(
+    audioUrl: string | undefined,
+    themeSlug: string,
+    audioType: string,
+  ): string {
+    // Mode 1: Explicitly empty string = User chose "none" - no audio
+    if (audioUrl === '') {
+      return '';
     }
 
-    // Resolve audio URLs - preserve empty strings (mode: none)
-    const resolvedBgmUrl = resolveAudioUrl(cfg.rawConfig?.bgmUrl, themeSlug, 'bgm.mp3');
-    const resolvedWinSound = resolveAudioUrl(cfg.rawConfig?.winSound, themeSlug, 'win.mp3');
-    const resolvedLoseSound = resolveAudioUrl(cfg.rawConfig?.loseSound, themeSlug, 'lose.mp3');
-    const resolvedJackpotSound = resolveAudioUrl(cfg.rawConfig?.jackpotSound, themeSlug, 'jackpot.mp3');
+    // Mode 2: __CUSTOM_PENDING__ = User chose custom but hasn't uploaded yet - no audio
+    if (audioUrl === '__CUSTOM_PENDING__') {
+      return '';
+    }
 
-    // Override config with resolved URLs
-    cfg.rawConfig = {
-        ...cfg.rawConfig,
-        bgmUrl: resolvedBgmUrl,
-        winSound: resolvedWinSound,
-        loseSound: resolvedLoseSound,
-        jackpotSound: resolvedJackpotSound
-    };
+    // Mode 3: __THEME_DEFAULT__ or undefined = Use theme default
+    if (!audioUrl || audioUrl === '__THEME_DEFAULT__') {
+      return `/api/uploads/templates/${themeSlug}/${audioType}`;
+    }
 
-    return `
+    // Mode 4: Has URL = User uploaded custom audio
+    return audioUrl;
+  }
+
+  // Resolve audio URLs - preserve empty strings (mode: none)
+  const resolvedBgmUrl = resolveAudioUrl(
+    cfg.rawConfig?.bgmUrl,
+    themeSlug,
+    'bgm.mp3',
+  );
+  const resolvedWinSound = resolveAudioUrl(
+    cfg.rawConfig?.winSound,
+    themeSlug,
+    'win.mp3',
+  );
+  const resolvedLoseSound = resolveAudioUrl(
+    cfg.rawConfig?.loseSound,
+    themeSlug,
+    'lose.mp3',
+  );
+  const resolvedJackpotSound = resolveAudioUrl(
+    cfg.rawConfig?.jackpotSound,
+    themeSlug,
+    'jackpot.mp3',
+  );
+
+  // Override config with resolved URLs
+  cfg.rawConfig = {
+    ...cfg.rawConfig,
+    bgmUrl: resolvedBgmUrl,
+    winSound: resolvedWinSound,
+    loseSound: resolvedLoseSound,
+    jackpotSound: resolvedJackpotSound,
+  };
+
+  return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -300,11 +344,15 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
             ${cfg.bgType === 'color' ? `background: ${cfg.bgColor};` : ''}
             ${cfg.bgType === 'gradient' ? `background: ${cfg.bgGradient || (cfg.bgGradStart && cfg.bgGradEnd ? `linear-gradient(135deg, ${cfg.bgGradStart} 0%, ${cfg.bgGradEnd} 100%)` : '')};` : ''}
             ${cfg.bgGradStart && cfg.bgGradEnd && cfg.bgType !== 'image' ? `background: linear-gradient(135deg, ${cfg.bgGradStart} 0%, ${cfg.bgGradEnd} 100%);` : ''}
-            ${cfg.bgType === 'image' ? `
+            ${
+              cfg.bgType === 'image'
+                ? `
                 background: url("${cfg.bgImage}") center/${cfg.bgFit} no-repeat;
                 filter: blur(${cfg.bgBlur}px);
                 opacity: ${cfg.bgOpacity};
-            ` : ''}
+            `
+                : ''
+            }
         }
         
         /* ========== FLOATING PARTICLES ========== */
@@ -471,7 +519,7 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
             animation: float 4s ease-in-out infinite;
         }
         .default-title {
-            font-family: ${cfg.gameFont ? "'CustomGameFont', " : ""}'Orbitron', sans-serif;
+            font-family: ${cfg.gameFont ? "'CustomGameFont', " : ''}'Orbitron', sans-serif;
             font-size: clamp(1.8rem, 8vw, 3rem); font-weight: 950;
             background: var(--metallic-text); 
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -568,22 +616,24 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
         }
         .pointer-asset {
             width: 100%; height: 100%;
-            ${cfg.pointerImage ?
-            `background: url("${cfg.pointerImage}") center/contain no-repeat;` :
-            `background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            ${
+              cfg.pointerImage
+                ? `background: url("${cfg.pointerImage}") center/contain no-repeat;`
+                : `background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
                  clip-path: polygon(0 0, 100% 0, 50% 100%);
                  border-radius: 4px;
                  box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);`
-        }
+            }
         }
         
         .center-hub {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: ${cfg.centerSize}px; height: ${cfg.centerSize}px;
-            ${cfg.centerType === 'image' && cfg.centerImage ?
-            `background: url("${cfg.centerImage}") center/cover no-repeat;` :
-            `background: radial-gradient(circle at 30% 30%, #fff, #94a3b8);`
-        }
+            ${
+              cfg.centerType === 'image' && cfg.centerImage
+                ? `background: url("${cfg.centerImage}") center/cover no-repeat;`
+                : `background: radial-gradient(circle at 30% 30%, #fff, #94a3b8);`
+            }
             border: ${cfg.centerBorder ? '5px solid #1e293b' : 'none'};
             box-shadow: ${cfg.centerShadow ? '0 10px 30px rgba(0,0,0,0.8), inset 0 2px 5px #fff' : 'none'};
             z-index: 20; border-radius: 50%;
@@ -604,10 +654,11 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
             transition: all 0.15s ease;
             box-shadow: ${cfg.spinBtnShadow ? '0 8px 30px rgba(0,0,0,0.5), 0 4px 0 rgba(0,0,0,0.2)' : 'none'};
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            ${cfg.spinBtnImage ?
-            `background: url("${cfg.spinBtnImage}") center/100% 100% no-repeat;` :
-            `background: linear-gradient(180deg, ${cfg.spinBtnColor} 0%, ${adjustColor(cfg.spinBtnColor, -20)} 100%);`
-        }
+            ${
+              cfg.spinBtnImage
+                ? `background: url("${cfg.spinBtnImage}") center/100% 100% no-repeat;`
+                : `background: linear-gradient(180deg, ${cfg.spinBtnColor} 0%, ${adjustColor(cfg.spinBtnColor, -20)} 100%);`
+            }
         }
         .spin-btn::before {
             content: '';
@@ -797,9 +848,13 @@ export function generateSpinWheelHtml(cfg: SpinWheelConfig): string {
 
         <div class="hud-bottom">
             <button class="spin-btn" id="spin-btn" onclick="spin()" disabled style="opacity: 0.5; cursor: not-allowed;">
-                ${cfg.spinBtnText || cfg.spinBtnSubtext ? `
+                ${
+                  cfg.spinBtnText || cfg.spinBtnSubtext
+                    ? `
                 <div class="spin-label">${cfg.spinBtnText || ''}</div>
-                <div class="spin-sub">${cfg.spinBtnSubtext || ''}</div>` : ''}
+                <div class="spin-sub">${cfg.spinBtnSubtext || ''}</div>`
+                    : ''
+                }
             </button>
             <div id="status-msg">LOADING...</div>
         </div>
@@ -2162,11 +2217,11 @@ function initSwipeToSpin() {
 
 // Helper to darken/lighten color
 function adjustColor(hex: string, percent: number): string {
-    if (!hex || hex[0] !== '#') return hex;
-    const num = parseInt(hex.slice(1), 16);
-    const amt = Math.round(2.55 * percent);
-    const R = Math.max(0, Math.min(255, (num >> 16) + amt));
-    const G = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amt));
-    const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
-    return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+  if (!hex || hex[0] !== '#') return hex;
+  const num = parseInt(hex.slice(1), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+  const G = Math.max(0, Math.min(255, ((num >> 8) & 0x00ff) + amt));
+  const B = Math.max(0, Math.min(255, (num & 0x0000ff) + amt));
+  return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
 }

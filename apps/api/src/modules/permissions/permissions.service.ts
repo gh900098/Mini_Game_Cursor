@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatePermissionDto } from './dto/create-permission.dto';
@@ -10,14 +14,16 @@ export class PermissionsService {
   constructor(
     @InjectRepository(Permission)
     private readonly permissionRepository: Repository<Permission>,
-  ) { }
+  ) {}
 
   async create(createPermissionDto: CreatePermissionDto): Promise<Permission> {
     const slug = `${createPermissionDto.resource}:${createPermissionDto.action}`;
     const name = `${createPermissionDto.resource} ${createPermissionDto.action}`;
 
     // Check if permission already exists
-    const existing = await this.permissionRepository.findOne({ where: { slug } });
+    const existing = await this.permissionRepository.findOne({
+      where: { slug },
+    });
     if (existing) {
       throw new ConflictException('Permission already exists');
     }
@@ -33,7 +39,14 @@ export class PermissionsService {
     return await this.permissionRepository.save(permission);
   }
 
-  async findAll(query: { page?: number; limit?: number; keyword?: string } = {}): Promise<{ items: Permission[]; total: number; page: number; limit: number }> {
+  async findAll(
+    query: { page?: number; limit?: number; keyword?: string } = {},
+  ): Promise<{
+    items: Permission[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
     const { page = 1, limit = 10, keyword } = query;
     const pageNum = Number(page) || 1;
     const limitNum = Number(limit) || 10;
@@ -41,9 +54,12 @@ export class PermissionsService {
     const qb = this.permissionRepository.createQueryBuilder('permission');
 
     if (keyword) {
-      qb.where('(permission.name ILIKE :keyword OR permission.slug ILIKE :keyword OR permission.resource ILIKE :keyword OR permission.action ILIKE :keyword)', {
-        keyword: `%${keyword}%`,
-      });
+      qb.where(
+        '(permission.name ILIKE :keyword OR permission.slug ILIKE :keyword OR permission.resource ILIKE :keyword OR permission.action ILIKE :keyword)',
+        {
+          keyword: `%${keyword}%`,
+        },
+      );
     }
 
     qb.orderBy('permission.resource', 'ASC')
@@ -62,14 +78,19 @@ export class PermissionsService {
   }
 
   async findOne(id: string): Promise<Permission> {
-    const permission = await this.permissionRepository.findOne({ where: { id } });
+    const permission = await this.permissionRepository.findOne({
+      where: { id },
+    });
     if (!permission) {
       throw new NotFoundException(`Permission with ID ${id} not found`);
     }
     return permission;
   }
 
-  async update(id: string, updatePermissionDto: UpdatePermissionDto): Promise<Permission> {
+  async update(
+    id: string,
+    updatePermissionDto: UpdatePermissionDto,
+  ): Promise<Permission> {
     const permission = await this.findOne(id);
 
     if (updatePermissionDto.description !== undefined) {

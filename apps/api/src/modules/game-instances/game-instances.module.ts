@@ -10,9 +10,11 @@ import { BudgetTracking } from '../scores/entities/budget-tracking.entity';
 import { PrizeType } from '../prizes/entities/prize-type.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([GameInstance, Score, BudgetTracking, PrizeType])],
-    controllers: [GameInstancesController],
-    providers: [GameInstancesService],
-    exports: [GameInstancesService],
+  imports: [
+    TypeOrmModule.forFeature([GameInstance, Score, BudgetTracking, PrizeType]),
+  ],
+  controllers: [GameInstancesController],
+  providers: [GameInstancesService],
+  exports: [GameInstancesService],
 })
-export class GameInstancesModule { }
+export class GameInstancesModule {}

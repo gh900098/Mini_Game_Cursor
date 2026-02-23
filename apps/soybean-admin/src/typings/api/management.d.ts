@@ -84,13 +84,7 @@ declare namespace Api {
                     username?: string;
                     password?: string;
                 };
-                syncConfigs?: Record<string, {
-                    enabled: boolean;
-                    syncMode: 'full' | 'incremental';
-                    maxPages: number;
-                    syncCron?: string;
-                    syncParams?: Record<string, any>;
-                }>;
+                syncConfigs?: Record<string, CompanySyncSettings>;
                 // Legacy support
 
                 syncParams?: Record<string, any>;

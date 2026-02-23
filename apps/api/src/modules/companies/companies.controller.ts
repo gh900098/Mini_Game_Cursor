@@ -1,25 +1,46 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { Roles, RoleLevel } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { PermissionsGuard, RequirePermission } from '../../common/guards/permissions.guard';
+import {
+  PermissionsGuard,
+  RequirePermission,
+} from '../../common/guards/permissions.guard';
 
 @ApiTags('companies')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
 @Controller('companies')
 export class CompaniesController {
-  constructor(private readonly companiesService: CompaniesService) { }
+  constructor(private readonly companiesService: CompaniesService) {}
 
   @Post()
   @RequirePermission('companies:create')
   @ApiOperation({ summary: 'Create a new company' })
   @ApiResponse({ status: 201, description: 'Company created successfully' })
-  @ApiResponse({ status: 409, description: 'Company with this slug already exists' })
+  @ApiResponse({
+    status: 409,
+    description: 'Company with this slug already exists',
+  })
   create(@Body() createCompanyDto: CreateCompanyDto) {
     return this.companiesService.create(createCompanyDto);
   }
@@ -35,12 +56,13 @@ export class CompaniesController {
   @Get('integration-providers')
   @RequirePermission('companies:read')
   @ApiOperation({ summary: 'Get available integration providers' })
-  @ApiResponse({ status: 200, description: 'Returns all available integration providers' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns all available integration providers',
+  })
   getIntegrationProviders() {
     // These reflect the currently implemented SyncStrategy classes
-    return [
-      { label: 'JK Platform', value: 'JK' }
-    ];
+    return [{ label: 'JK Platform', value: 'JK' }];
   }
 
   @Get(':id')
@@ -57,7 +79,10 @@ export class CompaniesController {
   @ApiOperation({ summary: 'Update a company' })
   @ApiResponse({ status: 200, description: 'Company updated successfully' })
   @ApiResponse({ status: 404, description: 'Company not found' })
-  @ApiResponse({ status: 409, description: 'Company with this slug already exists' })
+  @ApiResponse({
+    status: 409,
+    description: 'Company with this slug already exists',
+  })
   update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
     return this.companiesService.update(id, updateCompanyDto);
   }

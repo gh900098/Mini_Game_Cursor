@@ -7,12 +7,9 @@ import { PrizeStrategyService } from './prize-strategy.service';
 import { MembersModule } from '../members/members.module';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([PrizeType]),
-        MembersModule,
-    ],
-    controllers: [PrizesController],
-    providers: [PrizesService, PrizeStrategyService],
-    exports: [PrizesService, PrizeStrategyService],
+  imports: [TypeOrmModule.forFeature([PrizeType]), MembersModule],
+  controllers: [PrizesController],
+  providers: [PrizesService, PrizeStrategyService],
+  exports: [PrizesService, PrizeStrategyService],
 })
-export class PrizesModule { }
+export class PrizesModule {}

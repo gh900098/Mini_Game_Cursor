@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThanOrEqual } from 'typeorm';
 import { PlayAttempt } from './entities/play-attempt.entity';
@@ -18,12 +22,16 @@ export class GameRulesService {
     private membersRepo: Repository<Member>,
     @InjectRepository(Score)
     private scoresRepo: Repository<Score>,
-  ) { }
+  ) {}
 
   /**
    * 验证所有规则（在玩游戏前调用）
    */
-  async validatePlay(memberId: string, instance: GameInstance, isImpersonated: boolean = false): Promise<void> {
+  async validatePlay(
+    memberId: string,
+    instance: GameInstance,
+    isImpersonated: boolean = false,
+  ): Promise<void> {
     if (isImpersonated) {
       return;
     }
@@ -40,7 +48,8 @@ export class GameRulesService {
     // 预算控制 - 如果是 soft mode (Points Only)，则不在这里抛出异常，允许进入游戏
     // 真正的奖品拦截会在提交分数时发生
     const budgetConfig = instance.config?.budgetConfig;
-    const isSoftMode = budgetConfig?.enable && budgetConfig?.exhaustionMode === 'soft';
+    const isSoftMode =
+      budgetConfig?.enable && budgetConfig?.exhaustionMode === 'soft';
     await this.checkBudget(instance, !isSoftMode);
   }
 
@@ -92,7 +101,10 @@ export class GameRulesService {
   /**
    * 规则1: 每日次数限制
    */
-  async checkDailyLimit(memberId: string, instance: GameInstance): Promise<void> {
+  async checkDailyLimit(
+    memberId: string,
+    instance: GameInstance,
+  ): Promise<void> {
     const dailyLimit = instance.config?.dailyLimit || 0;
 
     // 0 = 无限制
@@ -115,7 +127,9 @@ export class GameRulesService {
     let effectiveLimit = dailyLimit;
     const member = await this.membersRepo.findOne({ where: { id: memberId } });
     if (member?.vipTier && instance.config?.vipTiers) {
-      const vipConfig = instance.config.vipTiers.find((t: any) => t.name === member.vipTier);
+      const vipConfig = instance.config.vipTiers.find(
+        (t: any) => t.name === member.vipTier,
+      );
       if (vipConfig) {
         effectiveLimit += vipConfig.extraSpins || 0;
       }
@@ -173,7 +187,10 @@ export class GameRulesService {
   /**
    * 规则3: 只能玩一次
    */
-  async checkOneTimeOnly(memberId: string, instance: GameInstance): Promise<void> {
+  async checkOneTimeOnly(
+    memberId: string,
+    instance: GameInstance,
+  ): Promise<void> {
     const oneTimeOnly = instance.config?.oneTimeOnly || false;
 
     if (!oneTimeOnly) return;
@@ -227,8 +244,18 @@ export class GameRulesService {
       const today = now.getDay(); // 0-6
 
       if (!config.activeDays.includes(today)) {
-        const dayNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-        const activeDayNames = config.activeDays.map((d: number) => dayNames[d]);
+        const dayNames = [
+          '周日',
+          '周一',
+          '周二',
+          '周三',
+          '周四',
+          '周五',
+          '周六',
+        ];
+        const activeDayNames = config.activeDays.map(
+          (d: number) => dayNames[d],
+        );
 
         throw new BadRequestException({
           code: 'INVALID_DAY',
@@ -269,7 +296,10 @@ export class GameRulesService {
    * @param throwError Whether to throw exception on failure (Hard Stop)
    * @returns boolean True if budget is OK, False if exhausted (only if throwError is false)
    */
-  async checkBudget(instance: GameInstance, throwError: boolean = true): Promise<boolean> {
+  async checkBudget(
+    instance: GameInstance,
+    throwError: boolean = true,
+  ): Promise<boolean> {
     const config = instance.config?.budgetConfig;
 
     // 1. Check if budget control is enabled
@@ -306,7 +336,11 @@ export class GameRulesService {
 
     // 4. Monthly Budget Check
     if (config.monthlyBudget) {
-      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const firstDayOfMonth = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        1,
+      );
       const monthlyStats = await this.budgetRepo
         .createQueryBuilder('tracking')
         .select('SUM(tracking.totalCost)', 'total')
@@ -322,7 +356,7 @@ export class GameRulesService {
           code: 'MONTHLY_BUDGET_EXCEEDED',
           message: '本月预算已用完，请联系管理员',
           monthlyBudget: config.monthlyBudget,
-          spent: monthlySpent
+          spent: monthlySpent,
         });
       }
     }
@@ -335,7 +369,7 @@ export class GameRulesService {
       .getRawOne();
 
     const lifetimeSpent = Number(lifetimeStats?.total || 0);
-    const totalLimit = config.totalBudget || (todayTracking?.totalBudget);
+    const totalLimit = config.totalBudget || todayTracking?.totalBudget;
 
     if (totalLimit && totalLimit > 0 && lifetimeSpent >= totalLimit) {
       if (!throwError) return false;
@@ -362,7 +396,11 @@ export class GameRulesService {
   /**
    * 更新预算并记录流水 (Enterprise - Ledger Integrated)
    */
-  async updateBudget(instanceId: string, prizeCost: number, reference?: { type: string; id: string; metadata?: any }): Promise<void> {
+  async updateBudget(
+    instanceId: string,
+    prizeCost: number,
+    reference?: { type: string; id: string; metadata?: any },
+  ): Promise<void> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -417,7 +455,11 @@ export class GameRulesService {
     // 查询最近的游戏记录
     const recentScores = await this.playAttemptsRepo
       .createQueryBuilder('attempt')
-      .leftJoin('scores', 'score', 'score.memberId = attempt.memberId AND score.instanceId = attempt.instanceId')
+      .leftJoin(
+        'scores',
+        'score',
+        'score.memberId = attempt.memberId AND score.instanceId = attempt.instanceId',
+      )
       .where('attempt.memberId = :memberId', { memberId })
       .andWhere('attempt.instanceId = :instanceId', { instanceId: instance.id })
       .andWhere('attempt.success = :success', { success: true })
@@ -461,7 +503,11 @@ export class GameRulesService {
   /**
    * 获取玩家当前状态（用于前端显示）
    */
-  async getPlayerStatus(memberId: string, instance: GameInstance, isImpersonated: boolean = false): Promise<any> {
+  async getPlayerStatus(
+    memberId: string,
+    instance: GameInstance,
+    isImpersonated: boolean = false,
+  ): Promise<any> {
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
 
@@ -479,7 +525,9 @@ export class GameRulesService {
     let effectiveLimit = dailyLimit;
     const member = await this.membersRepo.findOne({ where: { id: memberId } });
     if (member?.vipTier && instance.config?.vipTiers) {
-      const vipConfig = instance.config.vipTiers.find((t: any) => t.name === member.vipTier);
+      const vipConfig = instance.config.vipTiers.find(
+        (t: any) => t.name === member.vipTier,
+      );
       if (vipConfig) {
         effectiveLimit += vipConfig.extraSpins || 0;
       }
@@ -556,8 +604,12 @@ export class GameRulesService {
       });
 
       if (lastAttempt && instance.config?.cooldown) {
-        const secondsSince = (Date.now() - lastAttempt.attemptedAt.getTime()) / 1000;
-        const cooldownRemaining = Math.max(0, instance.config.cooldown - secondsSince);
+        const secondsSince =
+          (Date.now() - lastAttempt.attemptedAt.getTime()) / 1000;
+        const cooldownRemaining = Math.max(
+          0,
+          instance.config.cooldown - secondsSince,
+        );
         if (cooldownRemaining > 0) {
           blockDetails.cooldownRemaining = Math.ceil(cooldownRemaining);
         }
@@ -613,7 +665,8 @@ export class GameRulesService {
       canPlay,
       dailyLimit: effectiveLimit,
       played,
-      remaining: effectiveLimit === 0 ? -1 : Math.max(0, effectiveLimit - played),
+      remaining:
+        effectiveLimit === 0 ? -1 : Math.max(0, effectiveLimit - played),
       resetAt: tomorrow.toISOString(),
       // Additional info for UI
       oneTimeOnly,

@@ -3,16 +3,19 @@ import { ExternalAuthService } from './external-auth.service';
 
 @Controller('auth/external')
 export class ExternalAuthController {
-    constructor(private readonly externalAuthService: ExternalAuthService) { }
+  constructor(private readonly externalAuthService: ExternalAuthService) {}
 
-    @Post('initialize')
-    async initialize(@Body() payload: {
-        companySlug: string;
-        externalId: string;
-        username?: string;
-        timestamp: number;
-        signature: string;
-    }) {
-        return this.externalAuthService.validateSignatureAndIssueToken(payload);
-    }
+  @Post('initialize')
+  async initialize(
+    @Body()
+    payload: {
+      companySlug: string;
+      externalId: string;
+      username?: string;
+      timestamp: number;
+      signature: string;
+    },
+  ) {
+    return this.externalAuthService.validateSignatureAndIssueToken(payload);
+  }
 }

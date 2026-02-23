@@ -234,6 +234,11 @@ Provides an end-to-end flow for integrating deposits from external platform wall
 - Administrators dictate exactly how many points an external flat-currency is worth in the admin panel.
 - This is stored under `integration_config.syncConfigs.deposit.depositConversionRate` inside the `Company` entity schema json attribute.
 
+#### 3. Deposit Point Rules Engine
+- **Max Eligible Deposits:** Limits points to the first `N` deposits.
+- **Max Daily/Monthly Points:** Accumulates points mathematically within defined timeframes.
+- **Graceful Truncation:** Identifies boundary breaches computing remaining threshold deltas and issues partial point grants with tagged rejection notices (e.g. `DAILY_LIMIT_TRUNCATED`, `MAX_ELIGIBLE_DEPOSITS_EXCEEDED`).
+
 ---
 
 ## 📂 Project Structure Overview

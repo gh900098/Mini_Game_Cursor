@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index, ManyToOne, JoinColumn, Unique } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Index,
+  ManyToOne,
+  JoinColumn,
+  Unique,
+} from 'typeorm';
 import { GameInstance } from '../../game-instances/entities/game-instance.entity';
 
 @Entity('budget_tracking')

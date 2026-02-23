@@ -1,336 +1,438 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query, Header, UseInterceptors, UploadedFile, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+  Query,
+  Header,
+  UseInterceptors,
+  UploadedFile,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { GameInstance } from './entities/game-instance.entity';
 import { GameInstancesService } from './game-instances.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionsGuard, RequirePermission } from '../../common/guards/permissions.guard';
+import {
+  PermissionsGuard,
+  RequirePermission,
+} from '../../common/guards/permissions.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { generateSpinWheelHtml, SpinWheelConfig } from './templates/spin-wheel.template';
+import {
+  generateSpinWheelHtml,
+  SpinWheelConfig,
+} from './templates/spin-wheel.template';
 
 @Controller('game-instances')
 export class GameInstancesController {
-    constructor(private readonly instancesService: GameInstancesService) { }
+  constructor(private readonly instancesService: GameInstancesService) {}
 
-    /**
-     * Helper to mask prizes visually when in Social Mode
-     */
-    private maskPrizesForSocialMode(config: any): any {
-        if (!config.prizeList || !Array.isArray(config.prizeList)) return config;
+  /**
+   * Helper to mask prizes visually when in Social Mode
+   */
+  private maskPrizesForSocialMode(config: any): any {
+    if (!config.prizeList || !Array.isArray(config.prizeList)) return config;
 
-        const maskedConfig = { ...config };
-        maskedConfig.prizeList = config.prizeList.map((p: any) => {
-            if (p.isLose) return p;
+    const maskedConfig = { ...config };
+    maskedConfig.prizeList = config.prizeList.map((p: any) => {
+      if (p.isLose) return p;
 
-            // Use the authoritative 'isPoints' flag from the backend enrichment
-            // If missing (e.g. old code), fallback to simplistic check
-            const isPointType = (typeof p.isPoints === 'boolean') ? p.isPoints : (p.prizeType === 'points');
+      // Use the authoritative 'isPoints' flag from the backend enrichment
+      // If missing (e.g. old code), fallback to simplistic check
+      const isPointType =
+        typeof p.isPoints === 'boolean' ? p.isPoints : p.prizeType === 'points';
 
-            if (isPointType) {
-                return p;
-            }
+      if (isPointType) {
+        return p;
+      }
 
-            // If it is NOT points (Item, Cash, E-Gift, etc.), we MUST mask it.
-            // STRATEGY: Use the 'cost' (Budget Deduction) as the Point Value.
-            const budgetVal = Number(p.cost) || 0;
-            const pts = budgetVal > 0 ? budgetVal : (p.value || p.scoreValue || 500);
-            const ptsLabel = `${pts} PTS`;
+      // If it is NOT points (Item, Cash, E-Gift, etc.), we MUST mask it.
+      // STRATEGY: Use the 'cost' (Budget Deduction) as the Point Value.
+      const budgetVal = Number(p.cost) || 0;
+      const pts = budgetVal > 0 ? budgetVal : p.value || p.scoreValue || 500;
+      const ptsLabel = `${pts} PTS`;
 
-            return {
-                ...p,
-                label: p.isJackpot ? `💎 ${ptsLabel}` : `⭐ ${ptsLabel}`,
-                prizeName: p.isJackpot ? 'Jackpot Score' : 'Score Reward',
-                icon: p.isJackpot ? '💎' : '⭐',
-                image: '', // Strictly clear any specific prize image
-            };
-        });
+      return {
+        ...p,
+        label: p.isJackpot ? `💎 ${ptsLabel}` : `⭐ ${ptsLabel}`,
+        prizeName: p.isJackpot ? 'Jackpot Score' : 'Score Reward',
+        icon: p.isJackpot ? '💎' : '⭐',
+        image: '', // Strictly clear any specific prize image
+      };
+    });
 
-        // Also mask spin button subtext if it mentions tokens/win
-        if (maskedConfig.spinBtnSubtext) {
-            maskedConfig.spinBtnSubtext = 'PLAY FOR RANKING';
-        }
-
-        return maskedConfig;
+    // Also mask spin button subtext if it mentions tokens/win
+    if (maskedConfig.spinBtnSubtext) {
+      maskedConfig.spinBtnSubtext = 'PLAY FOR RANKING';
     }
 
-    @Get(':slug/play')
-    @Header('Content-Type', 'text/html')
-    @Header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-    async play(
-        @Param('slug') slug: string,
-        @Query('token') token: string,
-        @Query('isPreview') isPreview?: string,
-        @Query('v') version?: string
-    ) {
-        // Handle live theme preview from admin panel which uses template slug instead of instance slug
-        if (isPreview && slug === 'spin-wheel') {
-            const mockInstance = {
-                id: 'preview',
-                name: 'Theme Preview',
-                gameTemplate: { slug: 'spin-wheel' },
-                config: {},
-            } as any;
-            return this.handlePlay(mockInstance, isPreview, version);
-        }
+    return maskedConfig;
+  }
 
-        const instance = await this.instancesService.findBySlug(slug);
-        return this.handlePlay(instance, isPreview, version);
+  @Get(':slug/play')
+  @Header('Content-Type', 'text/html')
+  @Header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+  async play(
+    @Param('slug') slug: string,
+    @Query('token') token: string,
+    @Query('isPreview') isPreview?: string,
+    @Query('v') version?: string,
+  ) {
+    // Handle live theme preview from admin panel which uses template slug instead of instance slug
+    if (isPreview && slug === 'spin-wheel') {
+      const mockInstance = {
+        id: 'preview',
+        name: 'Theme Preview',
+        gameTemplate: { slug: 'spin-wheel' },
+        config: {},
+      } as any;
+      return this.handlePlay(mockInstance, isPreview, version);
     }
 
-    @Get('c/:companySlug/:gameSlug/play')
-    @Header('Content-Type', 'text/html')
-    @Header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-    async playByCompanySlug(
-        @Param('companySlug') companySlug: string,
-        @Param('gameSlug') gameSlug: string,
-        @Query('token') token: string,
-        @Query('isPreview') isPreview?: string,
-        @Query('v') version?: string
-    ) {
-        const instance = await this.instancesService.findByCompanyAndSlug(companySlug, gameSlug);
-        return this.handlePlay(instance, isPreview, version);
+    const instance = await this.instancesService.findBySlug(slug);
+    return this.handlePlay(instance, isPreview, version);
+  }
+
+  @Get('c/:companySlug/:gameSlug/play')
+  @Header('Content-Type', 'text/html')
+  @Header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+  async playByCompanySlug(
+    @Param('companySlug') companySlug: string,
+    @Param('gameSlug') gameSlug: string,
+    @Query('token') token: string,
+    @Query('isPreview') isPreview?: string,
+    @Query('v') version?: string,
+  ) {
+    const instance = await this.instancesService.findByCompanyAndSlug(
+      companySlug,
+      gameSlug,
+    );
+    return this.handlePlay(instance, isPreview, version);
+  }
+
+  private async handlePlay(
+    instance: GameInstance,
+    isPreview?: string,
+    version?: string,
+  ) {
+    if (!instance) throw new NotFoundException('Game instance not found');
+
+    let config = await this.instancesService.getEffectiveConfig(instance);
+    const gameSlug = instance.gameTemplate?.slug;
+
+    // Universal Social Mode Masking: If budget is exhausted and mode is soft, mask prizes visually
+    const budgetConfig = instance.config?.budgetConfig;
+    if (budgetConfig?.enable && budgetConfig?.exhaustionMode === 'soft') {
+      const isExhausted =
+        await this.instancesService.isBudgetExhausted(instance);
+      if (isExhausted) {
+        config = this.maskPrizesForSocialMode(config);
+      }
     }
 
-    private async handlePlay(instance: GameInstance, isPreview?: string, version?: string) {
-        if (!instance) throw new NotFoundException('Game instance not found');
+    // Check if user selected a visual template (other than 'default')
+    const visualTemplate = config.visualTemplate || 'default';
+    if (visualTemplate !== 'default' && gameSlug) {
+      // Try to load the specific visual template HTML file
+      // Format: {gameSlug}-{templateName}.html (e.g., spin-wheel-premium-neon.html)
+      const templatePath = path.join(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        'uploads',
+        'games',
+        `${gameSlug}-${visualTemplate}.html`,
+      );
+      if (fs.existsSync(templatePath)) {
+        let html = fs.readFileSync(templatePath, 'utf-8');
+        const configScript = `<script>window.GAME_CONFIG = ${JSON.stringify(config)}; window.INSTANCE_NAME = "${instance.name}";</script>`;
+        html = html.replace('</head>', configScript + '</head>');
+        return html;
+      }
+      // If template file not found, fall through to default dynamic template
+      console.log(
+        `[Template] Visual template file not found: ${templatePath}, using default`,
+      );
+    }
 
-        let config = await this.instancesService.getEffectiveConfig(instance);
-        const gameSlug = instance.gameTemplate?.slug;
+    // Debug log
+    console.log(
+      '[Server Debug] Effective config - dividerType:',
+      config.dividerType,
+      'dividerImage:',
+      config.dividerImage,
+    );
 
-        // Universal Social Mode Masking: If budget is exhausted and mode is soft, mask prizes visually
-        const budgetConfig = instance.config?.budgetConfig;
-        if (budgetConfig?.enable && budgetConfig?.exhaustionMode === 'soft') {
-            const isExhausted = await this.instancesService.isBudgetExhausted(instance);
-            if (isExhausted) {
-                config = this.maskPrizesForSocialMode(config);
-            }
+    // ========== PREMIUM TEMPLATE V2 ==========
+    // V2 is now default, use v=1 for legacy template
+    if (version !== '1') {
+      const getUrl = (val: string) => {
+        if (!val) return '';
+        if (val.startsWith('http') || val.startsWith('/')) return val;
+        return `/api/uploads/${val}`;
+      };
+
+      const prizeList = config.prizeList || [
+        { icon: '💰', label: '10 Points', weight: 40, color: '#3b82f6' },
+        { icon: '🎁', label: 'Surprise', weight: 10, color: '#8b5cf6' },
+        { icon: '🤡', label: 'Try Again', weight: 25, color: '#64748b' },
+        { icon: '💎', label: 'Jackpot', weight: 5, color: '#eab308' },
+        { icon: '🎟️', label: 'Ticket', weight: 20, color: '#10b981' },
+      ];
+
+      let rawDuration = Number(config.spinDuration) || 4000;
+      if (rawDuration < 100) rawDuration *= 1000;
+
+      const pointerDir = config.pointerDirection || 'top';
+      const dirMap: Record<string, number> = {
+        top: 0,
+        'top-right': 45,
+        right: 90,
+        'bottom-right': 135,
+        bottom: 180,
+        'bottom-left': 225,
+        left: 270,
+        'top-left': 315,
+      };
+
+      let bgGradient =
+        config.bgGradient ||
+        'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)';
+      if (config.bgGradStart && config.bgGradEnd) {
+        if (config.bgGradDir === 'radial') {
+          bgGradient = `radial-gradient(circle at center, ${config.bgGradStart}, ${config.bgGradEnd})`;
+        } else {
+          const dir = config.bgGradDir || '135deg';
+          bgGradient = `linear-gradient(${dir}, ${config.bgGradStart} 0%, ${config.bgGradEnd} 100%)`;
         }
+      }
 
-        // Check if user selected a visual template (other than 'default')
-        const visualTemplate = config.visualTemplate || 'default';
-        if (visualTemplate !== 'default' && gameSlug) {
-            // Try to load the specific visual template HTML file
-            // Format: {gameSlug}-{templateName}.html (e.g., spin-wheel-premium-neon.html)
-            const templatePath = path.join(__dirname, '..', '..', '..', 'uploads', 'games', `${gameSlug}-${visualTemplate}.html`);
-            if (fs.existsSync(templatePath)) {
-                let html = fs.readFileSync(templatePath, 'utf-8');
-                const configScript = `<script>window.GAME_CONFIG = ${JSON.stringify(config)}; window.INSTANCE_NAME = "${instance.name}";</script>`;
-                html = html.replace('</head>', configScript + '</head>');
-                return html;
-            }
-            // If template file not found, fall through to default dynamic template
-            console.log(`[Template] Visual template file not found: ${templatePath}, using default`);
-        }
+      const templateConfig: SpinWheelConfig = {
+        instanceName: instance.name,
+        prizeList,
+        themeColor: config.themeColor || '#3b82f6',
+        secondaryColor: config.secondaryColor || '#f1f5f9',
+        spinDuration: rawDuration,
+        spinTurns: Number(config.spinTurns) || 12,
+        costPerSpin: config.costPerSpin || 0,
 
-        // Debug log
-        console.log('[Server Debug] Effective config - dividerType:', config.dividerType, 'dividerImage:', config.dividerImage);
+        bgType:
+          config.bgType ||
+          (config.bgImage
+            ? 'image'
+            : config.bgGradStart
+              ? 'gradient'
+              : 'color'),
+        bgColor: config.bgColor || '#1a1a1a',
+        bgGradient,
+        bgImage: getUrl(config.bgImage),
+        bgFit: config.bgFit || 'cover',
+        bgBlur: config.bgBlur || 0,
+        bgOpacity:
+          (config.bgOpacity !== undefined ? config.bgOpacity : 100) / 100,
 
-        // ========== PREMIUM TEMPLATE V2 ==========
-        // V2 is now default, use v=1 for legacy template
-        if (version !== '1') {
-            const getUrl = (val: string) => {
-                if (!val) return '';
-                if (val.startsWith('http') || val.startsWith('/')) return val;
-                return `/api/uploads/${val}`;
-            };
+        titleImage: getUrl(config.titleImage),
+        logoWidth: config.logoWidth || 80,
+        logoTopMargin:
+          config.logoTopMargin !== undefined ? config.logoTopMargin : 10,
+        logoOpacity:
+          (config.logoOpacity !== undefined ? config.logoOpacity : 100) / 100,
+        logoShadow: config.logoDropShadow
+          ? 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))'
+          : 'none',
 
-            const prizeList = config.prizeList || [
-                { icon: '💰', label: '10 Points', weight: 40, color: '#3b82f6' },
-                { icon: '🎁', label: 'Surprise', weight: 10, color: '#8b5cf6' },
-                { icon: '🤡', label: 'Try Again', weight: 25, color: '#64748b' },
-                { icon: '💎', label: 'Jackpot', weight: 5, color: '#eab308' },
-                { icon: '🎟️', label: 'Ticket', weight: 20, color: '#10b981' }
-            ];
+        wheelBorderImage: getUrl(config.wheelBorderImage),
+        dividerType:
+          config.dividerType || (config.dividerImage ? 'image' : 'line'),
+        dividerColor: config.dividerColor || 'rgba(255,255,255,0.2)',
+        dividerStroke: config.dividerStroke || 1,
+        dividerImage: getUrl(config.dividerImage),
+        dividerWidth: config.dividerWidth || 20,
+        dividerHeight: config.dividerHeight || 180,
+        dividerTop: config.dividerTop || 0,
 
-            let rawDuration = Number(config.spinDuration) || 4000;
-            if (rawDuration < 100) rawDuration *= 1000;
+        pointerImage: getUrl(config.pointerImage),
+        pointerSize: config.pointerSize || 50,
+        pointerTop: config.pointerTop !== undefined ? config.pointerTop : -35,
+        pointerShadow:
+          config.pointerShadow !== undefined ? config.pointerShadow : true,
+        pointerDirection: pointerDir,
+        pointerRotation: dirMap[pointerDir] || 0,
 
-            const pointerDir = config.pointerDirection || 'top';
-            const dirMap: Record<string, number> = { 'top': 0, 'top-right': 45, 'right': 90, 'bottom-right': 135, 'bottom': 180, 'bottom-left': 225, 'left': 270, 'top-left': 315 };
+        centerImage: getUrl(config.centerImage),
+        centerType: config.centerType || 'emoji',
+        centerEmoji: config.centerEmoji || '🎯',
+        centerSize: config.centerSize || 60,
+        centerBorder:
+          config.centerBorder !== undefined ? config.centerBorder : true,
+        centerShadow:
+          config.centerShadow !== undefined ? config.centerShadow : true,
 
-            let bgGradient = config.bgGradient || 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)';
-            if (config.bgGradStart && config.bgGradEnd) {
-                if (config.bgGradDir === 'radial') {
-                    bgGradient = `radial-gradient(circle at center, ${config.bgGradStart}, ${config.bgGradEnd})`;
-                } else {
-                    const dir = config.bgGradDir || '135deg';
-                    bgGradient = `linear-gradient(${dir}, ${config.bgGradStart} 0%, ${config.bgGradEnd} 100%)`;
-                }
-            }
+        spinBtnImage: getUrl(config.spinBtnImage),
+        spinBtnText: config.spinBtnText || 'SPIN NOW',
+        spinBtnSubtext:
+          config.spinBtnSubtext || `1 PLAY = ${config.costPerSpin || 0} TOKEN`,
+        spinBtnColor: config.spinBtnColor || '#f59e0b',
+        spinBtnTextColor: config.spinBtnTextColor || '#451a03',
+        spinBtnShadow:
+          config.spinBtnShadow !== undefined ? config.spinBtnShadow : true,
+        spinBtnWidth: config.spinBtnWidth || 320,
+        spinBtnHeight: config.spinBtnHeight || 70,
 
-            const templateConfig: SpinWheelConfig = {
-                instanceName: instance.name,
-                prizeList,
-                themeColor: config.themeColor || '#3b82f6',
-                secondaryColor: config.secondaryColor || '#f1f5f9',
-                spinDuration: rawDuration,
-                spinTurns: Number(config.spinTurns) || 12,
-                costPerSpin: config.costPerSpin || 0,
+        tokenBarImage: getUrl(config.tokenBarImage),
+        tokenBarColor: config.tokenBarColor || '#ca8a04',
+        tokenBarTextColor: config.tokenBarTextColor || '#ffffff',
+        tokenBarShadow:
+          config.tokenBarShadow !== undefined ? config.tokenBarShadow : true,
 
-                bgType: config.bgType || (config.bgImage ? 'image' : config.bgGradStart ? 'gradient' : 'color'),
-                bgColor: config.bgColor || '#1a1a1a',
-                bgGradient,
-                bgImage: getUrl(config.bgImage),
-                bgFit: config.bgFit || 'cover',
-                bgBlur: config.bgBlur || 0,
-                bgOpacity: (config.bgOpacity !== undefined ? config.bgOpacity : 100) / 100,
+        gameFont: getUrl(config.gameFont),
+        enableSound: config.enableSound !== false,
+        isPreview: !!isPreview,
+        rawConfig: config,
 
-                titleImage: getUrl(config.titleImage),
-                logoWidth: config.logoWidth || 80,
-                logoTopMargin: config.logoTopMargin !== undefined ? config.logoTopMargin : 10,
-                logoOpacity: (config.logoOpacity !== undefined ? config.logoOpacity : 100) / 100,
-                logoShadow: config.logoDropShadow ? 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' : 'none',
+        // LED Colors (for visual templates like Christmas Joy)
+        ledColor1: config.ledColor1 || '',
+        ledColor2: config.ledColor2 || '',
+        ledColor3: config.ledColor3 || '',
 
-                wheelBorderImage: getUrl(config.wheelBorderImage),
-                dividerType: config.dividerType || (config.dividerImage ? 'image' : 'line'),
-                dividerColor: config.dividerColor || 'rgba(255,255,255,0.2)',
-                dividerStroke: config.dividerStroke || 1,
-                dividerImage: getUrl(config.dividerImage),
-                dividerWidth: config.dividerWidth || 20,
-                dividerHeight: config.dividerHeight || 180,
-                dividerTop: config.dividerTop || 0,
+        // Background Gradient (alternative)
+        bgGradStart: config.bgGradStart || '',
+        bgGradEnd: config.bgGradEnd || '',
 
-                pointerImage: getUrl(config.pointerImage),
-                pointerSize: config.pointerSize || 50,
-                pointerTop: config.pointerTop !== undefined ? config.pointerTop : -35,
-                pointerShadow: config.pointerShadow !== undefined ? config.pointerShadow : true,
-                pointerDirection: pointerDir,
-                pointerRotation: dirMap[pointerDir] || 0,
+        // Confetti effects
+        enableConfetti: config.enableConfetti !== false,
+        confettiParticles: config.confettiParticles || 150,
+        confettiSpread: config.confettiSpread || 80,
+        confettiColors:
+          config.confettiColors || '#eab308,#ffffff,#3b82f6,#22c55e',
+        confettiShapeType: config.confettiShapeType || 'default',
+        confettiEmojis: config.confettiEmojis || '',
+      };
 
-                centerImage: getUrl(config.centerImage),
-                centerType: config.centerType || 'emoji',
-                centerEmoji: config.centerEmoji || '🎯',
-                centerSize: config.centerSize || 60,
-                centerBorder: config.centerBorder !== undefined ? config.centerBorder : true,
-                centerShadow: config.centerShadow !== undefined ? config.centerShadow : true,
+      return generateSpinWheelHtml(templateConfig);
+    }
 
-                spinBtnImage: getUrl(config.spinBtnImage),
-                spinBtnText: config.spinBtnText || 'SPIN NOW',
-                spinBtnSubtext: config.spinBtnSubtext || `1 PLAY = ${config.costPerSpin || 0} TOKEN`,
-                spinBtnColor: config.spinBtnColor || '#f59e0b',
-                spinBtnTextColor: config.spinBtnTextColor || '#451a03',
-                spinBtnShadow: config.spinBtnShadow !== undefined ? config.spinBtnShadow : true,
-                spinBtnWidth: config.spinBtnWidth || 320,
-                spinBtnHeight: config.spinBtnHeight || 70,
+    // ========== ORIGINAL TEMPLATE V1 ==========
+    const prizeList = config.prizeList || [
+      { icon: '💰', label: '10 Points', weight: 40, color: '#3b82f6' },
+      { icon: '🎁', label: 'Surprise', weight: 10, color: '#8b5cf6' },
+      { icon: '🤡', label: 'Try Again', weight: 25, color: '#64748b' },
+      { icon: '💎', label: 'Jackpot', weight: 5, color: '#eab308' },
+      { icon: '🎟️', label: 'Ticket', weight: 20, color: '#10b981' },
+    ];
 
-                tokenBarImage: getUrl(config.tokenBarImage),
-                tokenBarColor: config.tokenBarColor || '#ca8a04',
-                tokenBarTextColor: config.tokenBarTextColor || '#ffffff',
-                tokenBarShadow: config.tokenBarShadow !== undefined ? config.tokenBarShadow : true,
+    const themeColor = config.themeColor || '#3b82f6';
+    const secondaryColor = config.secondaryColor || '#f1f5f9';
 
-                gameFont: getUrl(config.gameFont),
-                enableSound: config.enableSound !== false,
-                isPreview: !!isPreview,
-                rawConfig: config,
+    let rawDuration = Number(config.spinDuration) || 4000;
+    if (rawDuration < 100) rawDuration *= 1000;
+    const spinDuration = rawDuration;
 
-                // LED Colors (for visual templates like Christmas Joy)
-                ledColor1: config.ledColor1 || '',
-                ledColor2: config.ledColor2 || '',
-                ledColor3: config.ledColor3 || '',
+    const spinTurns = Number(config.spinTurns) || 12;
+    const costPerSpin = config.costPerSpin || 0;
 
-                // Background Gradient (alternative)
-                bgGradStart: config.bgGradStart || '',
-                bgGradEnd: config.bgGradEnd || '',
+    const getUrl = (val: string) => {
+      if (!val) return '';
+      if (val.startsWith('http') || val.startsWith('/')) return val;
+      return `/api/uploads/${val}`;
+    };
 
-                // Confetti effects
-                enableConfetti: config.enableConfetti !== false,
-                confettiParticles: config.confettiParticles || 150,
-                confettiSpread: config.confettiSpread || 80,
-                confettiColors: config.confettiColors || '#eab308,#ffffff,#3b82f6,#22c55e',
-                confettiShapeType: config.confettiShapeType || 'default',
-                confettiEmojis: config.confettiEmojis || ''
-            };
+    const bgType =
+      config.bgType ||
+      (config.bgImage ? 'image' : config.bgGradStart ? 'gradient' : 'color');
+    const bgImg = getUrl(config.bgImage);
+    const bgColor = config.bgColor || '#1a1a1a';
 
-            return generateSpinWheelHtml(templateConfig);
-        }
+    let bgGradient =
+      config.bgGradient || 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)';
+    if (config.bgGradStart && config.bgGradEnd) {
+      if (config.bgGradDir === 'radial') {
+        bgGradient = `radial-gradient(circle at center, ${config.bgGradStart}, ${config.bgGradEnd})`;
+      } else {
+        const dir = config.bgGradDir || '135deg';
+        bgGradient = `linear-gradient(${dir}, ${config.bgGradStart} 0%, ${config.bgGradEnd} 100%)`;
+      }
+    }
 
-        // ========== ORIGINAL TEMPLATE V1 ==========
-        const prizeList = config.prizeList || [
-            { icon: '💰', label: '10 Points', weight: 40, color: '#3b82f6' },
-            { icon: '🎁', label: 'Surprise', weight: 10, color: '#8b5cf6' },
-            { icon: '🤡', label: 'Try Again', weight: 25, color: '#64748b' },
-            { icon: '💎', label: 'Jackpot', weight: 5, color: '#eab308' },
-            { icon: '🎟️', label: 'Ticket', weight: 20, color: '#10b981' }
-        ];
+    const bgFit = config.bgFit || 'cover';
+    const bgBlur = (config.bgBlur || 0) + 'px';
+    const bgOpacity =
+      (config.bgOpacity !== undefined ? config.bgOpacity : 100) / 100;
 
-        const themeColor = config.themeColor || '#3b82f6';
-        const secondaryColor = config.secondaryColor || '#f1f5f9';
+    const logoWidth = config.logoWidth || 80;
+    const logoTopMargin =
+      config.logoTopMargin !== undefined ? config.logoTopMargin : 10;
+    const logoOpacity =
+      (config.logoOpacity !== undefined ? config.logoOpacity : 100) / 100;
+    const logoShadow = config.logoDropShadow
+      ? 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))'
+      : 'none';
 
-        let rawDuration = Number(config.spinDuration) || 4000;
-        if (rawDuration < 100) rawDuration *= 1000;
-        const spinDuration = rawDuration;
+    const centerSize = config.centerSize || 60;
+    const centerBorder =
+      config.centerBorder !== undefined ? config.centerBorder : true;
+    const centerShadow =
+      config.centerShadow !== undefined ? config.centerShadow : true;
+    const centerType = config.centerType || 'emoji';
+    const centerEmoji = config.centerEmoji || '🎯';
 
-        const spinTurns = Number(config.spinTurns) || 12;
-        const costPerSpin = config.costPerSpin || 0;
+    const pointerSize = config.pointerSize || 50;
+    const pointerTop =
+      config.pointerTop !== undefined ? config.pointerTop : -35;
+    const pointerShadow =
+      config.pointerShadow !== undefined ? config.pointerShadow : true;
 
-        const getUrl = (val: string) => {
-            if (!val) return '';
-            if (val.startsWith('http') || val.startsWith('/')) return val;
-            return `/api/uploads/${val}`;
-        };
+    const pointerDir = config.pointerDirection || 'top';
+    const dirMap: Record<string, number> = {
+      top: 0,
+      'top-right': 45,
+      right: 90,
+      'bottom-right': 135,
+      bottom: 180,
+      'bottom-left': 225,
+      left: 270,
+      'top-left': 315,
+    };
+    const pointerRot = dirMap[pointerDir] || 0;
 
-        const bgType = config.bgType || (config.bgImage ? 'image' : config.bgGradStart ? 'gradient' : 'color');
-        const bgImg = getUrl(config.bgImage);
-        const bgColor = config.bgColor || '#1a1a1a';
+    const titleImg = getUrl(config.titleImage);
+    const centerImg = getUrl(config.centerImage);
+    const pointerImg = getUrl(config.pointerImage);
+    const spinBtnImg = getUrl(config.spinBtnImage);
+    const wheelBorderImg = getUrl(config.wheelBorderImage);
+    const tokenBarImg = getUrl(config.tokenBarImage);
+    const tokenBarColor = config.tokenBarColor || '#ca8a04';
+    const tokenBarTextColor = config.tokenBarTextColor || '#ffffff';
+    const tokenBarShadow =
+      config.tokenBarShadow !== undefined ? config.tokenBarShadow : true;
+    const gameFont = getUrl(config.gameFont);
 
-        let bgGradient = config.bgGradient || 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)';
-        if (config.bgGradStart && config.bgGradEnd) {
-            if (config.bgGradDir === 'radial') {
-                bgGradient = `radial-gradient(circle at center, ${config.bgGradStart}, ${config.bgGradEnd})`;
-            } else {
-                const dir = config.bgGradDir || '135deg';
-                bgGradient = `linear-gradient(${dir}, ${config.bgGradStart} 0%, ${config.bgGradEnd} 100%)`;
-            }
-        }
+    const spinBtnText = config.spinBtnText || 'SPIN NOW';
+    const spinBtnSubtext =
+      config.spinBtnSubtext || '1 PLAY = ' + costPerSpin + ' TOKEN';
+    const spinBtnColor = config.spinBtnColor || '#f59e0b';
+    const spinBtnTextColor = config.spinBtnTextColor || '#451a03';
+    const spinBtnShadow =
+      config.spinBtnShadow !== undefined ? config.spinBtnShadow : true;
+    const spinBtnWidth = config.spinBtnWidth || 320;
+    const spinBtnHeight = config.spinBtnHeight || 70;
 
-        const bgFit = config.bgFit || 'cover';
-        const bgBlur = (config.bgBlur || 0) + 'px';
-        const bgOpacity = (config.bgOpacity !== undefined ? config.bgOpacity : 100) / 100;
+    // Ensure defaults if not set in config
+    const bgGradStart = config.bgGradStart || '#1e1b4b';
 
-        const logoWidth = config.logoWidth || 80;
-        const logoTopMargin = config.logoTopMargin !== undefined ? config.logoTopMargin : 10;
-        const logoOpacity = (config.logoOpacity !== undefined ? config.logoOpacity : 100) / 100;
-        const logoShadow = config.logoDropShadow ? 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' : 'none';
-
-        const centerSize = config.centerSize || 60;
-        const centerBorder = config.centerBorder !== undefined ? config.centerBorder : true;
-        const centerShadow = config.centerShadow !== undefined ? config.centerShadow : true;
-        const centerType = config.centerType || 'emoji';
-        const centerEmoji = config.centerEmoji || '🎯';
-
-        const pointerSize = config.pointerSize || 50;
-        const pointerTop = config.pointerTop !== undefined ? config.pointerTop : -35;
-        const pointerShadow = config.pointerShadow !== undefined ? config.pointerShadow : true;
-
-        const pointerDir = config.pointerDirection || 'top';
-        const dirMap: Record<string, number> = { 'top': 0, 'top-right': 45, 'right': 90, 'bottom-right': 135, 'bottom': 180, 'bottom-left': 225, 'left': 270, 'top-left': 315 };
-        const pointerRot = dirMap[pointerDir] || 0;
-
-        const titleImg = getUrl(config.titleImage);
-        const centerImg = getUrl(config.centerImage);
-        const pointerImg = getUrl(config.pointerImage);
-        const spinBtnImg = getUrl(config.spinBtnImage);
-        const wheelBorderImg = getUrl(config.wheelBorderImage);
-        const tokenBarImg = getUrl(config.tokenBarImage);
-        const tokenBarColor = config.tokenBarColor || '#ca8a04';
-        const tokenBarTextColor = config.tokenBarTextColor || '#ffffff';
-        const tokenBarShadow = config.tokenBarShadow !== undefined ? config.tokenBarShadow : true;
-        const gameFont = getUrl(config.gameFont);
-
-        const spinBtnText = config.spinBtnText || 'SPIN NOW';
-        const spinBtnSubtext = config.spinBtnSubtext || '1 PLAY = ' + costPerSpin + ' TOKEN';
-        const spinBtnColor = config.spinBtnColor || '#f59e0b';
-        const spinBtnTextColor = config.spinBtnTextColor || '#451a03';
-        const spinBtnShadow = config.spinBtnShadow !== undefined ? config.spinBtnShadow : true;
-        const spinBtnWidth = config.spinBtnWidth || 320;
-        const spinBtnHeight = config.spinBtnHeight || 70;
-
-        // Ensure defaults if not set in config
-        const bgGradStart = config.bgGradStart || '#1e1b4b';
-
-        const fontCss = gameFont ? `
+    const fontCss = gameFont
+      ? `
             @font-face {
                 font-family: 'CustomGameFont';
                 src: url('${gameFont}');
@@ -340,9 +442,10 @@ export class GameInstancesController {
             :root, body, button, input, .token-bar, .default-title, .prize-text {
                 font-family: 'CustomGameFont', 'Orbitron', 'Inter', sans-serif !important;
             }
-        ` : '';
+        `
+      : '';
 
-        return `
+    return `
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -396,7 +499,7 @@ export class GameInstancesController {
                     filter: ${logoShadow};
                 }
                 .default-title {
-                    font-family: ${gameFont ? "'CustomGameFont', " : ""}'Orbitron', sans-serif;
+                    font-family: ${gameFont ? "'CustomGameFont', " : ''}'Orbitron', sans-serif;
                     font-size: 2.5rem; font-weight: 950;
                     background: var(--metallic-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
                     filter: drop-shadow(0 0 15px rgba(234, 179, 8, 0.6)); line-height: 1;
@@ -545,9 +648,13 @@ export class GameInstancesController {
 
                 <div class="hud-bottom">
                     <button class="spin-btn" id="spin-btn" onclick="spin()">
-                        ${!spinBtnImg ? `
+                        ${
+                          !spinBtnImg
+                            ? `
                         <div class="spin-label">${spinBtnText}</div>
-                        <div class="spin-sub">${spinBtnSubtext}</div>` : ''}
+                        <div class="spin-sub">${spinBtnSubtext}</div>`
+                            : ''
+                        }
                     </button>
                     <div id="status-msg">READY TO WIN?</div>
                 </div>
@@ -941,223 +1048,266 @@ export class GameInstancesController {
         </body>
         </html>
         `;
+  }
+
+  @Get('public/:companySlug')
+  async findAllPublic(@Param('companySlug') companySlug: string) {
+    return this.instancesService.findAllByCompanySlug(companySlug);
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermission('games:manage')
+  create(@Request() req: any, @Body() body: any) {
+    // Super Admin can specify companyId, otherwise use current company
+    // Fallback to default company if currentCompanyId is not set
+    const companyId =
+      req.user.isSuperAdmin && body.companyId
+        ? body.companyId
+        : req.user.currentCompanyId || 'f6605a10-7b87-415f-bce9-2fa55e495c87';
+
+    return this.instancesService.create({
+      ...body,
+      companyId,
+    });
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermission('games:manage')
+  findAll(@Request() req: any, @Query('companyId') companyId?: string) {
+    if (req.user.isSuperAdmin) {
+      if (companyId) {
+        return this.instancesService.findAllByCompany(companyId);
+      }
+      return this.instancesService.findAll();
     }
+    return this.instancesService.findAllByCompany(req.user.currentCompanyId);
+  }
 
-    @Get('public/:companySlug')
-    async findAllPublic(@Param('companySlug') companySlug: string) {
-        return this.instancesService.findAllByCompanySlug(companySlug);
-    }
+  @Post('upload')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (req: any, file, cb) => {
+          const companyId = req.user?.currentCompanyId || 'default';
+          const instanceId = req.body.instanceId || 'common';
+          const category = req.body.category || 'misc';
 
-    @Post()
-    @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @RequirePermission('games:manage')
-    create(@Request() req: any, @Body() body: any) {
-        // Super Admin can specify companyId, otherwise use current company
-        // Fallback to default company if currentCompanyId is not set
-        const companyId = req.user.isSuperAdmin && body.companyId
-            ? body.companyId
-            : (req.user.currentCompanyId || 'f6605a10-7b87-415f-bce9-2fa55e495c87');
+          // Common themes are global, so they don't use companyId partitioning
+          const uploadPath = instanceId.startsWith('common-themes')
+            ? `./uploads/${instanceId}/${category}`
+            : `./uploads/${companyId}/${instanceId}/${category}`;
 
-        return this.instancesService.create({
-            ...body,
-            companyId,
-        });
-    }
-
-    @Get()
-    @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @RequirePermission('games:manage')
-    findAll(@Request() req: any, @Query('companyId') companyId?: string) {
-        if (req.user.isSuperAdmin) {
-            if (companyId) {
-                return this.instancesService.findAllByCompany(companyId);
-            }
-            return this.instancesService.findAll();
-        }
-        return this.instancesService.findAllByCompany(req.user.currentCompanyId);
-    }
-
-    @Post('upload')
-    @UseGuards(JwtAuthGuard)
-    @UseInterceptors(FileInterceptor('file', {
-        storage: diskStorage({
-            destination: (req: any, file, cb) => {
-                const companyId = req.user?.currentCompanyId || 'default';
-                const instanceId = req.body.instanceId || 'common';
-                const category = req.body.category || 'misc';
-
-                // Common themes are global, so they don't use companyId partitioning
-                const uploadPath = instanceId.startsWith('common-themes')
-                    ? `./uploads/${instanceId}/${category}`
-                    : `./uploads/${companyId}/${instanceId}/${category}`;
-
-                const fs = require('fs');
-                if (!fs.existsSync(uploadPath)) {
-                    fs.mkdirSync(uploadPath, { recursive: true });
-                }
-                cb(null, uploadPath);
-            },
-            filename: (req: any, file, cb) => {
-                if (req.body.customName) {
-                    // Sanitize customName to prevent filesystem issues
-                    // Replace spaces, slashes, and other problematic characters
-                    const sanitizedName = req.body.customName
-                        .replace(/\\/g, '-')           // Replace backslash with hyphen
-                        .replace(/\//g, '-')            // Replace forward slash with hyphen
-                        .replace(/\s+/g, '_')           // Replace spaces with underscore
-                        .replace(/[^a-zA-Z0-9._-]/g, '_'); // Replace other special chars with underscore
-
-                    const ext = extname(file.originalname);
-                    return cb(null, `${sanitizedName}${ext}`);
-                }
-                const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('');
-                return cb(null, `${randomName}${extname(file.originalname)}`);
-            }
-        }),
-        fileFilter: (req: any, file, cb) => {
-            // Strict Font Validation
-            if (req.body.category === 'fonts') {
-                if (!file.originalname.match(/\.(ttf|otf|woff|woff2)$/i)) {
-                    return cb(new BadRequestException('Only font files (ttf, otf, woff, woff2) are allowed!'), false);
-                }
-                return cb(null, true);
-            }
-
-            // Audio File Validation - Limit to 4MB for audio files
-            const isAudioFile = file.originalname.match(/\.(mp3|wav|ogg|m4a|aac)$/i);
-            if (isAudioFile) {
-                // Audio files have stricter size limits (checked in uploadFile method)
-                return cb(null, true);
-            }
-
-            // General Asset Validation (images, video, fonts)
-            if (!file.originalname.match(/\.(jpg|jpeg|png|gif|svg|webp|mp4|webm|ttf|otf|woff|woff2|mp3|wav|ogg|m4a|aac)$/i)) {
-                return cb(new BadRequestException('Unsupported file type!'), false);
-            }
-            cb(null, true);
+          const fs = require('fs');
+          if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+          }
+          cb(null, uploadPath);
         },
-        limits: {
-            fileSize: 10 * 1024 * 1024 // Max 10MB for general files
+        filename: (req: any, file, cb) => {
+          if (req.body.customName) {
+            // Sanitize customName to prevent filesystem issues
+            // Replace spaces, slashes, and other problematic characters
+            const sanitizedName = req.body.customName
+              .replace(/\\/g, '-') // Replace backslash with hyphen
+              .replace(/\//g, '-') // Replace forward slash with hyphen
+              .replace(/\s+/g, '_') // Replace spaces with underscore
+              .replace(/[^a-zA-Z0-9._-]/g, '_'); // Replace other special chars with underscore
+
+            const ext = extname(file.originalname);
+            return cb(null, `${sanitizedName}${ext}`);
+          }
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return cb(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+      fileFilter: (req: any, file, cb) => {
+        // Strict Font Validation
+        if (req.body.category === 'fonts') {
+          if (!file.originalname.match(/\.(ttf|otf|woff|woff2)$/i)) {
+            return cb(
+              new BadRequestException(
+                'Only font files (ttf, otf, woff, woff2) are allowed!',
+              ),
+              false,
+            );
+          }
+          return cb(null, true);
         }
-    }))
-    async uploadFile(@UploadedFile() file: any, @Request() req: any) {
-        const companyId = req.user?.currentCompanyId || 'default';
-        const instanceId = req.body.instanceId || 'common';
-        const category = req.body.category || 'misc';
 
-        const urlPrefix = instanceId.startsWith('common-themes')
-            ? `/api/uploads/${instanceId}/${category}`
-            : `/api/uploads/${companyId}/${instanceId}/${category}`;
-
-        // Audio file size validation - max 4MB
-        const isAudioFile = file.originalname.match(/\.(mp3|wav|ogg|m4a|aac)$/i);
-        if (isAudioFile && file.size > 4 * 1024 * 1024) {
-            // Delete the uploaded file since it exceeds the limit
-            const fs = require('fs');
-            fs.unlinkSync(file.path);
-            throw new BadRequestException('Audio files must be under 4MB! Consider compressing your audio file.');
+        // Audio File Validation - Limit to 4MB for audio files
+        const isAudioFile = file.originalname.match(
+          /\.(mp3|wav|ogg|m4a|aac)$/i,
+        );
+        if (isAudioFile) {
+          // Audio files have stricter size limits (checked in uploadFile method)
+          return cb(null, true);
         }
 
-        return {
-            url: `${urlPrefix}/${file.filename}`
-        };
+        // General Asset Validation (images, video, fonts)
+        if (
+          !file.originalname.match(
+            /\.(jpg|jpeg|png|gif|svg|webp|mp4|webm|ttf|otf|woff|woff2|mp3|wav|ogg|m4a|aac)$/i,
+          )
+        ) {
+          return cb(new BadRequestException('Unsupported file type!'), false);
+        }
+        cb(null, true);
+      },
+      limits: {
+        fileSize: 10 * 1024 * 1024, // Max 10MB for general files
+      },
+    }),
+  )
+  async uploadFile(@UploadedFile() file: any, @Request() req: any) {
+    const companyId = req.user?.currentCompanyId || 'default';
+    const instanceId = req.body.instanceId || 'common';
+    const category = req.body.category || 'misc';
+
+    const urlPrefix = instanceId.startsWith('common-themes')
+      ? `/api/uploads/${instanceId}/${category}`
+      : `/api/uploads/${companyId}/${instanceId}/${category}`;
+
+    // Audio file size validation - max 4MB
+    const isAudioFile = file.originalname.match(/\.(mp3|wav|ogg|m4a|aac)$/i);
+    if (isAudioFile && file.size > 4 * 1024 * 1024) {
+      // Delete the uploaded file since it exceeds the limit
+      const fs = require('fs');
+      fs.unlinkSync(file.path);
+      throw new BadRequestException(
+        'Audio files must be under 4MB! Consider compressing your audio file.',
+      );
     }
 
-    @Delete('upload')
-    @UseGuards(JwtAuthGuard)
-    async deleteUploadedFile(@Request() req: any, @Body() body: { url: string }) {
-        const fileUrl: string = body?.url;
-        if (!fileUrl) {
-            throw new BadRequestException('No file URL provided');
-        }
+    return {
+      url: `${urlPrefix}/${file.filename}`,
+    };
+  }
 
-        // Strip the /api/uploads/ prefix to get the relative path
-        const prefix = '/api/uploads/';
-        if (!fileUrl.startsWith(prefix)) {
-            throw new BadRequestException('Invalid file URL');
-        }
-
-        // Remove query string (e.g. ?t=123456)
-        const relativePath = fileUrl.split('?')[0].slice(prefix.length);
-
-        // Security: prevent path traversal
-        const fs = require('fs');
-        const path = require('path');
-        const uploadsRoot = path.resolve('./uploads');
-        const filePath = path.resolve(uploadsRoot, relativePath);
-
-        if (!filePath.startsWith(uploadsRoot)) {
-            throw new BadRequestException('Invalid file path');
-        }
-
-        if (!fs.existsSync(filePath)) {
-            // File already gone — treat as success
-            return { success: true, message: 'File not found (already deleted)' };
-        }
-
-        fs.unlinkSync(filePath);
-        return { success: true, message: 'File deleted' };
+  @Delete('upload')
+  @UseGuards(JwtAuthGuard)
+  async deleteUploadedFile(@Request() req: any, @Body() body: { url: string }) {
+    const fileUrl: string = body?.url;
+    if (!fileUrl) {
+      throw new BadRequestException('No file URL provided');
     }
 
-    @Post('validate-slug')
-    @UseGuards(JwtAuthGuard)
-    async validateSlug(@Request() req: any, @Body() body: { slug: string; excludeId?: string }) {
-        const companyId = req.user.currentCompanyId || 'f6605a10-7b87-415f-bce9-2fa55e495c87';
-        return this.instancesService.validateSlug(body.slug, companyId, body.excludeId);
+    // Strip the /api/uploads/ prefix to get the relative path
+    const prefix = '/api/uploads/';
+    if (!fileUrl.startsWith(prefix)) {
+      throw new BadRequestException('Invalid file URL');
     }
 
-    @Get('c/:companySlug/:gameSlug')
-    async findByCompanyAndGameSlug(
-        @Param('companySlug') companySlug: string,
-        @Param('gameSlug') gameSlug: string
-    ) {
-        return this.instancesService.findByCompanyAndSlug(companySlug, gameSlug);
+    // Remove query string (e.g. ?t=123456)
+    const relativePath = fileUrl.split('?')[0].slice(prefix.length);
+
+    // Security: prevent path traversal
+    const fs = require('fs');
+    const path = require('path');
+    const uploadsRoot = path.resolve('./uploads');
+    const filePath = path.resolve(uploadsRoot, relativePath);
+
+    if (!filePath.startsWith(uploadsRoot)) {
+      throw new BadRequestException('Invalid file path');
     }
 
-    @Get(':slug')
-    async findBySlug(@Param('slug') slug: string) {
-        return this.instancesService.findBySlug(slug);
+    if (!fs.existsSync(filePath)) {
+      // File already gone — treat as success
+      return { success: true, message: 'File not found (already deleted)' };
     }
 
-    @Patch(':id')
-    @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @RequirePermission('games:manage')
-    async update(@Request() req: any, @Param('id') id: string, @Body() body: any) {
-        const instance = await this.instancesService.findAllByCompany(req.user.currentCompanyId);
-        const target = instance.find(i => i.id === id);
+    fs.unlinkSync(filePath);
+    return { success: true, message: 'File deleted' };
+  }
 
-        if (!req.user.isSuperAdmin && !target) {
-            throw new ForbiddenException('You do not have permission to modify this instance');
-        }
+  @Post('validate-slug')
+  @UseGuards(JwtAuthGuard)
+  async validateSlug(
+    @Request() req: any,
+    @Body() body: { slug: string; excludeId?: string },
+  ) {
+    const companyId =
+      req.user.currentCompanyId || 'f6605a10-7b87-415f-bce9-2fa55e495c87';
+    return this.instancesService.validateSlug(
+      body.slug,
+      companyId,
+      body.excludeId,
+    );
+  }
 
-        return this.instancesService.update(id, body);
+  @Get('c/:companySlug/:gameSlug')
+  async findByCompanyAndGameSlug(
+    @Param('companySlug') companySlug: string,
+    @Param('gameSlug') gameSlug: string,
+  ) {
+    return this.instancesService.findByCompanyAndSlug(companySlug, gameSlug);
+  }
+
+  @Get(':slug')
+  async findBySlug(@Param('slug') slug: string) {
+    return this.instancesService.findBySlug(slug);
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermission('games:manage')
+  async update(
+    @Request() req: any,
+    @Param('id') id: string,
+    @Body() body: any,
+  ) {
+    const instance = await this.instancesService.findAllByCompany(
+      req.user.currentCompanyId,
+    );
+    const target = instance.find((i) => i.id === id);
+
+    if (!req.user.isSuperAdmin && !target) {
+      throw new ForbiddenException(
+        'You do not have permission to modify this instance',
+      );
     }
 
-    @Delete(':id')
-    @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @RequirePermission('games:manage')
-    async remove(@Request() req: any, @Param('id') id: string) {
-        const instance = await this.instancesService.findAllByCompany(req.user.currentCompanyId);
-        const target = instance.find(i => i.id === id);
+    return this.instancesService.update(id, body);
+  }
 
-        if (!req.user.isSuperAdmin && !target) {
-            throw new ForbiddenException('You do not have permission to delete this instance');
-        }
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermission('games:manage')
+  async remove(@Request() req: any, @Param('id') id: string) {
+    const instance = await this.instancesService.findAllByCompany(
+      req.user.currentCompanyId,
+    );
+    const target = instance.find((i) => i.id === id);
 
-        return this.instancesService.remove(id);
+    if (!req.user.isSuperAdmin && !target) {
+      throw new ForbiddenException(
+        'You do not have permission to delete this instance',
+      );
     }
 
-    @Get(':id/usage-check')
-    @UseGuards(JwtAuthGuard, PermissionsGuard)
-    @RequirePermission('games:manage')
-    async checkUsage(@Request() req: any, @Param('id') id: string) {
-        const instance = await this.instancesService.findAllByCompany(req.user.currentCompanyId);
-        const target = instance.find(i => i.id === id);
+    return this.instancesService.remove(id);
+  }
 
-        if (!req.user.isSuperAdmin && !target) {
-            throw new ForbiddenException('You do not have permission to access this instance');
-        }
+  @Get(':id/usage-check')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermission('games:manage')
+  async checkUsage(@Request() req: any, @Param('id') id: string) {
+    const instance = await this.instancesService.findAllByCompany(
+      req.user.currentCompanyId,
+    );
+    const target = instance.find((i) => i.id === id);
 
-        return this.instancesService.checkUsage(id);
+    if (!req.user.isSuperAdmin && !target) {
+      throw new ForbiddenException(
+        'You do not have permission to access this instance',
+      );
     }
+
+    return this.instancesService.checkUsage(id);
+  }
 }

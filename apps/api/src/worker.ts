@@ -3,18 +3,18 @@ import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
-    const logger = new Logger('Worker');
+  const logger = new Logger('Worker');
 
-    // Create application context (no HTTP server)
-    const app = await NestFactory.createApplicationContext(AppModule);
+  // Create application context (no HTTP server)
+  const app = await NestFactory.createApplicationContext(AppModule);
 
-    // Enable shutdown hooks
-    app.enableShutdownHooks();
+  // Enable shutdown hooks
+  app.enableShutdownHooks();
 
-    logger.log('Worker started successfully');
+  logger.log('Worker started successfully');
 
-    // Keep the process alive
-    // In BullMQ with NestJS, the workers start automatically when the module is initialized.
+  // Keep the process alive
+  // In BullMQ with NestJS, the workers start automatically when the module is initialized.
 }
 
 bootstrap();

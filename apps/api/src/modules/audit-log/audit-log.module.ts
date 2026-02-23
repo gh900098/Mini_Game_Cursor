@@ -14,30 +14,30 @@ import { RolesModule } from '../roles/roles.module';
 import { PermissionsModule } from '../permissions/permissions.module';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([AuditLog]),
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            useFactory: async (configService: ConfigService) => ({
-                secret: configService.get<string>('JWT_SECRET') || 'secret',
-                signOptions: { expiresIn: '60m' },
-            }),
-            inject: [ConfigService],
-        }),
-        SystemSettingsModule,
-        CompaniesModule,
-        UsersModule,
-        RolesModule,
-        PermissionsModule,
-    ],
-    controllers: [AuditLogController],
-    providers: [
-        AuditLogService,
-        {
-            provide: APP_INTERCEPTOR,
-            useClass: AuditInterceptor,
-        },
-    ],
-    exports: [AuditLogService],
+  imports: [
+    TypeOrmModule.forFeature([AuditLog]),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET') || 'secret',
+        signOptions: { expiresIn: '60m' },
+      }),
+      inject: [ConfigService],
+    }),
+    SystemSettingsModule,
+    CompaniesModule,
+    UsersModule,
+    RolesModule,
+    PermissionsModule,
+  ],
+  controllers: [AuditLogController],
+  providers: [
+    AuditLogService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditInterceptor,
+    },
+  ],
+  exports: [AuditLogService],
 })
-export class AuditLogModule { }
+export class AuditLogModule {}

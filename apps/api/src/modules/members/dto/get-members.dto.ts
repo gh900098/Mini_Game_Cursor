@@ -2,27 +2,27 @@ import { IsOptional, IsString, IsInt, IsUUID, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class GetMembersDto {
-    @IsOptional()
-    @IsInt()
-    @Min(1)
-    @Type(() => Number)
-    page?: number = 1;
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Type(() => Number)
+  page?: number = 1;
 
-    @IsOptional()
-    @IsInt()
-    @Min(1)
-    @Type(() => Number)
-    limit?: number = 10;
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Type(() => Number)
+  limit?: number = 10;
 
-    @IsOptional()
-    @IsString()
-    companyId?: string;
+  @IsOptional()
+  @IsString()
+  companyId?: string;
 
-    @IsOptional()
-    @IsString()
-    username?: string;
+  @IsOptional()
+  @IsString()
+  username?: string;
 
-    @IsOptional()
-    @IsString()
-    externalId?: string;
+  @IsOptional()
+  @IsString()
+  externalId?: string;
 }

@@ -16,11 +16,21 @@ import { PrizesModule } from '../prizes/prizes.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Role, Permission, Company, User, UserCompany, Game, GameInstance, Score, Theme]),
+    TypeOrmModule.forFeature([
+      Role,
+      Permission,
+      Company,
+      User,
+      UserCompany,
+      Game,
+      GameInstance,
+      Score,
+      Theme,
+    ]),
     PrizesModule,
   ],
   controllers: [SeedController],
   providers: [SeedService],
   exports: [SeedService],
 })
-export class SeedModule { }
+export class SeedModule {}

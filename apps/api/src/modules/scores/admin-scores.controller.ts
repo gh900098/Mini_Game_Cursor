@@ -1,4 +1,11 @@
-import { Controller, Get, Query, UseGuards, Request, ForbiddenException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  UseGuards,
+  Request,
+  ForbiddenException,
+} from '@nestjs/common';
 import { ScoresService } from './scores.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -15,182 +22,234 @@ import { BudgetLedger } from './entities/budget-ledger.entity';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(RoleLevel.STAFF)
 export class AdminScoresController {
-    constructor(
-        private readonly scoresService: ScoresService,
-        @InjectRepository(Score)
-        private scoresRepo: Repository<Score>,
-        @InjectRepository(PlayAttempt)
-        private playAttemptsRepo: Repository<PlayAttempt>,
-        @InjectRepository(BudgetTracking)
-        private budgetTrackingRepo: Repository<BudgetTracking>,
-        @InjectRepository(BudgetLedger)
-        private budgetLedgerRepo: Repository<BudgetLedger>,
-    ) { }
+  constructor(
+    private readonly scoresService: ScoresService,
+    @InjectRepository(Score)
+    private scoresRepo: Repository<Score>,
+    @InjectRepository(PlayAttempt)
+    private playAttemptsRepo: Repository<PlayAttempt>,
+    @InjectRepository(BudgetTracking)
+    private budgetTrackingRepo: Repository<BudgetTracking>,
+    @InjectRepository(BudgetLedger)
+    private budgetLedgerRepo: Repository<BudgetLedger>,
+  ) {}
 
-    @Get('all')
-    async getAllScores(@Request() req: any, @Query() queryDto: { companyId?: string; page?: number; limit?: number }) {
-        const { page = 1, limit = 10, companyId: requestedCompanyId } = queryDto;
-        const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
+  @Get('all')
+  async getAllScores(
+    @Request() req: any,
+    @Query() queryDto: { companyId?: string; page?: number; limit?: number },
+  ) {
+    const { page = 1, limit = 10, companyId: requestedCompanyId } = queryDto;
+    const companyId = req.user.isSuperAdmin
+      ? requestedCompanyId
+      : req.user.currentCompanyId;
 
-        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
-            throw new ForbiddenException('You do not have access to this company');
-        }
-
-        const query = this.scoresRepo
-            .createQueryBuilder('score')
-            .leftJoinAndSelect('score.member', 'member')
-            .leftJoinAndSelect('score.instance', 'instance')
-            .leftJoinAndSelect('instance.company', 'company')
-            .orderBy('score.createdAt', 'DESC')
-            .skip((Number(page) - 1) * Number(limit))
-            .take(Number(limit));
-
-        if (companyId) {
-            query.where('company.id = :companyId', { companyId });
-        }
-
-        const [items, total] = await query.getManyAndCount();
-
-        // ALWAYS mask sensitive data in list views
-        const maskedItems = items.map(s => {
-            if (s.member) {
-                s.member.email = maskEmail(s.member.email);
-                s.member.phoneNumber = maskPhone(s.member.phoneNumber);
-            }
-            return s;
-        });
-
-        return {
-            items: maskedItems,
-            total,
-            page: Number(page),
-            limit: Number(limit)
-        };
+    if (
+      requestedCompanyId &&
+      !req.user.isSuperAdmin &&
+      requestedCompanyId !== req.user.currentCompanyId
+    ) {
+      throw new ForbiddenException('You do not have access to this company');
     }
 
-    @Get('play-attempts')
-    async getPlayAttempts(@Request() req: any, @Query() queryDto: { companyId?: string; page?: number; limit?: number }) {
-        const { page = 1, limit = 10, companyId: requestedCompanyId } = queryDto;
-        const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
+    const query = this.scoresRepo
+      .createQueryBuilder('score')
+      .leftJoinAndSelect('score.member', 'member')
+      .leftJoinAndSelect('score.instance', 'instance')
+      .leftJoinAndSelect('instance.company', 'company')
+      .orderBy('score.createdAt', 'DESC')
+      .skip((Number(page) - 1) * Number(limit))
+      .take(Number(limit));
 
-        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
-            throw new ForbiddenException('You do not have access to this company');
-        }
-
-        const query = this.playAttemptsRepo
-            .createQueryBuilder('attempt')
-            .leftJoinAndSelect('attempt.member', 'member')
-            .leftJoinAndSelect('attempt.instance', 'instance')
-            .leftJoinAndSelect('instance.company', 'company')
-            .orderBy('attempt.attemptedAt', 'DESC')
-            .skip((Number(page) - 1) * Number(limit))
-            .take(Number(limit));
-
-        if (companyId) {
-            query.where('company.id = :companyId', { companyId });
-        }
-
-        const [items, total] = await query.getManyAndCount();
-
-        // ALWAYS mask sensitive data in list views
-        const maskedItems = items.map(a => {
-            if (a.member) {
-                a.member.email = maskEmail(a.member.email);
-                a.member.phoneNumber = maskPhone(a.member.phoneNumber);
-            }
-            return a;
-        });
-
-        return {
-            items: maskedItems,
-            total,
-            page: Number(page),
-            limit: Number(limit)
-        };
+    if (companyId) {
+      query.where('company.id = :companyId', { companyId });
     }
 
-    @Get('budget-tracking')
-    async getBudgetTracking(@Request() req: any, @Query('companyId') requestedCompanyId?: string) {
-        const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
+    const [items, total] = await query.getManyAndCount();
 
-        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
-            throw new ForbiddenException('You do not have access to this company');
-        }
+    // ALWAYS mask sensitive data in list views
+    const maskedItems = items.map((s) => {
+      if (s.member) {
+        s.member.email = maskEmail(s.member.email);
+        s.member.phoneNumber = maskPhone(s.member.phoneNumber);
+      }
+      return s;
+    });
 
-        const query = this.budgetTrackingRepo
-            .createQueryBuilder('budget')
-            .leftJoinAndSelect('budget.instance', 'instance')
-            .leftJoinAndSelect('instance.company', 'company')
-            .orderBy('budget.trackingDate', 'DESC')
-            .take(100);
+    return {
+      items: maskedItems,
+      total,
+      page: Number(page),
+      limit: Number(limit),
+    };
+  }
 
-        if (companyId) {
-            query.where('company.id = :companyId', { companyId });
-        }
+  @Get('play-attempts')
+  async getPlayAttempts(
+    @Request() req: any,
+    @Query() queryDto: { companyId?: string; page?: number; limit?: number },
+  ) {
+    const { page = 1, limit = 10, companyId: requestedCompanyId } = queryDto;
+    const companyId = req.user.isSuperAdmin
+      ? requestedCompanyId
+      : req.user.currentCompanyId;
 
-        return query.getMany();
+    if (
+      requestedCompanyId &&
+      !req.user.isSuperAdmin &&
+      requestedCompanyId !== req.user.currentCompanyId
+    ) {
+      throw new ForbiddenException('You do not have access to this company');
     }
 
-    @Get('budget-ledger')
-    async getBudgetLedger(@Request() req: any, @Query('companyId') requestedCompanyId?: string) {
-        const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
+    const query = this.playAttemptsRepo
+      .createQueryBuilder('attempt')
+      .leftJoinAndSelect('attempt.member', 'member')
+      .leftJoinAndSelect('attempt.instance', 'instance')
+      .leftJoinAndSelect('instance.company', 'company')
+      .orderBy('attempt.attemptedAt', 'DESC')
+      .skip((Number(page) - 1) * Number(limit))
+      .take(Number(limit));
 
-        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
-            throw new ForbiddenException('You do not have access to this company');
-        }
-
-        const query = this.budgetLedgerRepo
-            .createQueryBuilder('ledger')
-            .leftJoinAndSelect('ledger.budget', 'budget')
-            .leftJoinAndSelect('budget.instance', 'instance')
-            .leftJoinAndSelect('instance.company', 'company')
-            .orderBy('ledger.createdAt', 'DESC')
-            .take(500);
-
-        if (companyId) {
-            query.where('company.id = :companyId', { companyId });
-        }
-
-        return query.getMany();
+    if (companyId) {
+      query.where('company.id = :companyId', { companyId });
     }
 
-    @Get('stats')
-    async getStats(@Request() req: any, @Query('companyId') requestedCompanyId?: string) {
-        const companyId = req.user.isSuperAdmin ? requestedCompanyId : req.user.currentCompanyId;
+    const [items, total] = await query.getManyAndCount();
 
-        if (requestedCompanyId && !req.user.isSuperAdmin && requestedCompanyId !== req.user.currentCompanyId) {
-            throw new ForbiddenException('You do not have access to this company');
-        }
+    // ALWAYS mask sensitive data in list views
+    const maskedItems = items.map((a) => {
+      if (a.member) {
+        a.member.email = maskEmail(a.member.email);
+        a.member.phoneNumber = maskPhone(a.member.phoneNumber);
+      }
+      return a;
+    });
 
-        // Get overall statistics
-        const scoresQuery = this.scoresRepo.createQueryBuilder('score');
-        const attemptsQuery = this.playAttemptsRepo.createQueryBuilder('attempt');
+    return {
+      items: maskedItems,
+      total,
+      page: Number(page),
+      limit: Number(limit),
+    };
+  }
 
-        if (companyId) {
-            scoresQuery
-                .leftJoin('score.instance', 'instance')
-                .leftJoin('instance.company', 'company')
-                .where('company.id = :companyId', { companyId });
+  @Get('budget-tracking')
+  async getBudgetTracking(
+    @Request() req: any,
+    @Query('companyId') requestedCompanyId?: string,
+  ) {
+    const companyId = req.user.isSuperAdmin
+      ? requestedCompanyId
+      : req.user.currentCompanyId;
 
-            attemptsQuery
-                .leftJoin('attempt.instance', 'instance')
-                .leftJoin('instance.company', 'company')
-                .where('company.id = :companyId', { companyId });
-        }
-
-        const totalScores = await scoresQuery.getCount();
-        const totalAwardedPointsRaw = await scoresQuery.select('SUM(score.finalPoints)', 'sum').getRawOne();
-        const totalAwardedPoints = Number(totalAwardedPointsRaw?.sum || 0);
-
-        const totalAttempts = await attemptsQuery.getCount();
-        const successfulAttempts = await attemptsQuery.where('attempt.success = true').getCount();
-
-        return {
-            totalScores,
-            totalAwardedPoints,
-            totalAttempts,
-            successfulAttempts,
-            successRate: totalAttempts > 0 ? Number((successfulAttempts / totalAttempts * 100).toFixed(2)) : 0,
-        };
+    if (
+      requestedCompanyId &&
+      !req.user.isSuperAdmin &&
+      requestedCompanyId !== req.user.currentCompanyId
+    ) {
+      throw new ForbiddenException('You do not have access to this company');
     }
+
+    const query = this.budgetTrackingRepo
+      .createQueryBuilder('budget')
+      .leftJoinAndSelect('budget.instance', 'instance')
+      .leftJoinAndSelect('instance.company', 'company')
+      .orderBy('budget.trackingDate', 'DESC')
+      .take(100);
+
+    if (companyId) {
+      query.where('company.id = :companyId', { companyId });
+    }
+
+    return query.getMany();
+  }
+
+  @Get('budget-ledger')
+  async getBudgetLedger(
+    @Request() req: any,
+    @Query('companyId') requestedCompanyId?: string,
+  ) {
+    const companyId = req.user.isSuperAdmin
+      ? requestedCompanyId
+      : req.user.currentCompanyId;
+
+    if (
+      requestedCompanyId &&
+      !req.user.isSuperAdmin &&
+      requestedCompanyId !== req.user.currentCompanyId
+    ) {
+      throw new ForbiddenException('You do not have access to this company');
+    }
+
+    const query = this.budgetLedgerRepo
+      .createQueryBuilder('ledger')
+      .leftJoinAndSelect('ledger.budget', 'budget')
+      .leftJoinAndSelect('budget.instance', 'instance')
+      .leftJoinAndSelect('instance.company', 'company')
+      .orderBy('ledger.createdAt', 'DESC')
+      .take(500);
+
+    if (companyId) {
+      query.where('company.id = :companyId', { companyId });
+    }
+
+    return query.getMany();
+  }
+
+  @Get('stats')
+  async getStats(
+    @Request() req: any,
+    @Query('companyId') requestedCompanyId?: string,
+  ) {
+    const companyId = req.user.isSuperAdmin
+      ? requestedCompanyId
+      : req.user.currentCompanyId;
+
+    if (
+      requestedCompanyId &&
+      !req.user.isSuperAdmin &&
+      requestedCompanyId !== req.user.currentCompanyId
+    ) {
+      throw new ForbiddenException('You do not have access to this company');
+    }
+
+    // Get overall statistics
+    const scoresQuery = this.scoresRepo.createQueryBuilder('score');
+    const attemptsQuery = this.playAttemptsRepo.createQueryBuilder('attempt');
+
+    if (companyId) {
+      scoresQuery
+        .leftJoin('score.instance', 'instance')
+        .leftJoin('instance.company', 'company')
+        .where('company.id = :companyId', { companyId });
+
+      attemptsQuery
+        .leftJoin('attempt.instance', 'instance')
+        .leftJoin('instance.company', 'company')
+        .where('company.id = :companyId', { companyId });
+    }
+
+    const totalScores = await scoresQuery.getCount();
+    const totalAwardedPointsRaw = await scoresQuery
+      .select('SUM(score.finalPoints)', 'sum')
+      .getRawOne();
+    const totalAwardedPoints = Number(totalAwardedPointsRaw?.sum || 0);
+
+    const totalAttempts = await attemptsQuery.getCount();
+    const successfulAttempts = await attemptsQuery
+      .where('attempt.success = true')
+      .getCount();
+
+    return {
+      totalScores,
+      totalAwardedPoints,
+      totalAttempts,
+      successfulAttempts,
+      successRate:
+        totalAttempts > 0
+          ? Number(((successfulAttempts / totalAttempts) * 100).toFixed(2))
+          : 0,
+    };
+  }
 }

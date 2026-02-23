@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -12,14 +16,17 @@ export class CompaniesService {
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>,
     private readonly eventEmitter: EventEmitter2,
-  ) { }
+  ) {}
 
   async create(createCompanyDto: CreateCompanyDto): Promise<Company> {
     // Enforce slug or generate from name
-    const slug = createCompanyDto.slug || this.generateSlug(createCompanyDto.name);
+    const slug =
+      createCompanyDto.slug || this.generateSlug(createCompanyDto.name);
 
     // Check if slug already exists
-    const existingCompany = await this.companyRepository.findOne({ where: { slug } });
+    const existingCompany = await this.companyRepository.findOne({
+      where: { slug },
+    });
     if (existingCompany) {
       throw new ConflictException('Company with this slug already exists');
     }
@@ -29,20 +36,25 @@ export class CompaniesService {
       slug,
       inactiveAt: createCompanyDto.inactiveAt
         ? new Date(createCompanyDto.inactiveAt)
-        : (createCompanyDto.isActive === false ? new Date() : null)
+        : createCompanyDto.isActive === false
+          ? new Date()
+          : null,
     });
 
     try {
       return await this.companyRepository.save(company);
     } catch (error) {
-      if (error.code === '23505') { // Unique violation
+      if (error.code === '23505') {
+        // Unique violation
         throw new ConflictException('Company with this slug already exists');
       }
       throw error;
     }
   }
 
-  async findAll(query: { page?: number; limit?: number; keyword?: string } = {}): Promise<{ items: Company[]; total: number; page: number; limit: number }> {
+  async findAll(
+    query: { page?: number; limit?: number; keyword?: string } = {},
+  ): Promise<{ items: Company[]; total: number; page: number; limit: number }> {
     const { page = 1, limit = 10, keyword } = query;
     const pageNum = Number(page) || 1;
     const limitNum = Number(limit) || 10;
@@ -81,7 +93,10 @@ export class CompaniesService {
     return await this.companyRepository.findOne({ where: { slug } });
   }
 
-  async update(id: string, updateCompanyDto: UpdateCompanyDto): Promise<Company> {
+  async update(
+    id: string,
+    updateCompanyDto: UpdateCompanyDto,
+  ): Promise<Company> {
     const company = await this.findOne(id);
 
     // If slug is being updated, check for uniqueness
@@ -96,11 +111,16 @@ export class CompaniesService {
 
     // Handle inactiveAt tracking
     if (updateCompanyDto.inactiveAt !== undefined) {
-      company.inactiveAt = updateCompanyDto.inactiveAt ? new Date(updateCompanyDto.inactiveAt) : null;
+      company.inactiveAt = updateCompanyDto.inactiveAt
+        ? new Date(updateCompanyDto.inactiveAt)
+        : null;
     } else if (updateCompanyDto.isActive !== undefined) {
       if (updateCompanyDto.isActive === false && company.isActive === true) {
         company.inactiveAt = new Date();
-      } else if (updateCompanyDto.isActive === true && company.isActive === false) {
+      } else if (
+        updateCompanyDto.isActive === true &&
+        company.isActive === false
+      ) {
         company.inactiveAt = null;
       }
     }

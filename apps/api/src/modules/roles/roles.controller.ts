@@ -1,18 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { PermissionsGuard, RequirePermission } from '../../common/guards/permissions.guard';
+import {
+  PermissionsGuard,
+  RequirePermission,
+} from '../../common/guards/permissions.guard';
 
 @ApiTags('roles')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
 @Controller('roles')
 export class RolesController {
-  constructor(private readonly rolesService: RolesService) { }
+  constructor(private readonly rolesService: RolesService) {}
 
   @Post()
   @RequirePermission('roles:create')
@@ -26,7 +44,10 @@ export class RolesController {
   @Get()
   @RequirePermission('roles:read')
   @ApiOperation({ summary: 'Get all roles' })
-  @ApiResponse({ status: 200, description: 'Returns all roles with permissions' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns all roles with permissions',
+  })
   findAll(@Query() query: { page?: number; limit?: number; keyword?: string }) {
     return this.rolesService.findAll(query);
   }

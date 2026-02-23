@@ -3,7 +3,7 @@ import { SeedService } from './modules/seed/seed.service';
 
 @Injectable()
 export class AppService implements OnModuleInit {
-  constructor(private readonly seedService: SeedService) { }
+  constructor(private readonly seedService: SeedService) {}
 
   async onModuleInit() {
     console.log('--- AUTO SEEDING ON STARTUP ---');
@@ -11,7 +11,10 @@ export class AppService implements OnModuleInit {
       await this.seedService.seedAll();
       console.log('--- AUTO SEEDING COMPLETED ---');
     } catch (error) {
-      console.error('--- AUTO SEEDING FAILED (Likely duplicate seeding) ---', error.message);
+      console.error(
+        '--- AUTO SEEDING FAILED (Likely duplicate seeding) ---',
+        error.message,
+      );
       try {
         console.log('--- ATTEMPTING TO REFRESH GAME SCHEMAS DIRECTLY ---');
         await this.seedService.refreshGameSchemas();

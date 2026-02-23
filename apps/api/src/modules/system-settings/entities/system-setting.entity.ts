@@ -1,16 +1,22 @@
-import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('system_settings')
 export class SystemSetting {
-    @PrimaryColumn()
-    key: string;
+  @PrimaryColumn()
+  key: string;
 
-    @Column({ type: 'jsonb' })
-    value: any;
+  @Column({ type: 'jsonb' })
+  value: any;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

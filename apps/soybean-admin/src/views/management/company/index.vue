@@ -81,7 +81,7 @@ const formModel = reactive({
     },
     syncConfigs: {
       member: { enabled: true, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
-      deposit: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {}, depositConversionRate: 0 },
+      deposit: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {}, depositConversionRate: 0, maxPointsPerDay: null, maxPointsPerMonth: null, maxEligibleDeposits: null },
       withdraw: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} }
     } as Record<string, any>
   }
@@ -277,7 +277,7 @@ function handleAdd() {
       },
       syncConfigs: {
         member: { enabled: true, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} },
-        deposit: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {}, depositConversionRate: 0 },
+        deposit: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {}, depositConversionRate: 0, maxPointsPerDay: null, maxPointsPerMonth: null, maxEligibleDeposits: null },
         withdraw: { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} }
       }
     }
@@ -314,7 +314,7 @@ function handleEdit(row: Api.Management.Company) {
         },
         syncConfigs: {
             member: row.integration_config?.syncConfigs?.member ?? { enabled: true, syncMode: row.integration_config?.syncMode ?? 'incremental', maxPages: row.integration_config?.maxPages ?? 200, syncCron: row.integration_config?.syncCron ?? '', syncParams: row.integration_config?.syncParams ?? {} },
-            deposit: row.integration_config?.syncConfigs?.deposit ?? { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {}, depositConversionRate: 0 },
+            deposit: row.integration_config?.syncConfigs?.deposit ?? { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {}, depositConversionRate: 0, maxPointsPerDay: null, maxPointsPerMonth: null, maxEligibleDeposits: null },
             withdraw: row.integration_config?.syncConfigs?.withdraw ?? { enabled: false, syncMode: 'incremental', maxPages: 200, syncCron: '', syncParams: {} }
         }
     }
@@ -554,6 +554,38 @@ getCompanies();
                          {{ $t('company.depositSyncDaysHint') || 'How many days back should the scheduled sync fetch? (Default: 2, Max: 30)' }}
                       </template>
                     </NFormItem>
+
+                    <NDivider title-placement="left" dashed>Deposit Rules Engine (Limits)</NDivider>
+                    <NFormItem label="Max Eligible Deposits">
+                      <NInputNumber 
+                        v-model:value="formModel.integration_config.syncConfigs[type.key].maxEligibleDeposits" 
+                        :min="1"
+                        class="w-full"
+                        clearable
+                        placeholder="e.g. 5 (Points awarded ONLY for first 5 deposits)" />
+                      <template #feedback>
+                        Restrict points strictly to the first N deposits ever made by the user. Leave blank for unlimited.
+                      </template>
+                    </NFormItem>
+
+                    <NFormItem label="Max Daily Points">
+                      <NInputNumber 
+                        v-model:value="formModel.integration_config.syncConfigs[type.key].maxPointsPerDay" 
+                        :min="1"
+                        class="w-full"
+                        clearable
+                        placeholder="e.g. 5000 (Max 5,000 pts per day)" />
+                    </NFormItem>
+
+                    <NFormItem label="Max Monthly Points">
+                      <NInputNumber 
+                        v-model:value="formModel.integration_config.syncConfigs[type.key].maxPointsPerMonth" 
+                        :min="1"
+                        class="w-full"
+                        clearable
+                        placeholder="e.g. 50000 (Max 50,000 pts per month)" />
+                    </NFormItem>
+
                   </template>
 
                   <NDivider title-placement="left" dashed>Custom API Parameters</NDivider>

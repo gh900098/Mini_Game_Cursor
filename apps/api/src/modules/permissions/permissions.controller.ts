@@ -1,18 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { PermissionsService } from './permissions.service';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { PermissionsGuard, RequirePermission } from '../../common/guards/permissions.guard';
+import {
+  PermissionsGuard,
+  RequirePermission,
+} from '../../common/guards/permissions.guard';
 
 @ApiTags('permissions')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
 @Controller('permissions')
 export class PermissionsController {
-  constructor(private readonly permissionsService: PermissionsService) { }
+  constructor(private readonly permissionsService: PermissionsService) {}
 
   @Post()
   @RequirePermission('permissions:create')
@@ -25,7 +43,10 @@ export class PermissionsController {
 
   @Get('options')
   @RequirePermission('roles:read')
-  @ApiOperation({ summary: 'Get all permissions for options list (accessible with roles:read)' })
+  @ApiOperation({
+    summary:
+      'Get all permissions for options list (accessible with roles:read)',
+  })
   @ApiResponse({ status: 200, description: 'Returns all permissions' })
   findAllOptions() {
     // Return all for options list (no pagination)
@@ -54,7 +75,10 @@ export class PermissionsController {
   @ApiOperation({ summary: 'Update a permission' })
   @ApiResponse({ status: 200, description: 'Permission updated successfully' })
   @ApiResponse({ status: 404, description: 'Permission not found' })
-  update(@Param('id') id: string, @Body() updatePermissionDto: UpdatePermissionDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updatePermissionDto: UpdatePermissionDto,
+  ) {
     return this.permissionsService.update(id, updatePermissionDto);
   }
 

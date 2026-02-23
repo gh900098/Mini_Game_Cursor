@@ -1,33 +1,40 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Member } from './member.entity';
 
 @Entity('login_history')
 export class LoginHistory {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    memberId: string;
+  @Column()
+  memberId: string;
 
-    @Column({ nullable: true })
-    ipAddress: string;
+  @Column({ nullable: true })
+  ipAddress: string;
 
-    @Column({ nullable: true })
-    userAgent: string;
+  @Column({ nullable: true })
+  userAgent: string;
 
-    @Column({ default: true })
-    success: boolean;
+  @Column({ default: true })
+  success: boolean;
 
-    @Column({ nullable: true })
-    failureReason: string;
+  @Column({ nullable: true })
+  failureReason: string;
 
-    @Column({ type: 'jsonb', nullable: true })
-    metadata: Record<string, any>;
+  @Column({ type: 'jsonb', nullable: true })
+  metadata: Record<string, any>;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @ManyToOne(() => Member)
-    @JoinColumn({ name: 'memberId' })
-    member: Member;
+  @ManyToOne(() => Member)
+  @JoinColumn({ name: 'memberId' })
+  member: Member;
 }

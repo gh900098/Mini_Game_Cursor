@@ -15,37 +15,37 @@ import { SyncStrategyFactory } from './strategies/sync-strategy.factory';
 import { JkSyncStrategy } from './strategies/jk.strategy';
 
 @Module({
-    imports: [
-        HttpModule,
-        MembersModule,
-        MembersModule,
-        CompaniesModule,
-        ConfigModule,
-        ConfigModule,
-        SystemSettingsModule,
-        BullModule.registerQueue({
-            name: 'sync-queue',
-            defaultJobOptions: {
-                attempts: 5,
-                backoff: {
-                    type: 'exponential',
-                    delay: 2000,
-                },
-            },
-        }),
-        BullBoardModule.forFeature({
-            name: 'sync-queue',
-            adapter: BullMQAdapter,
-        }),
-    ],
-    controllers: [SyncController],
-    providers: [
-        SyncProcessor,
-        JKBackendService,
-        SyncScheduler,
-        SyncStrategyFactory,
-        JkSyncStrategy
-    ],
-    exports: [BullModule, JKBackendService, SyncScheduler],
+  imports: [
+    HttpModule,
+    MembersModule,
+    MembersModule,
+    CompaniesModule,
+    ConfigModule,
+    ConfigModule,
+    SystemSettingsModule,
+    BullModule.registerQueue({
+      name: 'sync-queue',
+      defaultJobOptions: {
+        attempts: 5,
+        backoff: {
+          type: 'exponential',
+          delay: 2000,
+        },
+      },
+    }),
+    BullBoardModule.forFeature({
+      name: 'sync-queue',
+      adapter: BullMQAdapter,
+    }),
+  ],
+  controllers: [SyncController],
+  providers: [
+    SyncProcessor,
+    JKBackendService,
+    SyncScheduler,
+    SyncStrategyFactory,
+    JkSyncStrategy,
+  ],
+  exports: [BullModule, JKBackendService, SyncScheduler],
 })
-export class SyncModule { }
+export class SyncModule {}

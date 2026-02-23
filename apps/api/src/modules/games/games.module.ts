@@ -6,9 +6,9 @@ import { AdminGamesController } from './admin-games.controller';
 import { Game } from './entities/game.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Game])],
-    controllers: [GamesController, AdminGamesController],
-    providers: [GamesService],
-    exports: [GamesService],
+  imports: [TypeOrmModule.forFeature([Game])],
+  controllers: [GamesController, AdminGamesController],
+  providers: [GamesService],
+  exports: [GamesService],
 })
-export class GamesModule { }
+export class GamesModule {}

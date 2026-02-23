@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -6,14 +16,17 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { Roles, RoleLevel } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { PermissionsGuard, RequirePermission } from '../../common/guards/permissions.guard';
+import {
+  PermissionsGuard,
+  RequirePermission,
+} from '../../common/guards/permissions.guard';
 
 @ApiTags('Users')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @RequirePermission('users:create')
@@ -23,7 +36,15 @@ export class UsersController {
 
   @Get()
   @RequirePermission('users:read')
-  findAll(@Query() query: { page?: number; limit?: number; companyId?: string; keyword?: string }) {
+  findAll(
+    @Query()
+    query: {
+      page?: number;
+      limit?: number;
+      companyId?: string;
+      keyword?: string;
+    },
+  ) {
     return this.usersService.findAll(query);
   }
 

@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  Index,
+} from 'typeorm';
 
 @Entity('audit_logs')
 @Index(['companyId'])
@@ -7,51 +13,51 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, Index } from 
 @Index(['action'])
 @Index(['createdAt'])
 export class AuditLog {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column({ nullable: true })
-    userId: string;
+  @Column({ nullable: true })
+  userId: string;
 
-    @Column({ nullable: true })
-    userName: string;
+  @Column({ nullable: true })
+  userName: string;
 
-    @Column({ nullable: true })
-    companyId: string;
+  @Column({ nullable: true })
+  companyId: string;
 
-    @Column({ nullable: true })
-    module: string;
+  @Column({ nullable: true })
+  module: string;
 
-    @Column({ nullable: true })
-    action: string;
+  @Column({ nullable: true })
+  action: string;
 
-    @Column({ nullable: true })
-    method: string;
+  @Column({ nullable: true })
+  method: string;
 
-    @Column({ nullable: true })
-    path: string;
+  @Column({ nullable: true })
+  path: string;
 
-    @Column({ nullable: true })
-    ip: string;
+  @Column({ nullable: true })
+  ip: string;
 
-    @Column({ type: 'text', nullable: true })
-    userAgent: string;
+  @Column({ type: 'text', nullable: true })
+  userAgent: string;
 
-    @Column({ type: 'jsonb', nullable: true })
-    payload: any;
+  @Column({ type: 'jsonb', nullable: true })
+  payload: any;
 
-    @Column({ type: 'jsonb', nullable: true })
-    params: any;
+  @Column({ type: 'jsonb', nullable: true })
+  params: any;
 
-    @Column({ type: 'jsonb', nullable: true })
-    result: any;
+  @Column({ type: 'jsonb', nullable: true })
+  result: any;
 
-    @Column({ nullable: true })
-    status: number;
+  @Column({ nullable: true })
+  status: number;
 
-    @Column({ nullable: true })
-    duration: number;
+  @Column({ nullable: true })
+  duration: number;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 }

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -13,7 +18,7 @@ export class RolesService {
     private readonly roleRepository: Repository<Role>,
     @InjectRepository(Permission)
     private readonly permissionRepository: Repository<Permission>,
-  ) { }
+  ) {}
 
   async create(createRoleDto: CreateRoleDto): Promise<Role> {
     const slug = this.generateSlug(createRoleDto.name);
@@ -42,12 +47,15 @@ export class RolesService {
     return await this.roleRepository.save(role);
   }
 
-  async findAll(query: { page?: number; limit?: number; keyword?: string } = {}): Promise<{ items: Role[]; total: number; page: number; limit: number }> {
+  async findAll(
+    query: { page?: number; limit?: number; keyword?: string } = {},
+  ): Promise<{ items: Role[]; total: number; page: number; limit: number }> {
     const { page = 1, limit = 10, keyword } = query;
     const pageNum = Number(page) || 1;
     const limitNum = Number(limit) || 10;
 
-    const qb = this.roleRepository.createQueryBuilder('role')
+    const qb = this.roleRepository
+      .createQueryBuilder('role')
       .leftJoinAndSelect('role.permissions', 'permissions');
 
     if (keyword) {

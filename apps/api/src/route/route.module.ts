@@ -3,7 +3,7 @@ import { RouteController } from './route.controller';
 import { RouteService } from './route.service';
 
 @Module({
-    controllers: [RouteController],
-    providers: [RouteService],
+  controllers: [RouteController],
+  providers: [RouteService],
 })
-export class RouteModule { }
+export class RouteModule {}

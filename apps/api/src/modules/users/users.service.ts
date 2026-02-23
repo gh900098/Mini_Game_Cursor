@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -13,11 +17,13 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private encryptionService: EncryptionService,
-  ) { }
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const emailHash = this.encryptionService.hash(createUserDto.email);
-    const existing = await this.usersRepository.findOne({ where: { emailHash } });
+    const existing = await this.usersRepository.findOne({
+      where: { emailHash },
+    });
 
     if (existing) {
       throw new ConflictException('Email already exists');
@@ -34,12 +40,20 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  async findAll(query: { page?: number; limit?: number; companyId?: string; keyword?: string } = {}): Promise<{ items: User[]; total: number; page: number; limit: number }> {
+  async findAll(
+    query: {
+      page?: number;
+      limit?: number;
+      companyId?: string;
+      keyword?: string;
+    } = {},
+  ): Promise<{ items: User[]; total: number; page: number; limit: number }> {
     const { page = 1, limit = 10, companyId, keyword } = query;
     const pageNum = Number(page) || 1;
     const limitNum = Number(limit) || 10;
 
-    const qb = this.usersRepository.createQueryBuilder('user')
+    const qb = this.usersRepository
+      .createQueryBuilder('user')
       .leftJoinAndSelect('user.userCompanies', 'userCompanies')
       .leftJoinAndSelect('userCompanies.company', 'company')
       .leftJoinAndSelect('userCompanies.role', 'role')
@@ -50,7 +64,8 @@ export class UsersService {
     }
 
     if (keyword) {
-      const keywordCondition = '(user.name ILIKE :keyword OR user.email ILIKE :keyword)';
+      const keywordCondition =
+        '(user.name ILIKE :keyword OR user.email ILIKE :keyword)';
       if (companyId && companyId !== 'ALL') {
         qb.andWhere(keywordCondition, { keyword: `%${keyword}%` });
       } else {
@@ -75,7 +90,12 @@ export class UsersService {
   async findOne(id: string): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['userCompanies', 'userCompanies.company', 'userCompanies.role', 'userCompanies.role.permissions'],
+      relations: [
+        'userCompanies',
+        'userCompanies.company',
+        'userCompanies.role',
+        'userCompanies.role.permissions',
+      ],
     });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -87,7 +107,12 @@ export class UsersService {
     const emailHash = this.encryptionService.hash(email);
     return this.usersRepository.findOne({
       where: { emailHash },
-      relations: ['userCompanies', 'userCompanies.company', 'userCompanies.role', 'userCompanies.role.permissions'],
+      relations: [
+        'userCompanies',
+        'userCompanies.company',
+        'userCompanies.role',
+        'userCompanies.role.permissions',
+      ],
     });
   }
 

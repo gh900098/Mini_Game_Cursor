@@ -16,14 +16,21 @@ import { Member } from '../members/entities/member.entity';
 import { PrizesModule } from '../prizes/prizes.module';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Score, PlayAttempt, BudgetTracking, BudgetLedger, Member, MemberPrize]),
-        GameInstancesModule,
-        MembersModule,
-        PrizesModule,
-    ],
-    controllers: [ScoresController, AdminScoresController, AdminPrizesController],
-    providers: [ScoresService, GameRulesService],
-    exports: [ScoresService, GameRulesService],
+  imports: [
+    TypeOrmModule.forFeature([
+      Score,
+      PlayAttempt,
+      BudgetTracking,
+      BudgetLedger,
+      Member,
+      MemberPrize,
+    ]),
+    GameInstancesModule,
+    MembersModule,
+    PrizesModule,
+  ],
+  controllers: [ScoresController, AdminScoresController, AdminPrizesController],
+  providers: [ScoresService, GameRulesService],
+  exports: [ScoresService, GameRulesService],
 })
-export class ScoresModule { }
+export class ScoresModule {}
