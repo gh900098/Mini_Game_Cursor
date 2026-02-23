@@ -371,6 +371,10 @@ const webhookBaseUrl = computed(() => {
   return `${protocol}//${host}/api/webhooks/sync`;
 });
 
+const isIntegrationConfigured = computed(() => {
+  return formModel.integration_config.enabled && !!formModel.integration_config.apiUrl;
+});
+
 const webhookUrls = computed(() => {
   if (!formModel.id) return [];
   const base = webhookBaseUrl.value;
@@ -504,8 +508,11 @@ getCompanies();
           </NForm>
         </NTabPane>
 
-        <NTabPane name="sync" tab="Sync Settings" :disabled="!formModel.integration_config.enabled">
-          <NTabs type="segment" animated class="mt-2">
+        <NTabPane name="sync" tab="Sync Settings" :disabled="!isIntegrationConfigured">
+          <div v-if="!isIntegrationConfigured" class="py-10 text-center text-gray-400">
+            Please configure the Integration Provider and API URL first.
+          </div>
+          <NTabs v-else type="segment" animated class="mt-2">
             <NTabPane v-for="type in syncTypes" :key="type.key" :name="type.key" :tab="type.label">
               <NForm :model="formModel.integration_config.syncConfigs[type.key]" label-placement="left" label-width="120" class="pt-4">
                 <NFormItem label="Type Status">
@@ -611,8 +618,11 @@ getCompanies();
           </NTabs>
         </NTabPane>
 
-        <NTabPane name="webhooks" tab="Webhooks" :disabled="!formModel.id">
-          <div class="bg-gray-50 p-4 rounded-8px border border-dashed border-gray-300 mt-4">
+        <NTabPane name="webhooks" tab="Webhooks" :disabled="!formModel.id || !isIntegrationConfigured">
+          <div v-if="!isIntegrationConfigured" class="py-10 text-center text-gray-400">
+            Please configure the Integration Provider and API URL first.
+          </div>
+          <div v-else class="bg-gray-50 p-4 rounded-8px border border-dashed border-gray-300 mt-4">
             <p class="text-xs text-gray-500 mb-4 italic">Provide these URLs to the JK Platform to receive real-time updates.</p>
             <div class="space-y-4">
               <div v-for="item in webhookUrls" :key="item.type" class="flex flex-col space-y-1">

@@ -57,6 +57,17 @@
 
 ---
 
+## [2026-02-23] UX Fix: Conditional Integration Sync Guard
+
+### 🎨 UX Improvement
+
+**Problem:** Activating a new Integration dynamically opened the Sync Settings and Webhook tabs before a valid `apiUrl` was supplied, causing administrators to configure broken cron jobs that looped error states locally.
+**Fix:** Introduced the `isIntegrationConfigured` computed property into the company modal that strictly sets `:disabled="true"` on the tab panels until API credentials exist.
+
+**File Modified:** `apps/soybean-admin/src/views/management/company/index.vue`
+
+---
+
 ## [2026-02-22] Generic Integration Architecture & Strategy Pattern Refactor
 
 ### 🏗️ Architectural Enhancement

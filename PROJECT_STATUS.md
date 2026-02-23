@@ -44,6 +44,7 @@ The synchronization system now handles real-time deposits from third-party webho
 
 
 ## ✅ Recently Completed
+- [x] **UX Fix: Conditional Integration Guard** (Disabled company admin Integration Sync and Webhook tabs until an API URL is configured - 2026-02-23)
 - [x] **Deposit Point Rules Engine Architecture** (Applied truncation limits to MembersService mapping to DAILY_LIMIT_TRUNCATED, MAX_ELIGIBLE_DEPOSITS_EXCEEDED - 2026-02-23)
 - [x] **Scheduled Deposit Sync (Fallback)** (Hourly API polling via `syncBatchDeposits` with UI Max Pages configuration - 2026-02-23)
 - [x] **Enterprise Deposit Integration** (Webhook strategy, conversion rate math, UI settings, idempotency DB constraints - 2026-02-23)
