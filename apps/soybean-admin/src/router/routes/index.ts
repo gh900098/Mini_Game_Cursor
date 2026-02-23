@@ -53,6 +53,10 @@ export function createStaticRoutes() {
         } else if (r.name === 'management_route') {
           r.meta.roles = ['R_SUPER'];
           r.meta.permission = 'routes:read';
+        } else if (r.name === 'management_sync-settings') {
+          r.meta.roles = ['R_SUPER', 'R_ADMIN'];
+          r.meta.icon = 'material-symbols:sync-rounded';
+          r.meta.order = 5;
         } else if (r.name === 'management_audit-log') {
           r.meta.roles = ['R_SUPER', 'R_ADMIN'];
           r.meta.permission = 'audit-logs:read';
