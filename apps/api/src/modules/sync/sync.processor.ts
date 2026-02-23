@@ -59,7 +59,8 @@ export class SyncProcessor extends WorkerHost {
             return strategy.execute(companyId, company.integration_config, {
                 type,
                 externalUserId,
-                payload
+                payload,
+                source
             });
 
         } catch (error) {

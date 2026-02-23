@@ -29,7 +29,30 @@ export class JkSyncStrategy implements SyncStrategy {
             case 'deposit': {
                 if (syncParams?.payload) {
                     try {
-                        const payload = syncParams?.payload || {};
+                        let payload = syncParams?.payload || {};
+                        const source = syncParams?.source;
+
+                        // If triggered by a webhook (which provides only a summary), fetch the actual transaction via API
+                        if (source === 'webhook' || Object.keys(payload).length <= 7) {
+                            const transactionId = payload.id || payload.orderId || payload.transactionId;
+
+                            if (transactionId) {
+                                this.logger.debug(`Webhook payload identified. Fetching full transaction details for deposit ${transactionId} via API...`);
+                                const response = await this.jkService.getAllTransactions(config, 0, { id: transactionId });
+                                const data = response.data || {};
+                                const transactions = data.transactions || data.list || data.data || (Array.isArray(data) ? data : []);
+
+                                const fullTxn = transactions.find((t: any) => t.id == transactionId || t.orderId == transactionId || t.transactionId == transactionId);
+
+                                if (fullTxn) {
+                                    payload = fullTxn;
+                                } else {
+                                    this.logger.warn(`Transaction ${transactionId} not found in JK API. Cannot verify webhook deposit.`);
+                                    return { success: false, reason: 'Transaction verification failed' };
+                                }
+                            }
+                        }
+
                         // Handle both webhook ("userId") and getAllTransaction API ("user.id" or "userId")
                         const externalUserId = payload.userId || payload.member_id || payload.user?.id || payload.uid;
                         // Handle money ("amount" vs "cash")

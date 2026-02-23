@@ -124,7 +124,7 @@ export class JKBackendService {
         }, config);
     }
 
-    async getAllTransactions(config: any, pageIndex = 0) {
+    async getAllTransactions(config: any, pageIndex = 0, filters: any = {}) {
         let apiUrl = config.apiUrl || this.configService.get('JK_API_URL');
         if (apiUrl && apiUrl.endsWith('/')) {
             apiUrl = apiUrl.slice(0, -1);
@@ -148,6 +148,7 @@ export class JKBackendService {
             type: 'DEPOSIT', // Only fetch deposits
             sDate: sDate.toISOString().split('.')[0] + 'Z', // e.g. 2021-02-22T00:00:00Z
             eDate: eDate.toISOString().split('.')[0] + 'Z',
+            ...filters, // Pass explicit filters like id or userId for webhook validation
             ...extraParams,
         }, config);
     }
