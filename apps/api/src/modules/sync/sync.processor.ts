@@ -85,16 +85,21 @@ export class SyncProcessor extends WorkerHost {
             const results = await Promise.all(batch.map(async company => {
                 try {
                     const strategy = this.strategyFactory.getStrategy(company.integration_config.provider);
-                    return await strategy.execute(company.id, company.integration_config, { type: 'member' });
+                    const memberResult = await strategy.execute(company.id, company.integration_config, { type: 'member' });
+                    const depositResult = await strategy.execute(company.id, company.integration_config, { type: 'deposit' });
+
+                    const memberJobs = typeof memberResult === 'number' ? memberResult : 0;
+                    const depositJobs = typeof depositResult === 'number' ? depositResult : 0;
+
+                    return memberJobs + depositJobs;
                 } catch (e) {
                     this.logger.error(`Error orchestrating sync for company ${company.id}: ${e.message}`);
                     return 0;
                 }
             }));
 
-            // Note: results here might be objects (for simple syncs) or numbers (jobs queued for batch syncs)
-            // since execute() is generic, but for 'member' type without userId, jkStrategy returns queuedCount.
-            totalQueued += results.reduce((sum: number, res: any) => sum + (typeof res === 'number' ? res : 0), 0);
+            // results here are numbers representing combined member + deposit jobs queued
+            totalQueued += results.reduce((sum: number, res: number) => sum + res, 0);
         }
 
         this.logger.log(`Dynamic sync orchestration completed. Total jobs queued across all companies: ${totalQueued}`);

@@ -19,6 +19,23 @@
 
 ---
 
+## [2026-02-23] Scheduled Deposit Synchronization
+
+### 🔄 Reliability Fallback
+
+**Problem:** Complete reliance on external webhooks for deposits leaves the system vulnerable to network failures or dropped requests.
+**Fix:** Created an hourly batch-pull fallback mechanism (`syncBatchDeposits`) that safely imports missed transactions using the Idempotency constraints guarantees.
+
+**Implementation Details:**
+- **API Fetching:** Added `getAllTransactions` mapping to `jk-backend.service.ts`.
+- **Batch Processing:** Updated `jk.strategy.ts` to paginate maximum pages into `sync-deposit` BullMQ jobs.
+- **Hourly Dispatch:** Modified `sync.processor.ts` `handleHourlySyncOrchestration()` to fire off deposit syncs alongside parallel member syncs.
+- **UX Controls:** Admin UI updated to expose "Max Pages" and "Schedule" inputs explicitly for deposits.
+
+**File Modified:** `api/src/modules/sync/jk-backend.service.ts`, `api/src/modules/sync/strategies/jk.strategy.ts`, `api/src/modules/sync/sync.processor.ts`
+
+---
+
 ## [2026-02-23] UX Fix: Sync Settings Menu Restoration & Dynamic Providers
 
 ### 🎨 UX Improvement

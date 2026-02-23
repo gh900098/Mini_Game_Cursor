@@ -44,6 +44,7 @@ The synchronization system now handles real-time deposits from third-party webho
 
 
 ## ✅ Recently Completed
+- [x] **Scheduled Deposit Sync (Fallback)** (Hourly API polling via `syncBatchDeposits` with UI Max Pages configuration - 2026-02-23)
 - [x] **Enterprise Deposit Integration** (Webhook strategy, conversion rate math, UI settings, idempotency DB constraints - 2026-02-23)
 - [x] **UX Fix: Sync Settings Menu & Dynamic Providers** (Restored Sync Settings menu routing and added GET /integration-providers endpoint for dynamic configuration - 2026-02-23)
 - [x] **Generic Integration Architecture** (Refactored JK sync to use Strategy Pattern, renamed variables to integration_config - 2026-02-22)

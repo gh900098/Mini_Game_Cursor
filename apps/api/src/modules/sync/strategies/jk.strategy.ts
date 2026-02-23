@@ -27,34 +27,38 @@ export class JkSyncStrategy implements SyncStrategy {
                     return this.syncBatchMembers(companyId, config);
                 }
             case 'deposit': {
-                try {
-                    const payload = syncParams?.payload || {};
-                    const externalUserId = payload.uid || payload.userId;
-                    const depositAmount = parseFloat(payload.amount);
-                    const referenceId = payload.orderId || payload.transactionId || syncParams?.opts?.jobId;
+                if (syncParams?.payload) {
+                    try {
+                        const payload = syncParams?.payload || {};
+                        const externalUserId = payload.uid || payload.userId || payload.member_id;
+                        const depositAmount = parseFloat(payload.amount);
+                        const referenceId = payload.orderId || payload.transactionId || payload.id || syncParams?.opts?.jobId;
 
-                    if (!externalUserId || isNaN(depositAmount) || depositAmount <= 0 || !referenceId) {
-                        this.logger.warn(`Invalid deposit payload for company ${companyId}: ${JSON.stringify(payload)}`);
-                        return { success: false, reason: 'Invalid payload' };
+                        if (!externalUserId || isNaN(depositAmount) || depositAmount <= 0 || !referenceId) {
+                            this.logger.warn(`Invalid deposit payload for company ${companyId}: ${JSON.stringify(payload)}`);
+                            return { success: false, reason: 'Invalid payload' };
+                        }
+
+                        const depositConfig = config.syncConfigs?.['deposit'] || {};
+                        const conversionRate = parseFloat(depositConfig.depositConversionRate || '0');
+
+                        const result = await this.membersService.processDeposit(
+                            companyId,
+                            externalUserId,
+                            depositAmount,
+                            conversionRate,
+                            referenceId,
+                            payload
+                        );
+
+                        return result;
+
+                    } catch (error) {
+                        this.logger.error(`Error processing deposit for company ${companyId}: ${error.message}`);
+                        return { success: false, reason: error.message };
                     }
-
-                    const depositConfig = config.syncConfigs?.['deposit'] || {};
-                    const conversionRate = parseFloat(depositConfig.depositConversionRate || '0');
-
-                    const result = await this.membersService.processDeposit(
-                        companyId,
-                        externalUserId,
-                        depositAmount,
-                        conversionRate,
-                        referenceId,
-                        payload
-                    );
-
-                    return result;
-
-                } catch (error) {
-                    this.logger.error(`Error processing deposit for company ${companyId}: ${error.message}`);
-                    return { success: false, reason: error.message };
+                } else {
+                    return this.syncBatchDeposits(companyId, config);
                 }
             }
             case 'withdraw':
@@ -158,6 +162,68 @@ export class JkSyncStrategy implements SyncStrategy {
                 hasMore = false;
             }
         }
+        return queuedCount;
+    }
+
+    private async syncBatchDeposits(companyId: string, config: any): Promise<number> {
+        this.logger.log(`Queueing batch deposit sync jobs for company ${companyId}`);
+
+        let page = 0;
+        let hasMore = true;
+        let queuedCount = 0;
+
+        const depositConfig = config.syncConfigs?.['deposit'] || {};
+        const maxPages = depositConfig.maxPages || 10; // Default to 10 pages for deposit sync
+        const params = depositConfig.syncParams || {};
+
+        while (hasMore && page < maxPages) {
+            try {
+                this.logger.debug(`Fetching deposit page ${page} for company ${companyId}...`);
+
+                const response = await this.jkService.getAllTransactions({ ...config, syncParams: params }, page);
+
+                const data = response.data || {};
+                // Assuming data could be under data.transactions, data.list, etc.
+                const transactions = data.transactions || data.list || data.data || (Array.isArray(data) ? data : []);
+                const totalPage = data.totalPage || data.totalPages || 1;
+
+                if (response.status === 'SUCCESS' && Array.isArray(transactions) && transactions.length > 0) {
+                    const jobs = transactions.map((txn: any) => ({
+                        name: 'sync-deposit',
+                        data: {
+                            type: 'deposit',
+                            companyId: companyId,
+                            externalUserId: txn.uid || txn.userId || txn.member_id,
+                            payload: txn,
+                            source: 'cron_hourly',
+                            timestamp: Date.now(),
+                        },
+                        opts: {
+                            jobId: `cron_dep_${companyId}_${txn.orderId || txn.transactionId || txn.id}`,
+                            removeOnComplete: 500,
+                        }
+                    }));
+
+                    await this.syncQueue.addBulk(jobs);
+                    queuedCount += jobs.length;
+
+                    page++;
+                    if (page >= totalPage || page >= maxPages) {
+                        hasMore = false;
+                        if (page >= maxPages) {
+                            this.logger.log(`Company ${companyId} deposit sync limit reached at page ${page}`);
+                        }
+                    }
+                } else {
+                    hasMore = false;
+                }
+            } catch (error) {
+                this.logger.error(`Error in batch deposit sync for company ${companyId}, page ${page}: ${error.message}`);
+                hasMore = false;
+            }
+        }
+
+        this.logger.log(`Finished queueing ${queuedCount} deposit sync jobs for company ${companyId}`);
         return queuedCount;
     }
 }

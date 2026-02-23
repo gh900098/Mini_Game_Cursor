@@ -123,4 +123,24 @@ export class JKBackendService {
             ...extraParams,
         }, config);
     }
+
+    async getAllTransactions(config: any, pageIndex = 0) {
+        let apiUrl = config.apiUrl || this.configService.get('JK_API_URL');
+        if (apiUrl && apiUrl.endsWith('/')) {
+            apiUrl = apiUrl.slice(0, -1);
+        }
+
+        const accessId = config.accessId;
+        const accessToken = config.accessToken;
+
+        const extraParams = config.syncParams || {};
+
+        return this.request(`${apiUrl}//api/v1/index.php`, {
+            module: '/users/getAllTransaction',
+            accessId,
+            accessToken,
+            pageIndex,
+            ...extraParams,
+        }, config);
+    }
 }
