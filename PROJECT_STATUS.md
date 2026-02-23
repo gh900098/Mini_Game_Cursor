@@ -1,16 +1,16 @@
 # Project Status & Current Context
 
-**Last Updated:** 2026-02-23 16:45
-**Current Mission:** Deposit Integration ✅
+**Last Updated:** 2026-02-23 17:38
+**Current Mission:** Credit Transaction Ledger ✅
 **Server Status:** 🟢 Running. (API:3100, Admin:3101, Web:3102, Worker:3100).
 
 ## 🎯 Current Focus (AI Memory)
 - **Active Mission:** Awaiting next instructions.
 - **Current Branch:** `main`
-- **Status**: 🟢 Live. Deposit integration is fully implemented with idempotency checks, admin UI configuration, and i18n support.
+- **Status**: 🟢 Live. Credit Transaction Ledger fully merged with icon fix and Elegant Router pattern documented.
 
 ### Context
-The synchronization system now handles real-time deposits from third-party webhook integrations natively. A unique constraint on `CreditTransaction.referenceId` ensures idempotency to prevent duplicate operations and points double-crediting.
+Global credit transaction ledger is live with paginated search, multi-identifier filtering, and a correct sidebar icon. The Elegant Router 6-file route pattern has been added to MEMORY_BANK.md to prevent repeated mistakes.
 - **Goal:** Completed. Waiting for next instruction.
 
 ## 🏗️ Architectural Context (The "Must Knows")
@@ -40,11 +40,12 @@ The synchronization system now handles real-time deposits from third-party webho
 | :--- | :--- | :--- | :--- |
 | BUG-001 | 🔴 Bug | Agent Amnesia (Need to load context) | 🚧 In Progress |
 | BUG-002 | 🟢 Bug | Tenant Isolation (Admin/Member endpoints) | ✅ Fixed |
-| FEAT-002 | 🟢 Feat | Credit Transaction Ledger | ✅ Fixed |
+| FEAT-002 | 🟢 Feat | Credit Transaction Ledger | ✅ Merged |
 | FEAT-001 | 🟢 Feat | Dynamic Probabilities (Phase 4) | ⏳ Pending |
 
 
 ## ✅ Recently Completed
+- [x] **Feat: Credit Transaction Ledger + Icon Fix** (Full stack global credit history, paginated, filterable, with correct sidebar icon and Elegant Router pattern documented in MEMORY_BANK - 2026-02-23)
 - [x] **Feat: Credit Transaction Ledger** (Full stack implementation of a global credit transaction history view with pagination, filters, and i18n - 2026-02-23)
 - [x] **Bug Fix: BullMQ Infinite Duplicate Jobs** (Corrected `jobId` syntax location inside `.add({ repeat: {} })` options to ensure Redis hashing properly replaces old schedules - 2026-02-23)
 - [x] **UX Fix: Conditional Integration Guard** (Disabled company admin Integration Sync and Webhook tabs until an API URL is configured - 2026-02-23)
