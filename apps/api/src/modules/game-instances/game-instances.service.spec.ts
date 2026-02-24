@@ -3,6 +3,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { GameInstancesService } from './game-instances.service';
 import { GameInstance } from './entities/game-instance.entity';
 import { Score } from '../scores/entities/score.entity';
+import { BudgetTracking } from '../scores/entities/budget-tracking.entity';
+import { PrizeType } from '../prizes/entities/prize-type.entity';
 
 describe('GameInstancesService', () => {
   let service: GameInstancesService;
@@ -19,6 +21,16 @@ describe('GameInstancesService', () => {
     count: jest.fn(),
   };
 
+  const mockBudgetRepo = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+  };
+
+  const mockPrizeTypeRepo = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
@@ -31,6 +43,14 @@ describe('GameInstancesService', () => {
         {
           provide: getRepositoryToken(Score),
           useValue: mockScoreRepo,
+        },
+        {
+          provide: getRepositoryToken(BudgetTracking),
+          useValue: mockBudgetRepo,
+        },
+        {
+          provide: getRepositoryToken(PrizeType),
+          useValue: mockPrizeTypeRepo,
         },
       ],
     }).compile();
@@ -114,6 +134,7 @@ describe('GameInstancesService', () => {
     it('should apply smart slug on creation', async () => {
       const mockQueryBuilder = {
         where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
         getOne: jest
           .fn()
           .mockResolvedValueOnce({ id: 'existing' })
@@ -121,7 +142,7 @@ describe('GameInstancesService', () => {
       };
       repo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
-      const data = { name: 'Test', slug: 'test' };
+      const data = { name: 'Test', slug: 'test', companyId: 'company-uuid' };
       const result = await service.create(data);
       expect(result.slug).not.toBe('test');
       expect(result.slug).toMatch(/^test-[a-z0-9]{4}$/);

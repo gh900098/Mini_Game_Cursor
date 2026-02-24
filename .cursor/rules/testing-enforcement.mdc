@@ -1,0 +1,43 @@
+---
+description: Enforces automated testing for every backend code change. Every new service method and controller endpoint must have tests.
+globs: 
+alwaysApply: true
+---
+
+# Testing Enforcement (Always Active)
+
+Every backend code change MUST include tests. No feature is complete without them.
+
+## What Requires Tests
+
+| Change Type | Required Test | Location |
+|---|---|---|
+| New service method | Unit test mocking the repository | `*.service.spec.ts` alongside the service |
+| New controller endpoint | Controller test mocking the service | `*.controller.spec.ts` alongside the controller |
+| New API route (full flow) | E2E test with supertest | `apps/api/test/*.e2e-spec.ts` |
+| Bug fix | Regression test proving the bug is fixed | In the relevant spec file |
+
+## Minimum Test Coverage Per Feature
+
+- [ ] Every new service method has at least one success case and one error case test
+- [ ] Every new endpoint verifies correct HTTP status codes
+- [ ] Tenant-scoped queries are tested with `companyId` isolation (if applicable)
+- [ ] DTO validation is tested (invalid input returns 400)
+- [ ] Auth-guarded endpoints are tested for 403 without token
+
+## Test Patterns (Reference Files)
+
+Follow these existing test files as templates:
+- **Service unit test:** `apps/api/src/modules/games/games.service.spec.ts`
+- **Controller test:** `apps/api/src/modules/games/games.controller.spec.ts`
+- **E2E integration test:** `apps/api/test/games.e2e-spec.ts`
+
+## Running Tests
+
+- Unit + controller tests: `pnpm --filter api test`
+- E2E tests: `pnpm --filter api test:e2e`
+- With coverage: `pnpm --filter api test:cov`
+
+## Merge Blocker
+
+`pnpm --filter api test` MUST pass before any feature branch is merged. If tests fail, the feature is NOT done. Fix the failing tests before proceeding to the finish-feature workflow.

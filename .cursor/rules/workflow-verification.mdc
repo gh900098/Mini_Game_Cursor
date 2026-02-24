@@ -14,6 +14,7 @@ Run this workflow whenever you think you are "Done" with a task.
 - [ ] Is this a **Database (Schema)** change?
 
 ## 2. Backend Verification (If Applicable)
+- [ ] **Automated Tests (MANDATORY):** Run `pnpm --filter api test` — ALL tests must pass. If any test fails, the feature is NOT done.
 - [ ] **Compile Check:** Run `pnpm --filter api build` to ensure no TS errors.
 - [ ] **Auto-Deploy (Local Docker):**
     - Run: `docker compose -f docker-compose.test.yml up -d --build <service_name>`
