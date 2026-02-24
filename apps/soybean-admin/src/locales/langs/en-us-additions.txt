@@ -1,8 +1,0 @@
-          gameFont: 'Game Font',
-          fontPreset: 'Font Preset',
-          customFont: 'Custom Font',
-          direction: 'Direction',
-          type: 'Type',
-          contentType: 'Content Type',
-          selectIcon: 'Select Icon',
-          imageFillMethod: 'Image Fill Method'

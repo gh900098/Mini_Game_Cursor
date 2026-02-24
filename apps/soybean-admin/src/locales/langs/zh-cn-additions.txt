@@ -1,8 +1,0 @@
-          gameFont: '游戏字体',
-          fontPreset: '字体预设',
-          customFont: '自定义字体',
-          direction: '方向',
-          type: '类型',
-          contentType: '内容类型',
-          selectIcon: '选择图标',
-          imageFillMethod: '图片填充方式'

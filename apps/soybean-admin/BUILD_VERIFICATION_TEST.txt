@@ -1,3 +1,0 @@
-BUILD_TEST_TIMESTAMP_20261207_201500
-This file verifies Docker is copying the latest source files.
-If you see this in the container, the COPY command is working correctly.

@@ -1,0 +1,45 @@
+---
+description: Enforces strict file and folder organization. Prevents dumping debug scripts, logs, or temp files in the project root or wrong locations.
+globs: 
+alwaysApply: true
+---
+
+# Project Structure Rules (Always Enforced)
+
+## Root Directory — Config Only
+
+The project root may ONLY contain:
+- Config files: `package.json`, `pnpm-workspace.yaml`, `tsconfig*.json`, `docker-compose*.yml`, `Dockerfile.*`, `.env*`, `.gitignore`, `.dockerignore`, `.npmrc`
+- Documentation: `README.md`, `AGENTS.md`, `PROJECT_STATUS.md`, `CODING_STANDARDS.md`, `MEMORY_BANK.md`, `AI_MEMORY_PROTOCOL.md`
+- Shell scripts for ops: `start-prod.sh`, `stop-prod.sh`
+
+**NEVER place in root:** `.js`, `.ts`, `.sql`, `.py`, `.html`, `.txt`, `.log` working files. No exceptions.
+
+## Mandatory File Locations
+
+| File Type | Correct Location | Example |
+|---|---|---|
+| Debug/verification scripts | `tools/debug/` | `tools/debug/verify-isolation.js` |
+| SQL scripts (migrations, fixes) | `tools/sql/` | `tools/sql/fix-prize-types.sql` |
+| Reproduction scripts | `tools/repro/` | `tools/repro/bug-002-leak.js` |
+| Test/load scripts | `tools/testing/` | `tools/testing/test-barrage.ps1` |
+| Demo/prototype HTML | `tools/demos/` | `tools/demos/wheel-preview.html` |
+| Permanent utility scripts | `scripts/` | `scripts/force-db-update.js` |
+| Backend source code | `apps/api/src/` | Never loose files in `apps/api/` root |
+| Frontend source code | `apps/soybean-admin/src/` or `apps/web-app/src/` | Never loose files in app roots |
+| Documentation | `docs/` | All `.md` guides, specs, reports |
+
+## Rules for Creating Files
+
+1. **Before creating ANY file**, check this table for the correct location
+2. **Temp files created during debugging** must be cleaned up before the feature is merged (see verification workflow Step 9)
+3. **Log output** (`.txt`, `.log`) must NEVER be committed — add to `.gitignore`
+4. **If a file doesn't fit any category**, ask the user where it should go
+
+## Rules for the Agent
+
+- If you create a debug script during work, place it in `tools/debug/` immediately — not in root
+- If you write a SQL fix, place it in `tools/sql/` immediately — not in root
+- If the user asks you to "check" or "verify" something and you write a script, it goes in `tools/` — never root
+- Before running the finish-feature workflow, scan for any loose files in root or app directories and move them
+- Update `docs/CODEMAP.md` when adding new files to `tools/`

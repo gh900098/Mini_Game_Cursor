@@ -6,3 +6,14 @@ coverage
 *.log
 .idea
 .vscode
+
+# Debug/temp output — never commit
+*.txt.bak
+worker_logs*.txt
+worker_stats*.txt
+__temp_*
+*.pyc
+__pycache__/
+
+# Old IDE config
+.antigravityrules
