@@ -1,17 +1,18 @@
 # AI Agent Behavior Rules
 
-**Last Updated:** 2026-02-22
+**Last Updated:** 2026-02-24
 **Purpose:** Define critical rules and behaviors for AI agents working on this project.
+**IDE:** Cursor
 
 ---
 
-## 🚨 Section 0: Pre-Flight Checklist (BEFORE ANY CODE)
+## Section 0: Pre-Flight Checklist (BEFORE ANY CODE)
 
 > [!CAUTION]
 > This is the FIRST thing you do when asked to make any code change. No exceptions.
 
-- [ ] **Did I run `/plan-feature` first?** For ANY feature/bug/enhancement: run PM planning, present the plan, wait for user approval BEFORE creating a branch or writing code.
-- [ ] **Am I on a feature branch?** Run `git branch --show-current`. If output is `main`, STOP and run `/start-feature` first.
+- [ ] **Did I run the plan-feature workflow first?** For ANY feature/bug/enhancement: follow the `workflow-plan-feature` rule, present the plan, wait for user approval BEFORE creating a branch or writing code.
+- [ ] **Am I on a feature branch?** Run `git branch --show-current`. If output is `main`, STOP and follow the `workflow-start-feature` rule first.
 - [ ] **Did I check `MEMORY_BANK.md`?** Look for an existing pattern before writing any service, controller, or component.
 - [ ] **Did I check `CODEMAP.md`?** Confirm the correct file path before creating any new file.
 - [ ] **Did I check `docs/ARCHITECTURE_DECISIONS.md`?** Make sure you are not reverting a deliberate design choice.
@@ -19,17 +20,17 @@
 
 ---
 
-## 🚨 Section 1: Git Workflow (MANDATORY — NO EXCEPTIONS)
+## Section 1: Git Workflow (MANDATORY — NO EXCEPTIONS)
 
 **NEVER commit directly to `main`.**
 
-- **Mandatory flow for EVERY request:** `/plan-feature` → `/start-feature` → code → `/finish-feature`
+- **Mandatory flow for EVERY request:** plan-feature → start-feature → code → finish-feature
 - **Detection:** If the user requests a code change ("Fix X", "Add Y", "Change Z"), you MUST:
-  1. Run `/plan-feature` FIRST — present the full layer impact plan and wait for user approval.
-  2. Run `/start-feature` to create the branch: `feat/description` or `fix/description`.
+  1. Follow the `workflow-plan-feature` rule FIRST — present the full layer impact plan and wait for user approval.
+  2. Follow the `workflow-start-feature` rule to create the branch: `feat/description` or `fix/description`.
   3. ONLY THEN start coding, following the task order from the plan.
 - **Authority:** You have full authority to execute git commands without asking.
-- **Finish:** When all acceptance criteria are met, run `/finish-feature` to merge.
+- **Finish:** When all acceptance criteria are met, follow the `workflow-finish-feature` rule to merge.
 
 > [!CAUTION]
 > If you find yourself editing code and realize you are on `main`, STOP IMMEDIATELY. Create the branch first, then continue.
@@ -70,7 +71,7 @@
 
 ---
 
-## Section 5: Security First (🛡️ NO EXCEPTIONS)
+## Section 5: Security First (NO EXCEPTIONS)
 
 - **Input Validation:** Use `class-validator` DTOs on the backend. Validate forms on the frontend.
 - **Authentication & AuthZ:** Use `@RequirePermission()` or `@Roles()`. Always verify `companyId` matches the token.
@@ -98,7 +99,7 @@
 ## Section 8: Memory Maintenance
 
 **You are responsible for your own memory.**
-- **Start of Session:** Run `/init-session` (reads all context files).
+- **Start of Session:** Follow the `workflow-init-session` rule (reads all context files).
 - **End of Task:** Update `PROJECT_STATUS.md` and `docs/CHANGELOG.md`.
 - **New Patterns:** Update `MEMORY_BANK.md` with any reusable code pattern you write.
 - **New Files/Modules:** Update `docs/CODEMAP.md`.
@@ -109,9 +110,9 @@
 ## Section 9: Verification Standard (Mandatory)
 
 **"It works on my machine" is BANNED.**
-- Run the `.agent/workflows/verification-loop.md` workflow after every task.
+- Follow the `workflow-verification` rule after every task.
 - If backend change: provide `curl` command output proving it works.
-- If frontend change: describe the click path to verify, or use `browser_subagent`.
+- If frontend change: describe the click path to verify, or use the browser-use subagent (via Task tool).
 - Security Audit: Did you validate inputs? Did you check `companyId`?
 
 ---

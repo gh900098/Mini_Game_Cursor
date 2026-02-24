@@ -2,6 +2,27 @@
  
  Records all important feature updates, bug fixes, and architectural changes.
  
+## [2026-02-24] IDE Migration: Google Antigravity to Cursor
+
+### Infrastructure Change
+
+**Problem:** Project was structured for Google Antigravity IDE with `.agent/workflows/` and `.agent/skills/` conventions that are incompatible with Cursor IDE.
+**Fix:** Migrated entire agent configuration to Cursor-native structure.
+
+**Changes:**
+- **Workflows (9 files):** Converted `.agent/workflows/*.md` to `.cursor/rules/workflow-*.mdc` with Cursor frontmatter format (`description`, `globs`, `alwaysApply`).
+- **Skills (18 directories):** Moved `.agent/skills/` to `.cursor/skills/` preserving all subdirectories, scripts, data files, and references.
+- **AGENTS.md:** Updated all path references from `.agent/` to `.cursor/`, replaced slash-command references (`/plan-feature`, `/start-feature`, etc.) with natural language workflow triggers.
+- **Documentation:** Updated `WORKFLOW.md`, `CODING_STANDARDS.md`, `PROJECT_STATUS.md`, `CODEMAP.md`, `JK-INTEGRATION.md` to reference new `.cursor/` paths.
+- **Cleanup:** Removed Antigravity-specific directives (`// turbo-all`, `// turbo`), replaced `view_file` with Cursor Read tool references, replaced `browser_subagent` with Cursor browser-use subagent references.
+- **Removed:** Entire `.agent/` directory after successful migration.
+
+**Files Modified:** `AGENTS.md`, `CODING_STANDARDS.md`, `PROJECT_STATUS.md`, `docs/WORKFLOW.md`, `docs/CODEMAP.md`, `docs/JK-INTEGRATION.md`, `docs/CHANGELOG.md`
+**Files Created:** `.cursor/rules/` (9 files), `.cursor/skills/` (18 directories)
+**Files Removed:** `.agent/` (entire directory tree)
+
+---
+
 ## [2026-02-23] Credit Transaction Ledger & Flexible Search
 
 ### 💰 Feature Addition
@@ -725,7 +746,7 @@ b440b2a - refactor: enhance prize details modal UI design
 
 **Installation Path:**
 ```
-.agent/skills/ui-ux-pro-max/
+.cursor/skills/ui-ux-pro-max/
 ├── SKILL.md          # Skill instruction document.
 ├── data/             # Design database (CSV files).
 └── scripts/          # Python search engine.
@@ -743,21 +764,21 @@ b440b2a - refactor: enhance prize details modal UI design
 **Usage Examples:**
 ```bash
 # Auto-generate design system
-python .agent/skills/ui-ux-pro-max/scripts/search.py "gaming platform entertainment" --design-system -p "Mini Game Platform"
+python .cursor/skills/ui-ux-pro-max/scripts/search.py "gaming platform entertainment" --design-system -p "Mini Game Platform"
 
 # Domain-specific search
-python .agent/skills/ui-ux-pro-max/scripts/search.py "vibrant playful" --domain style
-python .agent/skills/ui-ux-pro-max/scripts/search.py "elegant modern" --domain typography
-python .agent/skills/ui-ux-pro-max/scripts/search.py "dashboard" --domain chart
+python .cursor/skills/ui-ux-pro-max/scripts/search.py "vibrant playful" --domain style
+python .cursor/skills/ui-ux-pro-max/scripts/search.py "elegant modern" --domain typography
+python .cursor/skills/ui-ux-pro-max/scripts/search.py "dashboard" --domain chart
 
 # Tech stack guide
-python .agent/skills/ui-ux-pro-max/scripts/search.py "responsive layout" --stack vue
+python .cursor/skills/ui-ux-pro-max/scripts/search.py "responsive layout" --stack vue
 ```
 
 **Testing & Verification:**
 ```
 ✅ CLI installation successful (uipro-cli).
-✅ Skill initialization successful (.agent/skills/ui-ux-pro-max/).
+✅ Skill initialization successful (.cursor/skills/ui-ux-pro-max/).
 ✅ Python 3.14.3 available.
 ✅ Test query successful (Generated gaming platform design system).
   - Pattern: App Store Style Landing
@@ -768,7 +789,7 @@ python .agent/skills/ui-ux-pro-max/scripts/search.py "responsive layout" --stack
 ```
 
 **File Changes:**
-- `.agent/skills/ui-ux-pro-max/` - Added the entire skill directory (31 files).
+- `.cursor/skills/ui-ux-pro-max/` - Added the entire skill directory (31 files).
 
 **Deployment:**
 - ✅ Skill installed and available.

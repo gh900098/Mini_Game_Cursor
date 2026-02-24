@@ -15,11 +15,11 @@ Global credit transaction ledger is live with paginated search, multi-identifier
 
 ## 🏗️ Architectural Context (The "Must Knows")
 - **Local Testing Environment:**
-  - **Source of Truth:** `.agent/workflows/deploy-to-test.md`
+  - **Source of Truth:** `.cursor/rules/workflow-deploy-test.mdc`
   - **Command:** `docker compose -f docker-compose.test.yml up -d --build`
   - **Ports:** API(3100), Admin(3101), Web(3102).
 - **Production Environment:**
-  - **Source of Truth:** `.agent/workflows/deploy-to-prod.md`
+  - **Source of Truth:** `.cursor/rules/workflow-deploy-prod.mdc`
   - **Command:** `docker compose -f docker-compose.prod.yml up -d --build` (See workflow)
   - **Variables:** Uses `ADMIN_URL` and `GAME_URL` for domain mapping.
 - **Server Archi (Reference Only):** 

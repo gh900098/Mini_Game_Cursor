@@ -18,11 +18,11 @@ Before writing ANY code, you MUST read these files to understand the current sta
 - **Start Feature:**
     - Is it a bug? -> `fix/description`
     - Is it a feature? -> `feat/description`
-    - Use workflow: `/start-feature`
+    - Follow the `workflow-start-feature` rule
 - **Finish Feature:**
     - Verify first (Rule #5).
     - Merge to main only when complete.
-    - Use workflow: `/finish-feature`
+    - Follow the `workflow-finish-feature` rule
 
 ## 3. "Do Not Harm" Policy
 - **Never delete** a function unless you are 100% sure it is unused.
@@ -164,7 +164,7 @@ await strategy.execute(payload);
 - **Rule:** No PR merge without docs update.
 
 ## 5. Verification (The "Double Check")
-- **Mandatory:** You must run the `.agent/workflows/verification-loop.md`.
+- **Mandatory:** You must run the `.cursor/rules/workflow-verification.mdc`.
 - **Auto-Deploy:** You **MUST** run `docker compose -f docker-compose.prod.yml up -d --build <service>` before testing.
 - **Backend:** `curl` it.
 - **Frontend:** Click it.

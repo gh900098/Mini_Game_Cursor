@@ -137,7 +137,7 @@ ALTER TABLE prize_configs ADD COLUMN shipping_fields JSONB;
 | `/users/manualAngPao` | Manual credit distribution |
 | `/transactions/getAllTransactions` | Transaction history |
 
-**Complete API docs:** See `.agent/skills/api-integration-developer/references/jk-backend-api.md`
+**Complete API docs:** See `.cursor/skills/api-integration-developer/references/jk-backend-api.md`
 
 ---
 
@@ -1280,7 +1280,7 @@ WHERE pc.requires_shipping = true
 ## 📚 References
 
 - JK Backend API Documentation: https://k3o58k.com/
-- Local API Reference: `.agent/skills/api-integration-developer/references/jk-backend-api.md`
+- Local API Reference: `.cursor/skills/api-integration-developer/references/jk-backend-api.md`
 - MiniGame Architecture: `minigame/ARCHITECTURE.md`
 - MiniGame Deployment: `minigame/DEPLOYMENT.md`
 

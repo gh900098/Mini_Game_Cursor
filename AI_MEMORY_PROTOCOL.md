@@ -3,19 +3,19 @@
 **Goal:** Prevent "Agent Amnesia" when starting a new chat or switching models.
 
 ## 1. The "Golden Start" Prompt
-When you start a new conversation, paste this as your **very first message**:
+When you start a new conversation, ask the agent to:
 
-> `/init-session`
+> "Initialize session" or "Load context"
 
-**(This is a shortcut for: "Initialize Session: Read `PROJECT_STATUS.md` and `CODING_STANDARDS.md".)**
+**(The agent follows the `workflow-init-session` rule: reads `PROJECT_STATUS.md`, `CODING_STANDARDS.md`, `MEMORY_BANK.md`, `CODEMAP.md`, and `AGENTS.md`.)**
 
 ## 2. Does the Agent "Auto-Remember"?
-- **No.** You must "feed" it these two files at the start of **every** new chat.
+- **No.** You must "feed" it these context files at the start of **every** new chat.
 - **Why?** Each new chat session is a blank slate. It doesn't know what happened yesterday unless you tell it.
 
 ## 3. How to Update Memory?
 - When a task is done, tell the Agent:
-> `/update-status`
+> "Save progress" or "Update status"
 
 - If you find a new pattern that works well, tell the Agent:
 > "Add this code pattern to `MEMORY_BANK.md` so we don't forget it."

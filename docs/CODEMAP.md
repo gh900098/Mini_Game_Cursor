@@ -302,6 +302,41 @@ A reference guide for quickly finding code locations.
 
 ---
 
+## AI Agent Configuration (.cursor/)
+
+**Cursor Rules (Workflows)**
+- `.cursor/rules/workflow-init-session.mdc` — Session initialization
+- `.cursor/rules/workflow-plan-feature.mdc` — Feature planning (PM mode)
+- `.cursor/rules/workflow-start-feature.mdc` — Branch creation + impact analysis
+- `.cursor/rules/workflow-finish-feature.mdc` — Verify, document, merge
+- `.cursor/rules/workflow-verification.mdc` — Quality verification loop
+- `.cursor/rules/workflow-update-status.mdc` — Save progress to PROJECT_STATUS.md
+- `.cursor/rules/workflow-deploy-test.mdc` — Local Docker test deployment
+- `.cursor/rules/workflow-deploy-prod.mdc` — Production Docker deployment
+- `.cursor/rules/workflow-new-skill.mdc` — Propose and create new skills
+
+**Cursor Skills (Domain Knowledge)**
+- `.cursor/skills/nestjs-backend-developer/` — NestJS patterns and standards
+- `.cursor/skills/vue-frontend-developer/` — Vue 3 frontend patterns
+- `.cursor/skills/game-designer/` — HTML5 Canvas game development
+- `.cursor/skills/soybean-admin-developer/` — Soybean Admin customization
+- `.cursor/skills/postgresql-database-developer/` — Database design and migrations
+- `.cursor/skills/security-consultant/` — Security practices
+- `.cursor/skills/multi-tenancy-architect/` — Tenant isolation patterns
+- `.cursor/skills/api-integration-developer/` — API and webhook integration
+- `.cursor/skills/enterprise-prize-architecture/` — Prize fulfillment system
+- `.cursor/skills/full-stack-game-developer/` — Full platform overview
+- `.cursor/skills/mobile-pwa-developer/` — PWA and mobile development
+- `.cursor/skills/localization-specialist/` — i18n and localization
+- `.cursor/skills/devops-engineer/` — Docker, CI/CD, deployment
+- `.cursor/skills/performance-engineer/` — Performance optimization
+- `.cursor/skills/qa-specialist/` — Testing and QA
+- `.cursor/skills/technical-writer/` — Technical documentation
+- `.cursor/skills/skills-maintainer/` — Skills audit and maintenance
+- `.cursor/skills/ui-ux-pro-max/` — UI/UX design intelligence (includes scripts and data)
+
+---
+
 ## 📊 File Statistics
 
 ### Code Volume Estimate
