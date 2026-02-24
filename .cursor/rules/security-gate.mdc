@@ -1,0 +1,54 @@
+---
+description: Mandatory security checklist enforced on every code change. Covers multi-tenant isolation, input validation, PII protection, and infrastructure security.
+globs: 
+alwaysApply: true
+---
+
+# Security Gate (Always Active)
+
+Every code change MUST pass these checks before completion. No exceptions.
+
+## 5 Security Pillars
+
+| Pillar | Rule |
+|---|---|
+| **Authentication** | Every protected endpoint: `@UseGuards(JwtAuthGuard)` |
+| **Authorization** | Every admin endpoint: verify `companyId` from token + `@Roles()` or `@RequirePermission()` |
+| **Input Validation** | Every POST/PATCH/DELETE: DTO with `class-validator`. Never trust raw `req.body` |
+| **Data Isolation** | Every tenant-scoped DB query: `where: { companyId }`. No cross-tenant access |
+| **Secrets** | Zero hardcoded credentials. All via `ConfigService` + `.env` |
+
+## Backend Checklist
+
+- [ ] All new endpoints have `@UseGuards(JwtAuthGuard)` (if public, state why explicitly)
+- [ ] All tenant-scoped queries include `where: { companyId }`
+- [ ] All DTOs use `class-validator` — no raw `req.body`
+- [ ] No secrets, API keys, or URLs hardcoded — all from `ConfigService`
+- [ ] No PII (email, phone, name) in `logger.log()` or `console.log()`
+- [ ] File uploads: MIME validated, filename server-generated (UUID), path traversal guarded
+- [ ] Destructive multi-step operations use DB transactions (`runner.manager.transaction`)
+- [ ] Return `404` not `403` when tenant tries to access another tenant's resource
+
+## Frontend Checklist
+
+- [ ] No `v-html` with dynamic user data (XSS risk)
+- [ ] JWT stored in Pinia store memory, **not** `localStorage`
+- [ ] `postMessage` listeners validate `event.origin` before processing
+- [ ] No sensitive data in browser console logs
+
+## Infrastructure Checklist
+
+- [ ] `git diff` shows no `.env` secrets or credentials in the commit
+- [ ] New env vars added to `.env.example` with placeholder values only
+- [ ] New Docker services do not expose unnecessary ports
+
+## PII Rules
+
+- PII fields encrypted at rest (`EncryptionTransformer`)
+- List responses show masked values only (`****@gmail.com`)
+- Detail responses require `@RequirePermission('members:view_sensitive')`
+- PII never appears in logs, error messages, or audit trails
+
+## When Security Fails
+
+If ANY check above fails, the feature is **NOT done**. Fix the security issue first, then re-verify. For deep security analysis (architecture review, penetration testing, threat modeling), read the full skill at `.cursor/skills/security-consultant/SKILL.md` and the complete standards at `docs/SECURITY_STANDARDS.md`.
